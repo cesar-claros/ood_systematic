@@ -20,5 +20,5 @@ python cifar_test.py --model_path=$model_path $rank_weight_opt $rank_feature_opt
 where ```--test_mode=$test_opt``` indicates the dataset that will be used to evaluate the trained CFS. Available options are ```iid_test```, ```ood_sncs_c100```, ```ood_nsncs_svhn```, ```ood_nsncs_ti```, ```ood_nsncs_ti```, ```ood_nsncs_lsun_cropped```, ```ood_nsncs_lsun_resize```, ```ood_nsncs_isun```, ```ood_nsncs_textures```, ```ood_nsncs_places365```.
 For example, if you want to test the trained CFS for first run of the Deep Gamblers model trained on CIFAR-10 with no RankWeight, RankFeat and/or ASH at inference time and with GPU and Temperature scaling, using the SVHN dataset, execute the following line:
 ```bash
-python cifar_iid_train.py --model_path=cifar10_paper_sweep/dg_bbvgg13_do0_run1_rew2.2 --no-rank_weight --no-rank_feature --ash=None --use_cuda --temperature_scale --test_mode=ood_nsncs_svhn
+python cifar_iid_test.py --model_path=cifar10_paper_sweep/dg_bbvgg13_do0_run1_rew2.2 --no-rank_weight --no-rank_feature --ash=None --use_cuda --temperature_scale --test_mode=ood_nsncs_svhn
 ```
