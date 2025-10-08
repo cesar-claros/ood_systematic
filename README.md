@@ -1,7 +1,37 @@
 # A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training Paradigm Shifts
-This project relies heavily on FD-Shifts [https://github.com/IML-DKFZ/fd-shifts]. Make sure that you installed FD-Shifts v0.1.1, before executing our code
+This project relies heavily on FD-Shifts [https://github.com/IML-DKFZ/fd-shifts]. Make sure that you install the forked version of FD-Shifts [https://github.com/cesar-claros/fd-shifts-0.1.1/] that we modified to include TinyImagenent as a source dataset, and also include the required libraries to train and test all the ID/OOD detectection methods shown in the paper. To clone this version execute the following line:
+```bash
+pip install git+https://github.com/cesar-claros/fd-shifts-0.1.1.git
+```
+
+Alternatively, you can install FD-Shifts v0.1.1 [https://github.com/IML-DKFZ/fd-shifts] and ```bayesian-optimization==3.1.0```, ```faiss-cpu==1.9.0```, ```MedPy```, ```tinyimagenet==0.9.9```, and ```torch_pca==1.0.0```, before executing our code. However, support for TinyImagenet as source dataset is not included in this version.
+
+### Verify TinyImagenet as source dataset
+Once FD-Shifts [https://github.com/cesar-claros/fd-shifts-0.1.1/] has been installed, you can check if the experiments that use TinyImagenet are included by executing the following line:
+```bash
+fd_shifts list 
+```
+You should be able to see the experiments that use TinyImagenet in the output
+```bash
+...
+fd-shifts/tiny-imagenet-200_paper_sweep/devries_bbvgg13_do0_run1_rew2.2
+fd-shifts/tiny-imagenet-200_paper_sweep/devries_bbvgg13_do0_run2_rew2.2
+fd-shifts/tiny-imagenet-200_paper_sweep/devries_bbvgg13_do0_run3_rew2.2
+fd-shifts/tiny-imagenet-200_paper_sweep/devries_bbvgg13_do0_run4_rew2.2
+...
+```
+
+### Train models associated to TinyImagenet
+You can train all models the models that use TinyImagenet by executing  
 
 ## Usage
+### Clone code
+To  clone the code into ```project``` folder, execute the following line:
+```bash
+git clone https://github.com/cesar-claros/ood_systematic.git project
+```
+
+
 ### Train Confidence Score Functions
 To train all Confidence Score Functions (CSFs) for a given trained model, execute the following line: 
 ```bash
