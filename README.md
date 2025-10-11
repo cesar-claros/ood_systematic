@@ -31,6 +31,14 @@ To  clone the code into ```project``` folder, execute the following line:
 git clone https://github.com/cesar-claros/ood_systematic.git project
 ```
 
+### Data folder requirements
+Follow instructions for data folder structure according to [https://github.com/IML-DKFZ/fd-shifts/blob/v0.1.1/docs/datasets.md]. Additionally, download the extra OOD datasets used in this work from the following link:
+- [OOD datasets](https://zenodo.org/records/17317862)
+into ```$DATASET_ROOT_DIR```. This file contains datasets commonly used for OOD detection evaluation, which include Textures, Places365, iSUN, LSUN, and LSUN resize.
+
+### Download trained models' weights
+Download the model weights following instructions described in the FD-Shifts project [https://github.com/IML-DKFZ/fd-shifts]. In addition to the available trained models, we trained a set of models that use TinyImagenet. These trained models can be downloaded from be following link:
+- [TinyImagenet](https://zenodo.org/records/17316185)
 
 ### Train Confidence Score Functions
 To train all Confidence Score Functions (CSFs) for a given trained model, execute the following line: 
