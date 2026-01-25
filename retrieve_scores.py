@@ -32,6 +32,9 @@ def main():
     dataset = args.dataset
     vit = args.vit
     
+    if dataset == 'cifar100' and vit:
+        dataset = 'cifar100_modelvit_bbvit_lr0.01'
+    
     # Logic from original script adapted to use args
     ti_condition = 'ood_nsncs_ti' if (dataset=='cifar10' or dataset.split('_')[0]=='cifar100' or dataset=='super_cifar100' or dataset=='supercifar') else 'ood_sncs_c10'
     c100_condition = 'ood_sncs_c100' if (dataset=='cifar10' or dataset=='tiny-imagenet-200') else 'ood_sncs_c10'
