@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from functools import reduce
+from loguru import logger
 from src.utils_stats import *
 from src.scores_retrieval_utils import (
     read_results_vit,
@@ -25,6 +26,8 @@ def main():
     parser.add_argument("--scores-dir", type=str, default="scores_final", help="Directory to save final scores")
     
     args = parser.parse_args()
+    
+    logger.info(f"Starting score retrieval with arguments: {args}")
     
     dataset = args.dataset
     vit = args.vit
@@ -62,9 +65,17 @@ def main():
     best_hyperparameters_list = []
     
     # Create output directory if it doesn't exist
-    os.makedirs(args.scores_dir, exist_ok=True)
+    if not os.path.exists(args.scores_dir):
+        logger.info(f"Creating output directory: {args.scores_dir}")
+        os.makedirs(args.scores_dir, exist_ok=True)
+    else:
+        logger.debug(f"Output directory exists: {args.scores_dir}")
 
-    for score_name in ['AUGRC','AURC','AUROC_f','FPR@95TPR']:
+    scores_to_process = ['AUGRC','AURC','AUROC_f','FPR@95TPR']
+    logger.info(f"Processing scores: {scores_to_process}")
+
+    for score_name in scores_to_process:
+        logger.debug(f"Processing score: {score_name}")
         cond_1 = results_val['metrics']=='MCD-ECTM_class_avg'
         cond_2 = results_val['metrics']=='MCD-ECTM_class_pred'
         cond_3 = results_val['metrics']=='MCD-ECTM_global'
@@ -156,7 +167,9 @@ def main():
         out_path_false = os.path.join(args.scores_dir, f'scores_{score_name}_MCD-False_{label_model}_{dict_clip.get(dataset, dataset)}.csv')
         out_path_true = os.path.join(args.scores_dir, f'scores_{score_name}_MCD-True_{label_model}_{dict_clip.get(dataset, dataset)}.csv')
         
+        logger.info(f"Saving scores to {out_path_false}")
         augrc_scores_ood[~mcd_methods_mask].to_csv(out_path_false)
+        logger.info(f"Saving scores to {out_path_true}")
         augrc_scores_ood[mcd_methods_mask].to_csv(out_path_true)
 
         ood_nsncs_dict_all = {
@@ -188,7 +201,9 @@ def main():
         out_path_all_false = os.path.join(args.scores_dir, f'scores_all_{score_name}_MCD-False_{label_model}_{dict_clip.get(dataset, dataset)}.csv')
         out_path_all_true = os.path.join(args.scores_dir, f'scores_all_{score_name}_MCD-True_{label_model}_{dict_clip.get(dataset, dataset)}.csv')
 
+        logger.info(f"Saving all scores to {out_path_all_false}")
         metric_scores_ood[~mcd_methods_mask].to_csv(out_path_all_false)
+        logger.info(f"Saving all scores to {out_path_all_true}")
         metric_scores_ood[mcd_methods_mask].to_csv(out_path_all_true)
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from functools import reduce
+from loguru import logger
 
 # Additional imports if needed by the functions
 # from sklearn.cluster import KMeans
@@ -11,6 +12,7 @@ from functools import reduce
 # import seaborn as sns
 
 def read_results_vit(dataset,set_name):
+    logger.info(f"Reading ViT results for dataset: {dataset}, set: {set_name}")
     experiment_dir = Path(os.environ["EXPERIMENT_ROOT_DIR"]+f'/vit/')
     folders_in_exp_dir = [j for j in experiment_dir.iterdir() if f'{dataset}_' in j.parts[-1]]
     # print(len(folders_in_exp_dir))
@@ -19,6 +21,9 @@ def read_results_vit(dataset,set_name):
     else:
         lst_idx = [1,2,6,5,7]
     res = []
+    
+    logger.debug(f"Found {len(folders_in_exp_dir)} experiment folders.")
+    
     for k in range(len(folders_in_exp_dir)):
         model_description = folders_in_exp_dir[k].parts[-1].split('_')
         files_in_folder = [j for j in folders_in_exp_dir[k].joinpath('analysis').glob(f'*stats*{set_name}.csv')]
@@ -29,15 +34,25 @@ def read_results_vit(dataset,set_name):
             stats_df[['model','network','drop_out','run','reward']] = [model_description[j] for j in lst_idx]
             stats_df[['RankWeight','RankFeat','ASH']] = [ *exp_description[1:3], exp_description[3]]
             res.append(stats_df)
+            
+    if not res:
+        logger.warning(f"No results found for dataset: {dataset}, set: {set_name}")
+        return pd.DataFrame()
+        
     results = pd.concat(res).reset_index(names='metrics')
     # print(results['run'])
     results['run'] = results['run'].str.split(pat='run', expand=True)[1].astype(int)
+    logger.success(f"Successfully read {len(results)} rows for {dataset} - {set_name}")
     return results
 
 def read_results(dataset,set_name):
+    logger.info(f"Reading results for dataset: {dataset}, set: {set_name}")
     experiment_dir = Path(os.environ["EXPERIMENT_ROOT_DIR"]+f'/{dataset}_paper_sweep/')
     folders_in_exp_dir = [j for j in experiment_dir.iterdir()]
     res = []
+    
+    logger.debug(f"Found {len(folders_in_exp_dir)} experiment folders.")
+
     for k in range(len(folders_in_exp_dir)):
         model_description = folders_in_exp_dir[k].parts[-1].split('_')
         files_in_folder = [j for j in folders_in_exp_dir[k].joinpath('analysis').glob(f'*stats*{set_name}.csv')]
@@ -47,8 +62,14 @@ def read_results(dataset,set_name):
             stats_df[['model','network','drop_out','run','reward']] = model_description
             stats_df[['RankWeight','RankFeat','ASH']] = [ *exp_description[1:3], exp_description[3]]
             res.append(stats_df)
+            
+    if not res:
+        logger.warning(f"No results found for dataset: {dataset}, set: {set_name}")
+        return pd.DataFrame()
+
     results = pd.concat(res).reset_index(names='metrics')
     results['run'] = results['run'].str.split(pat='run', expand=True)[1].astype(int)
+    logger.success(f"Successfully read {len(results)} rows for {dataset} - {set_name}")
     return results
 
 def select_best_hyperparameters(results_val, model_name, score_name, mcd_metrics:bool=False, model_opts=['RW0','RF0','ASHNone']):
