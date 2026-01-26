@@ -108,7 +108,11 @@ def run(iid_dataset:str, output_dir:str):
 if __name__ == "__main__":
     # Create the parser
     parser = argparse.ArgumentParser(description="Uncertainty evaluation")
-    parser.add_argument('--iid_dataset', type=str, required=True, help="IID data set name", choices=['cifar10','cifar100','supercifar100','tinyimagenet'])
+    parser.add_argument('--iid_dataset', 
+                        type=str, 
+                        required=True, 
+                        help="IID data set name", 
+                        choices=['cifar10','cifar100','supercifar100','tinyimagenet'])
     parser.add_argument('--output_dir',
                         type=str,
                         default='.',

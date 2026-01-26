@@ -17,7 +17,7 @@ import matplotlib
 from matplotlib import colors, patches
 #%%
 # Known metadata columns in score tables; all other columns are assumed to be dataset columns
-KNOWN_META_COLS = ["model", "drop out", "reward", "methods"]
+KNOWN_META_COLS = ["model", "drop out", "reward", "methods", "run"]
 
 # Metric direction (True = higher is better on raw scale)
 HIGHER_BETTER = {

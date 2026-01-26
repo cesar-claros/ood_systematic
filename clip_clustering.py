@@ -8,7 +8,11 @@ from loguru import logger
 
 def main():
     parser = argparse.ArgumentParser(description="Cluster CLIP proximity metrics.")
-    parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset")
+    parser.add_argument("--dataset", 
+                        type=str, 
+                        required=True, 
+                        help="Name of the dataset",
+                        choices=['cifar10','cifar100','supercifar100','tinyimagenet'])
     parser.add_argument("--n-clusters", type=int, default=3, help="Number of clusters for KMeans")
     parser.add_argument("--input-dir", type=str, default=".", help="Directory containing the input JSON file")
     parser.add_argument("--output-dir", type=str, default=".", help="Directory to save the output files")
@@ -29,7 +33,7 @@ def main():
     metrics_show = [('global','kid mean'),('global','fid'),
                     ('class-aware','inv text alignment mean'),
                     ('class-aware','img centroid dist mean'),
-                    ('group_name','')]
+                    ('group','')]
     metrics = [('global','kid mean'),('global','fid'),('class-aware','inv text alignment mean'),('class-aware','img centroid dist mean')]
 
     input_path = os.path.join(input_dir, f'clip_proximity_{dataset}.json')
@@ -70,7 +74,7 @@ def main():
     if 'test' in distances_df.index:
         test_row = distances_df.loc[['test']].copy()
         test_row['cluster_id'] = -1
-        test_row['group'] = '0'
+        test_row['group'] = "0"
         distances_df = distances_df.drop('test',axis='rows')
     else:
         logger.warning("No 'test' row found/extracted. Proceeding with clustering on all available data.")
@@ -91,15 +95,16 @@ def main():
         .index.to_list()
     )
 
-    id_to_name = {cluster_order[0]:"1", cluster_order[1]:"2", cluster_order[2]:"3",}
-    id_to_name_dist = {cluster_order[0]:"Near", cluster_order[1]:"Mid", cluster_order[2]:"Far",'0':"ID"}
+    id_to_name = {"0":"0", cluster_order[0]:"1", cluster_order[1]:"2", cluster_order[2]:"3",}
+    id_to_name_dist = {cluster_order[0]:"Near", cluster_order[1]:"Mid", cluster_order[2]:"Far","0":"ID"}
     
+    distances_df["group"] = distances_df["cluster_id"].map(id_to_name)
     if test_row is not None:
         distances_df = pd.concat([test_row,distances_df],axis=0)
     
-    distances_df["group"] = distances_df["cluster_id"].map(id_to_name)
     distances_df["group_name"] = distances_df["cluster_id"].map(id_to_name_dist)
     distances_df = distances_df.sort_values(by='group', ascending=True)
+
 
     os.makedirs(output_dir, exist_ok=True)
     csv_path = os.path.join(output_dir, f'clip_distances_{dataset}.csv')
