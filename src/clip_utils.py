@@ -492,7 +492,8 @@ def nearest_superclass_distance(X: np.ndarray, cents: np.ndarray) -> np.ndarray:
 def text_alignment_scores(X: np.ndarray, Tproto: np.ndarray) -> np.ndarray:
     # cosine similarity to best text prototype
     sims = X @ Tproto.T
-    return sims.max(axis=1), sims.argmax(axis=1)  # higher = better alignment
+    return sims.max(axis=1) # higher = better alignment
+    # return sims.max(axis=1), sims.argmax(axis=1)  # higher = better alignment
 
 def text_confidence_alignment_scores(X: np.ndarray, Tproto: np.ndarray, Tproto_confidence: np.ndarray) -> np.ndarray:
     # cosine similarity to best text prototype

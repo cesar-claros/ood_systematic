@@ -52,7 +52,7 @@ for SOURCE in sources:
         "AUGRC":     f"scores/scores_all_AUGRC_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
         "AURC":      f"scores/scores_all_AURC_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
         # Optional CLIP distances / groupings file (columns: dataset, features..., e.g., 'group', 'clip_dist_id_ood', etc.)
-        "CLIP_FILE": f"scores/clip_distances_{SOURCE}.csv",  # set to None if not available
+        "CLIP_FILE": f"clip_scores/clip_distances_{SOURCE}.csv",  # set to None if not available
         # Output dir
         "OUTDIR": f"ood_eval_outputs/{SOURCE}_{BACKBONE}_MCD-{MCD_flag}",
         # Alpha for significance
