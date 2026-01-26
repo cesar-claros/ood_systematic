@@ -21,7 +21,11 @@ os.environ.setdefault("DATASET_ROOT_DIR", '/work/cniel/sw/FD_Shifts/project/data
 
 def main():
     parser = argparse.ArgumentParser(description="Retrieve scores from experiment results.")
-    parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset (e.g., cifar10, supercifar, cifar100)")
+    parser.add_argument("--dataset", 
+                        type=str, 
+                        required=True, 
+                        help="Name of the dataset (e.g., cifar10, supercifar, cifar100)",
+                        choices=['cifar10','supercifar100','cifar100','tinyimagenet'])
     parser.add_argument("--vit", action="store_true", help="Set this flag if using ViT model results")
     parser.add_argument("--scores-dir", type=str, default="scores_final", help="Directory to save final scores")
     
@@ -34,6 +38,12 @@ def main():
     
     if dataset == 'cifar100' and vit:
         dataset = 'cifar100_modelvit_bbvit_lr0.01'
+    elif dataset == 'supercifar100' and vit:
+        dataset = 'super_cifar100'
+    elif dataset == 'supercifar100' and not vit:
+        dataset = 'supercifar'
+    elif dataset == 'tinyimagenet':
+        dataset = 'tiny-imagenet-200'
     
     # Logic from original script adapted to use args
     ti_condition = 'ood_nsncs_ti' if (dataset=='cifar10' or dataset.split('_')[0]=='cifar100' or dataset=='super_cifar100' or dataset=='supercifar') else 'ood_sncs_c10'
