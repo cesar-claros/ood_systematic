@@ -503,3 +503,21 @@ def text_confidence_alignment_scores(X: np.ndarray, Tproto: np.ndarray, Tproto_c
     class_confidence_list = [x[class_idx[k],:] for k,x in enumerate(sims_confidence_reshaped)]
     class_confidence = np.vstack(class_confidence_list)
     return class_confidence.max(axis=1), class_idx, class_confidence.argmax(axis=1)  # higher = better alignment
+
+def class_centroids(X_id: np.ndarray, y_id: np.ndarray, ) -> np.ndarray:
+    cents = []
+    unique_y = np.unique(y_id)
+    for s in unique_y:
+        mask = (y_id == s)
+        cents.append(X_id[mask].mean(axis=0, keepdims=True))
+    cents = np.concatenate(cents, axis=0)
+    # Normalize since image features were normalized
+    cents = cents / np.linalg.norm(cents, axis=1, keepdims=True)
+    return cents
+
+def nearest_class_distance(X: np.ndarray, cents: np.ndarray) -> np.ndarray:
+    # cosine→angular distance
+    sims = X @ cents.T
+    best = sims.max(axis=1)
+    d = np.sqrt(np.maximum(0.0, 2.0 * (1.0 - best)))
+    return d  # lower = closer to some class

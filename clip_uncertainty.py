@@ -19,7 +19,7 @@ from src.clip_utils import (
 )
 
 # ---------- Runner (example) ----------
-def run(iid_dataset:str):
+def run(iid_dataset:str, output_dir:str):
     ti_condition = 'tinyimagenet' if (iid_dataset=='cifar10' or iid_dataset=='cifar100' or iid_dataset=='supercifar100') else 'cifar10'
     c100_condition = 'cifar100' if (iid_dataset=='cifar10' or iid_dataset=='tinyimagenet') else 'cifar10'
     logger.info('Loading CLIP model...')
@@ -87,10 +87,11 @@ def run(iid_dataset:str):
         'prompts_confidence':PROMPTS_confidence,
     }
     # Optional: save results
-    path = f"clip_uncertainty_{iid_dataset}.joblib"
+    os.makedirs(output_dir, exist_ok=True)
+    path = os.path.join(output_dir, f"clip_uncertainty_{iid_dataset}.joblib")
     # with open(path, "w") as f:
     joblib.dump(results, path)
-    print(f"Saved: {path}")
+    logger.success(f"Saved results to: {path}")
 
 if __name__ == "__main__":
     # Create the parser
@@ -100,6 +101,11 @@ if __name__ == "__main__":
                         required=True, 
                         help="IID data set name", 
                         choices=['cifar10','cifar100','supercifar100','tinyimagenet'])
+    parser.add_argument('--output-dir',
+                        type=str,
+                        default='.',
+                        help="Directory to save the results")
     args = parser.parse_args()
     iid_dataset = args.iid_dataset
-    run(iid_dataset)
+    output_dir = args.output_dir
+    run(iid_dataset, output_dir)
