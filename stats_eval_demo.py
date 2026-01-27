@@ -27,6 +27,8 @@ def main():
     parser.add_argument("--backbone", type=str, default='Conv', choices=['Conv', 'ViT'], help="Backbone type")
     parser.add_argument("--mcd", action="store_true", help="Set MCD flag")
     parser.add_argument("--metric", type=str, default='AURC', help="Single metric to demonstrate (e.g., AURC)")
+    parser.add_argument("--group", type=str, help="Specific group to analyze (e.g., test, near)")
+    parser.add_argument("--methods", nargs='+', help="List of methods to include (substring match)")
     parser.add_argument("--output-dir", type=str, default="demo_outputs", help="Directory to save intermediate results")
     
     args = parser.parse_args()
@@ -95,6 +97,22 @@ def main():
     else:
         logger.info("CLIP file not found. Assigning default group 'All'.")
         df_met['group'] = 'All'
+        
+    # Filter by specific methods if requested
+    if args.methods:
+        logger.info(f"Filtering methods containing: {args.methods}")
+        # Case-insensitive substring match? Or exact? 
+        # Typically method names might be case sensitive (e.g. 'GEN' vs 'gen'). 
+        # Using string containment for flexibility.
+        mask = df_met['methods'].apply(lambda x: any(str(m) in str(x) for m in args.methods))
+        df_met = df_met[mask]
+        logger.info(f"Rows after method filtering: {len(df_met)}")
+
+    # Filter by specific group if requested
+    if args.group:
+        logger.info(f"Filtering for group: {args.group}")
+        df_met = df_met[df_met['group'] == args.group]
+        logger.info(f"Rows after group filtering: {len(df_met)}")
         
     logger.info(f"Data ready for ranking. Rows: {len(df_met)}")
     df_met.to_csv(os.path.join(OUTDIR, "2_preprocessed_data.csv"), index=False)
