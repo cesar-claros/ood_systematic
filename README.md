@@ -1,7 +1,7 @@
 # A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training Paradigm Shifts
 Convolutional Models       |  Transformer Models
 :-------------------------:|:-------------------------:
-<img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/top_cliques_Conv_False_%5B'AUGRC'%2C%20'AURC'%5D_1.jpeg">  |  <img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/top_cliques_ViT_False_%5B'AUGRC'%2C%20'AURC'%5D_1.jpeg">
+<img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/top_cliques_Conv_False_RC.jpeg">  |  <img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/top_cliques_ViT_False_RC.jpeg">
 
 
 This project relies heavily on FD-Shifts [https://github.com/IML-DKFZ/fd-shifts]. Make sure that you install the forked version of FD-Shifts [https://github.com/cesar-claros/fd-shifts-0.1.1/] that we modified to include TinyImagenent as a source dataset, and also include the required libraries to train and test all the ID/OOD detectection methods shown in the paper. To clone this version execute the following line:

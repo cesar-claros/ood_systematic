@@ -376,9 +376,10 @@ def main():
                         alpha=0.5)
         ax[0].add_patch(rect)
     
-    out_filename = f'top_cliques_{BACKBONE}_{MCD_flag}_{args.metric_group}.pdf'
+    out_filename = f'top_cliques_{BACKBONE}_{MCD_flag}_{args.metric_group}'
     out_path = os.path.join(OUTDIR, out_filename)
-    fig.savefig(out_path, bbox_inches='tight')
+    fig.savefig(out_path + '.pdf', bbox_inches='tight')
+    fig.savefig(out_path + '.jpeg', bbox_inches='tight')
     logger.success(f"Saved plot to: {out_path}")
 
 if __name__ == "__main__":
