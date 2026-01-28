@@ -1,0 +1,11 @@
+,model,drop out,methods,reward,run,dataset,score,metric,method_base,variation,backbone,n_classes,MCD,score_std,source
+0,confidnet,do0,GEN global,2.2,2,test,4.108432107012454,AUGRC,GEN,global,Conv,10,0,-4.108432107012454,cifar10
+1,confidnet,do0,GEN global,2.2,4,test,4.667907412261735,AUGRC,GEN,global,Conv,10,0,-4.667907412261735,cifar10
+2,confidnet,do0,GEN global,2.2,5,test,4.023049391687285,AUGRC,GEN,global,Conv,10,0,-4.023049391687285,cifar10
+3,confidnet,do0,GEN global,2.2,1,test,4.616240742312382,AUGRC,GEN,global,Conv,10,0,-4.616240742312382,cifar10
+4,confidnet,do0,GEN global,2.2,3,test,4.268339513752531,AUGRC,GEN,global,Conv,10,0,-4.268339513752531,cifar10
+5,confidnet,do0,GEN,2.2,2,test,4.107765433152154,AUGRC,GEN,(none),Conv,10,0,-4.107765433152154,cifar10
+6,confidnet,do0,GEN,2.2,4,test,4.673722224567124,AUGRC,GEN,(none),Conv,10,0,-4.673722224567124,cifar10
+7,confidnet,do0,GEN,2.2,5,test,4.019197533033244,AUGRC,GEN,(none),Conv,10,0,-4.019197533033244,cifar10
+8,confidnet,do0,GEN,2.2,1,test,4.619228405398543,AUGRC,GEN,(none),Conv,10,0,-4.619228405398543,cifar10
+9,confidnet,do0,GEN,2.2,3,test,4.265228405990961,AUGRC,GEN,(none),Conv,10,0,-4.265228405990961,cifar10

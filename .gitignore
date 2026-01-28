@@ -2,7 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.csv
 data/
 *.json
 configs_exp/
+scores/
+clip_scores/
