@@ -1,0 +1,59 @@
+2026-01-27 16:02:54.379 | INFO     | __main__:main:45 - === STEP 1: LOAD RAW SCORES ===
+2026-01-27 16:02:54.380 | INFO     | __main__:main:53 - Target file: scores/scores_all_AUGRC_MCD-False_Conv_cifar10.csv
+2026-01-27 16:02:54.567 | INFO     | __main__:main:68 - Loaded 11205 rows.
+2026-01-27 16:02:54.573 | INFO     | __main__:main:70 - Raw Scores Sample:
+       model drop out     methods  reward  run dataset     score metric method_base variation backbone  n_classes MCD  score_std   source
+0  confidnet      do0  GEN global     2.2    2    test  4.108432  AUGRC         GEN    global     Conv         10   0  -4.108432  cifar10
+1  confidnet      do0  GEN global     2.2    4    test  4.667907  AUGRC         GEN    global     Conv         10   0  -4.667907  cifar10
+2  confidnet      do0  GEN global     2.2    5    test  4.023049  AUGRC         GEN    global     Conv         10   0  -4.023049  cifar10
+3  confidnet      do0  GEN global     2.2    1    test  4.616241  AUGRC         GEN    global     Conv         10   0  -4.616241  cifar10
+4  confidnet      do0  GEN global     2.2    3    test  4.268340  AUGRC         GEN    global     Conv         10   0  -4.268340  cifar10
+5  confidnet      do0         GEN     2.2    2    test  4.107765  AUGRC         GEN    (none)     Conv         10   0  -4.107765  cifar10
+6  confidnet      do0         GEN     2.2    4    test  4.673722  AUGRC         GEN    (none)     Conv         10   0  -4.673722  cifar10
+7  confidnet      do0         GEN     2.2    5    test  4.019198  AUGRC         GEN    (none)     Conv         10   0  -4.019198  cifar10
+8  confidnet      do0         GEN     2.2    1    test  4.619228  AUGRC         GEN    (none)     Conv         10   0  -4.619228  cifar10
+9  confidnet      do0         GEN     2.2    3    test  4.265228  AUGRC         GEN    (none)     Conv         10   0  -4.265228  cifar10
+2026-01-27 16:02:54.575 | INFO     | __main__:main:73 - === STEP 2: PREPROCESSING & FILTERING ===
+2026-01-27 16:02:54.580 | INFO     | __main__:main:90 - Loading CLIP groups from clip_scores/clip_distances_cifar10.csv
+2026-01-27 16:02:54.586 | INFO     | __main__:main:96 - Merged CLIP groups.
+2026-01-27 16:02:54.586 | INFO     | __main__:main:103 - Filtering methods containing: ['GEN', 'MSR', 'CTM', 'fDBD', 'Confidence']
+2026-01-27 16:02:54.600 | INFO     | __main__:main:109 - Rows after method filtering: 675
+2026-01-27 16:02:54.600 | INFO     | __main__:main:113 - Filtering for group: 0
+2026-01-27 16:02:54.600 | INFO     | __main__:main:115 - Rows after group filtering: 75
+2026-01-27 16:02:54.600 | INFO     | __main__:main:117 - Data ready for ranking. Rows: 75
+2026-01-27 16:02:54.602 | INFO     | __main__:main:120 - === STEP 3: RANKING ===
+2026-01-27 16:02:54.605 | INFO     | __main__:main:133 - Showing ranks for block: ('test', 'confidnet', 'AUGRC', 0)
+2026-01-27 16:02:54.610 | INFO     | __main__:main:135 - Block Ranks:
+                                   methods  score_std  rank
+dataset model     metric group                             
+test    confidnet AUGRC  0             GEN  -4.019198  0.04
+                         0             GEN  -4.107765  0.08
+                         0             GEN  -4.265228  0.12
+                         0      Confidence  -4.356247  0.16
+                         0      Confidence  -4.452796  0.20
+                         0             GEN  -4.619228  0.24
+                         0             MSR  -4.631111  0.28
+                         0             GEN  -4.673722  0.32
+                         0             MSR  -4.737488  0.36
+                         0      Confidence  -4.766043  0.40
+2026-01-27 16:02:54.613 | INFO     | __main__:main:138 - === STEP 4: AGGREGATE RANKS (Global/Group) ===
+2026-01-27 16:02:54.615 | INFO     | __main__:main:141 - Average Ranks per Group:
+   group     methods  avg_rank
+0      0         GEN  0.274667
+1      0  Confidence  0.416000
+2      0         MSR  0.456000
+3      0         CTM  0.656000
+4      0        fDBD  0.797333
+2026-01-27 16:02:54.616 | INFO     | __main__:main:144 - === STEP 5: FRIEDMAN TEST & POST-HOC ANALYSIS ===
+2026-01-27 16:02:54.616 | INFO     | __main__:main:149 - Unique Groups Found: [0]
+2026-01-27 16:02:54.616 | INFO     | __main__:main:153 - Analyzing Group: 0
+2026-01-27 16:02:54.623 | INFO     | __main__:main:162 - Friedman Test (Group 0): Statistic=7.7333, p-value=1.0185e-01
+2026-01-27 16:02:54.629 | INFO     | __main__:main:171 - Post-hoc Matrix Shape: (5, 5)
+2026-01-27 16:02:54.631 | INFO     | __main__:main:178 - === STEP 6: FINDING MAXIMAL CLIQUES ===
+2026-01-27 16:02:54.631 | INFO     | __main__:main:179 - Finding cliques of methods that are not significantly different...
+2026-01-27 16:02:54.632 | INFO     | __main__:main:181 - Found 3 maximal cliques.
+2026-01-27 16:02:54.632 | INFO     | __main__:main:188 - === STEP 7: RANKING CLIQUES & LAYERING ===
+2026-01-27 16:02:54.633 | INFO     | __main__:main:194 - Identified 1 layers.
+2026-01-27 16:02:54.633 | DEBUG    | __main__:main:201 - Layer 1 (Mean Rank 2.2222): ['Confidence', 'GEN', 'MSR']...
+2026-01-27 16:02:54.634 | INFO     | __main__:main:211 - Top Layer Members for 0: ['Confidence', 'GEN', 'MSR']
+2026-01-27 16:02:54.634 | SUCCESS  | __main__:main:213 - Demonstration complete. Check intermediate files in output directory.

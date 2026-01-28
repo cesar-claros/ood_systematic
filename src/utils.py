@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader, Subset
 from fd_shifts import logger
 import torchvision.transforms as transforms
 import torchvision
+import pandas as pd
 #%%
 ArrayType = torch.Tensor
 T = TypeVar(
@@ -260,3 +261,72 @@ def compute_model_evaluations(model, datamodule, set_name:str) :
 #                                     'gamma' : params['gamma']} )
 #     ent_df = pd.DataFrame(scores_entropy_val)
 #     return ent_df
+#%%
+def read_results_vit(dataset,set_name):
+    experiment_dir = Path(os.environ["EXPERIMENT_ROOT_DIR"]+f'/vit/')
+    folders_in_exp_dir = [j for j in experiment_dir.iterdir() if f'{dataset}_' in j.parts[-1]]
+    # print(len(folders_in_exp_dir))
+    if 'super' in  dataset:
+        lst_idx = [2,3,7,6,8]
+    else:
+        lst_idx = [1,2,6,5,7]
+    res = []
+    for k in range(len(folders_in_exp_dir)):
+        model_description = folders_in_exp_dir[k].parts[-1].split('_')
+        files_in_folder = [j for j in folders_in_exp_dir[k].joinpath('analysis').glob(f'*stats*{set_name}.csv')]
+        # print(files_in_folder)
+        for i in range(len(files_in_folder)):
+            exp_description = files_in_folder[i].parts[-1].split('_')
+            stats_df = pd.read_csv(files_in_folder[i], index_col=0)
+            stats_df[['model','network','drop_out','run','reward']] = [model_description[j] for j in lst_idx]
+            stats_df[['RankWeight','RankFeat','ASH']] = [ *exp_description[1:3], exp_description[3]]
+            res.append(stats_df)
+    results = pd.concat(res).reset_index(names='metrics')
+    # print(results['run'])
+    results['run'] = results['run'].str.split(pat='run', expand=True)[1].astype(int)
+    return results
+#%%
+def read_results(dataset,set_name):
+    experiment_dir = Path(os.environ["EXPERIMENT_ROOT_DIR"]+f'/{dataset}_paper_sweep/')
+    folders_in_exp_dir = [j for j in experiment_dir.iterdir()]
+    res = []
+    for k in range(len(folders_in_exp_dir)):
+        model_description = folders_in_exp_dir[k].parts[-1].split('_')
+        files_in_folder = [j for j in folders_in_exp_dir[k].joinpath('analysis').glob(f'*stats*{set_name}.csv')]
+        for i in range(len(files_in_folder)):
+            exp_description = files_in_folder[i].parts[-1].split('_')
+            stats_df = pd.read_csv(files_in_folder[i], index_col=0)
+            stats_df[['model','network','drop_out','run','reward']] = model_description
+            stats_df[['RankWeight','RankFeat','ASH']] = [ *exp_description[1:3], exp_description[3]]
+            res.append(stats_df)
+    results = pd.concat(res).reset_index(names='metrics')
+    results['run'] = results['run'].str.split(pat='run', expand=True)[1].astype(int)
+    return results
+
+#%%
+def extract_char_after_substring(main_string, search_string):
+    """
+    Finds a specific string within a main string and extracts the character
+    immediately following it.
+
+    Args:
+        main_string (str): The string to search within.
+        search_string (str): The string to search for.
+
+    Returns:
+        str: The character immediately after the search_string, or None if
+             the search_string is not found or is at the end of the main_string.
+    """
+    index = main_string.find(search_string)
+
+    if index != -1:  # If the search_string is found
+        # Calculate the index of the character after the search_string
+        char_after_index = index + len(search_string)
+        
+        # Check if there is a character at that index (i.e., not at the end)
+        if char_after_index < len(main_string):
+            return main_string[char_after_index:].split(search_string)[0].split('_')[0]
+        else:
+            return None  # Search string is at the end of the main string
+    else:
+        return None  # Search string not found

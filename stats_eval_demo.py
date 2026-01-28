@@ -104,14 +104,14 @@ def main():
         # Case-insensitive substring match? Or exact? 
         # Typically method names might be case sensitive (e.g. 'GEN' vs 'gen'). 
         # Using string containment for flexibility.
-        mask = df_met['methods'].apply(lambda x: any(str(m) in str(x) for m in args.methods))
+        mask = df_met['methods'].apply(lambda x: any(str(m)==str(x) for m in args.methods))
         df_met = df_met[mask]
         logger.info(f"Rows after method filtering: {len(df_met)}")
 
     # Filter by specific group if requested
     if args.group:
         logger.info(f"Filtering for group: {args.group}")
-        df_met = df_met[df_met['group'] == args.group]
+        df_met = df_met[df_met['group'] == int(args.group)]
         logger.info(f"Rows after group filtering: {len(df_met)}")
         
     logger.info(f"Data ready for ranking. Rows: {len(df_met)}")
@@ -146,7 +146,7 @@ def main():
     
     # Process each group separately
     unique_groups = df_met['group'].unique()
-    
+    logger.info(f"Unique Groups Found: {unique_groups}")
     combined_cliques_df = []
     
     for grp in unique_groups:
