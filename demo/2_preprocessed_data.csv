@@ -24,6 +24,11 @@ confidnet,do0,fDBD,2.2,4,test,5.66930865436815,AUGRC,fDBD,(none),Conv,10,0,-5.66
 confidnet,do0,fDBD,2.2,5,test,5.259975312039185,AUGRC,fDBD,(none),Conv,10,0,-5.259975312039185,cifar10,0
 confidnet,do0,fDBD,2.2,1,test,5.676993832287231,AUGRC,fDBD,(none),Conv,10,0,-5.676993832287231,cifar10,0
 confidnet,do0,fDBD,2.2,3,test,5.493660500757364,AUGRC,fDBD,(none),Conv,10,0,-5.493660500757364,cifar10,0
+confidnet,do1,Energy,2.2,1,test,5.810537031740952,AUGRC,Energy,(none),Conv,10,0,-5.810537031740952,cifar10,0
+confidnet,do1,Energy,2.2,3,test,5.812030870057545,AUGRC,Energy,(none),Conv,10,0,-5.812030870057545,cifar10,0
+confidnet,do1,Energy,2.2,5,test,6.01455556276859,AUGRC,Energy,(none),Conv,10,0,-6.01455556276859,cifar10,0
+confidnet,do1,Energy,2.2,4,test,6.144796298358414,AUGRC,Energy,(none),Conv,10,0,-6.144796298358414,cifar10,0
+confidnet,do1,Energy,2.2,2,test,5.494320983915207,AUGRC,Energy,(none),Conv,10,0,-5.494320983915207,cifar10,0
 devries,do0,Confidence,2.2,4,test,4.568888892608002,AUGRC,Confidence,(none),Conv,10,0,-4.568888892608002,cifar10,0
 devries,do0,Confidence,2.2,2,test,4.659623462324412,AUGRC,Confidence,(none),Conv,10,0,-4.659623462324412,cifar10,0
 devries,do0,Confidence,2.2,1,test,4.559530864843206,AUGRC,Confidence,(none),Conv,10,0,-4.559530864843206,cifar10,0
@@ -44,6 +49,11 @@ devries,do0,fDBD,2.2,2,test,6.390487667329984,AUGRC,fDBD,(none),Conv,10,0,-6.390
 devries,do0,fDBD,2.2,1,test,5.765864204281469,AUGRC,fDBD,(none),Conv,10,0,-5.765864204281469,cifar10,0
 devries,do0,fDBD,2.2,3,test,5.8474506195481,AUGRC,fDBD,(none),Conv,10,0,-5.8474506195481,cifar10,0
 devries,do0,fDBD,2.2,5,test,5.465216045804684,AUGRC,fDBD,(none),Conv,10,0,-5.465216045804684,cifar10,0
+devries,do1,Energy,2.2,5,test,5.948709890855955,AUGRC,Energy,(none),Conv,10,0,-5.948709890855955,cifar10,0
+devries,do1,Energy,2.2,1,test,6.217345683276815,AUGRC,Energy,(none),Conv,10,0,-6.217345683276815,cifar10,0
+devries,do1,Energy,2.2,3,test,6.024790129231405,AUGRC,Energy,(none),Conv,10,0,-6.024790129231405,cifar10,0
+devries,do1,Energy,2.2,2,test,5.989419766909528,AUGRC,Energy,(none),Conv,10,0,-5.989419766909528,cifar10,0
+devries,do1,Energy,2.2,4,test,5.976981491236884,AUGRC,Energy,(none),Conv,10,0,-5.976981491236884,cifar10,0
 devries,do0,CTM,2.2,4,test,6.974487652342455,AUGRC,CTM,(none),Conv,10,0,-6.974487652342455,cifar10,0
 devries,do0,CTM,2.2,2,test,6.545697529687864,AUGRC,CTM,(none),Conv,10,0,-6.545697529687864,cifar10,0
 devries,do0,CTM,2.2,1,test,6.740913600414287,AUGRC,CTM,(none),Conv,10,0,-6.740913600414287,cifar10,0
@@ -74,3 +84,8 @@ dg,do0,fDBD,2.2,4,test,4.32264197772262,AUGRC,fDBD,(none),Conv,10,0,-4.322641977
 dg,do0,fDBD,2.2,5,test,4.305265437452667,AUGRC,fDBD,(none),Conv,10,0,-4.305265437452667,cifar10,0
 dg,do0,fDBD,2.2,3,test,4.600771609468211,AUGRC,fDBD,(none),Conv,10,0,-4.600771609468211,cifar10,0
 dg,do0,fDBD,2.2,1,test,4.588796308071727,AUGRC,fDBD,(none),Conv,10,0,-4.588796308071727,cifar10,0
+dg,do1,Energy,3.0,5,test,5.502777779691517,AUGRC,Energy,(none),Conv,10,0,-5.502777779691517,cifar10,0
+dg,do1,Energy,3.0,1,test,5.6812592562976825,AUGRC,Energy,(none),Conv,10,0,-5.6812592562976825,cifar10,0
+dg,do1,Energy,3.0,4,test,5.9685000133387,AUGRC,Energy,(none),Conv,10,0,-5.9685000133387,cifar10,0
+dg,do1,Energy,3.0,2,test,5.950901236773968,AUGRC,Energy,(none),Conv,10,0,-5.950901236773968,cifar10,0
+dg,do1,Energy,3.0,3,test,5.712864205834598,AUGRC,Energy,(none),Conv,10,0,-5.712864205834598,cifar10,0

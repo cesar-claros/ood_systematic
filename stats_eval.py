@@ -114,8 +114,8 @@ def main():
         logger.error("No data loaded. Exiting.")
         return
 
-    rank_group = ["dataset", 'model', "metric", 'group']
-    blocks = ['dataset',"model",'metric']
+    rank_group = ["dataset", 'model', "metric", 'group', ]
+    blocks = ['dataset', 'model', 'metric', 'group', ]
 
     members_list = []
     
@@ -181,7 +181,8 @@ def main():
                     layered_ranks.append(avg_ranks_)
             except Exception as e:
                 logger.error(f"Error in Friedman/Posthoc for {source_} group {dataset_group}: {e}")
-
+        # logger.info(f"Layered cliques for {source_}: {layered_cliques}")
+        # logger.info(f"Layered ranks for {source_}: {layered_ranks}")
         clique_members = []
         clique_avg = []
         datasets_order = ['0','1','2','3'] # mapped to test, near, mid, far
@@ -269,7 +270,21 @@ def main():
         members_all = members_all[cols_show]
         members_all = members_all[sorted(members_all.columns)]
         rows_shading = [(0,1),(4,4),(7,8),(11,13),(16,18),(21,21),(24,24),(26,27),(30,31),(33,33),(36,37)]
-        rects_list = [[(-0.5, 8.5),4,2,'dotted','black','wheat'],
+        if 'run' in blocks:
+            rects_list = [[(-0.5, 5.5),4,2,'dotted','black','wheat'],
+                        [(-0.5, 14.5),4,2,'dotted','black','wheat'],
+                        [(-0.5, 21.5),4,1,'dotted','black','wheat'],
+                        # [(-0.5, 22.5),4,1,'dotted','black','wheat'],
+                        [(-0.5, 23.5),4,1,'dotted','black','wheat'],
+                        [(3.5, 7.5),12,3,'dotted','black','plum'],
+                        [(3.5, 7.5),3,2,'dotted','black','plum'],
+                        # [(12.5, 7.5),3,2,'dotted','black','plum'],
+                        [(3.5, 25.5),12,1,'dotted','black','plum'],
+                        # [(7.5, 13.5),3,2,'dotted','black','plum'],
+                        [(3.5, 26.5),12,1,'dotted','black','plum'],
+                        ]
+        else:
+            rects_list = [[(-0.5, 8.5),4,2,'dotted','black','wheat'],
                         [(-0.5, 18.5),4,2,'dotted','black','wheat'],
                         [(-0.5, 25.5),4,2,'dotted','black','wheat'],
                         [(-0.5, 29.5),4,2,'dotted','black','wheat'],
@@ -313,25 +328,45 @@ def main():
         members_all = members_all[cols_show]
         members_all = members_all[sorted(members_all.columns)]
         rows_shading = [(0,1),(4,4),(6,7),(10,11),(14,15),(18,19),(21,22),(25,26),(29,29)]
-        rects_list = [[(6.5, -0.5),1,2,'dotted','black','deepskyblue'],
-                    [(2.5, -0.5),1,2,'dotted','black','deepskyblue'],
-                    [(10.5, -0.5),1,2,'dotted','black','deepskyblue'],
-                    [(14.5, -0.5),1,2,'dotted','black','deepskyblue'],
-                    [(-0.5, 9.5),4,2,'dotted','black','wheat'],
-                    [(-0.5, 15.5),4,2,'dotted','black','wheat'],
-                    [(3.5, 5.5),3,2,'dotted','black','plum'],
-                    [(7.5, 5.5),2,2,'dotted','black','plum'],
-                    [(11.5, 5.5),1,2,'dotted','black','plum'],
-                    [(3.5, 13.5),3,2,'dotted','black','plum'],
-                    [(7.5, 13.5),2,2,'dotted','black','plum'],
-                    [(11.5, 13.5),1,2,'dotted','black','plum'],
-                    [(3.5, 17.5),3,2,'dotted','black','plum'],
-                    [(7.5, 17.5),2,2,'dotted','black','plum'],
-                    [(11.5, 17.5),1,2,'dotted','black','plum'],
-                    [(5.5, 26.5),1,2,'dotted','black','forestgreen'],
-                    [(9.5, 26.5),1,2,'dotted','black','forestgreen'],
-                    [(13.5, 26.5),1,2,'dotted','black','forestgreen'],
-                    ]
+        if 'run' in blocks:
+            rects_list = [[(3.5, -0.5),16,2,'dotted','black','plum'],
+                        [(3.5, 5.5),12,2,'dotted','black','plum'],
+                        [(3.5, 13.5),12,2,'dotted','black','plum'],
+                        [(3.5, 22.5),12,2,'dotted','black','plum'],
+                        [(-0.5, 7.5),4,2,'dotted','black','wheat'],
+                        [(-0.5, 11.5),4,2,'dotted','black','wheat'],
+                        # [(-0.5, 18.5),4,2,'dotted','black','wheat'],
+                        # [(-0.5, 22.5),4,3,'dotted','black','wheat'],
+                        # [(3.5, 5.5),3,2,'dotted','black','plum'],
+                        # [(7.5, 5.5),3,2,'dotted','black','plum'],
+                        # [(11.5, 5.5),3,2,'dotted','black','plum'],
+                        # [(3.5, 11.5),3,2,'dotted','black','plum'],
+                        # [(7.5, 11.5),3,2,'dotted','black','plum'],
+                        # [(11.5, 11.5),3,2,'dotted','black','plum'],
+                        # [(3.5, 19.5),3,1,'dotted','black','plum'],
+                        # [(7.5, 19.5),3,1,'dotted','black','plum'],
+                        # [(11.5, 19.5),3,1,'dotted','black','plum'],
+                        ]
+        else:
+            rects_list = [[(6.5, -0.5),1,2,'dotted','black','deepskyblue'],
+                        [(2.5, -0.5),1,2,'dotted','black','deepskyblue'],
+                        [(10.5, -0.5),1,2,'dotted','black','deepskyblue'],
+                        [(14.5, -0.5),1,2,'dotted','black','deepskyblue'],
+                        [(-0.5, 9.5),4,2,'dotted','black','wheat'],
+                        [(-0.5, 15.5),4,2,'dotted','black','wheat'],
+                        [(3.5, 5.5),3,2,'dotted','black','plum'],
+                        [(7.5, 5.5),2,2,'dotted','black','plum'],
+                        [(11.5, 5.5),1,2,'dotted','black','plum'],
+                        [(3.5, 13.5),3,2,'dotted','black','plum'],
+                        [(7.5, 13.5),2,2,'dotted','black','plum'],
+                        [(11.5, 13.5),1,2,'dotted','black','plum'],
+                        [(3.5, 17.5),3,2,'dotted','black','plum'],
+                        [(7.5, 17.5),2,2,'dotted','black','plum'],
+                        [(11.5, 17.5),1,2,'dotted','black','plum'],
+                        [(5.5, 26.5),1,2,'dotted','black','forestgreen'],
+                        [(9.5, 26.5),1,2,'dotted','black','forestgreen'],
+                        [(13.5, 26.5),1,2,'dotted','black','forestgreen'],
+                        ]
 
     logger.info("Generating plot...")
     fig, ax = plt.subplots(1,2,figsize=figsize,width_ratios=[0.8,0.2],sharey='all')

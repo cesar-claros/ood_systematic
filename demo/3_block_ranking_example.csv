@@ -1,26 +1,7 @@
-dataset,model,metric,group,drop out,methods,reward,run,score,method_base,variation,backbone,n_classes,MCD,score_std,source,rank
-test,confidnet,AUGRC,0,do0,GEN,2.2,5,4.019197533033244,GEN,(none),Conv,10,0,-4.019197533033244,cifar10,0.04
-test,confidnet,AUGRC,0,do0,GEN,2.2,2,4.107765433152154,GEN,(none),Conv,10,0,-4.107765433152154,cifar10,0.08
-test,confidnet,AUGRC,0,do0,GEN,2.2,3,4.265228405990961,GEN,(none),Conv,10,0,-4.265228405990961,cifar10,0.12
-test,confidnet,AUGRC,0,do1,Confidence,2.2,2,4.356246924823305,Confidence,(none),Conv,10,0,-4.356246924823305,cifar10,0.16
-test,confidnet,AUGRC,0,do1,Confidence,2.2,1,4.4527963019924455,Confidence,(none),Conv,10,0,-4.4527963019924455,cifar10,0.2
-test,confidnet,AUGRC,0,do0,GEN,2.2,1,4.619228405398543,GEN,(none),Conv,10,0,-4.619228405398543,cifar10,0.24
-test,confidnet,AUGRC,0,do1,MSR,2.2,2,4.631111113319801,MSR,(none),Conv,10,0,-4.631111113319801,cifar10,0.28
-test,confidnet,AUGRC,0,do0,GEN,2.2,4,4.673722224567124,GEN,(none),Conv,10,0,-4.673722224567124,cifar10,0.32
-test,confidnet,AUGRC,0,do1,MSR,2.2,1,4.737487662731533,MSR,(none),Conv,10,0,-4.737487662731533,cifar10,0.36
-test,confidnet,AUGRC,0,do1,Confidence,2.2,3,4.766043213294728,Confidence,(none),Conv,10,0,-4.766043213294728,cifar10,0.4
-test,confidnet,AUGRC,0,do1,Confidence,2.2,5,4.802765439008606,Confidence,(none),Conv,10,0,-4.802765439008606,cifar10,0.44
-test,confidnet,AUGRC,0,do0,CTM,2.2,2,4.805296305296199,CTM,(none),Conv,10,0,-4.805296305296199,cifar10,0.48
-test,confidnet,AUGRC,0,do1,Confidence,2.2,4,4.897246919229575,Confidence,(none),Conv,10,0,-4.897246919229575,cifar10,0.52
-test,confidnet,AUGRC,0,do0,CTM,2.2,5,4.9827530954377535,CTM,(none),Conv,10,0,-4.9827530954377535,cifar10,0.56
-test,confidnet,AUGRC,0,do1,MSR,2.2,3,4.993716054986483,MSR,(none),Conv,10,0,-4.993716054986483,cifar10,0.6
-test,confidnet,AUGRC,0,do0,CTM,2.2,3,5.054500005245952,CTM,(none),Conv,10,0,-5.054500005245952,cifar10,0.64
-test,confidnet,AUGRC,0,do1,MSR,2.2,5,5.057351854806055,MSR,(none),Conv,10,0,-5.057351854806055,cifar10,0.68
-test,confidnet,AUGRC,0,do1,MSR,2.2,4,5.139104945746819,MSR,(none),Conv,10,0,-5.139104945746819,cifar10,0.72
-test,confidnet,AUGRC,0,do0,fDBD,2.2,5,5.259975312039185,fDBD,(none),Conv,10,0,-5.259975312039185,cifar10,0.76
-test,confidnet,AUGRC,0,do0,fDBD,2.2,2,5.304901233192746,fDBD,(none),Conv,10,0,-5.304901233192746,cifar10,0.8
-test,confidnet,AUGRC,0,do0,CTM,2.2,1,5.479098760914995,CTM,(none),Conv,10,0,-5.479098760914995,cifar10,0.84
-test,confidnet,AUGRC,0,do0,fDBD,2.2,3,5.493660500757364,fDBD,(none),Conv,10,0,-5.493660500757364,cifar10,0.88
-test,confidnet,AUGRC,0,do0,CTM,2.2,4,5.496456791745407,CTM,(none),Conv,10,0,-5.496456791745407,cifar10,0.92
-test,confidnet,AUGRC,0,do0,fDBD,2.2,4,5.66930865436815,fDBD,(none),Conv,10,0,-5.66930865436815,cifar10,0.96
-test,confidnet,AUGRC,0,do0,fDBD,2.2,1,5.676993832287231,fDBD,(none),Conv,10,0,-5.676993832287231,cifar10,1.0
+dataset,model,metric,group,run,drop out,methods,reward,score,method_base,variation,backbone,n_classes,MCD,score_std,source,rank
+test,confidnet,AUGRC,0,1,do1,Confidence,2.2,4.4527963019924455,Confidence,(none),Conv,10,0,-4.4527963019924455,cifar10,0.16666666666666666
+test,confidnet,AUGRC,0,1,do0,GEN,2.2,4.619228405398543,GEN,(none),Conv,10,0,-4.619228405398543,cifar10,0.3333333333333333
+test,confidnet,AUGRC,0,1,do1,MSR,2.2,4.737487662731533,MSR,(none),Conv,10,0,-4.737487662731533,cifar10,0.5
+test,confidnet,AUGRC,0,1,do0,CTM,2.2,5.479098760914995,CTM,(none),Conv,10,0,-5.479098760914995,cifar10,0.6666666666666666
+test,confidnet,AUGRC,0,1,do0,fDBD,2.2,5.676993832287231,fDBD,(none),Conv,10,0,-5.676993832287231,cifar10,0.8333333333333334
+test,confidnet,AUGRC,0,1,do1,Energy,2.2,5.810537031740952,Energy,(none),Conv,10,0,-5.810537031740952,cifar10,1.0

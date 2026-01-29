@@ -1,2 +1,4 @@
 layer,mean_rank,members
-1,2.2222222222222223,"Confidence, GEN, MSR"
+1,1.9333333333333336,"Confidence, GEN"
+2,3.5,"CTM, MSR"
+3,5.533333333333333,Energy

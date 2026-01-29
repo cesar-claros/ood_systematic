@@ -1,5 +1,7 @@
 import os, math, warnings
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 from loguru import logger
@@ -125,7 +127,7 @@ def main():
     # df_["rank"] = df_.groupby(rank_group)["score_std"].rank(ascending=False, method="average", pct=True)
     # rank_group = ["dataset", 'model', "metric", 'group']
     
-    rank_group = ["dataset", 'model', "metric", 'group']
+    rank_group = ["dataset", 'model', "metric", 'group', 'run']
     df_met["rank"] = df_met.groupby(rank_group)["score_std"].rank(ascending=False, method="average", pct=True)
     
     # Show ranks for a specific dataset/model block
@@ -134,6 +136,7 @@ def main():
     block_data = df_met.set_index(rank_group).loc[example_block].sort_values("rank")
     logger.info(f"Block Ranks:\n{block_data[['methods', 'score_std', 'rank']].head(10)}")
     block_data.to_csv(os.path.join(OUTDIR, "3_block_ranking_example.csv"))
+    
 
     logger.info("=== STEP 4: AGGREGATE RANKS (Global/Group) ===")
     # Average rank per method within each group
@@ -154,7 +157,7 @@ def main():
         sub = df_met[df_met['group'] == grp].copy()
         
         # Block definition for Friedman: dataset|model|metric
-        blocks = ['dataset',"model",'metric']
+        blocks = ['dataset',"model",'metric','run']
         sub["block"] = sub[blocks].astype(str).agg("|".join, axis=1)
         
         # Friedman Test
@@ -169,7 +172,21 @@ def main():
             # This generates a matrix of p-values for pairwise comparisons
             ph = conover_posthoc_from_pivot(pivot)
             logger.info(f"Post-hoc Matrix Shape: {ph.shape}")
-            ph.to_csv(os.path.join(OUTDIR, f"6_{grp}_posthoc_pvalues.csv"))
+            ph.round(3).to_csv(os.path.join(OUTDIR, f"6_{grp}_posthoc_pvalues.csv"))
+            fig, ax = plt.subplots(figsize=(5, 5))
+            sns.heatmap(ph,
+                         annot=True, 
+                         square=True,
+                         vmin=0.0,
+                         vmax=1.0, 
+                         cmap='BuGn', 
+                         fmt=".3f", 
+                         cbar_kws={"shrink": 0.75}, 
+                         ax=ax)
+            ax.set_xlabel('')
+            ax.set_ylabel('')
+            fig.savefig(os.path.join(OUTDIR, f"6_{grp}_posthoc_heatmap.pdf"), bbox_inches='tight')
+            fig.savefig(os.path.join(OUTDIR, f"6_{grp}_posthoc_heatmap.jpeg"), bbox_inches='tight')
             
             # Average ranks for this group (needed for clique finding)
             ranks_ = pivot.rank(axis=1, ascending=False)
