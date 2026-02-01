@@ -28,6 +28,14 @@ fd-shifts/tiny-imagenet-200_paper_sweep/devries_bbvgg13_do0_run4_rew2.2
 
 ### Train models associated to TinyImagenet
 You can train all models the models that use TinyImagenet by executing  
+```bash
+fd_shifts launch --dataset=tiny-imagenet-200
+```
+## Environment Reproduction
+To reproduce the environment used in this project, pull the following Docker image:
+```bash
+docker pull cesarclaros/systematic_analysis_ood:cuda11.7
+```
 
 ## Usage
 ### Clone code
@@ -64,12 +72,6 @@ where ```--test_mode=$test_opt``` indicates the dataset that will be used to eva
 For example, if you want to test the trained CFS for first run of the Deep Gamblers model trained on CIFAR-10 with no RankWeight, RankFeat and/or ASH at inference time and with GPU and Temperature scaling, using the SVHN dataset, execute the following line:
 ```bash
 python cifar_test.py --model_path=cifar10_paper_sweep/dg_bbvgg13_do0_run1_rew2.2 --no-rank_weight --no-rank_feature --ash=None --use_cuda --temperature_scale --test_mode=ood_nsncs_svhn
-```
-
-## Environment Reproduction
-To reproduce the environment used in this project, pull the following Docker image:
-```bash
-docker pull cesarclaros/systematic_analysis_ood:cuda11.7
 ```
 
 ## Evaluation and Analysis Scripts
