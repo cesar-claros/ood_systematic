@@ -2381,6 +2381,7 @@ class NeuralCollapseMetrics:
         non_diagonal_mask = ~diagonal_mask
         row_indices, col_indices = torch.nonzero(non_diagonal_mask, as_tuple=True)
         return torch.mean(cdnv_matrix[row_indices,col_indices])
+    
     # def equiangular(self, C:ArrayType):
     #     n = matrix.shape[0]
     #     diagonal_mask = torch.eye(n, dtype=torch.bool)
@@ -2423,7 +2424,7 @@ class NeuralCollapseMetrics:
             activations_per_class_tensor = activations_train[labels_train==c]
             if only_correct:
                 labels_per_class_tensor = labels_train[labels_train==c]
-                logits_per_class_tensor = activations_per_class_tensor@self.w.T + self.b
+                logits_per_class_tensor = activations_per_class_tensor @ self.w.T + self.b
                 predictions_per_class_tensor = logits_per_class_tensor.max(dim=1).indices
                 correct_idx = predictions_per_class_tensor==labels_per_class_tensor
                 if correct_idx.sum()>0: # Make sure that any given class has correct predictions, 
@@ -2437,21 +2438,21 @@ class NeuralCollapseMetrics:
                 self.class_means.append( class_mean )
             # Compute metrics
             mu_cG = (class_mean - self.global_mean).reshape(-1,1)
-            sigma_B = sigma_B + mu_cG@mu_cG.T 
+            sigma_B = sigma_B + mu_cG @ mu_cG.T 
             # dim_W = class_mean.shape[0]
             # sigma_W = torch.zeros(dim_W, dim_W)
             H_k = torch.zeros(len(activations_per_class_tensor), dim_B)
             for j, h_ki in enumerate(activations_per_class_tensor):
                 h_ki_c = (h_ki - class_mean).reshape(-1,1)
                 H_k[j] = h_ki_c.T
-                sigma_W = sigma_W + h_ki_c@h_ki_c.T
+                sigma_W = sigma_W + h_ki_c @ h_ki_c.T
             self.class_variance.append( torch.linalg.norm(H_k, dim=1, ord=2).pow(2).mean() )
         # Variability Collapse (Within-class variation collapse)
         K = self.num_classes
         N = activations_train.shape[0]
         sigma_B = (1/K) * sigma_B
         sigma_W = (1/(N*K)) * sigma_W
-        var_collapse = (1/K)*torch.trace(sigma_W@torch.linalg.pinv(sigma_B))
+        var_collapse = (1/K)*torch.trace(sigma_W @ torch.linalg.pinv(sigma_B))
         # Equiangularity and Max-angle
         M = torch.vstack(self.class_means) - self.global_mean
         cos_uc = pairwise_cosine_similarity( M, zero_diagonal=False )

@@ -8,3 +8,5 @@ configs_exp/
 scores/
 clip_scores/
 ood_eval_outputs/
+neural_collapse_metrics/
+neural_collapse_vis.py
