@@ -3,13 +3,21 @@ Convolutional Models       |  Transformer Models
 :-------------------------:|:-------------------------:
 <img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/top_cliques_Conv_False_RC.jpeg">  |  <img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/top_cliques_ViT_False_RC.jpeg">
 
-
+## Environment Reproduction
 This project relies heavily on FD-Shifts [https://github.com/IML-DKFZ/fd-shifts]. Make sure that you install the forked version of FD-Shifts [https://github.com/cesar-claros/fd-shifts-0.1.1/] that we modified to include TinyImagenent as a source dataset, and also include the required libraries to train and test all the ID/OOD detectection methods shown in the paper. To clone this version execute the following line:
 ```bash
 pip install git+https://github.com/cesar-claros/fd-shifts-0.1.1.git
 ```
 
 Alternatively, you can install FD-Shifts v0.1.1 [https://github.com/IML-DKFZ/fd-shifts] and ```bayesian-optimization==3.1.0```, ```faiss-cpu==1.9.0```, ```MedPy```, ```tinyimagenet==0.9.9```, and ```torch_pca==1.0.0```, before executing our code. However, support for TinyImagenet as source dataset is not included in this version.
+
+
+A better alternative is to reproduce the environment used in this project by pulling the following Docker image:
+```bash
+docker pull cesarclaros/systematic_analysis_ood:cuda11.7
+```
+This container has all the required depedencies to execute the experiments and our code.
+
 
 ### Verify TinyImagenet as source dataset
 Once FD-Shifts [https://github.com/cesar-claros/fd-shifts-0.1.1/] has been installed, you can check if the experiments that use TinyImagenet are included by executing the following line:
@@ -31,11 +39,7 @@ You can train all models the models that use TinyImagenet by executing
 ```bash
 fd_shifts launch --dataset=tiny-imagenet-200
 ```
-## Environment Reproduction
-To reproduce the environment used in this project, pull the following Docker image:
-```bash
-docker pull cesarclaros/systematic_analysis_ood:cuda11.7
-```
+
 
 ## Usage
 ### Clone code
