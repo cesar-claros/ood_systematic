@@ -65,3 +65,81 @@ For example, if you want to test the trained CFS for first run of the Deep Gambl
 ```bash
 python cifar_test.py --model_path=cifar10_paper_sweep/dg_bbvgg13_do0_run1_rew2.2 --no-rank_weight --no-rank_feature --ash=None --use_cuda --temperature_scale --test_mode=ood_nsncs_svhn
 ```
+
+## Environment Reproduction
+To reproduce the environment used in this project, pull the following Docker image:
+```bash
+docker pull cesarclaros/systematic_analysis_ood:cuda11.7
+```
+
+## Evaluation and Analysis Scripts
+
+The following scripts are refactored to support command-line arguments and logging.
+
+### 1. Data Retrieval
+**`retrieve_scores.py`**: Aggregates scores from experiment directories.
+```bash
+python retrieve_scores.py --dataset cifar10 --output-dir ./scores
+```
+Arguments:
+- `--dataset`: Dataset name (e.g., `cifar10`, `cifar100`, `tinyimagenet`).
+- `--output-dir`: Output directory for CSV files.
+
+### 2. CLIP-based Metrics
+**`clip_uncertainty.py`**: Computes uncertainty metrics using CLIP features.
+```bash
+python clip_uncertainty.py --dataset cifar10 --output-dir ./clip_scores
+```
+Arguments:
+- `--dataset`: Dataset name.
+- `--output-dir`: Directory to save joblib results.
+
+**`clip_proximity.py`**: Computes proximity metrics using CLIP features.
+```bash
+python clip_proximity.py --iid_dataset cifar10 --output-dir ./clip_scores
+```
+Arguments:
+- `--iid_dataset`: In-distribution dataset name.
+- `--output-dir`: Directory to save output JSON.
+
+**`clip_clustering.py`**: Performs clustering analysis on CLIP features.
+```bash
+python clip_clustering.py --dataset cifar10 --n-clusters 3 --input-dir ./clip_scores --output-dir ./cluster_results --latex
+```
+Arguments:
+- `--dataset`: Dataset name.
+- `--n-clusters`: Number of clusters (default: 3).
+- `--input-dir`: Directory containing input JSON files.
+- `--output-dir`: Directory for output CSV/Latex.
+- `--latex`: Flag to generate LaTeX table format.
+
+### 3. Statistical Evaluation
+**`stats_eval.py`**: Performs full statistical evaluation and generates plots.
+```bash
+python stats_eval.py --mcd --backbone ViT --metric-group RC --output-dir ./ood_eval_outputs
+```
+Arguments:
+- `--mcd`: Enable MCD (Monte Carlo Dropout) entries.
+- `--backbone`: Model backbone (`Conv` or `ViT`).
+- `--metric-group`: Metric group (`RC` for AUGRC/AURC, `ROC` for AUROC/FPR).
+- `--output-dir`: Output directory.
+
+**`stats_eval_demo.py`**: A step-by-step demonstration of the evaluation pipeline saving intermediate results.
+```bash
+python stats_eval_demo.py --source cifar10 --backbone Conv --metric AURC --group 0 --methods "MSP" "MaxLogit" --output-dir ./demo_outputs
+```
+Arguments:
+- `--source`: Source dataset.
+- `--backbone`: Model backbone.
+- `--metric`: Specific metric to analyze.
+- `--group`: Subgroup filter (e.g., '0' for test).
+- `--methods`: List of methods to filter (substring match).
+- `--output-dir`: Output directory.
+
+### 4. Neural Collapse Analysis
+**`neural_collapse_eval.py`**: Computes and aggregates neural collapse metrics.
+```bash
+python neural_collapse_eval.py --output-dir neural_collapse_metrics
+```
+Arguments:
+- `--output-dir`: Directory to save metric CSVs.
