@@ -12,6 +12,7 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 from sklearn.isotonic import IsotonicRegression
+from optbinning import OptimalBinning
 import seaborn as sns
 import pandas as pd
 import scipy
@@ -258,8 +259,10 @@ def calibration_summary(preds, labels, strategy='pavabc', n_min=10, n_max=1000, 
         bin_preds, bin_count, bin_total, bins = _calibration_process(preds, labels, strategy, n_bin)
     elif strategy == 'quantile':
         bin_preds, bin_count, bin_total, bins = _calibration_process(preds, labels, strategy, n_bin)
+    elif strategy == 'optbinning':
+        bin_preds, bin_count, bin_total, bins = _optbinning_process(preds, labels)
     else:
-        assert False, 'no correct strategy specified: (uniform, quantile, pava, ncpave)'
+        assert False, 'no correct strategy specified: (uniform, quantile, pava, pavabc, optbinning)'
     
     return bin_preds, bin_count, bin_total, bins
 
@@ -346,8 +349,36 @@ def _calibration_process(preds, labels, strategy="uniform", n_bin=10):
     else:
         assert False, 'no correct strategy specified: (uniform, quantile)'
 
- 
-    
+
+
+def _optbinning_process(preds, labels):
+    """Compute calibration bins using OptimalBinning with Hellinger divergence."""
+    optb = OptimalBinning(
+        name="pred",
+        dtype="numerical",
+        solver="cp",
+        divergence="hellinger",
+    )
+    optb.fit(preds, labels)
+
+    # Build bin edges: prepend 0.0 and append 1.0 around the optimal splits
+    splits = optb.splits
+    bins = np.concatenate([[0.0], splits, [1.0]])
+
+    # Digitize predictions into bins (right=False so left-closed intervals)
+    # Trick the last edge so that preds==1.0 falls in the final bin
+    bins_dig = bins.copy()
+    bins_dig[-1] = 1.0 + 1e-8
+    indices = np.digitize(preds, bins_dig, right=False) - 1
+
+    n_bins = len(bins) - 1
+    bin_count = np.array([int(labels[indices == i].sum()) for i in range(n_bins)])
+    bin_total = np.array([int((indices == i).sum()) for i in range(n_bins)])
+    bin_preds = [preds[indices == i] for i in range(n_bins)]
+
+    return bin_preds, bin_count, bin_total, bins
+
+
 # Modification of calibration_curve function in scikit-learn
 # License: BSD 3 clause
 # ==================================================
