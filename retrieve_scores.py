@@ -84,7 +84,7 @@ def main():
     else:
         logger.debug(f"Output directory exists: {args.scores_dir}")
 
-    scores_to_process = ['AUGRC','AURC','AUROC_f','FPR@95TPR']
+    scores_to_process = ['AUGRC','AURC','AUROC_f','FPR@95TPR','ECE','MCE']
     logger.info(f"Processing scores: {scores_to_process}")
 
     for score_name in scores_to_process:

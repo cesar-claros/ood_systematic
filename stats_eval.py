@@ -42,9 +42,13 @@ def main():
     
     if args.metric_group == 'RC':
         metric = ['AUGRC','AURC']
-    else:
+    elif args.metric_group == 'ROC':
         metric = ['AUROC_f','FPR@95TPR']
-    
+    elif args.metric_group == 'CE':
+        metric = ['ECE','MCE']
+    else:
+        raise ValueError(f"Unknown metric group: {args.metric_group}")
+
     logger.info(f"Starting stats eval with: MCD={MCD_flag}, Backbone={BACKBONE}, MetricGroup={args.metric_group} ({metric})")
     logger.info(f"Output directory: {OUTDIR}")
 
