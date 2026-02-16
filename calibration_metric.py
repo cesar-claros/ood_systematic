@@ -109,10 +109,10 @@ def tce(preds, labels, siglevel=0.05, strategy='pavabc', n_min=10, n_max=1000, n
 
     
 
-def tce_ttest(preds, labels, siglevel=0.05, strategy='pavabc', n_min=10, n_max=1000, n_bin=10, savepath=False, ymax=None):
+def tce_ttest(preds, labels, siglevel=0.05, strategy='pavabc', n_min=10, n_max=1000, n_bin=10, savepath=False, ymax=None, optb_kwargs=None):
     assert labels.shape[0] != n_min, "The minimum bin size equals to the data size. No binning needed."
     
-    bin_preds, bin_count, bin_total, _ = calibration_summary(preds, labels, strategy, n_min=n_min, n_max=n_max, n_bin=n_bin)
+    bin_preds, bin_count, bin_total, _ = calibration_summary(preds, labels, strategy, n_min=n_min, n_max=n_max, n_bin=n_bin, optb_kwargs=optb_kwargs)
     
     bin_rnum = np.zeros(len(bin_count))
     for i in range(len(bin_rnum)):
@@ -247,7 +247,7 @@ def plot_reliability_diagram(prob_pred, prob_data, bin_total, preds, bins, savep
 
     
     
-def calibration_summary(preds, labels, strategy='pavabc', n_min=10, n_max=1000, n_bin=10):
+def calibration_summary(preds, labels, strategy='pavabc', n_min=10, n_max=1000, n_bin=10, optb_kwargs=None):
     assert np.all(preds >= 0.0) and np.all(preds <= 1.0), "Prediction Out of Range [0, 1]"
     assert np.all((labels == 0) | (labels == 1)), "Label Not 0 or 1"
 
@@ -260,7 +260,7 @@ def calibration_summary(preds, labels, strategy='pavabc', n_min=10, n_max=1000, 
     elif strategy == 'quantile':
         bin_preds, bin_count, bin_total, bins = _calibration_process(preds, labels, strategy, n_bin)
     elif strategy == 'optbinning':
-        bin_preds, bin_count, bin_total, bins = _optbinning_process(preds, labels)
+        bin_preds, bin_count, bin_total, bins = _optbinning_process(preds, labels, optb_kwargs=optb_kwargs)
     else:
         assert False, 'no correct strategy specified: (uniform, quantile, pava, pavabc, optbinning)'
     
@@ -351,14 +351,20 @@ def _calibration_process(preds, labels, strategy="uniform", n_bin=10):
 
 
 
-def _optbinning_process(preds, labels):
-    """Compute calibration bins using OptimalBinning with Hellinger divergence."""
-    optb = OptimalBinning(
-        name="pred",
-        dtype="numerical",
-        solver="cp",
-        divergence="hellinger",
-    )
+def _optbinning_process(preds, labels, optb_kwargs=None):
+    """Compute calibration bins using OptimalBinning with Hellinger divergence.
+    
+    Any extra keyword arguments for OptimalBinning can be passed via optb_kwargs
+    and will override the defaults (dtype, solver, divergence).
+    """
+    defaults = {
+        "dtype": "numerical",
+        "solver": "mip",
+        "divergence": "hellinger",
+    }
+    if optb_kwargs is not None:
+        defaults.update(optb_kwargs)
+    optb = OptimalBinning(**defaults)
     optb.fit(preds, labels)
 
     # Build bin edges: prepend 0.0 and append 1.0 around the optimal splits
