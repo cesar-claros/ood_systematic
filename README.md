@@ -156,6 +156,7 @@ Arguments:
 Convolutional Models       |  Transformer Models
 :-------------------------:|:-------------------------:
 <img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/route1_severity_cifar10_Conv_l2.jpg">  |  <img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/route1_severity_cifar10_ViT_l2.jpg">
+
 **`calibration_ood.py`**: Fits post-hoc calibration models (Sigmoid/Platt scaling, Isotonic Regression, Beta calibration) to each confidence score function (CSF) on the validation split, then evaluates calibration quality on every OOD test set. Calibrators are fit with 5-fold cross-validation; cross-validated probabilities are used for the validation evaluation to avoid train-on-test bias. For each combination of model, dropout setting, reward, run, CSF, and calibration method, the script records ECE (L1, L2), MCE, and the corresponding finite-sample bounds. Results are saved to a single CSV per dataset/backbone combination. Processing of CSF × calibration-method pairs is parallelised with joblib threads.
 ```bash
 python calibration_ood.py --dataset cifar10 [--vit] [--scores-dir scores_final]
