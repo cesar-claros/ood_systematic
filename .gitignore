@@ -11,6 +11,6 @@ clip_scores/
 ood_eval_outputs/
 neural_collapse_metrics/
 neural_collapse_vis.py
-calibration.py
+calibration_example.py
 calibration_hyperparameters.py
 calibration_plots.py
