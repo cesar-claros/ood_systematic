@@ -16,14 +16,14 @@ from optbinning import OptimalBinning
 import seaborn as sns
 import pandas as pd
 import scipy
-from scipy.stats import binom, binomtest, t
 from sklearn.utils.validation import column_or_1d
 from sklearn.utils import check_consistent_length
 from sklearn.utils.validation import _check_pos_label_consistency
+from scipy.stats import binom, binomtest, norm, t, beta as beta_dist
 
 
 
-def ece(preds, labels, n_bin=10, mode='l1', savepath=False): 
+def ece(preds, labels, n_bin=20, mode='l1', savepath=False): 
     bin_preds, bin_count, bin_total, bins = calibration_summary(preds, labels, "uniform", n_bin=n_bin)
     prob_pred = np.array([ elem.mean() if len(elem) > 0 else 0.0 for elem in bin_preds ])
     prob_data = np.zeros(len(bin_total))
@@ -39,8 +39,8 @@ def ece(preds, labels, n_bin=10, mode='l1', savepath=False):
     else:
         assert False, 'no correct mode specified: (l1, l2, inf)'
         
-    # if savepath != False:
-    plot_reliability_diagram(prob_pred, prob_data, bin_total, preds, bins, savepath)
+    if savepath != False:
+        plot_reliability_diagram(prob_pred, prob_data, bin_total, preds, bins, savepath)
         
     return val
 
@@ -92,9 +92,9 @@ def lce(preds, labels, n_min=10, n_max=1000, mode='l1', savepath=False):
 
 
 
-def tce(preds, labels, siglevel=0.05, strategy='pavabc', n_min=10, n_max=1000, n_bin=10, savepath=False, ymax=None):
+def tce(preds, labels, siglevel=0.05, strategy='pavabc', n_min=10, n_max=1000, n_bin=10, savepath=False, ymax=None, optb_kwargs=None):
     assert labels.shape[0] != n_min, "The minimum bin size equals to the data size. No binning needed."
-    bin_preds, bin_count, bin_total, _ = calibration_summary(preds, labels, strategy, n_min=n_min, n_max=n_max, n_bin=n_bin)
+    bin_preds, bin_count, bin_total, _ = calibration_summary(preds, labels, strategy, n_min=n_min, n_max=n_max, n_bin=n_bin, optb_kwargs=optb_kwargs)
     
     bin_rnum = np.zeros(len(bin_count))
     for i in range(len(bin_rnum)):
@@ -463,3 +463,233 @@ def _calibration_curve(y_true, y_prob, *, pos_label=None, normalize="deprecated"
     #prob_pred = bin_sums[nonzero] / bin_total[nonzero]
     
     return prob_data[:-1], prob_pred[:-1], bin_total[:-1], bins
+
+
+class TCEBinner:
+    def __init__(
+        self,
+        siglevel: float = 0.05,
+        optb_kwargs: dict | None = None,
+        check_range: bool = True,
+        eps_last_edge: float = 1e-8,
+        boundary_tol: float = 1e-6,
+        boundary_max_iter: int = 60,
+        z_test_use_cc: bool = False,   # continuity correction option
+    ):
+        self.siglevel = siglevel
+        self.check_range = check_range
+        self.eps_last_edge = eps_last_edge
+        self.boundary_tol = boundary_tol
+        self.boundary_max_iter = boundary_max_iter
+        self.z_test_use_cc = z_test_use_cc
+
+        self.optb_kwargs = optb_kwargs or {
+            "solver": "mip",
+            "divergence": "neg_brier",
+            "max_n_prebins": 20,
+            "max_bin_size": 0.6,
+            "monotonic_trend": "auto",
+            "max_pvalue": 0.05,
+        }
+
+        self.optb_ = None
+        self.bins_ = None
+        self._boundary_cache = {}
+
+    def fit(self, preds_train, labels_train):
+        preds_train = np.asarray(preds_train, dtype=float)
+        labels_train = np.asarray(labels_train)
+
+        if self.check_range:
+            if not (np.all(preds_train >= 0.0) and np.all(preds_train <= 1.0)):
+                raise ValueError("Training preds out of range [0, 1].")
+            if not np.all((labels_train == 0) | (labels_train == 1)):
+                raise ValueError("Training labels must be 0/1.")
+
+        optb = OptimalBinning(dtype="numerical", **self.optb_kwargs)
+        optb.fit(preds_train, labels_train)
+
+        self.bins_ = np.concatenate([[0.0], optb.splits, [1.0]])
+        self.optb_ = optb
+        return self
+
+    def _digitize(self, preds):
+        if self.bins_ is None:
+            raise RuntimeError("Call fit(...) first.")
+
+        preds = np.asarray(preds, dtype=float)
+        if self.check_range and not (np.all(preds >= 0.0) and np.all(preds <= 1.0)):
+            raise ValueError("Preds out of range [0, 1].")
+
+        bins_dig = self.bins_.copy()
+        bins_dig[-1] = 1.0 + self.eps_last_edge
+        idx = np.digitize(preds, bins_dig, right=False) - 1
+        return np.clip(idx, 0, len(self.bins_) - 2)
+
+    def calibration_summary(self, preds, labels):
+        preds = np.asarray(preds, dtype=float)
+        labels = np.asarray(labels)
+
+        if self.check_range and not np.all((labels == 0) | (labels == 1)):
+            raise ValueError("Labels must be 0/1.")
+
+        idx = self._digitize(preds)
+        n_bins = len(self.bins_) - 1
+
+        bin_total = np.bincount(idx, minlength=n_bins).astype(int)
+        y = labels.astype(int)
+        bin_count = np.bincount(idx, weights=y, minlength=n_bins).astype(int)
+
+        bin_preds = [preds[idx == i] for i in range(n_bins)]
+        return bin_preds, bin_count, bin_total, self.bins_.copy()
+
+    # ---------- Test backends ----------
+
+    def _pvalue_binom(self, k, n, p):
+        p = float(np.clip(p, 0.0, 1.0))
+        return binomtest(int(k), int(n), p=p, alternative="two-sided").pvalue
+
+    def _find_acceptance_interval_binom_fast(self, k: int, n: int, alpha: float):
+        key = (int(k), int(n), float(alpha))
+        if key in self._boundary_cache:
+            return self._boundary_cache[key]
+
+        if n <= 0:
+            interval = (0.0, 1.0)
+            self._boundary_cache[key] = interval
+            return interval
+
+        p_hat = k / n
+        pv_hat = self._pvalue_binom(k, n, p_hat)
+        if pv_hat <= alpha:
+            interval = (p_hat, p_hat)
+            self._boundary_cache[key] = interval
+            return interval
+
+        def bisect(lo, hi, side):
+            for _ in range(self.boundary_max_iter):
+                mid = 0.5 * (lo + hi)
+                pv = self._pvalue_binom(k, n, mid)
+
+                if pv > alpha:
+                    if side == "left":
+                        hi = mid
+                    else:
+                        lo = mid
+                else:
+                    if side == "left":
+                        lo = mid
+                    else:
+                        hi = mid
+
+                if abs(hi - lo) < self.boundary_tol:
+                    break
+            return 0.5 * (lo + hi)
+
+        # left
+        if k == 0:
+            p_low = 0.0
+        else:
+            pv0 = self._pvalue_binom(k, n, 0.0)
+            p_low = 0.0 if pv0 > alpha else bisect(0.0, p_hat, "left")
+
+        # right
+        if k == n:
+            p_high = 1.0
+        else:
+            pv1 = self._pvalue_binom(k, n, 1.0)
+            p_high = 1.0 if pv1 > alpha else bisect(p_hat, 1.0, "right")
+
+        interval = (float(p_low), float(p_high))
+        self._boundary_cache[key] = interval
+        return interval
+
+    def _acceptance_interval_wilson(self, k: int, n: int, alpha: float):
+        # Wilson score CI for Bernoulli proportion
+        if n <= 0:
+            return (0.0, 1.0)
+        z = norm.ppf(1 - alpha / 2)
+        phat = k / n
+        denom = 1 + (z * z) / n
+        center = (phat + (z * z) / (2 * n)) / denom
+        half = (z / denom) * np.sqrt((phat * (1 - phat) / n) + (z * z) / (4 * n * n))
+        return (float(max(0.0, center - half)), float(min(1.0, center + half)))
+
+    def _acceptance_interval_clopper_pearson(self, k: int, n: int, alpha: float):
+        # Exact CI from Beta distribution quantiles
+        if n <= 0:
+            return (0.0, 1.0)
+        if k == 0:
+            low = 0.0
+        else:
+            low = beta_dist.ppf(alpha / 2, k, n - k + 1)
+        if k == n:
+            high = 1.0
+        else:
+            high = beta_dist.ppf(1 - alpha / 2, k + 1, n - k)
+        return (float(low), float(high))
+
+    def _pvals_ztest(self, p_arr, k: int, n: int, alpha: float):
+        """
+        Very fast approx: two-sided z-test per p, using SE under H0: p(1-p)/n.
+        (Optional continuity correction is heuristic here; you can ignore it.)
+        """
+        if n <= 1:
+            return np.ones_like(p_arr)
+
+        mu = k / n
+        p_arr = np.asarray(p_arr, dtype=float)
+
+        se = np.sqrt(np.maximum(p_arr * (1 - p_arr) / n, 1e-12))
+        z = np.abs(mu - p_arr) / se
+        # two-sided p-value
+        pvals = 2 * (1 - norm.cdf(z))
+        return pvals
+
+    # ---------- Public evaluation ----------
+
+    def tce(self, preds, labels, test: str = "binom_fast", savepath=False, ymax=None):
+        """
+        test in {"binom", "binom_fast", "wilson", "clopper_pearson", "ztest"}
+        """
+        bin_preds, bin_count, bin_total, bins = self.calibration_summary(preds, labels)
+        alpha = self.siglevel
+
+        bin_rnum = np.zeros(len(bin_count), dtype=int)
+
+        for i in range(len(bin_count)):
+            n = int(bin_total[i])
+            if n == 0:
+                continue
+            k = int(bin_count[i])
+            p_arr = bin_preds[i]
+
+            if test == "binom":
+                pvals = np.array([self._pvalue_binom(k, n, p) for p in p_arr], dtype=float)
+                bin_rnum[i] = int(np.sum(pvals <= alpha))
+
+            elif test == "binom_fast":
+                p_low, p_high = self._find_acceptance_interval_binom_fast(k, n, alpha)
+                bin_rnum[i] = int(np.sum((p_arr < p_low) | (p_arr > p_high)))
+
+            elif test == "wilson":
+                p_low, p_high = self._acceptance_interval_wilson(k, n, alpha)
+                bin_rnum[i] = int(np.sum((p_arr < p_low) | (p_arr > p_high)))
+
+            elif test == "clopper_pearson":
+                p_low, p_high = self._acceptance_interval_clopper_pearson(k, n, alpha)
+                bin_rnum[i] = int(np.sum((p_arr < p_low) | (p_arr > p_high)))
+
+            elif test == "ztest":
+                # close to what your "ttest" is trying to approximate, but more standard for proportions
+                pvals = self._pvals_ztest(p_arr, k, n, alpha)
+                bin_rnum[i] = int(np.sum(pvals <= alpha))
+
+            else:
+                raise ValueError(f"Unknown test={test}. Choose from binom, binom_fast, wilson, clopper_pearson, ztest.")
+
+        if savepath is not False:
+            plot_tce_diagram(bin_rnum, bin_preds, bin_count, bin_total, savepath, ymax)
+
+        tce_value = 100.0 * np.sum(bin_rnum) / max(1, np.sum(bin_total))
+        return tce_value

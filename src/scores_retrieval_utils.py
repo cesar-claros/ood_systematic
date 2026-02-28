@@ -11,6 +11,39 @@ from loguru import logger
 # from sklearn.preprocessing import StandardScaler
 # import seaborn as sns
 
+set_name_dict = {'c100':'cifar100', 
+                 'ti':'tinyimagenet',
+                 'c10':'cifar10', 
+                 'metrics':'methods'}
+methods_dict = {'CTM': 'CTM',
+                'CTM_class': 'CTM_class',
+                'CTM_class_avg': 'CTM_class_avg',
+                'CTM_class_avg_mean': 'CTMmean_class_avg',
+                'CTM_class_mean': 'CTMmean_class',
+                'CTM_class_pred': 'CTM_class_pred',
+                'CTM_class_pred_mean': 'CTMmean_class_pred',
+                'CTM_global': 'CTM_global',
+                'CTM_global_mean': 'CTMmean_global',
+                'CTM_mean': 'CTMmean',
+                'CTM_oc_mean': 'CTMmeanOC',
+                'MCD-CTM': 'MCD-CTM',
+                'MCD-CTM_class': 'MCD-CTM_class',
+                'MCD-CTM_class_avg': 'MCD-CTM_class_avg',
+                'MCD-CTM_class_avg_mean': 'MCD-CTMmean_class_avg',
+                'MCD-CTM_class_mean': 'MCD-CTMmean_class',
+                'MCD-CTM_class_pred': 'MCD-CTM_class_pred',
+                'MCD-CTM_class_pred_mean': 'MCD-CTMmean_class_pred',
+                'MCD-CTM_global': 'MCD-CTM_global',
+                'MCD-CTM_global_mean': 'MCD-CTMmean_global',
+                'MCD-CTM_mean': 'MCD-CTMmean',
+                'MCD-CTM_oc_mean': 'MCD-CTMmeanOC',
+                'MCD-ECTM': 'MCD-ECTM',
+                'MCD-ECTM_class_avg_mean': 'MCD-ECTMmean_class_avg',
+                'MCD-ECTM_class_pred_mean': 'MCD-ECTMmean_class_pred',
+                'MCD-ECTM_global_mean': 'MCD-ECTMmean_global',
+                'MCD-ECTM_mean': 'MCD-ECTMmean',
+                'MCD-ECTM_oc_mean': 'MCD-ECTMmeanOC'}
+
 def read_results_vit(dataset,set_name):
     logger.info(f"Reading ViT results for dataset: {dataset}, set: {set_name}")
     experiment_dir = Path(os.environ["EXPERIMENT_ROOT_DIR"]+f'/vit/')

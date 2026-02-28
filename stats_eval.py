@@ -31,7 +31,7 @@ def main():
     parser = argparse.ArgumentParser(description="OOD Systematic Eval Analysis")
     parser.add_argument("--mcd", action="store_true", help="Set MCD flag (default: False)")
     parser.add_argument("--backbone", type=str, required=True, choices=['Conv', 'ViT'], help="Backbone type")
-    parser.add_argument("--metric-group", type=str, required=True, choices=['RC', 'ROC'], help="Metric group: RC=['AUGRC', 'AURC'], ROC=['AUROC_f', 'FPR@95TPR']")
+    parser.add_argument("--metric-group", type=str, required=True, choices=['RC', 'ROC', 'CE', 'CE_BOUND'], help="Metric group: RC=['AUGRC', 'AURC'], ROC=['AUROC_f', 'FPR@95TPR'], CE=['ECE_L1','ECE_L2'], CE_BOUND=['ECE_L1_BOUND','ECE_L2_BOUND']")
     parser.add_argument("--output-dir", type=str, default="ood_eval_outputs", help="Output directory")
 
     args = parser.parse_args()
@@ -44,8 +44,10 @@ def main():
         metric = ['AUGRC','AURC']
     elif args.metric_group == 'ROC':
         metric = ['AUROC_f','FPR@95TPR']
+    elif args.metric_group == 'CE_BOUND':
+        metric = ['ECE_L1_BOUND','ECE_L2_BOUND']
     elif args.metric_group == 'CE':
-        metric = ['ECE','MCE']
+        metric = ['ECE_L1','ECE_L2']
     else:
         raise ValueError(f"Unknown metric group: {args.metric_group}")
 
@@ -74,6 +76,11 @@ def main():
             "AUROC_f":   f"scores/scores_all_AUROC_f_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
             "AUGRC":     f"scores/scores_all_AUGRC_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
             "AURC":      f"scores/scores_all_AURC_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "ECE_L1":    f"scores_final/scores_all_ECE_L1_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "ECE_L2":    f"scores_final/scores_all_ECE_L2_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "MCE":       f"scores_final/scores_all_MCE_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "ECE_L1_BOUND":    f"scores_final/scores_all_ECE_L1_BOUND_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "ECE_L2_BOUND":    f"scores_final/scores_all_ECE_L2_BOUND_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
             # Optional CLIP distances / groupings file (columns: dataset, features..., e.g., 'group', 'clip_dist_id_ood', etc.)
             "CLIP_FILE": f"clip_scores/clip_distances_{SOURCE}.csv",  # set to None if not available
             # Output dir
@@ -118,8 +125,8 @@ def main():
         logger.error("No data loaded. Exiting.")
         return
 
-    rank_group = ["dataset", 'model', "metric", 'group', ]
-    blocks = ['dataset', 'model', 'metric', 'group', ]
+    rank_group = ["dataset", 'model', "metric", 'group', 'run' ]
+    blocks = ['dataset', 'model', 'metric', 'group', 'run']
 
     members_list = []
     
@@ -215,10 +222,10 @@ def main():
         return
 
     reorder_index = [
-     'cifar10->test',
-     'supercifar100->test',
-     'cifar100->test',
-     'tinyimagenet->test',
+    #  'cifar10->test',
+    #  'supercifar100->test',
+    #  'cifar100->test',
+    #  'tinyimagenet->test',
      'cifar10->near',
      'supercifar100->near',
      'cifar100->near',
@@ -234,13 +241,17 @@ def main():
      ]
 
     members_all = pd.concat(members_list,axis=0)
-    members_all = members_all.where(members_all==True, False)
-    # Filter to existing indices from reorder_index
+    
     valid_reorder = [idx for idx in reorder_index if idx in members_all.index]
     members_all = members_all.loc[valid_reorder]
+    
+    members_all = members_all.where(members_all==True, False)
+    # Filter to existing indices from reorder_index
+    members_all = members_all[sorted(members_all.columns, key=str.casefold)]
 
+    members_all = members_all.loc[:, members_all.sum(axis=0) > 0]
     # Plotting Logic
-    figsize = (5,8)
+    figsize = (4,6)
     rects_list = []
     rows_shading = []
     
@@ -377,7 +388,7 @@ def main():
     plt.subplots_adjust(wspace=0.05)
     
     # Adjust c_list length if necessary, simplistic palette reuse
-    c_list = ['tab:green'] * 4 + ['tab:blue'] * 4 + ['tab:red'] * 4 + ['tab:orange'] * 4
+    c_list =  ['tab:blue'] * 4 + ['tab:red'] * 4 + ['tab:orange'] * 4
     # Extend if more rows
     if len(members_all) > len(c_list):
         c_list = (c_list * (len(members_all)//len(c_list) + 1))[:len(members_all)]
@@ -392,7 +403,7 @@ def main():
     for (y1,y2) in rows_shading:
         ax[0].axhspan(-.5+y1, .5+y2, facecolor='lightgray', alpha=0.5)
         
-    ax[0].set_title(f'Top cliques\n(Backbone:{BACKBONE}, Metrics={metric})')
+    ax[0].set_title(f'Top cliques\n(Backbone:{f"Convolutional" if BACKBONE=="Conv" else "Transformer"},\nMetrics={metric})')
     
     sns.barplot(x=members_all.sum(axis=0), y=members_all.columns, color='gray', ax=ax[1])
     # For modern matplotlib versions

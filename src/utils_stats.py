@@ -24,7 +24,12 @@ HIGHER_BETTER = {
     "AUROC_f": True,
     "FPR@95TPR": False,
     "AUGRC": False,
-    "AURC": False
+    "AURC": False,
+    "ECE_L1":False,
+    "ECE_L2":False,
+    "ECE_L1_BOUND":False,
+    "ECE_L2_BOUND":False,
+    "MCE":False,
 }
 
 # Recognize variations; "global" counts as the baseline variation for most
