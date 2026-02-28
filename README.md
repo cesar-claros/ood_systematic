@@ -149,3 +149,27 @@ python neural_collapse_eval.py --output-dir neural_collapse_metrics
 ```
 Arguments:
 - `--output-dir`: Directory to save metric CSVs.
+
+
+<img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/route1_severity_cifar10_Conv_l2.jpeg">  |  <img src="https://github.com/cesar-claros/ood_systematic/blob/main/figs/route1_severity_cifar10_ViT_l2.jpeg">
+
+### 5. Post-hoc Calibration of Confidence Scores
+**`calibration_ood.py`**: Fits post-hoc calibration models (Sigmoid/Platt scaling, Isotonic Regression, Beta calibration) to each confidence score function (CSF) on the validation split, then evaluates calibration quality on every OOD test set. Calibrators are fit with 5-fold cross-validation; cross-validated probabilities are used for the validation evaluation to avoid train-on-test bias. For each combination of model, dropout setting, reward, run, CSF, and calibration method, the script records ECE (L1, L2), MCE, and the corresponding finite-sample bounds. Results are saved to a single CSV per dataset/backbone combination. Processing of CSF × calibration-method pairs is parallelised with joblib threads.
+```bash
+python calibration_ood.py --dataset cifar10 [--vit] [--scores-dir scores_final]
+```
+Arguments:
+- `--dataset`: Dataset name (`cifar10`, `cifar100`, `supercifar100`, `tinyimagenet`).
+- `--vit`: Flag to use ViT model results (default: Conv).
+- `--scores-dir`: Directory to save the output CSV (default: `scores_final`).
+
+### 6. Metric Recomputation and Hyperparameter Selection
+**`recompute_metric.py`**: Reads the calibration results CSV produced by `calibration_ood.py` and selects the best hyperparameters (dropout, reward, calibration method) for each CSF on the validation set, then applies those selections to produce final per-OOD-set score tables. For each calibration metric (`ece_l1`, `ece_l2`, `mce`, `ece_l1_bound`, `ece_l2_bound`), it outputs both mean and per-run score CSVs, split by MCD vs. non-MCD methods, and a hyperparameter summary CSV. Method names are mapped to human-readable labels via `scores_retrieval_utils`.
+```bash
+python recompute_metric.py --dataset cifar10 [--vit] [--scores-dir scores_final] [--scores-path scores_final]
+```
+Arguments:
+- `--dataset`: Dataset name (`cifar10`, `cifar100`, `supercifar100`, `tinyimagenet`).
+- `--vit`: Flag to use ViT model results (default: Conv).
+- `--scores-dir`: Directory to save the output score and hyperparameter CSVs (default: `scores_final`).
+- `--scores-path`: Directory containing the input calibration results CSV (default: `scores_final`).
