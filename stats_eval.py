@@ -33,6 +33,7 @@ def main():
     parser.add_argument("--backbone", type=str, required=True, choices=['Conv', 'ViT'], help="Backbone type")
     parser.add_argument("--metric-group", type=str, required=True, choices=['RC', 'ROC', 'CE', 'CE_BOUND'], help="Metric group: RC=['AUGRC', 'AURC'], ROC=['AUROC_f', 'FPR@95TPR'], CE=['ECE_L1','ECE_L2'], CE_BOUND=['ECE_L1_BOUND','ECE_L2_BOUND']")
     parser.add_argument("--output-dir", type=str, default="ood_eval_outputs", help="Output directory")
+    parser.add_argument("--filter-methods", action="store_true", help="Exclude methods containing 'global' or 'class' (except PCA/KPCA RecError global variants)")
 
     args = parser.parse_args()
 
@@ -94,6 +95,20 @@ def main():
         alpha = CONFIG["ALPHA"]
         try:
             df = load_all_scores(CONFIG)
+
+            if args.filter_methods:
+                keep_exceptions = {
+                    "KPCA RecError global",
+                    "PCA RecError global",
+                    "MCD-KPCA RecError global",
+                    "MCD-PCA RecError global",
+                }
+                mask = df['methods'].str.contains('global|class', case=False, na=False)
+                mask &= ~df['methods'].isin(keep_exceptions)
+                n_removed = mask.sum()
+                df = df[~mask]
+                logger.info(f"Filtered {n_removed} rows with 'global'/'class' methods for {SOURCE}")
+
             df['source'] = SOURCE
 
             if os.path.exists(CONFIG["CLIP_FILE"]):
