@@ -1,0 +1,26 @@
+,ece_l1,ece_l1,ece_l2,ece_l2,mce,mce,ece_l1_bound,ece_l1_bound,ece_l2_bound,ece_l2_bound
+,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit
+,drop_out,calibration,drop_out,calibration,drop_out,calibration,drop_out,calibration,drop_out,calibration
+methods,,,,,,,,,,
+Confidence,do0,Isotonic,do0,Isotonic,do0,Isotonic,do1,Isotonic,do1,Sigmoid
+pNML,do1,Beta,do0,Beta,do0,Beta,do1,Isotonic,do1,Beta
+Maha,do0,Beta,do0,Beta,do1,Beta,do1,Isotonic,do1,Isotonic
+PE,do1,Beta,do1,Beta,do1,Sigmoid,do1,Isotonic,do1,Beta
+PCA RecError global,do1,Beta,do1,Beta,do1,Beta,do1,Isotonic,do1,Beta
+MSR,do0,Beta,do1,Beta,do1,Beta,do1,Isotonic,do1,Beta
+Residual,do0,Beta,do1,Beta,do1,Beta,do1,Isotonic,do1,Beta
+PCE,do0,Beta,do1,Beta,do1,Beta,do1,Isotonic,do1,Beta
+REN,do1,Beta,do1,Beta,do1,Sigmoid,do1,Isotonic,do1,Beta
+KPCA RecError global,do1,Sigmoid,do1,Sigmoid,do1,Sigmoid,do1,Isotonic,do1,Sigmoid
+GE,do1,Beta,do1,Beta,do0,Beta,do1,Isotonic,do1,Beta
+GradNorm,do1,Isotonic,do0,Beta,do0,Beta,do1,Isotonic,do1,Isotonic
+Energy,do1,Sigmoid,do1,Sigmoid,do1,Sigmoid,do1,Isotonic,do1,Sigmoid
+NeCo,do1,Sigmoid,do1,Sigmoid,do1,Beta,do1,Isotonic,do1,Sigmoid
+ViM,do1,Isotonic,do0,Beta,do0,Sigmoid,do1,Isotonic,do1,Beta
+GEN,do1,Beta,do0,Sigmoid,do0,Sigmoid,do1,Isotonic,do1,Sigmoid
+NNGuide,do1,Sigmoid,do1,Sigmoid,do1,Sigmoid,do1,Isotonic,do1,Sigmoid
+CTM,do1,Sigmoid,do1,Sigmoid,do0,Sigmoid,do1,Isotonic,do1,Sigmoid
+CTMmeanOC,do1,Isotonic,do1,Beta,do1,Beta,do1,Isotonic,do1,Beta
+fDBD,do1,Isotonic,do1,Beta,do0,Sigmoid,do1,Isotonic,do1,Sigmoid
+MLS,do1,Isotonic,do0,Sigmoid,do0,Sigmoid,do1,Isotonic,do1,Sigmoid
+CTMmean,do0,Beta,do0,Beta,do1,Sigmoid,do1,Isotonic,do1,Beta

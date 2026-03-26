@@ -1,0 +1,26 @@
+,ece_l1,ece_l1,ece_l1,ece_l1,ece_l1,ece_l1,ece_l1,ece_l2,ece_l2,ece_l2,ece_l2,ece_l2,ece_l2,ece_l2,mce,mce,mce,mce,mce,mce,mce,ece_l1_bound,ece_l1_bound,ece_l1_bound,ece_l1_bound,ece_l1_bound,ece_l1_bound,ece_l1_bound,ece_l2_bound,ece_l2_bound,ece_l2_bound,ece_l2_bound,ece_l2_bound,ece_l2_bound,ece_l2_bound
+,confidnet,confidnet,devries,devries,dg,dg,dg,confidnet,confidnet,devries,devries,dg,dg,dg,confidnet,confidnet,devries,devries,dg,dg,dg,confidnet,confidnet,devries,devries,dg,dg,dg,confidnet,confidnet,devries,devries,dg,dg,dg
+,drop_out,calibration,drop_out,calibration,drop_out,reward,calibration,drop_out,calibration,drop_out,calibration,drop_out,reward,calibration,drop_out,calibration,drop_out,calibration,drop_out,reward,calibration,drop_out,calibration,drop_out,calibration,drop_out,reward,calibration,drop_out,calibration,drop_out,calibration,drop_out,reward,calibration
+methods,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+NNGuide,do1,Sigmoid,do0,Sigmoid,do1,6.0,Sigmoid,do1,Sigmoid,do0,Sigmoid,do1,6.0,Sigmoid,do0,Sigmoid,do0,Sigmoid,do1,6.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Sigmoid,do1,Sigmoid,do1,2.2,Beta
+GradNorm,do1,Sigmoid,do1,Sigmoid,do0,2.2,Beta,do1,Sigmoid,do1,Sigmoid,do1,6.0,Sigmoid,do1,Sigmoid,do1,Sigmoid,do1,12.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Sigmoid,do1,Sigmoid,do1,2.2,Isotonic
+Energy,do0,Sigmoid,do1,Beta,do1,15.0,Sigmoid,do0,Sigmoid,do0,Sigmoid,do0,20.0,Sigmoid,do1,Sigmoid,do1,Sigmoid,do0,3.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Sigmoid,do1,Beta,do1,2.2,Beta
+Confidence,do0,Beta,do1,Beta,do1,15.0,Beta,do0,Beta,do1,Beta,do1,15.0,Beta,do0,Sigmoid,do0,Sigmoid,do0,20.0,Beta,do1,Isotonic,do0,Isotonic,do1,2.2,Isotonic,do1,Beta,do0,Beta,do1,2.2,Isotonic
+GEN,do0,Sigmoid,do0,Sigmoid,do0,20.0,Sigmoid,do0,Sigmoid,do1,Beta,do0,3.0,Sigmoid,do1,Sigmoid,do0,Sigmoid,do0,10.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,2.2,Beta
+MSR,do0,Beta,do1,Beta,do1,15.0,Beta,do0,Beta,do1,Beta,do1,15.0,Beta,do0,Sigmoid,do1,Sigmoid,do1,15.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,2.2,Beta
+GE,do0,Beta,do0,Beta,do1,15.0,Beta,do0,Beta,do0,Beta,do1,15.0,Beta,do0,Sigmoid,do1,Sigmoid,do1,10.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,2.2,Beta
+fDBD,do0,Beta,do0,Isotonic,do1,2.2,Isotonic,do0,Beta,do0,Beta,do0,3.0,Beta,do0,Sigmoid,do1,Sigmoid,do0,10.0,Sigmoid,do0,Isotonic,do0,Isotonic,do0,6.0,Isotonic,do0,Beta,do0,Beta,do0,20.0,Beta
+Residual,do0,Beta,do0,Isotonic,do1,2.2,Isotonic,do0,Beta,do0,Beta,do1,2.2,Isotonic,do0,Beta,do0,Beta,do1,10.0,Beta,do1,Isotonic,do1,Isotonic,do1,2.2,Beta,do1,Isotonic,do1,Isotonic,do1,2.2,Beta
+NeCo,do1,Sigmoid,do1,Sigmoid,do1,2.2,Isotonic,do0,Sigmoid,do1,Sigmoid,do0,20.0,Sigmoid,do0,Sigmoid,do1,Sigmoid,do1,6.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,20.0,Isotonic,do1,Sigmoid,do1,Sigmoid,do1,20.0,Sigmoid
+PE,do0,Beta,do0,Sigmoid,do0,2.2,Sigmoid,do0,Sigmoid,do0,Sigmoid,do0,2.2,Sigmoid,do0,Sigmoid,do1,Sigmoid,do0,15.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,2.2,Beta
+REN,do0,Beta,do0,Beta,do0,10.0,Sigmoid,do0,Beta,do0,Sigmoid,do0,10.0,Sigmoid,do1,Sigmoid,do0,Sigmoid,do0,10.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,2.2,Beta
+MLS,do1,Sigmoid,do0,Sigmoid,do0,20.0,Sigmoid,do0,Sigmoid,do1,Sigmoid,do0,20.0,Sigmoid,do0,Sigmoid,do1,Sigmoid,do0,6.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Sigmoid,do1,Sigmoid,do1,2.2,Beta
+KPCA RecError global,do0,Beta,do0,Beta,do1,2.2,Isotonic,do0,Beta,do0,Beta,do0,3.0,Sigmoid,do0,Sigmoid,do0,Sigmoid,do0,2.2,Sigmoid,do1,Isotonic,do1,Isotonic,do0,6.0,Isotonic,do1,Beta,do0,Beta,do0,6.0,Beta
+CTMmeanOC,do0,Beta,do1,Beta,do1,10.0,Beta,do0,Beta,do1,Beta,do0,20.0,Beta,do0,Beta,do0,Sigmoid,do0,20.0,Beta,do0,Isotonic,do1,Isotonic,do0,6.0,Isotonic,do0,Beta,do1,Beta,do0,20.0,Beta
+CTMmean,do0,Beta,do1,Beta,do1,2.2,Sigmoid,do0,Beta,do0,Beta,do0,20.0,Beta,do0,Beta,do0,Sigmoid,do0,20.0,Beta,do0,Isotonic,do1,Isotonic,do0,6.0,Isotonic,do0,Beta,do0,Beta,do0,20.0,Beta
+PCE,do0,Beta,do1,Beta,do1,12.0,Beta,do0,Beta,do1,Beta,do1,15.0,Beta,do0,Sigmoid,do1,Sigmoid,do0,15.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,2.2,Beta
+CTM,do0,Beta,do0,Beta,do1,15.0,Isotonic,do0,Beta,do0,Beta,do0,3.0,Beta,do0,Beta,do1,Beta,do0,10.0,Sigmoid,do0,Isotonic,do0,Isotonic,do1,2.2,Isotonic,do0,Beta,do0,Beta,do1,2.2,Isotonic
+PCA RecError global,do0,Isotonic,do1,Beta,do0,15.0,Beta,do0,Beta,do1,Beta,do0,15.0,Beta,do1,Sigmoid,do1,Sigmoid,do1,3.0,Sigmoid,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,2.2,Isotonic
+Maha,do1,Isotonic,do0,Isotonic,do1,2.2,Isotonic,do1,Isotonic,do0,Beta,do1,2.2,Isotonic,do0,Beta,do0,Beta,do1,2.2,Beta,do1,Isotonic,do1,Isotonic,do1,2.2,Beta,do1,Isotonic,do1,Isotonic,do1,2.2,Beta
+ViM,do1,Isotonic,do1,Isotonic,do1,2.2,Isotonic,do1,Beta,do0,Beta,do1,2.2,Isotonic,do0,Sigmoid,do1,Beta,do1,10.0,Beta,do1,Isotonic,do1,Isotonic,do0,2.2,Isotonic,do1,Beta,do1,Isotonic,do0,2.2,Beta
+pNML,do0,Isotonic,do1,Beta,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,2.2,Isotonic,do1,Beta,do1,Beta,do1,20.0,Beta,do1,Isotonic,do1,Isotonic,do1,2.2,Beta,do1,Beta,do1,Beta,do1,2.2,Beta

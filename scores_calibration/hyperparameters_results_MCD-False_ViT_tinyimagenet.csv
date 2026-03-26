@@ -1,0 +1,26 @@
+,ece_l1,ece_l1,ece_l2,ece_l2,mce,mce,ece_l1_bound,ece_l1_bound,ece_l2_bound,ece_l2_bound
+,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit,modelvit
+,drop_out,calibration,drop_out,calibration,drop_out,calibration,drop_out,calibration,drop_out,calibration
+methods,,,,,,,,,,
+Confidence,do1,Isotonic,do1,Isotonic,do1,Isotonic,do0,Isotonic,do0,Sigmoid
+pNML,do1,Beta,do1,Beta,do1,Beta,do0,Isotonic,do0,Isotonic
+Residual,do1,Beta,do1,Beta,do1,Beta,do0,Isotonic,do0,Beta
+CTM,do0,Isotonic,do0,Isotonic,do0,Sigmoid,do0,Isotonic,do0,Beta
+CTMmeanOC,do1,Beta,do1,Beta,do1,Sigmoid,do0,Isotonic,do0,Sigmoid
+PCA RecError global,do0,Beta,do0,Beta,do0,Sigmoid,do0,Isotonic,do0,Sigmoid
+MLS,do0,Isotonic,do1,Beta,do1,Sigmoid,do0,Isotonic,do0,Beta
+fDBD,do0,Isotonic,do1,Sigmoid,do0,Sigmoid,do0,Isotonic,do0,Isotonic
+Maha,do0,Beta,do1,Beta,do0,Sigmoid,do0,Isotonic,do0,Sigmoid
+REN,do0,Isotonic,do0,Beta,do0,Beta,do0,Isotonic,do0,Beta
+MSR,do0,Isotonic,do1,Beta,do1,Beta,do0,Isotonic,do0,Beta
+CTMmean,do1,Sigmoid,do0,Sigmoid,do1,Sigmoid,do0,Isotonic,do0,Sigmoid
+GradNorm,do0,Isotonic,do0,Beta,do0,Sigmoid,do0,Isotonic,do0,Beta
+NeCo,do0,Isotonic,do1,Sigmoid,do1,Sigmoid,do0,Isotonic,do0,Beta
+GEN,do0,Isotonic,do1,Beta,do1,Sigmoid,do0,Isotonic,do0,Beta
+PE,do1,Isotonic,do0,Beta,do0,Beta,do0,Isotonic,do0,Beta
+NNGuide,do0,Isotonic,do1,Sigmoid,do1,Sigmoid,do0,Isotonic,do0,Beta
+GE,do0,Sigmoid,do0,Isotonic,do1,Beta,do0,Isotonic,do0,Isotonic
+KPCA RecError global,do0,Beta,do1,Beta,do1,Sigmoid,do0,Isotonic,do0,Sigmoid
+ViM,do1,Sigmoid,do1,Sigmoid,do1,Sigmoid,do0,Isotonic,do0,Sigmoid
+PCE,do1,Beta,do1,Beta,do0,Beta,do0,Isotonic,do0,Beta
+Energy,do0,Isotonic,do1,Sigmoid,do1,Sigmoid,do0,Isotonic,do0,Beta
