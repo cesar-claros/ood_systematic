@@ -222,10 +222,10 @@ def main():
         return
 
     reorder_index = [
-    #  'cifar10->test',
-    #  'supercifar100->test',
-    #  'cifar100->test',
-    #  'tinyimagenet->test',
+     'cifar10->test',
+     'supercifar100->test',
+     'cifar100->test',
+     'tinyimagenet->test',
      'cifar10->near',
      'supercifar100->near',
      'cifar100->near',
@@ -388,7 +388,7 @@ def main():
     plt.subplots_adjust(wspace=0.05)
     
     # Adjust c_list length if necessary, simplistic palette reuse
-    c_list =  ['tab:blue'] * 4 + ['tab:red'] * 4 + ['tab:orange'] * 4
+    c_list =  ['tab:green'] * 4 + ['tab:blue'] * 4 + ['tab:red'] * 4 + ['tab:orange'] * 4 
     # Extend if more rows
     if len(members_all) > len(c_list):
         c_list = (c_list * (len(members_all)//len(c_list) + 1))[:len(members_all)]

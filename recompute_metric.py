@@ -68,7 +68,7 @@ def main():
                         choices=['cifar10','supercifar100','cifar100','tinyimagenet'],)
     parser.add_argument("--vit", action="store_true", help="Set this flag if using ViT model results")
     parser.add_argument("--scores-dir", type=str, default="scores_final", help="Directory to save final scores")
-    parser.add_argument("--scores-path", type=str, default="scores_final", help="Directory to to fins scores csv files for processing")
+    parser.add_argument("--scores-path", type=str, default="scores_final", help="Directory to find scores csv files for processing")
 
     args = parser.parse_args()
     # args = parser.parse_args(['--dataset','cifar10'])
