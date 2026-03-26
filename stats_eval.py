@@ -34,8 +34,19 @@ def main():
     parser.add_argument("--metric-group", type=str, required=True, choices=['RC', 'ROC', 'CE', 'CE_BOUND'], help="Metric group: RC=['AUGRC', 'AURC'], ROC=['AUROC_f', 'FPR@95TPR'], CE=['ECE_L1','ECE_L2'], CE_BOUND=['ECE_L1_BOUND','ECE_L2_BOUND']")
     parser.add_argument("--output-dir", type=str, default="ood_eval_outputs", help="Output directory")
     parser.add_argument("--filter-methods", action="store_true", help="Exclude methods containing 'global' or 'class' (except PCA/KPCA RecError global variants)")
+    parser.add_argument("--model", type=str, nargs='+', default=None,
+                        help="Filter by model(s). Conv options: confidnet, devries, dg. ViT options: modelvit. Default: all models.")
 
     args = parser.parse_args()
+
+    # Validate --model choices against --backbone
+    if args.model is not None:
+        valid_conv = {'confidnet', 'devries', 'dg'}
+        valid_vit = {'modelvit'}
+        valid = valid_vit if args.backbone == 'ViT' else valid_conv
+        invalid = set(args.model) - valid
+        if invalid:
+            parser.error(f"Invalid model(s) {invalid} for backbone {args.backbone}. Valid options: {valid}")
 
     MCD_flag = str(args.mcd) # 'True' or 'False' as string for file paths if that's the convention
     BACKBONE = args.backbone
@@ -108,6 +119,10 @@ def main():
                 n_removed = mask.sum()
                 df = df[~mask]
                 logger.info(f"Filtered {n_removed} rows with 'global'/'class' methods for {SOURCE}")
+
+            if args.model is not None:
+                df = df[df['model'].isin(args.model)]
+                logger.info(f"Filtered to models {args.model} for {SOURCE} ({len(df)} rows remaining)")
 
             df['source'] = SOURCE
 
@@ -441,7 +456,8 @@ def main():
                         alpha=0.5)
         ax[0].add_patch(rect)
     
-    out_filename = f'top_cliques_{BACKBONE}_{MCD_flag}_{args.metric_group}'
+    model_suffix = f'_{"_".join(args.model)}' if args.model is not None else ''
+    out_filename = f'top_cliques_{BACKBONE}_{MCD_flag}_{args.metric_group}{model_suffix}'
     out_path = os.path.join(OUTDIR, out_filename)
     fig.savefig(out_path + '.pdf', bbox_inches='tight')
     fig.savefig(out_path + '.jpeg', bbox_inches='tight')
