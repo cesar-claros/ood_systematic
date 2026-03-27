@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 data/
-*.json
+# *.json
 configs_exp/
 scores/
 scores_final/
