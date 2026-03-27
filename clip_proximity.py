@@ -16,18 +16,18 @@ from src.clip_utils import (
 )
 
 # ---------- Runner (example) ----------
-def run(iid_dataset:str, output_dir:str, model_name:str = "ViT-B-32", pretrained:str = None):
+def run(iid_dataset:str, output_dir:str, model_name:str = "ViT-B-32", pretrained:str = None, batch_size:int = 256):
     ti_condition = 'tinyimagenet' if (iid_dataset=='cifar10' or iid_dataset=='cifar100' or iid_dataset=='supercifar100') else 'cifar10'
     c100_condition = 'cifar100' if (iid_dataset=='cifar10' or iid_dataset=='tinyimagenet') else 'cifar10'
     logger.info(f'Loading CLIP model: {model_name}...')
     model, preprocess, tokenizer, device, backend = load_clip(model_name=model_name, pretrained=pretrained)
     logger.info(f'Loading {iid_dataset} data set...')
     # 1) Load ID = SuperCIFAR (CIFAR100 train as ID features)
-    # id_loader, classes = make_loader(iid_dataset, split="train", preprocess=preprocess, batch_size=256) # Duplicate line removed
+    # id_loader, classes = make_loader(iid_dataset, split="train", preprocess=preprocess, batch_size=batch_size) # Duplicate line removed
     logger.info(f'Computing features...')
-    id_loader, classes = make_loader(iid_dataset, split="train", preprocess=preprocess, batch_size=256)
+    id_loader, classes = make_loader(iid_dataset, split="train", preprocess=preprocess, batch_size=batch_size)
     X_id, y = extract_image_features(model, id_loader, device, backend, targets_out=True)  # [N_id, D]
-    # id_test_loader = make_loader(iid_dataset, split="test", preprocess=preprocess, batch_size=256)
+    # id_test_loader = make_loader(iid_dataset, split="test", preprocess=preprocess, batch_size=batch_size)
     # X_id_test, y_test = extract_image_features(model, id_test_loader, device, backend, targets_out=True)  # [N_id, D]
     # Optional: superclass text prototypes
     Tproto = make_text_prototypes(model, tokenizer, device, classes, backend=backend)
@@ -56,9 +56,9 @@ def run(iid_dataset:str, output_dir:str, model_name:str = "ViT-B-32", pretrained
     for name, (spec, split) in tqdm(ood_specs.items()):
         logger.info(f'Loading {name} data set...')
         if split == "folder":
-            loader = make_loader(spec, split="test", preprocess=preprocess, batch_size=256)
+            loader = make_loader(spec, split="test", preprocess=preprocess, batch_size=batch_size)
         else:
-            loader = make_loader(spec, split=split, preprocess=preprocess, batch_size=256)
+            loader = make_loader(spec, split=split, preprocess=preprocess, batch_size=batch_size)
         logger.info(f'Computing features...')
         X_ood = extract_image_features(model, loader, device, backend)
         logger.info(f'Computing distances...')
@@ -125,7 +125,12 @@ if __name__ == "__main__":
     parser.add_argument('--pretrained',
                         type=str,
                         default=None,
-                        help="Pretrained weights tag (default: laion2b_s34b_b79k)")
+                        help="Pretrained weights tag (default: auto-resolved per model)")
+    parser.add_argument('--batch_size',
+                        type=int,
+                        default=256,
+                        help="Batch size for feature extraction (default: 256, try 512-1024 on GPU)")
     args = parser.parse_args()
     run(args.iid_dataset, args.output_dir,
-        model_name=args.model_name, pretrained=args.pretrained)
+        model_name=args.model_name, pretrained=args.pretrained,
+        batch_size=args.batch_size)

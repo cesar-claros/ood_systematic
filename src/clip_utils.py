@@ -325,15 +325,16 @@ def make_loader(
 def extract_image_features(model, loader, device, backend="open_clip", l2_normalize=True, targets_out=False) -> np.ndarray:
     feats = []
     labels = []
-    for imgs, targets in tqdm(loader):
-        imgs = imgs.to(device, non_blocking=True)
-        if backend == "open_clip":
-            feats_i = model.encode_image(imgs)
-        feats_i = feats_i.float()
-        if l2_normalize:
-            feats_i = nn.functional.normalize(feats_i, dim=-1)
-        feats.append(feats_i.cpu().numpy())
-        labels.append(targets.cpu().numpy())
+    with torch.no_grad():
+        for imgs, targets in tqdm(loader):
+            imgs = imgs.to(device, non_blocking=True)
+            if backend == "open_clip":
+                feats_i = model.encode_image(imgs)
+            feats_i = feats_i.float()
+            if l2_normalize:
+                feats_i = nn.functional.normalize(feats_i, dim=-1)
+            feats.append(feats_i.cpu().numpy())
+            labels.append(targets.cpu().numpy())
     if targets_out:    
         return np.concatenate(feats, axis=0), np.concatenate(labels, axis=0)
     else:
