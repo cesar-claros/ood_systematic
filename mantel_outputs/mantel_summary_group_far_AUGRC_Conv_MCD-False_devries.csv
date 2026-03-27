@@ -1,0 +1,5 @@
+test,label,n_models,n_methods,r,p,significant
+full_NC_vs_spearman_rank,group_far,20,22,0.7177736896774144,0.0001,True
+full_NC_vs_jaccard_top1,group_far,20,22,0.5589828871031546,0.0001,True
+full_NC_vs_jaccard_top3,group_far,20,22,0.7370057967969773,0.0001,True
+full_NC_vs_jaccard_top5,group_far,20,22,0.6206982643823409,0.0001,True
