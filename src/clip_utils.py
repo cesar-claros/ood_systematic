@@ -229,7 +229,14 @@ def load_clip(model_name: str = "ViT-B-32", pretrained: Optional[str] = None, de
                 break
         if pretrained is None:
             pretrained = available[0] if available else "openai"
-    model, _, preprocess = open_clip.create_model_and_transforms(model_name, pretrained=pretrained, device=device)
+    # OpenAI weights use QuickGELU; use the -quickgelu model variant if needed
+    actual_model_name = model_name
+    if pretrained == "openai" and not model_name.endswith("-quickgelu"):
+        qg_name = model_name + "-quickgelu"
+        qg_available = open_clip.list_pretrained_tags_by_model(qg_name)
+        if "openai" in qg_available:
+            actual_model_name = qg_name
+    model, _, preprocess = open_clip.create_model_and_transforms(actual_model_name, pretrained=pretrained, device=device)
     tokenizer = open_clip.get_tokenizer(model_name)
     model.eval()
     return model, preprocess, tokenizer, device, "open_clip"
