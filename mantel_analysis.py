@@ -150,32 +150,44 @@ def build_rank_matrix(merged: pd.DataFrame, score_col: str,
     models_df : DataFrame with one row per model (with NC metrics)
     rank_matrix : ndarray of shape (n_models, n_methods)
     """
-    model_keys = ["dataset", "architecture", "study", "dropout", "run", "reward_val"]
+    # Use block-level keys (same as Approach 4), averaging across
+    # dropout/reward since those are hyperparameter selections.
+    block_keys = ["dataset", "architecture", "study", "run"]
 
-    # Pivot: rows = models, columns = methods, values = score
+    # Pivot: rows = blocks, columns = methods, values = mean score
     pivot = merged.pivot_table(
-        index=model_keys, columns="methods", values=score_col,
-        aggfunc="first",
+        index=block_keys, columns="methods", values=score_col,
+        aggfunc="mean",  # average across dropout/reward configs
     )
+    logger.info(f"Pivot raw: {pivot.shape[0]} blocks × {pivot.shape[1]} methods, "
+                f"NaN fraction: {pivot.isna().mean().mean():.2%}")
 
-    # Drop models or methods with missing values
-    pivot = pivot.dropna(axis=0, how="any").dropna(axis=1, how="any")
-    logger.info(f"Rank matrix: {pivot.shape[0]} models × {pivot.shape[1]} methods")
+    # Find largest complete sub-matrix iteratively
+    for _ in range(20):
+        shape_before = pivot.shape
+        # Drop methods where >50% of blocks are NaN
+        method_nan_frac = pivot.isna().mean(axis=0)
+        pivot = pivot.loc[:, method_nan_frac < 0.5]
+        # Drop blocks with any remaining NaN
+        pivot = pivot.dropna(axis=0, how="any")
+        # Drop methods that now have NaN
+        pivot = pivot.dropna(axis=1, how="any")
+        if pivot.shape == shape_before or pivot.empty:
+            break
+    logger.info(f"Rank matrix: {pivot.shape[0]} blocks × {pivot.shape[1]} methods")
 
     # Rank methods per model
     rank_df = pivot.rank(axis=1, ascending=ascending, method="average")
     rank_matrix = rank_df.values
 
-    # Get NC metrics for these models
-    models_idx = pivot.index.to_frame(index=False)
-    # Merge NC metrics back
-    nc_cols_present = [c for c in NC_METRICS if c in merged.columns or c + "_nc" in merged.columns]
-    # Get unique model NC metrics
-    nc_key_cols = model_keys + [c for c in merged.columns
-                                 if c in NC_METRICS or c.endswith("_nc")]
-    model_nc = merged[nc_key_cols].drop_duplicates(subset=model_keys)
+    # Get NC metrics for these blocks (average NC across dropout/reward)
+    blocks_idx = pivot.index.to_frame(index=False)
+    nc_col_names = [c for c in merged.columns if c in NC_METRICS or c.endswith("_nc")]
+    nc_agg_cols = block_keys + nc_col_names
+    block_nc = merged[nc_agg_cols].groupby(block_keys, as_index=False).mean(
+        numeric_only=True)
 
-    models_df = models_idx.merge(model_nc, on=model_keys, how="inner")
+    models_df = blocks_idx.merge(block_nc, on=block_keys, how="inner")
 
     # Resolve NC metric column names (may have _nc suffix from join)
     for m in NC_METRICS:
@@ -183,7 +195,7 @@ def build_rank_matrix(merged: pd.DataFrame, score_col: str,
             models_df[m] = models_df[m + "_nc"]
 
     # Align models_df rows with rank_matrix rows
-    models_df = models_df.set_index(model_keys).loc[pivot.index].reset_index()
+    models_df = models_df.set_index(block_keys).loc[pivot.index].reset_index()
 
     return models_df, rank_matrix, pivot.columns.tolist()
 
@@ -480,8 +492,11 @@ def _run_ood_group(merged: pd.DataFrame, ood_cols: list[str],
         # Compute mean score across OOD sets in this group
         group_merged = merged.copy()
         group_merged["group_mean_score"] = group_merged[cols].mean(axis=1)
+        n_nan = group_merged["group_mean_score"].isna().sum()
 
         logger.info(f"\n--- OOD group: {group_label} ({len(cols)} OOD sets) ---")
+        logger.info(f"  group_mean_score: {len(group_merged)} rows, "
+                    f"{n_nan} NaN ({n_nan/len(group_merged):.1%})")
         _run_mantel(group_merged, "group_mean_score", ascending, args,
                     file_prefix, label=f"group_{group_label}")
 
