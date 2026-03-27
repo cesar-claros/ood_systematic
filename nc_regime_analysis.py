@@ -1,8 +1,14 @@
 """
 Approach 4: Stratified Analysis by Neural Collapse Regime.
 
-For each NC metric, split models into terciles (low/mid/high collapse),
-rank OOD detection methods within each tercile, run Friedman + Conover
+For each NC metric, split models into terciles by metric value, then
+label bins by degree of neural collapse (high_NC / mid_NC / low_NC).
+All 13 NC metrics decrease as collapse increases, so:
+  - lowest metric values  → high_NC (most collapsed)
+  - middle metric values  → mid_NC
+  - highest metric values → low_NC  (least collapsed)
+
+Within each tercile, rank OOD detection methods, run Friedman + Conover
 post-hoc tests, and extract top cliques to see if the best method shifts
 across NC regimes.
 
@@ -177,7 +183,9 @@ def bin_nc_metric(df: pd.DataFrame, nc_metric: str, n_bins: int) -> pd.DataFrame
     """Bin at block level (dataset, architecture, study, run), averaging NC metrics
     across dropout/reward since different methods selected different hyperparameters."""
     col = nc_metric if nc_metric in df.columns else nc_metric + "_nc"
-    labels = ["low", "mid", "high"] if n_bins == 3 else [f"bin{i}" for i in range(n_bins)]
+    # All NC metrics decrease as collapse increases, so lowest values = most collapsed.
+    # Label bins by degree of neural collapse (not raw metric value).
+    labels = ["high_NC", "mid_NC", "low_NC"] if n_bins == 3 else [f"bin{i}" for i in range(n_bins)]
     df = df.copy()
     # Average NC metric across dropout/reward per block, then bin
     block_nc = df.groupby(BLOCK_KEYS, as_index=False)[col].mean()
@@ -452,7 +460,7 @@ def run_per_ood_pipeline(merged: pd.DataFrame, ood_cols: list[str],
             sns.heatmap(hm, annot=True, fmt=".1f", cmap="RdYlGn_r",
                         linewidths=0.3, ax=ax, cbar=bl == bin_labels[-1],
                         xticklabels=col_labels)
-            ax.set_title(f"{bl} collapse")
+            ax.set_title(f"{bl}")
             ax.set_xlabel("OOD set (FID)")
             if bl != bin_labels[0]:
                 ax.set_ylabel("")
@@ -552,7 +560,7 @@ def main():
     if args.per_ood:
         study_tag = f"_{args.study}" if args.study else ""
         file_prefix = f"{args.score_metric}_{args.backbone}_MCD-{args.mcd}{study_tag}"
-        bin_labels = (["low", "mid", "high"] if args.n_bins == 3
+        bin_labels = (["high_NC", "mid_NC", "low_NC"] if args.n_bins == 3
                       else [f"bin{i}" for i in range(args.n_bins)])
         run_per_ood_pipeline(merged, ood_cols, args, bin_labels,
                              file_prefix, datasets)
@@ -564,7 +572,7 @@ def main():
     summary_rows = []
     all_rank_data = []
 
-    bin_labels = ["low", "mid", "high"] if args.n_bins == 3 else [f"bin{i}" for i in range(args.n_bins)]
+    bin_labels = ["high_NC", "mid_NC", "low_NC"] if args.n_bins == 3 else [f"bin{i}" for i in range(args.n_bins)]
 
     for nc_metric in NC_METRICS:
         logger.info(f"Analysing NC metric: {nc_metric}")
@@ -646,7 +654,7 @@ def main():
         sns.heatmap(heatmap_data, annot=True, fmt=".1f", cmap="RdYlGn_r",
                     linewidths=0.5, ax=ax)
         ax.set_title(f"Mean rank by {nc_metric} regime\n({args.score_metric}, {args.backbone}, study={args.study or 'all'})")
-        ax.set_xlabel("NC regime (collapse level)")
+        ax.set_xlabel("NC regime")
         ax.set_ylabel("")
         fig_path = os.path.join(args.output_dir, f"heatmap_{nc_metric}_{file_prefix}")
         fig.savefig(fig_path + ".pdf", bbox_inches="tight")
