@@ -1,0 +1,40 @@
+nc_metric,bin,n_models,n_methods_input,n_methods_used,n_blocks_used,friedman_stat,friedman_p,significant,top_clique,top_clique_size
+var_collapse,low,7,22,22,7,93.08469791078494,4.714901024011302e-11,True,"KPCA RecError global, NNGuide, ViM, fDBD",4
+var_collapse,mid,6,22,22,6,67.88142292490113,7.64986110271087e-07,True,"CTMmean, CTMmeanOC, KPCA RecError global, PCA RecError global, ViM, pNML",6
+var_collapse,high,7,22,22,7,90.59796725014121,1.2723832056540623e-10,True,"Energy, GE, GradNorm, MLS, MSR, PCE, PE",7
+cdnv_score,low,7,22,22,7,97.197628458498,9.001949063593907e-12,True,"CTMmeanOC, KPCA RecError global, NeCo, ViM, pNML",5
+cdnv_score,mid,6,22,22,6,51.38339920948613,0.00023346450803468405,True,"CTMmean, CTMmeanOC, GE, GradNorm, KPCA RecError global, NNGuide, PE, ViM, fDBD",9
+cdnv_score,high,7,22,22,7,94.73800112930553,2.4281541501290993e-11,True,"Energy, GE, GradNorm, MLS, MSR, PCE, PE",7
+bias_collapse,low,7,22,22,7,93.48447204968943,4.016954736870308e-11,True,"CTMmean, CTMmeanOC, KPCA RecError global, pNML",4
+bias_collapse,mid,6,22,22,6,67.92094861660075,7.540210434375387e-07,True,"KPCA RecError global, NNGuide, NeCo, ViM, fDBD",5
+bias_collapse,high,7,22,22,7,106.1010728402033,2.367546286193192e-13,True,"Energy, GE, MLS, PCE, PE",5
+equiangular_uc,low,7,22,22,7,95.02936194240544,2.159549569114308e-11,True,"KPCA RecError global, NeCo, ViM, pNML",4
+equiangular_uc,mid,6,22,22,6,82.12648221343869,3.551221331371883e-09,True,"CTM, Energy, GE, GradNorm, MLS, NNGuide, NeCo, PCE, PE, fDBD",10
+equiangular_uc,high,7,22,22,7,77.54093732354602,2.071477525656073e-08,True,"CTMmean, CTMmeanOC, GE, GradNorm, KPCA RecError global, MLS, MSR, PCE, PE",9
+equiangular_wc,low,7,22,22,7,96.73009599096554,1.0875451548628173e-11,True,"Energy, GE, GradNorm, MLS, MSR, PCE, PE",7
+equiangular_wc,mid,6,22,22,6,57.05928853754938,3.5214200118441104e-05,True,"KPCA RecError global, ViM",2
+equiangular_wc,high,7,22,22,7,90.62507058159235,1.2587350412958255e-10,True,"CTMmeanOC, KPCA RecError global, NNGuide, NeCo, ViM, pNML",6
+equinorm_uc,low,7,22,22,7,85.38057594579334,9.987973578268453e-10,True,"KPCA RecError global, NNGuide, NeCo, ViM",4
+equinorm_uc,mid,6,22,22,6,52.616600790513814,0.0001560312129929066,True,"CTMmean, CTMmeanOC, GE, GradNorm, KPCA RecError global, NNGuide, PCA RecError global, PE, ViM, fDBD, pNML",11
+equinorm_uc,high,7,22,22,7,96.73009599096554,1.0875451548628173e-11,True,"Energy, GE, GradNorm, MLS, MSR, PCE, PE",7
+equinorm_wc,low,7,22,22,7,88.76171654432528,2.6370029869051397e-10,True,"Energy, GE, GradNorm, MLS, PCE, PE",6
+equinorm_wc,mid,6,22,22,6,65.90513833992094,1.5685256373011116e-06,True,"CTM, CTMmeanOC, GE, GradNorm, KPCA RecError global, NNGuide, PE, ViM, fDBD",9
+equinorm_wc,high,7,22,22,7,97.97684923771885,6.565754409260081e-12,True,"CTMmean, CTMmeanOC, KPCA RecError global, PCA RecError global, ViM, pNML",6
+max_equiangular_uc,low,7,22,22,7,95.02936194240544,2.159549569114308e-11,True,"KPCA RecError global, NeCo, ViM, pNML",4
+max_equiangular_uc,mid,6,22,22,6,82.12648221343869,3.551221331371883e-09,True,"CTM, Energy, GE, GradNorm, MLS, NNGuide, NeCo, PCE, PE, fDBD",10
+max_equiangular_uc,high,7,22,22,7,77.54093732354602,2.071477525656073e-08,True,"CTMmean, CTMmeanOC, GE, GradNorm, KPCA RecError global, MLS, MSR, PCE, PE",9
+max_equiangular_wc,low,7,22,22,7,106.24336533032192,2.2325906856613648e-13,True,"Energy, GE, MLS, PE",4
+max_equiangular_wc,mid,6,22,22,6,69.2490118577075,4.634173088155836e-07,True,"CTMmean, CTMmeanOC, GradNorm, KPCA RecError global, NNGuide, PCE, PE, ViM, fDBD",9
+max_equiangular_wc,high,7,22,22,7,113.37154150197637,1.1567784797163702e-14,True,"KPCA RecError global, PCA RecError global, ViM, pNML",4
+self_duality,low,7,22,22,7,100.97854319593455,1.936674827685699e-12,True,"KPCA RecError global, NeCo, ViM, pNML",4
+self_duality,mid,6,22,22,6,61.73913043478257,6.942112528859634e-06,True,"CTMmean, CTMmeanOC, GE, GradNorm, KPCA RecError global, PE, ViM, fDBD",8
+self_duality,high,7,22,22,7,89.02597402597405,2.3750053740792774e-10,True,"Energy, GE, GradNorm, MLS, MSR, PCE, PE",7
+w_etf_diff,low,7,22,22,7,85.48221343873524,9.59793733580526e-10,True,"CTMmean, CTMmeanOC, KPCA RecError global, pNML",4
+w_etf_diff,mid,6,22,22,6,79.09090909090907,1.1450535159604647e-08,True,"KPCA RecError global, NNGuide, NeCo, ViM, fDBD",5
+w_etf_diff,high,7,22,22,7,111.72501411631845,2.2996342976987626e-14,True,"Energy, GE, MLS, PE",4
+M_etf_diff,low,7,22,22,7,90.31338226990408,1.424868297318723e-10,True,"CTMmean, CTMmeanOC, KPCA RecError global, PCA RecError global, ViM, pNML",6
+M_etf_diff,mid,6,22,22,6,57.05928853754938,3.5214200118441104e-05,True,"KPCA RecError global, ViM",2
+M_etf_diff,high,7,22,22,7,106.52795031055905,1.9852226528156817e-13,True,"CTM, Energy, GE, GradNorm, MLS, PCE, PE",7
+wM_etf_diff,low,7,22,22,7,94.08752117447773,3.153618037862829e-11,True,"CTMmean, CTMmeanOC, KPCA RecError global, PCA RecError global, ViM, pNML",6
+wM_etf_diff,mid,6,22,22,6,56.766798418972314,3.890506938960213e-05,True,"CTMmeanOC, KPCA RecError global, ViM",3
+wM_etf_diff,high,7,22,22,7,106.52795031055905,1.9852226528156817e-13,True,"CTM, Energy, GE, GradNorm, MLS, PCE, PE",7

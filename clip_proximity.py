@@ -16,11 +16,11 @@ from src.clip_utils import (
 )
 
 # ---------- Runner (example) ----------
-def run(iid_dataset:str, output_dir:str):
+def run(iid_dataset:str, output_dir:str, model_name:str = "ViT-B-32", pretrained:str = None):
     ti_condition = 'tinyimagenet' if (iid_dataset=='cifar10' or iid_dataset=='cifar100' or iid_dataset=='supercifar100') else 'cifar10'
     c100_condition = 'cifar100' if (iid_dataset=='cifar10' or iid_dataset=='tinyimagenet') else 'cifar10'
-    logger.info('Loading CLIP model...')
-    model, preprocess, tokenizer, device, backend = load_clip(model_name="ViT-B-32")
+    logger.info(f'Loading CLIP model: {model_name}...')
+    model, preprocess, tokenizer, device, backend = load_clip(model_name=model_name, pretrained=pretrained)
     logger.info(f'Loading {iid_dataset} data set...')
     # 1) Load ID = SuperCIFAR (CIFAR100 train as ID features)
     # id_loader, classes = make_loader(iid_dataset, split="train", preprocess=preprocess, batch_size=256) # Duplicate line removed
@@ -100,7 +100,8 @@ def run(iid_dataset:str, output_dir:str):
 
     # Optional: save results
     os.makedirs(output_dir, exist_ok=True)
-    path = os.path.join(output_dir, f"clip_proximity_{iid_dataset}.json")
+    model_tag = model_name.replace("/", "-")
+    path = os.path.join(output_dir, f"clip_proximity_{iid_dataset}_{model_tag}.json")
     with open(path, "w") as f:
         json.dump(results, f, indent=2)
     logger.success(f"Saved results to: {path}")
@@ -108,16 +109,23 @@ def run(iid_dataset:str, output_dir:str):
 if __name__ == "__main__":
     # Create the parser
     parser = argparse.ArgumentParser(description="Uncertainty evaluation")
-    parser.add_argument('--iid_dataset', 
-                        type=str, 
-                        required=True, 
-                        help="IID data set name", 
+    parser.add_argument('--iid_dataset',
+                        type=str,
+                        required=True,
+                        help="IID data set name",
                         choices=['cifar10','cifar100','supercifar100','tinyimagenet'])
     parser.add_argument('--output_dir',
                         type=str,
                         default='.',
                         help="Directory to save the results")
+    parser.add_argument('--model_name',
+                        type=str,
+                        default='ViT-B-32',
+                        help="CLIP model name (e.g., ViT-B-32, ViT-B-16, ViT-L-14)")
+    parser.add_argument('--pretrained',
+                        type=str,
+                        default=None,
+                        help="Pretrained weights tag (default: laion2b_s34b_b79k)")
     args = parser.parse_args()
-    iid_dataset = args.iid_dataset
-    output_dir = args.output_dir
-    run(iid_dataset, output_dir)
+    run(args.iid_dataset, args.output_dir,
+        model_name=args.model_name, pretrained=args.pretrained)

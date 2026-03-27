@@ -1,0 +1,40 @@
+nc_metric,bin,n_models,n_methods_input,n_methods_used,n_blocks_used,friedman_stat,friedman_p,significant,top_clique,top_clique_size
+var_collapse,low,14,22,22,7,139.37041219649916,1.7953660205085259e-19,True,"CTM, CTMmean, CTMmeanOC, fDBD",4
+var_collapse,mid,12,22,22,6,50.411067193675876,0.0003196986933523754,True,"CTMmean, CTMmeanOC, Energy, GradNorm, MLS, NNGuide, NeCo, PE, fDBD",9
+var_collapse,high,14,22,22,7,68.77978543195934,5.505912939786527e-07,True,"CTM, CTMmean, Energy, GE, KPCA RecError global, MLS, NNGuide, NeCo, ViM",9
+cdnv_score,low,14,22,22,7,74.64088085827223,6.220409863986653e-08,True,"Energy, GE, MLS, NNGuide, NeCo",5
+cdnv_score,mid,12,22,22,6,63.494071146245005,3.7266657486487384e-06,True,"CTM, CTMmean, CTMmeanOC, Energy, GE, KPCA RecError global, NNGuide, NeCo, PE, REN, ViM, fDBD, pNML",13
+cdnv_score,high,14,22,22,7,130.13495200451723,9.581576746867604e-18,True,"CTM, CTMmean, CTMmeanOC, fDBD",4
+bias_collapse,low,14,22,22,7,74.64088085827223,6.220409863986653e-08,True,"Energy, GE, MLS, NNGuide, NeCo",5
+bias_collapse,mid,12,22,22,6,67.84189723320156,7.761083390798044e-07,True,"CTM, CTMmean, CTMmeanOC, Energy, GE, KPCA RecError global, REN, fDBD",8
+bias_collapse,high,14,22,22,7,122.87803500846985,2.1122538400745955e-16,True,"CTM, CTMmean, CTMmeanOC, NNGuide, fDBD",5
+equiangular_uc,low,14,22,22,7,79.73630717108983,8.936851288342037e-09,True,"Confidence, Energy, GE, MLS, NNGuide, NeCo",6
+equiangular_uc,mid,12,22,22,6,112.10276679841888,1.9645884005540066e-14,True,"CTM, CTMmean, CTMmeanOC, NNGuide, fDBD",5
+equiangular_uc,high,14,22,22,7,79.69565217391312,9.077631885997068e-09,True,"CTM, CTMmean, CTMmeanOC, Energy, KPCA RecError global, ViM, fDBD",7
+equiangular_wc,low,14,22,22,7,139.37041219649916,1.7953660205085259e-19,True,"CTM, CTMmean, CTMmeanOC, fDBD",4
+equiangular_wc,mid,12,22,22,6,80.07905138339919,7.832816005539427e-09,True,"CTM, CTMmean, CTMmeanOC, NNGuide, REN, ViM, fDBD",7
+equiangular_wc,high,14,22,22,7,89.92715979672505,1.661214401339384e-10,True,"Energy, GE, MLS, NeCo",4
+equinorm_uc,low,14,22,22,7,79.72953133822705,8.960163615678439e-09,True,"Confidence, Energy, GE, MLS, NNGuide, NeCo",6
+equinorm_uc,mid,12,22,22,6,79.47035573122525,9.898546220417141e-09,True,"CTM, CTMmean, CTMmeanOC, KPCA RecError global, fDBD",5
+equinorm_uc,high,14,22,22,7,96.78430265386794,1.0639761084323263e-11,True,"CTM, CTMmean, CTMmeanOC, NNGuide, ViM, fDBD",6
+equinorm_wc,low,14,22,22,7,72.83173348390744,1.2269408268940388e-07,True,"CTM, CTMmean, CTMmeanOC, Energy, KPCA RecError global, MLS, NNGuide, NeCo, fDBD",9
+equinorm_wc,mid,12,22,22,6,58.52964426877469,2.12644316692781e-05,True,"CTM, CTMmean, CTMmeanOC, Energy, GE, GradNorm, KPCA RecError global, MLS, NNGuide, NeCo, PE",11
+equinorm_wc,high,14,22,22,7,105.07792207792215,3.6088578054390363e-13,True,"CTM, CTMmean, CTMmeanOC, NNGuide, fDBD",5
+max_equiangular_uc,low,14,22,22,7,79.73630717108983,8.936851288342037e-09,True,"Confidence, Energy, GE, MLS, NNGuide, NeCo",6
+max_equiangular_uc,mid,12,22,22,6,112.10276679841888,1.9645884005540066e-14,True,"CTM, CTMmean, CTMmeanOC, NNGuide, fDBD",5
+max_equiangular_uc,high,14,22,22,7,79.69565217391312,9.077631885997068e-09,True,"CTM, CTMmean, CTMmeanOC, Energy, KPCA RecError global, ViM, fDBD",7
+max_equiangular_wc,low,14,22,22,7,139.37041219649916,1.7953660205085259e-19,True,"CTM, CTMmean, CTMmeanOC, fDBD",4
+max_equiangular_wc,mid,12,22,22,6,80.07905138339919,7.832816005539427e-09,True,"CTM, CTMmean, CTMmeanOC, NNGuide, REN, ViM, fDBD",7
+max_equiangular_wc,high,14,22,22,7,89.92715979672505,1.661214401339384e-10,True,"Energy, GE, MLS, NeCo",4
+self_duality,low,14,22,22,7,84.37097684923776,1.4825821382410847e-09,True,"CTM, CTMmean, CTMmeanOC, NNGuide, fDBD",5
+self_duality,mid,12,22,22,6,69.37549407114619,4.423482028004771e-07,True,"Energy, GE, MLS, NNGuide, NeCo",5
+self_duality,high,14,22,22,7,102.97741389045746,8.551370931121185e-13,True,"CTM, CTMmean, CTMmeanOC, NNGuide, fDBD",5
+w_etf_diff,low,14,22,22,7,74.64088085827223,6.220409863986653e-08,True,"Energy, GE, MLS, NNGuide, NeCo",5
+w_etf_diff,mid,12,22,22,6,65.81818181818181,1.618586720227894e-06,True,"CTM, CTMmean, CTMmeanOC, Energy, GE, KPCA RecError global, NNGuide, NeCo, PE, REN, ViM, fDBD",12
+w_etf_diff,high,14,22,22,7,125.71033314511578,6.339104379989033e-17,True,"CTM, CTMmean, CTMmeanOC, fDBD",4
+M_etf_diff,low,14,22,22,7,74.64088085827223,6.220409863986653e-08,True,"Energy, GE, MLS, NNGuide, NeCo",5
+M_etf_diff,mid,12,22,22,6,65.81818181818181,1.618586720227894e-06,True,"CTM, CTMmean, CTMmeanOC, Energy, GE, KPCA RecError global, NNGuide, NeCo, PE, REN, ViM, fDBD",12
+M_etf_diff,high,14,22,22,7,125.71033314511578,6.339104379989033e-17,True,"CTM, CTMmean, CTMmeanOC, fDBD",4
+wM_etf_diff,low,14,22,22,7,74.64088085827223,6.220409863986653e-08,True,"Energy, GE, MLS, NNGuide, NeCo",5
+wM_etf_diff,mid,12,22,22,6,65.81818181818181,1.618586720227894e-06,True,"CTM, CTMmean, CTMmeanOC, Energy, GE, KPCA RecError global, NNGuide, NeCo, PE, REN, ViM, fDBD",12
+wM_etf_diff,high,14,22,22,7,125.71033314511578,6.339104379989033e-17,True,"CTM, CTMmean, CTMmeanOC, fDBD",4
