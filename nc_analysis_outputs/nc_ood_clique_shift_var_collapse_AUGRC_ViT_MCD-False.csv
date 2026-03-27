@@ -1,0 +1,10 @@
+ood_set,avg_clip_fid,low,mid,high
+cifar100,0.19080717366812822,"PCA RecError global, ViM, pNML","PCA RecError global, ViM, pNML","GE, PE"
+cifar10,0.2171741844853313,NeCo,"CTMmeanOC, Energy, GE, MLS, NNGuide, PCE, PE, fDBD","Energy, GE, MLS, NNGuide, NeCo, PE"
+tinyimagenet,0.25916467614357813,"Maha, Residual, ViM, pNML","Maha, PCA RecError global, Residual, ViM, pNML","Maha, PCA RecError global, Residual, ViM, pNML"
+isun,0.40957509267432773,"CTMmeanOC, KPCA RecError global, Maha, ViM, fDBD","CTMmean, CTMmeanOC, KPCA RecError global, Maha, PCA RecError global, Residual, ViM, pNML","GE, GEN, GradNorm, KPCA RecError global, MSR, PCE, PE, REN"
+lsun resize,0.44339047660145725,"CTMmeanOC, KPCA RecError global, Maha, ViM, fDBD","CTMmean, CTMmeanOC, KPCA RecError global, Maha, PCA RecError global, Residual, ViM, pNML","GE, GEN, GradNorm, KPCA RecError global, MLS, MSR, PCE, PE, REN"
+lsun cropped,0.452894850417105,KPCA RecError global,"CTMmean, CTMmeanOC, Energy, KPCA RecError global, MLS, NNGuide","GE, GradNorm, KPCA RecError global"
+places365,0.5321273594354652,"Maha, Residual, ViM, pNML","PCA RecError global, Residual, pNML","Maha, Residual, pNML"
+textures,0.5468303877588535,"Maha, Residual, ViM","PCA RecError global, Residual, ViM, pNML","Residual, ViM, pNML"
+svhn,0.6846676149471842,"CTMmeanOC, KPCA RecError global","CTMmean, CTMmeanOC, KPCA RecError global, NNGuide","Energy, GE, GradNorm, KPCA RecError global, MLS"

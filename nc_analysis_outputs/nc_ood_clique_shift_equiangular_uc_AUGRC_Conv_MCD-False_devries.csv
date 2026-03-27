@@ -1,0 +1,10 @@
+ood_set,avg_clip_fid,low,mid,high
+cifar100,0.19080717366812822,"Energy, GE, MLS, NNGuide, NeCo","CTM, fDBD",
+cifar10,0.2171741844853313,"CTM, CTMmeanOC","CTM, CTMmeanOC, GEN, MSR, NNGuide, PCE, PE, REN, fDBD","Confidence, GEN, GradNorm, MLS, MSR, NeCo, PE, REN"
+tinyimagenet,0.25916467614357813,"Confidence, Energy, MLS, NeCo","CTM, CTMmean, CTMmeanOC, NNGuide, ViM, fDBD","CTM, Energy, GE, GradNorm, MLS, NeCo, PE, REN, pNML"
+isun,0.40957509267432773,"Confidence, Energy, GE, GradNorm, MLS, NNGuide, NeCo, PE, fDBD","CTM, CTMmean, CTMmeanOC, NNGuide, fDBD","CTM, Energy, GE, GradNorm, MLS, NNGuide, NeCo, PE, ViM, fDBD, pNML"
+lsun resize,0.44339047660145725,"Confidence, Energy, GE, GradNorm, KPCA RecError global, MLS, NNGuide, NeCo, fDBD","CTM, CTMmean, CTMmeanOC, NNGuide, fDBD","CTM, Energy, GE, GradNorm, MLS, NNGuide, NeCo, PE, ViM, pNML"
+lsun cropped,0.452894850417105,"CTM, Confidence, Energy, MLS, NNGuide, NeCo","CTM, CTMmean, CTMmeanOC, Confidence, GEN, KPCA RecError global, NNGuide, REN, fDBD","CTMmean, Confidence, Energy, GE, GradNorm, KPCA RecError global, fDBD"
+places365,0.5321273594354652,"Energy, GE, MLS, NNGuide, NeCo","CTM, CTMmeanOC, GEN, NNGuide, REN, fDBD","CTMmean, CTMmeanOC, KPCA RecError global, NNGuide, fDBD"
+textures,0.5468303877588535,"Energy, MLS, NNGuide, NeCo","CTMmean, CTMmeanOC","CTM, CTMmean, ViM"
+svhn,0.6846676149471842,"CTMmeanOC, Confidence, Energy, GE, MLS, NNGuide, NeCo, PCE, PE, REN","CTM, CTMmean, CTMmeanOC, KPCA RecError global, fDBD","CTM, CTMmean, CTMmeanOC, KPCA RecError global, ViM, fDBD"
