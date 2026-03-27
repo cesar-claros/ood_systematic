@@ -221,8 +221,14 @@ def load_clip(model_name: str = "ViT-B-32", pretrained: Optional[str] = None, de
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     preprocess = None        
     if pretrained is None:
-        # strong general model; change if you like "laion2b_s34b_b79k" or "openai"
-        pretrained = "laion2b_s34b_b79k"
+        available = open_clip.list_pretrained_tags_by_model(model_name)
+        # Prefer laion2b weights, then openai, then first available
+        for candidate in ["laion2b_s34b_b79k", "laion2b_s34b_b88k", "openai"]:
+            if candidate in available:
+                pretrained = candidate
+                break
+        if pretrained is None:
+            pretrained = available[0] if available else "openai"
     model, _, preprocess = open_clip.create_model_and_transforms(model_name, pretrained=pretrained, device=device)
     tokenizer = open_clip.get_tokenizer(model_name)
     model.eval()
