@@ -1,0 +1,7 @@
+feature_set,n_features,kfold_accuracy,kfold_balanced_accuracy,baseline
+PCA-2,2,0.45,0.5095238095238096,0.35
+PCA-3,3,0.45,0.5095238095238096,0.35
+"Top-2 RF (cdnv_score, equiangular_wc)",2,0.5,0.4809523809523809,0.35
+"Top-3 RF (cdnv_score, equiangular_wc, max_equiangular_wc)",3,0.75,0.6,0.35
+All 13 (tree),13,0.7,0.6428571428571428,0.35
+All 13 (RF),13,0.6,0.5428571428571429,0.35

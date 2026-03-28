@@ -1,0 +1,5 @@
+leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
+2,Energy,4,1.0,{'Energy': 4}
+4,CTM,5,1.0,{'CTM': 5}
+5,pNML,5,0.4,"{'pNML': 2, 'CTM': 2, 'Energy': 1}"
+6,CTMmean,3,1.0,{'CTMmean': 3}

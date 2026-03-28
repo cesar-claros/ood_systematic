@@ -1,0 +1,17 @@
+dataset,architecture,study,run,best_method,predicted_method,correct
+cifar10,ViT,vit,0,KPCA RecError global,KPCA RecError global,True
+cifar10,ViT,vit,1,KPCA RecError global,KPCA RecError global,True
+cifar10,ViT,vit,2,PCA RecError class pred,KPCA RecError global,False
+cifar10,ViT,vit,3,KPCA RecError global,KPCA RecError global,True
+cifar10,ViT,vit,4,PCA RecError class pred,KPCA RecError global,False
+cifar100,ViT,vit,0,KPCA RecError global,KPCA RecError global,True
+cifar100,ViT,vit,1,KPCA RecError global,KPCA RecError global,True
+cifar100,ViT,vit,2,KPCA RecError global,KPCA RecError global,True
+cifar100,ViT,vit,4,KPCA RecError global,KPCA RecError global,True
+supercifar100,ViT,vit,0,KPCA RecError global,KPCA RecError global,True
+supercifar100,ViT,vit,4,KPCA RecError global,KPCA RecError global,True
+tinyimagenet,ViT,vit,0,GradNorm,KPCA RecError global,False
+tinyimagenet,ViT,vit,1,REN class pred,KPCA RecError global,False
+tinyimagenet,ViT,vit,2,KPCA RecError global,KPCA RecError global,True
+tinyimagenet,ViT,vit,3,GradNorm,KPCA RecError global,False
+tinyimagenet,ViT,vit,4,REN class pred,KPCA RecError global,False

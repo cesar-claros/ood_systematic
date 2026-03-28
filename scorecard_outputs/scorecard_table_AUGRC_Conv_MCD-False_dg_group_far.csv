@@ -1,0 +1,5 @@
+leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
+1,Maha,10,1.0,{'Maha': 10}
+4,CTMmean,4,0.75,"{'CTMmean': 3, 'CTM': 1}"
+5,CTM,3,1.0,{'CTM': 3}
+6,CTMmeanOC,2,1.0,{'CTMmeanOC': 2}

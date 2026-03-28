@@ -1,0 +1,6 @@
+leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
+2,CTM,8,1.0,{'CTM': 8}
+4,ViM,5,0.8,"{'ViM': 4, 'CTM': 1}"
+5,CTM,1,1.0,{'CTM': 1}
+7,CTMmeanOC,1,1.0,{'CTMmeanOC': 1}
+8,CTMmeanOC,2,1.0,{'CTMmeanOC': 2}

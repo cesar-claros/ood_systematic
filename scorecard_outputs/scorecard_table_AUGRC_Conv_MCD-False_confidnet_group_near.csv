@@ -1,0 +1,6 @@
+leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
+2,CTM,5,1.0,{'CTM': 5}
+4,NNGuide,7,0.2857142857142857,"{'NNGuide': 2, 'Energy': 3, 'CTM': 2}"
+5,NeCo,5,0.4,"{'Energy': 3, 'NeCo': 2}"
+7,NeCo,1,1.0,{'NeCo': 1}
+8,fDBD,2,1.0,{'fDBD': 2}

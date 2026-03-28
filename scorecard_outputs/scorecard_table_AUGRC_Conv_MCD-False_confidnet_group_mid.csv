@@ -1,0 +1,7 @@
+leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
+3,CTM,8,1.0,{'CTM': 8}
+4,Energy,3,0.6666666666666666,"{'Energy': 2, 'CTM': 1}"
+5,Energy,4,1.0,{'Energy': 4}
+7,Energy,1,1.0,{'Energy': 1}
+9,NNGuide,2,1.0,{'NNGuide': 2}
+10,Energy,1,1.0,{'Energy': 1}

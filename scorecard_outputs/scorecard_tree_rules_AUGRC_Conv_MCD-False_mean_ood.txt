@@ -1,0 +1,36 @@
+# NC Scorecard: mean_ood
+# 55 models, 6 classes
+# PCA variance explained: [0.53436808 0.35621827 0.0716408 ]
+
+## PCA Component Interpretation
+
+PC1 (53.4% var):
+  High: equinorm_uc(0.36), bias_collapse(0.36), equiangular_uc(0.32)
+  Low:  var_collapse(-0.11), max_equiangular_wc(0.16), equiangular_wc(0.17)
+
+PC2 (35.6% var):
+  High: var_collapse(0.42), equiangular_wc(0.36), max_equiangular_wc(0.36)
+  Low:  cdnv_score(-0.31), w_etf_diff(-0.30), M_etf_diff(-0.30)
+
+PC3 (7.2% var):
+  High: self_duality(0.48), equinorm_wc(0.44), var_collapse(0.17)
+  Low:  max_equiangular_wc(-0.45), equiangular_wc(-0.44), w_etf_diff(-0.28)
+
+## Decision Rules
+
+|--- PC3 <= 1.64
+|   |--- PC1 <= 1.15
+|   |   |--- PC2 <= 1.13
+|   |   |   |--- class: ViM
+|   |   |--- PC2 >  1.13
+|   |   |   |--- class: NNGuide
+|   |--- PC1 >  1.15
+|   |   |--- PC3 <= -0.42
+|   |   |   |--- class: Energy
+|   |   |--- PC3 >  -0.42
+|   |   |   |--- class: fDBD
+|--- PC3 >  1.64
+|   |--- PC3 <= 1.87
+|   |   |--- class: CTMmeanOC
+|   |--- PC3 >  1.87
+|   |   |--- class: NNGuide

@@ -1,0 +1,7 @@
+feature_set,n_features,kfold_accuracy,kfold_balanced_accuracy,baseline
+PCA-2,2,0.6875,0.6825396825396824,0.4375
+PCA-3,3,0.6875,0.6825396825396824,0.4375
+"Top-2 RF (var_collapse, bias_collapse)",2,0.6875,0.6825396825396824,0.4375
+"Top-3 RF (var_collapse, bias_collapse, equiangular_wc)",3,0.6875,0.6825396825396824,0.4375
+All 13 (tree),13,0.625,0.5714285714285714,0.4375
+All 13 (RF),13,0.6875,0.6825396825396824,0.4375

@@ -1,0 +1,5 @@
+leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
+1,Residual,10,1.0,{'Residual': 10}
+4,Residual,1,1.0,{'Residual': 1}
+5,pNML,6,1.0,{'pNML': 6}
+6,Residual,2,1.0,{'Residual': 2}

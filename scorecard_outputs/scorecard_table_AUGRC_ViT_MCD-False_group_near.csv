@@ -1,0 +1,6 @@
+leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
+3,ViM,6,1.0,{'ViM': 6}
+4,PCA RecError global,4,0.5,"{'ViM': 2, 'PCA RecError global': 2}"
+6,PCA RecError global,1,1.0,{'PCA RecError global': 1}
+7,pNML,4,1.0,{'pNML': 4}
+8,PE,3,1.0,{'PE': 3}

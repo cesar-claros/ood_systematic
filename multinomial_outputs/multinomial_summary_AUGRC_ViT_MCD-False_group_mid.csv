@@ -1,0 +1,2 @@
+lodo_accuracy,lodo_balanced_accuracy,lodo_n_samples,lodo_baseline_accuracy,kfold_lr_accuracy,kfold_lr_balanced_accuracy,kfold_rf_accuracy,kfold_rf_balanced_accuracy,kfold_n_folds,kfold_baseline_accuracy,label,n_samples,n_classes,n_features,classes
+0.625,0.25,16,0.625,0.75,0.6,0.625,0.35,2,0.625,group_mid,16,4,13,"GradNorm,KPCA RecError global,PCA RecError class pred,REN class pred"

@@ -1,0 +1,7 @@
+leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
+3,ViM,3,0.6666666666666666,"{'KPCA RecError global': 1, 'ViM': 2}"
+4,KPCA RecError global,5,1.0,{'KPCA RecError global': 5}
+5,CTMmeanOC,2,1.0,{'CTMmeanOC': 2}
+7,pNML,4,1.0,{'pNML': 4}
+9,GE,1,1.0,{'GE': 1}
+10,GE,3,1.0,{'GE': 3}
