@@ -199,48 +199,47 @@ def main():
     loo_rows = []
 
     for dataset in args.datasets:
-        # Use only the first model for LOO analysis
-        model = args.models[0]
-        results = load_proximity_json(args.input_dir, dataset, model)
-        if results is None:
-            continue
+        for model in args.models:
+            results = load_proximity_json(args.input_dir, dataset, model)
+            if results is None:
+                continue
 
-        # Full composite: rank by each metric, average ranks
-        full_ranks = {}
-        for m in all_metrics:
-            d = extract_distances(results, dataset, m)
-            # Higher text_alignment = more similar (closer), so invert
-            if m == "text_alignment_mean":
-                d = -d
-            full_ranks[m] = d.rank()
+            # Full composite: rank by each metric, average ranks
+            full_ranks = {}
+            for m in all_metrics:
+                d = extract_distances(results, dataset, m)
+                # Higher text_alignment = more similar (closer), so invert
+                if m == "text_alignment_mean":
+                    d = -d
+                full_ranks[m] = d.rank()
 
-        full_rank_df = pd.DataFrame(full_ranks)
-        full_composite = full_rank_df.mean(axis=1).sort_values()
-        full_order = tuple(full_composite.index)
+            full_rank_df = pd.DataFrame(full_ranks)
+            full_composite = full_rank_df.mean(axis=1).sort_values()
+            full_order = tuple(full_composite.index)
 
-        for drop_metric in all_metrics:
-            kept = [m for m in all_metrics if m != drop_metric]
-            loo_composite = full_rank_df[kept].mean(axis=1).sort_values()
-            loo_order = tuple(loo_composite.index)
-            # Compute Spearman between full and LOO
-            common = full_composite.index.intersection(loo_composite.index)
-            rho, _ = spearmanr(full_composite[common].values,
-                               loo_composite[common].values)
-            same_order = full_order == loo_order
-            loo_rows.append({
-                "source_dataset": dataset,
-                "model": model,
-                "dropped_metric": drop_metric,
-                "spearman_vs_full": rho,
-                "order_identical": same_order,
-            })
-            logger.info(f"  {dataset} drop {drop_metric}: "
-                        f"rho={rho:.4f}, order={'SAME' if same_order else 'CHANGED'}")
+            for drop_metric in all_metrics:
+                kept = [m for m in all_metrics if m != drop_metric]
+                loo_composite = full_rank_df[kept].mean(axis=1).sort_values()
+                loo_order = tuple(loo_composite.index)
+                # Compute Spearman between full and LOO
+                common = full_composite.index.intersection(loo_composite.index)
+                rho, _ = spearmanr(full_composite[common].values,
+                                   loo_composite[common].values)
+                same_order = full_order == loo_order
+                loo_rows.append({
+                    "source_dataset": dataset,
+                    "model": model,
+                    "dropped_metric": drop_metric,
+                    "spearman_vs_full": rho,
+                    "order_identical": same_order,
+                })
+                logger.info(f"  {dataset}/{model} drop {drop_metric}: "
+                            f"rho={rho:.4f}, order={'SAME' if same_order else 'CHANGED'}")
 
     if loo_rows:
         loo_df = pd.DataFrame(loo_rows)
         loo_path = os.path.join(args.output_dir,
-                                f"leave_one_metric_out_{args.metric}.csv")
+                                "leave_one_metric_out.csv")
         loo_df.to_csv(loo_path, index=False)
         logger.success(f"Saved LOO analysis: {loo_path}")
 
