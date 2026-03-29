@@ -30,7 +30,11 @@ from scipy.stats import spearmanr, kendalltau
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score, silhouette_samples
+from scipy.cluster.hierarchy import linkage, fcluster, dendrogram, inconsistency
 from loguru import logger
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 
 DATASETS = ["cifar10", "cifar100", "supercifar100", "tinyimagenet"]
@@ -315,6 +319,106 @@ def main():
         for k, row in mean_sil.iterrows():
             logger.info(f"  k={k}: mean={row['mean']:.4f} ± {row['std']:.4f} "
                         f"(range {row['min']:.4f}–{row['max']:.4f})")
+
+
+    # ── Hierarchical clustering + dendrogram ────────────────────────────
+    logger.info("\n=== Hierarchical Clustering (Ward linkage) ===")
+    hc_rows = []
+
+    for dataset in args.datasets:
+        for model in args.models:
+            results = load_proximity_json(args.input_dir, dataset, model)
+            if results is None:
+                continue
+
+            # Build feature matrix from all 4 metrics
+            all_series = {}
+            for m in all_metrics:
+                d = extract_distances(results, dataset, m)
+                if m == "text_alignment_mean":
+                    d = -d
+                all_series[m] = d
+
+            feat_df = pd.DataFrame(all_series).dropna()
+            if len(feat_df) < 3:
+                continue
+
+            X = StandardScaler().fit_transform(feat_df.values)
+            labels = list(feat_df.index)
+
+            # Ward linkage
+            Z = linkage(X, method="ward")
+
+            # Record merge distances (for gap analysis)
+            merge_distances = Z[:, 2]
+            gaps = np.diff(merge_distances)
+            # Number of clusters = n - index_of_largest_gap
+            # The largest gap in merge distance suggests the natural cut
+            if len(gaps) > 0:
+                largest_gap_idx = np.argmax(gaps)
+                suggested_k = len(labels) - largest_gap_idx - 1
+            else:
+                suggested_k = 1
+
+            # Also get cluster assignments for k=2,3,4
+            for k in [2, 3, 4]:
+                if k >= len(labels):
+                    continue
+                cluster_labels = fcluster(Z, t=k, criterion="maxclust")
+                # Map clusters to OOD sets
+                cluster_map = {lbl: int(cl) for lbl, cl in zip(labels, cluster_labels)}
+                hc_rows.append({
+                    "source_dataset": dataset,
+                    "model": model,
+                    "k": k,
+                    "cluster_assignments": str(cluster_map),
+                    "suggested_k_gap": suggested_k,
+                })
+
+            logger.info(f"  {dataset}/{model}: suggested k (largest gap) = {suggested_k}")
+            logger.info(f"    Merge distances: {', '.join(f'{d:.3f}' for d in merge_distances)}")
+            logger.info(f"    Gaps:            {', '.join(f'{g:.3f}' for g in gaps)}")
+
+            # Save dendrogram figure
+            fig, ax = plt.subplots(figsize=(8, 5))
+            dendrogram(
+                Z,
+                labels=labels,
+                leaf_rotation=45,
+                leaf_font_size=9,
+                ax=ax,
+            )
+            ax.set_title(f"Hierarchical Clustering: {dataset} / {model}")
+            ax.set_ylabel("Ward distance")
+
+            # Draw horizontal line at the cut for k=3
+            if len(merge_distances) >= 2:
+                # Cut between the 2nd and 3rd last merges gives k=3
+                cut_height = (merge_distances[-2] + merge_distances[-3]) / 2 if len(merge_distances) >= 3 else merge_distances[-1]
+                ax.axhline(y=cut_height, color="red", linestyle="--",
+                           linewidth=1, label=f"k=3 cut")
+                ax.legend(fontsize=9)
+
+            model_tag = model.replace("/", "-")
+            for ext in ["pdf", "jpeg"]:
+                fig_path = os.path.join(args.output_dir,
+                                        f"dendrogram_{dataset}_{model_tag}.{ext}")
+                fig.savefig(fig_path, bbox_inches="tight", dpi=150)
+            plt.close(fig)
+            logger.info(f"    Saved dendrogram: dendrogram_{dataset}_{model_tag}.pdf")
+
+    if hc_rows:
+        hc_df = pd.DataFrame(hc_rows)
+        hc_path = os.path.join(args.output_dir, "hierarchical_clustering.csv")
+        hc_df.to_csv(hc_path, index=False)
+        logger.success(f"Saved hierarchical clustering: {hc_path}")
+
+        # Summary: suggested k counts
+        suggested = hc_df.drop_duplicates(subset=["source_dataset", "model"])
+        k_counts = suggested["suggested_k_gap"].value_counts().sort_index()
+        logger.info("\n=== Suggested k (largest-gap method) frequency ===")
+        for k, count in k_counts.items():
+            logger.info(f"  k={k}: {count}/{len(suggested)} configurations")
 
 
 if __name__ == "__main__":
