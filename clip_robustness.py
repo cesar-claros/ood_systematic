@@ -27,6 +27,9 @@ import itertools
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr, kendalltau
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score, silhouette_samples
 from loguru import logger
 
 
@@ -242,6 +245,76 @@ def main():
                                 "leave_one_metric_out.csv")
         loo_df.to_csv(loo_path, index=False)
         logger.success(f"Saved LOO analysis: {loo_path}")
+
+    # ── Silhouette analysis for k selection ──────────────────────────────
+    logger.info("\n=== Silhouette Analysis (k=2..6) ===")
+    k_range = range(2, 7)
+    sil_rows = []
+
+    for dataset in args.datasets:
+        for model in args.models:
+            results = load_proximity_json(args.input_dir, dataset, model)
+            if results is None:
+                continue
+
+            # Build feature matrix from all 4 metrics
+            all_series = {}
+            for m in all_metrics:
+                d = extract_distances(results, dataset, m)
+                if m == "text_alignment_mean":
+                    d = -d  # invert so higher = farther
+                all_series[m] = d
+
+            feat_df = pd.DataFrame(all_series).dropna()
+            if len(feat_df) < 3:
+                logger.warning(f"  {dataset}/{model}: too few OOD sets ({len(feat_df)}), skipping")
+                continue
+
+            X = StandardScaler().fit_transform(feat_df.values)
+
+            for k in k_range:
+                if k >= len(feat_df):
+                    continue
+                km = KMeans(n_clusters=k, n_init=50, random_state=0).fit(X)
+                sil = silhouette_score(X, km.labels_)
+                sil_samples = silhouette_samples(X, km.labels_)
+                # Per-cluster mean silhouette
+                per_cluster = []
+                for c in range(k):
+                    mask = km.labels_ == c
+                    per_cluster.append(sil_samples[mask].mean())
+                min_cluster_sil = min(per_cluster)
+
+                sil_rows.append({
+                    "source_dataset": dataset,
+                    "model": model,
+                    "k": k,
+                    "silhouette_score": sil,
+                    "min_cluster_silhouette": min_cluster_sil,
+                    "n_ood_sets": len(feat_df),
+                })
+                logger.info(f"  {dataset}/{model} k={k}: "
+                            f"silhouette={sil:.4f}, min_cluster={min_cluster_sil:.4f}")
+
+    if sil_rows:
+        sil_df = pd.DataFrame(sil_rows)
+        sil_path = os.path.join(args.output_dir, "silhouette_analysis.csv")
+        sil_df.to_csv(sil_path, index=False)
+        logger.success(f"Saved silhouette analysis: {sil_path}")
+
+        # Summary: best k per dataset/model
+        logger.info("\n=== Best k per Dataset/Model ===")
+        for (dataset, model), grp in sil_df.groupby(["source_dataset", "model"]):
+            best = grp.loc[grp["silhouette_score"].idxmax()]
+            logger.info(f"  {dataset}/{model}: best k={int(best['k'])} "
+                        f"(silhouette={best['silhouette_score']:.4f})")
+
+        # Summary: mean silhouette per k across all datasets/models
+        logger.info("\n=== Mean Silhouette per k ===")
+        mean_sil = sil_df.groupby("k")["silhouette_score"].agg(["mean", "std", "min", "max"])
+        for k, row in mean_sil.iterrows():
+            logger.info(f"  k={k}: mean={row['mean']:.4f} ± {row['std']:.4f} "
+                        f"(range {row['min']:.4f}–{row['max']:.4f})")
 
 
 if __name__ == "__main__":
