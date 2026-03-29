@@ -30,7 +30,7 @@ from scipy.stats import spearmanr, kendalltau
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score, silhouette_samples
-from scipy.cluster.hierarchy import linkage, fcluster, dendrogram, inconsistency
+from scipy.cluster.hierarchy import linkage, fcluster, dendrogram
 from loguru import logger
 import matplotlib
 matplotlib.use("Agg")
