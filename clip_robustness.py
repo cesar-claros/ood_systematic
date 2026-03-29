@@ -29,7 +29,7 @@ import pandas as pd
 from scipy.stats import spearmanr, kendalltau
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import silhouette_score, silhouette_samples
+from sklearn.metrics import silhouette_score, silhouette_samples, adjusted_rand_score
 from scipy.cluster.hierarchy import linkage, fcluster, dendrogram
 from loguru import logger
 import matplotlib
@@ -254,6 +254,9 @@ def main():
     logger.info("\n=== Silhouette Analysis (k=2..6) ===")
     k_range = range(2, 7)
     sil_rows = []
+    # Store k-means labels for cross-method comparison later
+    # key: (dataset, model, k) -> {ood_set: cluster_id}
+    kmeans_assignments = {}
 
     for dataset in args.datasets:
         for model in args.models:
@@ -275,6 +278,7 @@ def main():
                 continue
 
             X = StandardScaler().fit_transform(feat_df.values)
+            ood_labels = list(feat_df.index)
 
             for k in k_range:
                 if k >= len(feat_df):
@@ -297,6 +301,9 @@ def main():
                     "min_cluster_silhouette": min_cluster_sil,
                     "n_ood_sets": len(feat_df),
                 })
+                kmeans_assignments[(dataset, model, k)] = {
+                    lbl: int(cl) for lbl, cl in zip(ood_labels, km.labels_)
+                }
                 logger.info(f"  {dataset}/{model} k={k}: "
                             f"silhouette={sil:.4f}, min_cluster={min_cluster_sil:.4f}")
 
@@ -321,8 +328,9 @@ def main():
                         f"(range {row['min']:.4f}–{row['max']:.4f})")
 
 
-    # ── Hierarchical clustering + dendrogram ────────────────────────────
-    logger.info("\n=== Hierarchical Clustering (Ward linkage) ===")
+    # ── Hierarchical clustering + dendrogram (Ward & Average) ──────────
+    linkage_methods = ["ward", "average"]
+    logger.info(f"\n=== Hierarchical Clustering ({', '.join(linkage_methods)}) ===")
     hc_rows = []
 
     for dataset in args.datasets:
@@ -346,58 +354,78 @@ def main():
             X = StandardScaler().fit_transform(feat_df.values)
             labels = list(feat_df.index)
 
-            # Ward linkage
-            Z = linkage(X, method="ward")
+            # Run both linkage methods, collect results and linkage matrices
+            linkage_results = {}
+            for method in linkage_methods:
+                Z = linkage(X, method=method)
+                merge_distances = Z[:, 2]
+                gaps = np.diff(merge_distances)
 
-            # Record merge distances (for gap analysis)
-            merge_distances = Z[:, 2]
-            gaps = np.diff(merge_distances)
-            # Number of clusters = n - index_of_largest_gap
-            # The largest gap in merge distance suggests the natural cut
-            if len(gaps) > 0:
-                largest_gap_idx = np.argmax(gaps)
-                suggested_k = len(labels) - largest_gap_idx - 1
-            else:
-                suggested_k = 1
+                if len(gaps) > 0:
+                    largest_gap_idx = np.argmax(gaps)
+                    suggested_k = len(labels) - largest_gap_idx - 1
+                else:
+                    suggested_k = 1
 
-            # Also get cluster assignments for k=2,3,4
+                linkage_results[method] = {
+                    "Z": Z,
+                    "merge_distances": merge_distances,
+                    "gaps": gaps,
+                    "suggested_k": suggested_k,
+                }
+
+                for k in [2, 3, 4]:
+                    if k >= len(labels):
+                        continue
+                    cluster_labels = fcluster(Z, t=k, criterion="maxclust")
+                    cluster_map = {lbl: int(cl) for lbl, cl in zip(labels, cluster_labels)}
+                    hc_rows.append({
+                        "source_dataset": dataset,
+                        "model": model,
+                        "linkage": method,
+                        "k": k,
+                        "cluster_assignments": str(cluster_map),
+                        "suggested_k_gap": suggested_k,
+                    })
+
+                logger.info(f"  {dataset}/{model} ({method}): "
+                            f"suggested k = {suggested_k}")
+
+            # Check if ward and average agree on k=3 cluster assignments
             for k in [2, 3, 4]:
-                if k >= len(labels):
-                    continue
-                cluster_labels = fcluster(Z, t=k, criterion="maxclust")
-                # Map clusters to OOD sets
-                cluster_map = {lbl: int(cl) for lbl, cl in zip(labels, cluster_labels)}
-                hc_rows.append({
-                    "source_dataset": dataset,
-                    "model": model,
-                    "k": k,
-                    "cluster_assignments": str(cluster_map),
-                    "suggested_k_gap": suggested_k,
-                })
+                ward_labels = fcluster(linkage_results["ward"]["Z"],
+                                       t=k, criterion="maxclust")
+                avg_labels = fcluster(linkage_results["average"]["Z"],
+                                      t=k, criterion="maxclust")
+                # Compare via Adjusted Rand Index
+                ari = adjusted_rand_score(ward_labels, avg_labels)
+                logger.info(f"    k={k} Ward vs Average ARI: {ari:.4f}")
 
-            logger.info(f"  {dataset}/{model}: suggested k (largest gap) = {suggested_k}")
-            logger.info(f"    Merge distances: {', '.join(f'{d:.3f}' for d in merge_distances)}")
-            logger.info(f"    Gaps:            {', '.join(f'{g:.3f}' for g in gaps)}")
+            # Save side-by-side dendrogram figure
+            fig, axes = plt.subplots(1, 2, figsize=(16, 5))
+            for ax, method in zip(axes, linkage_methods):
+                Z = linkage_results[method]["Z"]
+                merge_distances = linkage_results[method]["merge_distances"]
 
-            # Save dendrogram figure
-            fig, ax = plt.subplots(figsize=(8, 5))
-            dendrogram(
-                Z,
-                labels=labels,
-                leaf_rotation=45,
-                leaf_font_size=9,
-                ax=ax,
-            )
-            ax.set_title(f"Hierarchical Clustering: {dataset} / {model}")
-            ax.set_ylabel("Ward distance")
+                dendrogram(
+                    Z,
+                    labels=labels,
+                    leaf_rotation=45,
+                    leaf_font_size=9,
+                    ax=ax,
+                )
+                ax.set_title(f"{method.capitalize()} linkage")
+                ax.set_ylabel(f"{method.capitalize()} distance")
 
-            # Draw horizontal line at the cut for k=3
-            if len(merge_distances) >= 2:
-                # Cut between the 2nd and 3rd last merges gives k=3
-                cut_height = (merge_distances[-2] + merge_distances[-3]) / 2 if len(merge_distances) >= 3 else merge_distances[-1]
-                ax.axhline(y=cut_height, color="red", linestyle="--",
-                           linewidth=1, label=f"k=3 cut")
-                ax.legend(fontsize=9)
+                if len(merge_distances) >= 3:
+                    cut_height = (merge_distances[-2] + merge_distances[-3]) / 2
+                    ax.axhline(y=cut_height, color="red", linestyle="--",
+                               linewidth=1, label="k=3 cut")
+                    ax.legend(fontsize=9)
+
+            fig.suptitle(f"Hierarchical Clustering: {dataset} / {model}",
+                         fontsize=13)
+            fig.tight_layout()
 
             model_tag = model.replace("/", "-")
             for ext in ["pdf", "jpeg"]:
@@ -413,12 +441,85 @@ def main():
         hc_df.to_csv(hc_path, index=False)
         logger.success(f"Saved hierarchical clustering: {hc_path}")
 
-        # Summary: suggested k counts
-        suggested = hc_df.drop_duplicates(subset=["source_dataset", "model"])
-        k_counts = suggested["suggested_k_gap"].value_counts().sort_index()
-        logger.info("\n=== Suggested k (largest-gap method) frequency ===")
-        for k, count in k_counts.items():
-            logger.info(f"  k={k}: {count}/{len(suggested)} configurations")
+        # Summary: suggested k counts per linkage
+        for method in linkage_methods:
+            sub = hc_df[hc_df["linkage"] == method]
+            suggested = sub.drop_duplicates(subset=["source_dataset", "model"])
+            k_counts = suggested["suggested_k_gap"].value_counts().sort_index()
+            logger.info(f"\n=== Suggested k ({method}) frequency ===")
+            for k, count in k_counts.items():
+                logger.info(f"  k={k}: {count}/{len(suggested)} configurations")
+
+        # Summary: agreement between linkage methods
+        logger.info("\n=== Ward vs Average Agreement ===")
+        for k in [2, 3, 4]:
+            agree = 0
+            total = 0
+            for (ds, mdl), grp in hc_df[hc_df["k"] == k].groupby(
+                    ["source_dataset", "model"]):
+                if len(grp) < 2:
+                    continue
+                ward_assign = grp[grp["linkage"] == "ward"]["cluster_assignments"].iloc[0]
+                avg_assign = grp[grp["linkage"] == "average"]["cluster_assignments"].iloc[0]
+                # Compare via ARI on the assignments
+                import ast
+                w = ast.literal_eval(ward_assign)
+                a = ast.literal_eval(avg_assign)
+                common_keys = sorted(set(w.keys()) & set(a.keys()))
+                ari = adjusted_rand_score(
+                    [w[k_] for k_ in common_keys],
+                    [a[k_] for k_ in common_keys])
+                if ari > 0.8:
+                    agree += 1
+                total += 1
+            logger.info(f"  k={k}: {agree}/{total} configs with ARI > 0.8")
+
+
+    # ── Cross-method agreement: k-means vs Ward vs Average ─────────────
+    logger.info("\n=== Cross-Method Agreement (k-means vs Ward vs Average) ===")
+    cross_rows = []
+
+    if hc_rows and kmeans_assignments:
+        import ast as _ast
+        for k in [2, 3, 4]:
+            for (ds, mdl), grp in hc_df[hc_df["k"] == k].groupby(
+                    ["source_dataset", "model"]):
+                km_assign = kmeans_assignments.get((ds, mdl, k))
+                if km_assign is None:
+                    continue
+
+                km_labels_list = sorted(km_assign.keys())
+                km_vals = [km_assign[l] for l in km_labels_list]
+
+                for method in linkage_methods:
+                    sub = grp[grp["linkage"] == method]
+                    if sub.empty:
+                        continue
+                    hc_assign = _ast.literal_eval(sub["cluster_assignments"].iloc[0])
+                    hc_vals = [hc_assign[l] for l in km_labels_list]
+                    ari = adjusted_rand_score(km_vals, hc_vals)
+                    cross_rows.append({
+                        "source_dataset": ds,
+                        "model": mdl,
+                        "k": k,
+                        "comparison": f"kmeans_vs_{method}",
+                        "ari": ari,
+                    })
+
+        if cross_rows:
+            cross_df = pd.DataFrame(cross_rows)
+            cross_path = os.path.join(args.output_dir,
+                                      "cross_method_agreement.csv")
+            cross_df.to_csv(cross_path, index=False)
+            logger.success(f"Saved cross-method agreement: {cross_path}")
+
+            # Summary per k and comparison pair
+            logger.info("\n  Mean ARI by k and comparison:")
+            for (k, comp), grp in cross_df.groupby(["k", "comparison"]):
+                mean_ari = grp["ari"].mean()
+                perfect = (grp["ari"] == 1.0).sum()
+                logger.info(f"    k={k} {comp}: mean ARI={mean_ari:.4f}, "
+                            f"perfect agreement={perfect}/{len(grp)}")
 
 
 if __name__ == "__main__":
