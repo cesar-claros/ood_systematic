@@ -36,6 +36,8 @@ def main():
     parser.add_argument("--filter-methods", action="store_true", help="Exclude methods containing 'global' or 'class' (except PCA/KPCA RecError global variants)")
     parser.add_argument("--model", type=str, nargs='+', default=None,
                         help="Filter by model(s). Conv options: confidnet, devries, dg. ViT options: modelvit. Default: all models.")
+    parser.add_argument("--clip-dir", type=str, default="clip_scores",
+                        help="Directory containing clip_distances_{source}.csv files (default: clip_scores)")
 
     args = parser.parse_args()
 
@@ -63,14 +65,15 @@ def main():
     else:
         raise ValueError(f"Unknown metric group: {args.metric_group}")
 
-    logger.info(f"Starting stats eval with: MCD={MCD_flag}, Backbone={BACKBONE}, MetricGroup={args.metric_group} ({metric})")
+    logger.info(f"Starting stats eval with: MCD={MCD_flag}, Backbone={BACKBONE}, MetricGroup={args.metric_group} ({metric}), CLIP dir={args.clip_dir}")
     logger.info(f"Output directory: {OUTDIR}")
 
     os.makedirs(OUTDIR, exist_ok=True)
 
-    clip_names = {'Unnamed: 0_level_1':'dataset', 
+    clip_names = {'Unnamed: 0_level_1':'dataset',
                     'Unnamed: 5_level_1':'group'}
-    distance_dict = {'0':'test','1':'near','2':'mid','3':'far'}
+    distance_dict_full = {'0':'test','1':'near','2':'mid','3':'far'}
+    distance_dict = distance_dict_full  # may be narrowed after data loading
 
     df_all = []
     
@@ -94,7 +97,7 @@ def main():
             "ECE_L1_BOUND":    f"scores_final/scores_all_ECE_L1_BOUND_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
             "ECE_L2_BOUND":    f"scores_final/scores_all_ECE_L2_BOUND_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
             # Optional CLIP distances / groupings file (columns: dataset, features..., e.g., 'group', 'clip_dist_id_ood', etc.)
-            "CLIP_FILE": f"clip_scores/clip_distances_{SOURCE}.csv",  # set to None if not available
+            "CLIP_FILE": f"{args.clip_dir}/clip_distances_{SOURCE}.csv",  # set to None if not available
             # Output dir
             "OUTDIR": OUTDIR,
             # Alpha for significance
@@ -226,23 +229,27 @@ def main():
         # logger.info(f"Layered ranks for {source_}: {layered_ranks}")
         clique_members = []
         clique_avg = []
-        datasets_order = ['0','1','2','3'] # mapped to test, near, mid, far
-        
-        # Verify if all groups exist
+
+        # Determine which groups are present in the data for this source
+        available_groups = sorted(layered_cliques.keys())
+        # Build datasets_order from available groups (e.g. ['0','1','2','3'] or ['0','1','3'])
+        datasets_order = [g for g in ['0','1','2','3'] if g in available_groups]
+
+        # Verify all available groups have cliques
         all_groups_present = True
         for c in datasets_order:
              if c not in layered_cliques:
                   all_groups_present = False
                   logger.warning(f"Group {c} ({distance_dict.get(c,c)}) missing in layers for {source_}")
-        
-        if all_groups_present:
+
+        if all_groups_present and len(datasets_order) > 0:
             for c in datasets_order:
                 clique_members.append( layered_cliques[c][0]['members'] )
                 clique_avg.append(layered_cliques[c][0]['mean_rank'])
-            
+
             member_df = pd.DataFrame([{name: True for name in names} for names in clique_members])
             member_df = member_df.where(member_df==True, False)
-            member_df.index = [source_+'->'+distance_dict[d] for d in datasets_order]
+            member_df.index = [source_+'->'+distance_dict.get(d, d) for d in datasets_order]
             members_list.append(member_df)
         else:
              logger.warning(f"Skipping members plot for {source_} due to missing groups.")
@@ -251,24 +258,21 @@ def main():
         logger.error("No members lists created. Exiting.")
         return
 
-    reorder_index = [
-     'cifar10->test',
-     'supercifar100->test',
-     'cifar100->test',
-     'tinyimagenet->test',
-     'cifar10->near',
-     'supercifar100->near',
-     'cifar100->near',
-     'tinyimagenet->near',
-     'cifar10->mid',
-     'supercifar100->mid',
-     'cifar100->mid',
-     'tinyimagenet->mid',
-     'cifar10->far',
-     'supercifar100->far',
-     'cifar100->far',
-     'tinyimagenet->far',
-     ]
+    # Build reorder_index dynamically from the groups present in the data
+    group_order = ['test', 'near', 'mid', 'far']
+    # Detect which group labels are actually present in the members_list indices
+    all_present_labels = set()
+    for mdf in members_list:
+        for idx in mdf.index:
+            label = idx.split('->')[-1]
+            all_present_labels.add(label)
+    active_groups = [g for g in group_order if g in all_present_labels]
+
+    reorder_index = []
+    for group_label in active_groups:
+        for src in sources:
+            key = f'{src}->{group_label}'
+            reorder_index.append(key)
 
     members_all = pd.concat(members_list,axis=0)
     
@@ -284,9 +288,17 @@ def main():
     figsize = (4,6)
     rects_list = []
     rows_shading = []
-    
+
+    # Use default 4-group layout (with hand-tuned shading/rects) only when
+    # the standard near/mid/far grouping is active
+    use_default_layout = (set(active_groups) == {'test', 'near', 'mid', 'far'})
+
     # Configure plot based on args
-    if args.metric_group == 'ROC' and BACKBONE=='ViT':
+    if not use_default_layout:
+        # Non-default grouping (e.g. OpenOOD binary near/far): auto-size, no manual annotations
+        n_rows = len(members_all)
+        figsize = (5, max(4, 0.35 * n_rows + 2))
+    elif args.metric_group == 'ROC' and BACKBONE=='ViT':
         figsize = (5,8)
         cols_show = [x for x in members_all.columns if 'class' not in x]
         cols_show.extend(['MLS class pred','MSR class pred','PCA RecError class pred','PCE class pred'])
@@ -417,9 +429,13 @@ def main():
     fig, ax = plt.subplots(1,2,figsize=figsize,width_ratios=[0.8,0.2],sharey='all')
     plt.subplots_adjust(wspace=0.05)
     
-    # Adjust c_list length if necessary, simplistic palette reuse
-    c_list =  ['tab:green'] * 4 + ['tab:blue'] * 4 + ['tab:red'] * 4 + ['tab:orange'] * 4 
-    # Extend if more rows
+    # Build c_list dynamically: one color per group, 4 sources per group
+    group_colors = ['tab:green', 'tab:blue', 'tab:red', 'tab:orange']
+    n_sources = len(sources)
+    c_list = []
+    for i, _ in enumerate(active_groups):
+        c_list.extend([group_colors[i % len(group_colors)]] * n_sources)
+    # Extend if more rows than expected
     if len(members_all) > len(c_list):
         c_list = (c_list * (len(members_all)//len(c_list) + 1))[:len(members_all)]
 
@@ -433,7 +449,8 @@ def main():
     for (y1,y2) in rows_shading:
         ax[0].axhspan(-.5+y1, .5+y2, facecolor='lightgray', alpha=0.5)
         
-    ax[0].set_title(f'Top cliques\n(Backbone:{f"Convolutional" if BACKBONE=="Conv" else "Transformer"},\nMetrics={metric})')
+    grouping_label = f', Grouping: {os.path.basename(args.clip_dir)}' if args.clip_dir != 'clip_scores' else ''
+    ax[0].set_title(f'Top cliques\n(Backbone:{f"Convolutional" if BACKBONE=="Conv" else "Transformer"},\nMetrics={metric}{grouping_label})')
     
     sns.barplot(x=members_all.sum(axis=0), y=members_all.columns, color='gray', ax=ax[1])
     # For modern matplotlib versions
@@ -457,7 +474,8 @@ def main():
         ax[0].add_patch(rect)
     
     model_suffix = f'_{"_".join(args.model)}' if args.model is not None else ''
-    out_filename = f'top_cliques_{BACKBONE}_{MCD_flag}_{args.metric_group}{model_suffix}'
+    clip_suffix = f'_{os.path.basename(args.clip_dir)}' if args.clip_dir != 'clip_scores' else ''
+    out_filename = f'top_cliques_{BACKBONE}_{MCD_flag}_{args.metric_group}{model_suffix}{clip_suffix}'
     out_path = os.path.join(OUTDIR, out_filename)
     fig.savefig(out_path + '.pdf', bbox_inches='tight')
     fig.savefig(out_path + '.jpeg', bbox_inches='tight')
