@@ -87,15 +87,15 @@ def main():
             # Map metric -> CSV path. You can point these to your real files per metric
             # NOTE: Assuming file naming convention matches what was in script. 
             # If MCD flag in filename uses 'True'/'False' string, this works.
-            "FPR@95TPR": f"scores/scores_all_FPR@95TPR_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
-            "AUROC_f":   f"scores/scores_all_AUROC_f_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
-            "AUGRC":     f"scores/scores_all_AUGRC_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
-            "AURC":      f"scores/scores_all_AURC_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
-            "ECE_L1":    f"scores_final/scores_all_ECE_L1_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
-            "ECE_L2":    f"scores_final/scores_all_ECE_L2_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
-            "MCE":       f"scores_final/scores_all_MCE_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
-            "ECE_L1_BOUND":    f"scores_final/scores_all_ECE_L1_BOUND_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
-            "ECE_L2_BOUND":    f"scores_final/scores_all_ECE_L2_BOUND_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "FPR@95TPR":       f"scores_risk/scores_all_FPR@95TPR_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "AUROC_f":         f"scores_risk/scores_all_AUROC_f_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "AUGRC":           f"scores_risk/scores_all_AUGRC_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "AURC":            f"scores_risk/scores_all_AURC_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "ECE_L1":          f"scores_calibration/scores_all_ECE_L1_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "ECE_L2":          f"scores_calibration/scores_all_ECE_L2_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "MCE":             f"scores_calibration/scores_all_MCE_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "ECE_L1_BOUND":    f"scores_calibration/scores_all_ECE_L1_BOUND_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
+            "ECE_L2_BOUND":    f"scores_calibration/scores_all_ECE_L2_BOUND_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv",
             # Optional CLIP distances / groupings file (columns: dataset, features..., e.g., 'group', 'clip_dist_id_ood', etc.)
             "CLIP_FILE": f"{args.clip_dir}/clip_distances_{SOURCE}.csv",  # set to None if not available
             # Output dir
