@@ -80,7 +80,10 @@ def main():
     # =========================
     # CONFIG: edit as needed
     # =========================
-    sources = ['cifar10', 'supercifar100', 'cifar100', 'tinyimagenet']
+    # Derive sources from available CLIP CSV files in the clip directory
+    _all_sources = ['cifar10', 'supercifar100', 'cifar100', 'tinyimagenet']
+    sources = [s for s in _all_sources if os.path.exists(os.path.join(args.clip_dir, f"clip_distances_{s}.csv"))]
+    logger.info(f"Active sources (from {args.clip_dir}): {sources}")
     for SOURCE in sources:
         logger.info(f"Processing source: {SOURCE}")
         CONFIG = {

@@ -6,17 +6,14 @@ replaces the k-means group column with a fixed near/far assignment
 that mirrors OpenOOD v1.5 (Zhang et al., 2024, Table 1), and writes
 new CSVs to --output-dir.
 
-OpenOOD defines:
-  CIFAR-10  : Near = {CIFAR-100, TIN}       Far = {MNIST, SVHN, Textures, Places365}
-  CIFAR-100 : Near = {CIFAR-10, TIN}        Far = {MNIST, SVHN, Textures, Places365}
+Only the intersection of OOD datasets shared between OpenOOD and our
+benchmark is retained:
+  CIFAR-10       : Near = {CIFAR-100, TinyImageNet}  Far = {SVHN, Textures, Places365}
+  CIFAR-100      : Near = {CIFAR-10, TinyImageNet}   Far = {SVHN, Textures, Places365}
+  SuperCIFAR-100 : Near = {CIFAR-10, TinyImageNet}   Far = {SVHN, Textures, Places365}
 
-We extend this to our dataset pool (no MNIST; includes iSUN, LSUN variants):
-  - Near-OOD datasets share the same domain (natural object images at similar
-    scale) as the source.  Following OpenOOD, this is CIFAR-10/100 and
-    TinyImageNet for CIFAR sources, and CIFAR-10/100 for TinyImageNet.
-  - Far-OOD datasets are scene images, digit images, or texture images that
-    differ in both semantics and low-level statistics: SVHN, Textures,
-    Places365, iSUN, LSUN-resize, LSUN-cropped.
+TinyImageNet is excluded as a source because OpenOOD does not define
+near/far groupings for it.
 
 Usage:
     python generate_openood_grouping.py \
@@ -29,16 +26,26 @@ import pandas as pd
 from loguru import logger
 
 
-# OpenOOD-style binary grouping: source -> set of near-OOD dataset names
-# Dataset names must match the index values in the CLIP CSV (spaces, not underscores)
+# OpenOOD-style binary grouping using the intersection of datasets
+# present in both OpenOOD and our benchmark.
 OPENOOD_NEAR = {
     "cifar10":       {"cifar100", "tinyimagenet"},
     "cifar100":      {"cifar10", "tinyimagenet"},
     "supercifar100": {"cifar10", "tinyimagenet"},
-    "tinyimagenet":  {"cifar10", "cifar100"},
 }
 
-SOURCES = ["cifar10", "cifar100", "supercifar100", "tinyimagenet"]
+OPENOOD_FAR = {
+    "cifar10":       {"svhn", "textures", "places365"},
+    "cifar100":      {"svhn", "textures", "places365"},
+    "supercifar100": {"svhn", "textures", "places365"},
+}
+
+SOURCES = ["cifar10", "cifar100", "supercifar100"]
+
+
+def _normalize(name):
+    """Lowercase, strip spaces/underscores for matching."""
+    return name.replace(" ", "").replace("_", "").lower()
 
 
 def main():
@@ -66,20 +73,28 @@ def main():
             "Unnamed: 5_level_1": "group",
         })
 
-        near_set = OPENOOD_NEAR[source]
+        near_set = {_normalize(n) for n in OPENOOD_NEAR[source]}
+        far_set = {_normalize(n) for n in OPENOOD_FAR[source]}
+        allowed = near_set | far_set | {"test"}
 
         def assign_group(row):
             name = row["dataset"]
+            name_norm = _normalize(name)
             if name == "test":
                 return "0"
-            # Normalize: CSV index uses spaces, our sets use no underscores
-            name_norm = name.replace(" ", "").lower()
-            for near_name in near_set:
-                if near_name.replace("_", "").lower() == name_norm:
-                    return "1"  # near
-            return "3"  # far (skip 2=mid to keep the same far code)
+            if name_norm in near_set:
+                return "1"  # near
+            if name_norm in far_set:
+                return "3"  # far
+            return None  # not in the intersection -> drop
 
         df["group"] = df.apply(assign_group, axis=1)
+
+        # Drop datasets not in the OpenOOD intersection
+        dropped = df[df["group"].isna()]["dataset"].tolist()
+        if dropped:
+            logger.info(f"  Dropping datasets not in OpenOOD intersection: {dropped}")
+        df = df[df["group"].notna()].copy()
 
         # Rebuild multi-level header to match original format
         out_df = df[["dataset", "kid mean", "fid",
