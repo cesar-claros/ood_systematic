@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import networkx as nx
 import matplotlib.lines as mlines
-from matplotlib.patches import Rectangle
 from src.utils_stats import *
 from loguru import logger
 import argparse
@@ -146,6 +145,8 @@ def main():
                     # Stability: variance within vs between clusters if 'group' present
                     if "group" in clip.columns:
                         merged = df.merge(clip[["dataset", "group"]], on="dataset", how="left")
+                        # Convert group to string to avoid float keys from NaN promotion
+                        merged["group"] = merged["group"].apply(lambda x: str(int(x)) if pd.notna(x) else x)
                     else:
                         merged = df
             else:
@@ -287,146 +288,10 @@ def main():
     members_all = members_all[sorted(members_all.columns, key=str.casefold)]
 
     members_all = members_all.loc[:, members_all.sum(axis=0) > 0]
-    # Plotting Logic
-    figsize = (4,6)
-    rects_list = []
-    rows_shading = []
-
-    # Use default 4-group layout (with hand-tuned shading/rects) only when
-    # the standard near/mid/far grouping is active
-    use_default_layout = (set(active_groups) == {'test', 'near', 'mid', 'far'})
-
-    # Configure plot based on args
-    if not use_default_layout:
-        # Non-default grouping (e.g. OpenOOD binary near/far): auto-size, no manual annotations
-        n_rows = len(members_all)
-        figsize = (5, max(4, 0.35 * n_rows + 2))
-    elif args.metric_group == 'ROC' and BACKBONE=='ViT':
-        figsize = (5,8)
-        cols_show = [x for x in members_all.columns if 'class' not in x]
-        cols_show.extend(['MLS class pred','MSR class pred','PCA RecError class pred','PCE class pred'])
-        cols_show = [c for c in cols_show if c in members_all.columns] # safety
-        members_all = members_all[cols_show]
-        members_all = members_all[sorted(members_all.columns)]
-        rows_shading = [(0,1),(4,4),(7,8),(11,12),(14,16),(20,20),(23,23),(26,28),(31,32),(34,34),(37,38)]
-        # Add rects definition (simplified for refactor, keeping original structure)
-        rects_list = [[(-0.5, 8.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 16.5),4,3,'dotted','black','wheat'],
-                        [(-0.5, 25.5),4,3,'dotted','black','wheat'],
-                        [(-0.5, 28.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 30.5),4,2,'dotted','black','wheat'],
-                        [(4.5, 10.5),3,2,'dotted','black','plum'],
-                        [(8.5, 10.5),3,2,'dotted','black','plum'],
-                        [(12.5, 10.5),3,2,'dotted','black','plum'],
-                        [(3.5, 23.5),3,2,'dotted','black','plum'],
-                        [(7.5, 23.5),3,2,'dotted','black','plum'],
-                        [(11.5, 23.5),3,2,'dotted','black','plum'],
-                        ]
-    elif args.metric_group == 'RC' and BACKBONE=='ViT':
-        figsize = (5,8)
-        cols_show = [x for x in members_all.columns if 'class' not in x]
-        cols_show.extend(['GradNorm class pred','KPCA RecError class pred','MLS class'])
-        cols_show = [c for c in cols_show if c in members_all.columns]
-        members_all = members_all[cols_show]
-        members_all = members_all[sorted(members_all.columns)]
-        rows_shading = [(0,1),(4,4),(7,8),(11,13),(16,18),(21,21),(24,24),(26,27),(30,31),(33,33),(36,37)]
-        if 'run' in blocks:
-            rects_list = [[(-0.5, 5.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 14.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 21.5),4,1,'dotted','black','wheat'],
-                        # [(-0.5, 22.5),4,1,'dotted','black','wheat'],
-                        [(-0.5, 23.5),4,1,'dotted','black','wheat'],
-                        [(3.5, 7.5),12,3,'dotted','black','plum'],
-                        [(3.5, 7.5),3,2,'dotted','black','plum'],
-                        # [(12.5, 7.5),3,2,'dotted','black','plum'],
-                        [(3.5, 25.5),12,1,'dotted','black','plum'],
-                        # [(7.5, 13.5),3,2,'dotted','black','plum'],
-                        [(3.5, 26.5),12,1,'dotted','black','plum'],
-                        ]
-        else:
-            rects_list = [[(-0.5, 8.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 18.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 25.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 29.5),4,2,'dotted','black','wheat'],
-                        [(4.5, 10.5),3,3,'dotted','black','plum'],
-                        [(8.5, 10.5),3,3,'dotted','black','plum'],
-                        [(12.5, 10.5),3,3,'dotted','black','plum'],
-                        [(3.5, 13.5),3,2,'dotted','black','plum'],
-                        [(7.5, 13.5),3,2,'dotted','black','plum'],
-                        [(11.5, 13.5),3,2,'dotted','black','plum'],
-                        ]
-
-    elif args.metric_group == 'ROC' and BACKBONE=='Conv': 
-        figsize = (5,8)
-        cols_show = [x for x in members_all.columns if 'class' not in x]
-        cols_show = [c for c in cols_show if c in members_all.columns]
-        members_all = members_all[cols_show]
-        members_all = members_all[sorted(members_all.columns)]
-        rows_shading = [(0,1),(4,4),(6,7),(10,11),(14,15),(18,18),(21,22),(25,26)]
-        rects_list = [[(6.5, -0.5),1,2,'dotted','black','skyblue'],
-                    [(2.5, -0.5),1,2,'dotted','black','skyblue'],
-                    [(10.5, -0.5),1,2,'dotted','black','skyblue'],
-                    [(14.5, -0.5),1,2,'dotted','black','skyblue'],
-                    [(-0.5, 9.5),4,2,'dotted','black','wheat'],
-                    [(-0.5, 13.5),4,2,'dotted','black','wheat'],
-                    [(-0.5, 18.5),4,2,'dotted','black','wheat'],
-                    [(-0.5, 22.5),4,2,'dotted','black','wheat'],
-                    [(3.5, 5.5),3,2,'dotted','black','plum'],
-                    [(7.5, 5.5),3,2,'dotted','black','plum'],
-                    [(11.5, 5.5),3,2,'dotted','black','plum'],
-                    [(3.5, 11.5),3,2,'dotted','black','plum'],
-                    [(7.5, 11.5),3,2,'dotted','black','plum'],
-                    [(11.5, 11.5),3,2,'dotted','black','plum'],
-                    [(3.5, 17.5),3,1,'dotted','black','plum'],
-                    [(7.5, 17.5),3,1,'dotted','black','plum'],
-                    [(11.5, 17.5),3,1,'dotted','black','plum'],
-                    ]
-    elif args.metric_group == 'RC' and BACKBONE=='Conv':
-        figsize = (5,8)
-        cols_show = [x for x in members_all.columns if 'class' not in x]
-        cols_show = [c for c in cols_show if c in members_all.columns]
-        members_all = members_all[cols_show]
-        members_all = members_all[sorted(members_all.columns)]
-        rows_shading = [(0,1),(4,4),(6,7),(10,11),(14,15),(18,19),(21,22),(25,26),(29,29)]
-        if 'run' in blocks:
-            rects_list = [[(3.5, -0.5),16,2,'dotted','black','plum'],
-                        [(3.5, 5.5),12,2,'dotted','black','plum'],
-                        [(3.5, 13.5),12,2,'dotted','black','plum'],
-                        [(3.5, 22.5),12,2,'dotted','black','plum'],
-                        [(-0.5, 7.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 11.5),4,2,'dotted','black','wheat'],
-                        # [(-0.5, 18.5),4,2,'dotted','black','wheat'],
-                        # [(-0.5, 22.5),4,3,'dotted','black','wheat'],
-                        # [(3.5, 5.5),3,2,'dotted','black','plum'],
-                        # [(7.5, 5.5),3,2,'dotted','black','plum'],
-                        # [(11.5, 5.5),3,2,'dotted','black','plum'],
-                        # [(3.5, 11.5),3,2,'dotted','black','plum'],
-                        # [(7.5, 11.5),3,2,'dotted','black','plum'],
-                        # [(11.5, 11.5),3,2,'dotted','black','plum'],
-                        # [(3.5, 19.5),3,1,'dotted','black','plum'],
-                        # [(7.5, 19.5),3,1,'dotted','black','plum'],
-                        # [(11.5, 19.5),3,1,'dotted','black','plum'],
-                        ]
-        else:
-            rects_list = [[(6.5, -0.5),1,2,'dotted','black','deepskyblue'],
-                        [(2.5, -0.5),1,2,'dotted','black','deepskyblue'],
-                        [(10.5, -0.5),1,2,'dotted','black','deepskyblue'],
-                        [(14.5, -0.5),1,2,'dotted','black','deepskyblue'],
-                        [(-0.5, 9.5),4,2,'dotted','black','wheat'],
-                        [(-0.5, 15.5),4,2,'dotted','black','wheat'],
-                        [(3.5, 5.5),3,2,'dotted','black','plum'],
-                        [(7.5, 5.5),2,2,'dotted','black','plum'],
-                        [(11.5, 5.5),1,2,'dotted','black','plum'],
-                        [(3.5, 13.5),3,2,'dotted','black','plum'],
-                        [(7.5, 13.5),2,2,'dotted','black','plum'],
-                        [(11.5, 13.5),1,2,'dotted','black','plum'],
-                        [(3.5, 17.5),3,2,'dotted','black','plum'],
-                        [(7.5, 17.5),2,2,'dotted','black','plum'],
-                        [(11.5, 17.5),1,2,'dotted','black','plum'],
-                        [(5.5, 26.5),1,2,'dotted','black','forestgreen'],
-                        [(9.5, 26.5),1,2,'dotted','black','forestgreen'],
-                        [(13.5, 26.5),1,2,'dotted','black','forestgreen'],
-                        ]
+    # Plotting Logic — auto-size based on data
+    n_rows = len(members_all)
+    n_cols = len(members_all.columns)
+    figsize = (max(4, 0.25 * n_cols + 2), max(4, 0.35 * n_rows + 2))
 
     logger.info("Generating plot...")
     fig, ax = plt.subplots(1,2,figsize=figsize,width_ratios=[0.8,0.2],sharey='all')
@@ -449,9 +314,6 @@ def main():
         logger.error(f"Error plotting grid: {e}")
         return
 
-    for (y1,y2) in rows_shading:
-        ax[0].axhspan(-.5+y1, .5+y2, facecolor='lightgray', alpha=0.5)
-        
     grouping_label = f', Grouping: {os.path.basename(args.clip_dir)}' if args.clip_dir != 'clip_scores' else ''
     ax[0].set_title(f'Top cliques\n(Backbone:{f"Convolutional" if BACKBONE=="Conv" else "Transformer"},\nMetrics={metric}{grouping_label})')
     
@@ -467,15 +329,6 @@ def main():
     for x in ["top", "bottom", "right"]:
         ax[1].spines[x].set_visible(False)
 
-    for xy,width,height,ls,lcolor,bcolor in rects_list:
-        rect = Rectangle(xy, width, height,
-                        linewidth=2,
-                        edgecolor=lcolor,
-                        facecolor=bcolor,
-                        linestyle=ls,
-                        alpha=0.5)
-        ax[0].add_patch(rect)
-    
     model_suffix = f'_{"_".join(args.model)}' if args.model is not None else ''
     clip_suffix = f'_{os.path.basename(args.clip_dir)}' if args.clip_dir != 'clip_scores' else ''
     out_filename = f'top_cliques_{BACKBONE}_{MCD_flag}_{args.metric_group}{model_suffix}{clip_suffix}'
