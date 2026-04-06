@@ -8,7 +8,8 @@ Two distance formulations for method similarity:
   (a) Jaccard distance on top-K method sets (binary)
   (b) Spearman rank distance on full method rankings
 
-NC similarity uses standardised Euclidean distance on the 13 NC metrics.
+NC similarity uses standardised Euclidean distance on the selected NC metrics
+(all 13, or the 8 Papyan-only metrics via --papyan-only).
 
 The Mantel test assesses the correlation between these two distance matrices
 via permutation (default 9999 permutations).
@@ -41,6 +42,22 @@ from nc_regime_analysis import (
     compute_mean_ood_score,
     JOIN_KEYS_SC,
 )
+
+# Papyan et al. (2020) metrics only — the five metrics defined in the original
+# Neural Collapse paper, applied to both class means (_uc) and weights (_wc):
+#   NC1: variability collapse
+#   NC2: equiangularity, maximal equiangularity, equinormness (means & weights)
+#   NC3: self-duality
+PAPYAN_NC_METRICS = [
+    "var_collapse",
+    "equiangular_uc", "equiangular_wc",
+    "equinorm_uc", "equinorm_wc",
+    "max_equiangular_uc", "max_equiangular_wc",
+    "self_duality",
+]
+
+# Default to all metrics; overridden by --papyan-only in main()
+ACTIVE_NC_METRICS = NC_METRICS
 
 
 # ── Mantel test implementation ──────────────────────────────────────────────
@@ -182,7 +199,7 @@ def build_rank_matrix(merged: pd.DataFrame, score_col: str,
 
     # Get NC metrics for these blocks (average NC across dropout/reward)
     blocks_idx = pivot.index.to_frame(index=False)
-    nc_col_names = [c for c in merged.columns if c in NC_METRICS or c.endswith("_nc")]
+    nc_col_names = [c for c in merged.columns if c in ACTIVE_NC_METRICS or c.endswith("_nc")]
     nc_agg_cols = block_keys + nc_col_names
     block_nc = merged[nc_agg_cols].groupby(block_keys, as_index=False).mean(
         numeric_only=True)
@@ -190,7 +207,7 @@ def build_rank_matrix(merged: pd.DataFrame, score_col: str,
     models_df = blocks_idx.merge(block_nc, on=block_keys, how="inner")
 
     # Resolve NC metric column names (may have _nc suffix from join)
-    for m in NC_METRICS:
+    for m in ACTIVE_NC_METRICS:
         if m not in models_df.columns and m + "_nc" in models_df.columns:
             models_df[m] = models_df[m + "_nc"]
 
@@ -232,8 +249,22 @@ def main():
     parser.add_argument("--clip-dir", type=str, default="clip_scores",
                         help="Directory with clip_distances_{dataset}.csv "
                              "(for --per-ood FID ordering)")
+    parser.add_argument("--papyan-only", action="store_true",
+                        help="Use only the 8 NC metrics from Papyan et al. (2020): "
+                             "var_collapse, equiangular/equinorm/max_equiangular "
+                             "(means & weights), and self_duality")
     parser.add_argument("--output-dir", type=str, default="mantel_outputs")
     args = parser.parse_args()
+
+    # Select which NC metrics to use
+    global ACTIVE_NC_METRICS
+    if args.papyan_only:
+        ACTIVE_NC_METRICS = PAPYAN_NC_METRICS
+        logger.info(f"Using Papyan-only NC metrics ({len(ACTIVE_NC_METRICS)}): "
+                    f"{ACTIVE_NC_METRICS}")
+    else:
+        ACTIVE_NC_METRICS = NC_METRICS
+        logger.info(f"Using all NC metrics ({len(ACTIVE_NC_METRICS)})")
 
     os.makedirs(args.output_dir, exist_ok=True)
 
@@ -302,8 +333,8 @@ def _run_mantel(merged: pd.DataFrame, score_col: str, ascending: bool,
         logger.error(f"Too few models ({n_models}) for meaningful Mantel test.")
         return
 
-    # ── NC distance (full 13-metric profile) ─────────────────────────────
-    nc_cols = [c for c in NC_METRICS if c in models_df.columns]
+    # ── NC distance (active metric profile) ──────────────────────────────
+    nc_cols = [c for c in ACTIVE_NC_METRICS if c in models_df.columns]
     D_nc = nc_distance_matrix(models_df, nc_cols)
 
     # ── Method distance: Spearman rank ───────────────────────────────────
@@ -564,7 +595,7 @@ def _run_per_ood(merged: pd.DataFrame, ood_cols: list[str],
             logger.warning(f"  Skipping {ood_set}: only {n_models} models")
             continue
 
-        nc_cols = [c for c in NC_METRICS if c in models_df.columns]
+        nc_cols = [c for c in ACTIVE_NC_METRICS if c in models_df.columns]
         D_nc = nc_distance_matrix(models_df, nc_cols)
         D_rank = method_rank_distance(rank_matrix)
 
