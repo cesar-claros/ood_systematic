@@ -1,2 +1,0 @@
-lodo_accuracy,lodo_balanced_accuracy,lodo_n_samples,lodo_baseline_accuracy,kfold_lr_accuracy,kfold_lr_balanced_accuracy,kfold_rf_accuracy,kfold_rf_balanced_accuracy,kfold_n_folds,kfold_baseline_accuracy,label,n_samples,n_classes,n_features,classes
-0.21052631578947367,0.15384615384615385,19,0.6842105263157895,0.8947368421052632,0.8333333333333333,0.8421052631578947,0.7948717948717949,5,0.6842105263157895,group_far,19,2,8,"Residual,pNML"

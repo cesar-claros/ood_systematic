@@ -1,2 +1,0 @@
-lodo_accuracy,lodo_balanced_accuracy,lodo_n_samples,lodo_baseline_accuracy,kfold_lr_accuracy,kfold_lr_balanced_accuracy,kfold_rf_accuracy,kfold_rf_balanced_accuracy,kfold_n_folds,kfold_baseline_accuracy,label,n_samples,n_classes,n_features,classes
-0.6470588235294118,0.4666666666666666,17,0.5882352941176471,0.8235294117647058,0.7999999999999999,0.8823529411764706,0.8833333333333333,3,0.5882352941176471,group_all,17,3,8,"CTM,CTMmeanOC,ViM"
