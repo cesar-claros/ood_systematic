@@ -33,6 +33,7 @@ import pandas as pd
 from scipy import stats
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.metrics import (
@@ -375,6 +376,67 @@ def run_classification(
     )
     logger.info(f"\nLR coefficients per class:\n{coef_df.round(3).to_string()}")
 
+    # ── 4. Decision Tree Rules ──────────────────────────────────────────
+    # Fit a shallow decision tree on unscaled features to produce
+    # interpretable if/then rules with thresholds in original NC units.
+    logger.info("\n--- Decision Tree Rules ---")
+
+    best_dt = None
+    best_dt_acc = -1
+    for depth in [2, 3, 4, 5]:
+        dt = DecisionTreeClassifier(
+            max_depth=depth, random_state=42,
+            class_weight="balanced",
+        )
+        if n_folds >= 2:
+            y_pred_dt = cross_val_predict(dt, X, y_enc, cv=skf)
+            dt_acc = accuracy_score(y_enc, y_pred_dt)
+        else:
+            dt_acc = 0.0
+        if dt_acc > best_dt_acc:
+            best_dt_acc = dt_acc
+            best_dt_depth = depth
+
+    # Refit best depth on full data
+    best_dt = DecisionTreeClassifier(
+        max_depth=best_dt_depth, random_state=42,
+        class_weight="balanced",
+    )
+    best_dt.fit(X, y_enc)
+
+    # Also evaluate with cross_val_predict for the chosen depth
+    if n_folds >= 2:
+        y_pred_dt_best = cross_val_predict(best_dt.__class__(
+            max_depth=best_dt_depth, random_state=42,
+            class_weight="balanced",
+        ), X, y_enc, cv=skf)
+        dt_cv_acc = accuracy_score(y_enc, y_pred_dt_best)
+        dt_cv_bal_acc = balanced_accuracy_score(y_enc, y_pred_dt_best)
+    else:
+        dt_cv_acc = dt_cv_bal_acc = np.nan
+
+    results["dt_depth"] = best_dt_depth
+    results["dt_cv_accuracy"] = dt_cv_acc
+    results["dt_cv_balanced_accuracy"] = dt_cv_bal_acc
+
+    # Train accuracy (how well the tree fits the data)
+    dt_train_acc = accuracy_score(y_enc, best_dt.predict(X))
+
+    logger.info(f"  Best depth: {best_dt_depth}")
+    logger.info(f"  Train accuracy: {dt_train_acc:.3f}")
+    logger.info(f"  CV accuracy:    {dt_cv_acc:.3f} (balanced: {dt_cv_bal_acc:.3f})")
+    if n_folds >= 2:
+        logger.info(f"  RF CV accuracy: {acc_rf:.3f} (for comparison)")
+
+    # Extract rules in text form
+    tree_rules = export_text(
+        best_dt,
+        feature_names=nc_features,
+        class_names=list(le.classes_),
+        decimals=4,
+    )
+    logger.info(f"\nDecision Tree Rules:\n{tree_rules}")
+
     # ── Save results ─────────────────────────────────────────────────────
     os.makedirs(output_dir, exist_ok=True)
 
@@ -399,6 +461,17 @@ def run_classification(
     coef_path = os.path.join(output_dir, f"multinomial_coefs_{file_prefix}_{label}.csv")
     coef_df.to_csv(coef_path)
     logger.info(f"Saved coefficients: {coef_path}")
+
+    # Decision tree rules
+    rules_path = os.path.join(output_dir, f"multinomial_tree_rules_{file_prefix}_{label}.txt")
+    with open(rules_path, "w") as f:
+        f.write(f"Decision Tree Rules ({label})\n")
+        f.write(f"Depth: {best_dt_depth}, Train acc: {dt_train_acc:.3f}, "
+                f"CV acc: {dt_cv_acc:.3f}, Balanced CV acc: {dt_cv_bal_acc:.3f}\n")
+        f.write(f"Classes: {list(le.classes_)}\n")
+        f.write(f"Features: {nc_features}\n\n")
+        f.write(tree_rules)
+    logger.info(f"Saved tree rules: {rules_path}")
 
     # LODO predictions
     if y_pred_lodo is not None:
