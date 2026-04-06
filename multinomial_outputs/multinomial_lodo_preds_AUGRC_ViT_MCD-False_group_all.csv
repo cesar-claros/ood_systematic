@@ -1,0 +1,19 @@
+dataset,architecture,study,dropout,run,best_method,predicted_method,correct
+cifar10,ViT,vit,True,0,pNML,KPCA RecError global,False
+cifar10,ViT,vit,True,2,pNML,CTMmeanOC,False
+cifar10,ViT,vit,True,3,pNML,KPCA RecError global,False
+cifar10,ViT,vit,True,4,pNML,CTMmeanOC,False
+cifar100,ViT,vit,True,0,KPCA RecError global,pNML,False
+cifar100,ViT,vit,True,1,ViM,pNML,False
+cifar100,ViT,vit,True,2,KPCA RecError global,pNML,False
+cifar100,ViT,vit,True,3,ViM,pNML,False
+cifar100,ViT,vit,True,4,KPCA RecError global,pNML,False
+supercifar100,ViT,vit,False,0,KPCA RecError global,GE,False
+supercifar100,ViT,vit,False,1,CTMmeanOC,GE,False
+supercifar100,ViT,vit,False,2,KPCA RecError global,GE,False
+supercifar100,ViT,vit,False,3,CTMmeanOC,GE,False
+supercifar100,ViT,vit,False,4,KPCA RecError global,GE,False
+tinyimagenet,ViT,vit,False,0,GE,CTMmeanOC,False
+tinyimagenet,ViT,vit,False,2,GE,CTMmeanOC,False
+tinyimagenet,ViT,vit,False,3,GE,CTMmeanOC,False
+tinyimagenet,ViT,vit,False,4,GE,CTMmeanOC,False

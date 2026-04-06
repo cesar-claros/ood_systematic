@@ -1,0 +1,14 @@
+dataset,architecture,study,dropout,run,best_method,predicted_method,correct
+cifar10,ViT,vit,True,0,KPCA RecError global,KPCA RecError global,True
+cifar10,ViT,vit,True,1,KPCA RecError global,KPCA RecError global,True
+cifar10,ViT,vit,True,2,KPCA RecError global,KPCA RecError global,True
+cifar10,ViT,vit,True,3,KPCA RecError global,KPCA RecError global,True
+cifar100,ViT,vit,True,0,KPCA RecError global,KPCA RecError global,True
+cifar100,ViT,vit,True,1,KPCA RecError global,KPCA RecError global,True
+cifar100,ViT,vit,True,2,KPCA RecError global,KPCA RecError global,True
+cifar100,ViT,vit,True,3,KPCA RecError global,KPCA RecError global,True
+cifar100,ViT,vit,True,4,KPCA RecError global,KPCA RecError global,True
+supercifar100,ViT,vit,False,0,KPCA RecError global,KPCA RecError global,True
+supercifar100,ViT,vit,False,2,KPCA RecError global,KPCA RecError global,True
+supercifar100,ViT,vit,False,3,KPCA RecError global,KPCA RecError global,True
+supercifar100,ViT,vit,False,4,KPCA RecError global,KPCA RecError global,True
