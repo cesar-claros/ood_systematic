@@ -1,0 +1,20 @@
+dataset,architecture,study,dropout,run,best_method,predicted_method,correct
+cifar10,ViT,vit,True,0,pNML,Residual,False
+cifar10,ViT,vit,True,2,pNML,Residual,False
+cifar10,ViT,vit,True,3,pNML,Residual,False
+cifar10,ViT,vit,True,4,pNML,Residual,False
+cifar100,ViT,vit,True,0,Residual,pNML,False
+cifar100,ViT,vit,True,1,Residual,pNML,False
+cifar100,ViT,vit,True,2,Residual,pNML,False
+cifar100,ViT,vit,True,3,Residual,pNML,False
+cifar100,ViT,vit,True,4,Residual,pNML,False
+supercifar100,ViT,vit,False,0,Residual,GradNorm,False
+supercifar100,ViT,vit,False,1,Residual,GradNorm,False
+supercifar100,ViT,vit,False,2,Residual,GradNorm,False
+supercifar100,ViT,vit,False,3,Residual,GradNorm,False
+supercifar100,ViT,vit,False,4,Residual,GradNorm,False
+tinyimagenet,ViT,vit,False,0,GradNorm,Residual,False
+tinyimagenet,ViT,vit,False,1,GradNorm,Residual,False
+tinyimagenet,ViT,vit,False,2,KPCA RecError global,Residual,False
+tinyimagenet,ViT,vit,False,3,GradNorm,Residual,False
+tinyimagenet,ViT,vit,False,4,KPCA RecError global,Residual,False
