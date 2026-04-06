@@ -332,8 +332,12 @@ def run_classification(
     logger.info(f"\n{importance_df.to_string(index=False)}")
 
     # Per-class LR coefficients
+    # Binary case: sklearn returns shape (1, n_features); expand to both classes
+    coefs = lr_full.coef_
+    if coefs.shape[0] == 1 and len(le.classes_) == 2:
+        coefs = np.vstack([coefs, -coefs])
     coef_df = pd.DataFrame(
-        lr_full.coef_,
+        coefs,
         index=le.classes_,
         columns=nc_features,
     )
