@@ -383,6 +383,61 @@ def _run_mantel(merged: pd.DataFrame, score_col: str, ascending: bool,
                 "significant": res_j["p_value"] < 0.05,
             })
 
+    # ── Leave-one-metric-out Mantel tests ──────────────────────────────
+    loo_rows = []
+    full_r = result_spearman["r_obs"]
+    k0 = args.top_k[0]
+    D_jac_k0 = jaccard_topk_distance(rank_matrix, k0) if k0 <= len(method_names) else None
+    full_r_jac = results_jaccard[k0]["r_obs"] if k0 in results_jaccard else None
+
+    if len(nc_cols) > 1:
+        for drop_col in nc_cols:
+            remaining = [c for c in nc_cols if c != drop_col]
+            D_nc_loo = nc_distance_matrix(models_df, remaining)
+            res_loo = mantel_test(D_nc_loo, D_rank, n_perms=args.n_perms)
+            row = {
+                "dropped_metric": drop_col,
+                "method_distance": "spearman_rank",
+                "r": res_loo["r_obs"],
+                "p": res_loo["p_value"],
+                "significant": res_loo["p_value"] < 0.05,
+                "r_full": full_r,
+                "delta_r": full_r - res_loo["r_obs"],
+            }
+            loo_rows.append(row)
+            if D_jac_k0 is not None:
+                res_loo_j = mantel_test(D_nc_loo, D_jac_k0, n_perms=args.n_perms)
+                loo_rows.append({
+                    "dropped_metric": drop_col,
+                    "method_distance": f"jaccard_top{k0}",
+                    "r": res_loo_j["r_obs"],
+                    "p": res_loo_j["p_value"],
+                    "significant": res_loo_j["p_value"] < 0.05,
+                    "r_full": full_r_jac,
+                    "delta_r": full_r_jac - res_loo_j["r_obs"],
+                })
+
+    # ── Per-method NC importance (Spearman correlation) ────────────────
+    # For each method, correlate its rank across configurations with each
+    # NC metric value. This identifies which NC properties predict when a
+    # specific method performs well (low rank = better).
+    per_method_rows = []
+    for j, method in enumerate(method_names):
+        method_ranks = rank_matrix[:, j]
+        for nc_col in nc_cols:
+            nc_vals = models_df[nc_col].values.astype(float)
+            # Skip if constant
+            if np.std(nc_vals) == 0 or np.std(method_ranks) == 0:
+                continue
+            rho, p_val = spearmanr(nc_vals, method_ranks)
+            per_method_rows.append({
+                "method": method,
+                "nc_metric": nc_col,
+                "rho": rho,
+                "p": p_val,
+                "significant": p_val < 0.05,
+            })
+
     # ── Save results ─────────────────────────────────────────────────────
     summary_rows = []
     summary_rows.append({
@@ -418,6 +473,22 @@ def _run_mantel(merged: pd.DataFrame, score_col: str, ascending: bool,
     per_metric_df.to_csv(per_metric_path, index=False)
     logger.info(f"Saved per-metric: {per_metric_path}")
 
+    if loo_rows:
+        loo_df = pd.DataFrame(loo_rows)
+        loo_path = os.path.join(
+            args.output_dir,
+            f"mantel_loo_{label}_{file_prefix}.csv")
+        loo_df.to_csv(loo_path, index=False)
+        logger.info(f"Saved leave-one-out: {loo_path}")
+
+    if per_method_rows:
+        pm_df = pd.DataFrame(per_method_rows)
+        pm_path = os.path.join(
+            args.output_dir,
+            f"mantel_per_method_{label}_{file_prefix}.csv")
+        pm_df.to_csv(pm_path, index=False)
+        logger.info(f"Saved per-method NC importance: {pm_path}")
+
     # ── Console summary ──────────────────────────────────────────────────
     logger.info(f"\n=== Mantel Test Results ({label}) ===")
     logger.info(f"Models: {n_models}, Methods: {len(method_names)}")
@@ -433,6 +504,27 @@ def _run_mantel(merged: pd.DataFrame, score_col: str, ascending: bool,
         sig = "*" if row["significant"] else ""
         logger.info(f"  {row['nc_metric']:25s}  r={row['r']:.4f}  "
                     f"p={row['p']:.4f} {sig}")
+    if loo_rows:
+        logger.info(f"\nLeave-one-out (vs Spearman rank, full r={full_r:.4f}):")
+        loo_df_rank = loo_df[loo_df["method_distance"] == "spearman_rank"].sort_values(
+            "delta_r", ascending=False)
+        for _, row in loo_df_rank.iterrows():
+            sign = "+" if row["delta_r"] < 0 else "-"
+            logger.info(f"  drop {row['dropped_metric']:25s}  r={row['r']:.4f}  "
+                        f"Δr={sign}{abs(row['delta_r']):.4f}")
+    if per_method_rows:
+        logger.info("\nPer-method NC importance (top predictor per method, "
+                    "significant only):")
+        pm_df_sig = pm_df[pm_df["significant"]].copy()
+        if not pm_df_sig.empty:
+            # For each method, show the NC metric with the strongest |rho|
+            pm_df_sig["abs_rho"] = pm_df_sig["rho"].abs()
+            top_per_method = pm_df_sig.loc[
+                pm_df_sig.groupby("method")["abs_rho"].idxmax()
+            ].sort_values("abs_rho", ascending=False)
+            for _, row in top_per_method.iterrows():
+                logger.info(f"  {row['method']:30s}  {row['nc_metric']:25s}  "
+                            f"ρ={row['rho']:+.4f}  p={row['p']:.4f}")
 
 
 def _load_ood_groups(clip_dir: str, datasets: list[str]) -> dict[str, dict[str, int]]:
