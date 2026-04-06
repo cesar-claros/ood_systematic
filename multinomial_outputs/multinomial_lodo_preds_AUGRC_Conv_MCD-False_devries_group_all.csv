@@ -10,7 +10,7 @@ cifar100,VGG13,devries,5,fDBD,CTM,False
 supercifar100,VGG13,devries,1,Energy,fDBD,False
 supercifar100,VGG13,devries,3,CTM,fDBD,False
 supercifar100,VGG13,devries,4,CTM,fDBD,False
-supercifar100,VGG13,devries,5,Energy,Energy,True
+supercifar100,VGG13,devries,5,Energy,fDBD,False
 tinyimagenet,VGG13,devries,1,CTM,fDBD,False
 tinyimagenet,VGG13,devries,2,CTM,fDBD,False
 tinyimagenet,VGG13,devries,3,CTM,fDBD,False

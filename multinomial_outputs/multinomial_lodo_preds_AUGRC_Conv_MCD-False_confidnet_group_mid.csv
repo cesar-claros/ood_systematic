@@ -8,11 +8,11 @@ cifar100,VGG13,confidnet,1,Energy,NNGuide,False
 cifar100,VGG13,confidnet,3,Energy,NNGuide,False
 cifar100,VGG13,confidnet,4,Energy,NNGuide,False
 cifar100,VGG13,confidnet,5,Energy,NNGuide,False
-supercifar100,VGG13,confidnet,1,Energy,NNGuide,False
-supercifar100,VGG13,confidnet,2,CTM,NNGuide,False
-supercifar100,VGG13,confidnet,3,CTM,NNGuide,False
-supercifar100,VGG13,confidnet,4,CTM,NNGuide,False
-supercifar100,VGG13,confidnet,5,CTM,NNGuide,False
+supercifar100,VGG13,confidnet,1,Energy,CTM,False
+supercifar100,VGG13,confidnet,2,CTM,CTM,True
+supercifar100,VGG13,confidnet,3,CTM,CTM,True
+supercifar100,VGG13,confidnet,4,CTM,CTM,True
+supercifar100,VGG13,confidnet,5,CTM,CTM,True
 tinyimagenet,VGG13,confidnet,1,CTM,CTM,True
 tinyimagenet,VGG13,confidnet,2,CTM,CTM,True
 tinyimagenet,VGG13,confidnet,3,CTM,CTM,True
