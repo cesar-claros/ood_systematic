@@ -69,7 +69,7 @@ PAPYAN_NC_METRICS = [
 ]
 
 
-BLOCK_KEYS = ["dataset", "architecture", "study", "dropout", "run"]
+BLOCK_KEYS = ["dataset", "architecture", "study", "dropout", "run", "reward_val"]
 
 
 # ── Build block-level dataset ────────────────────────────────────────────────
