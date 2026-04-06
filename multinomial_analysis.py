@@ -58,6 +58,16 @@ from nc_regime_analysis import (
     JOIN_KEYS_SC,
 )
 
+# Papyan et al. (2020) subset: NC1 (var_collapse), NC2 (equiangularity,
+# equinormness, max equiangularity for means & weights), NC3 (self_duality)
+PAPYAN_NC_METRICS = [
+    "var_collapse",
+    "equiangular_uc", "equiangular_wc",
+    "equinorm_uc", "equinorm_wc",
+    "max_equiangular_uc", "max_equiangular_wc",
+    "self_duality",
+]
+
 
 BLOCK_KEYS = ["dataset", "architecture", "study", "run"]
 
@@ -426,6 +436,8 @@ def main():
                         help="Run per OOD group (near/mid/far) using CLIP labels")
     parser.add_argument("--clip-dir", type=str, default="clip_scores",
                         help="Directory with clip_distances_{dataset}.csv")
+    parser.add_argument("--papyan-only", action="store_true",
+                        help="Restrict NC metrics to the 8 Papyan et al. (2020) metrics")
     parser.add_argument("--output-dir", type=str, default="multinomial_outputs")
     args = parser.parse_args()
 
@@ -471,7 +483,9 @@ def main():
     study_tag = f"_{args.study}" if args.study else ""
     file_prefix = f"{args.score_metric}_{args.backbone}_MCD-{args.mcd}{study_tag}"
 
-    nc_features = [m for m in NC_METRICS if m in merged.columns or m + "_nc" in merged.columns]
+    metric_pool = PAPYAN_NC_METRICS if args.papyan_only else NC_METRICS
+    nc_features = [m for m in metric_pool if m in merged.columns or m + "_nc" in merged.columns]
+    logger.info(f"NC features ({len(nc_features)}): {nc_features}")
 
     # ── Run classification ───────────────────────────────────────────────
     if args.ood_group:
