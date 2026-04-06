@@ -1,0 +1,17 @@
+test,label,n_models,n_methods,r,p,significant,ood_group
+full_NC_vs_spearman_rank,group_near,20,22,0.3196405272402323,0.0027,True,near
+full_NC_vs_jaccard_top1,group_near,20,22,0.3702789868631325,0.0004,True,near
+full_NC_vs_jaccard_top3,group_near,20,22,0.2801591840065602,0.0035,True,near
+full_NC_vs_jaccard_top5,group_near,20,22,0.3660441332757696,0.0005,True,near
+full_NC_vs_spearman_rank,group_mid,20,22,0.3613353377875667,0.0015,True,mid
+full_NC_vs_jaccard_top1,group_mid,20,22,0.3852684940604178,0.0002,True,mid
+full_NC_vs_jaccard_top3,group_mid,20,22,0.3379348100273763,0.0008,True,mid
+full_NC_vs_jaccard_top5,group_mid,20,22,0.3479435856776458,0.0018,True,mid
+full_NC_vs_spearman_rank,group_far,20,22,0.4400550072281959,0.0007,True,far
+full_NC_vs_jaccard_top1,group_far,20,22,0.3733502710974353,0.001,True,far
+full_NC_vs_jaccard_top3,group_far,20,22,0.5750700416478365,0.0002,True,far
+full_NC_vs_jaccard_top5,group_far,20,22,0.4745286428521043,0.0003,True,far
+full_NC_vs_spearman_rank,group_all,20,22,0.3093132340712736,0.0034,True,all
+full_NC_vs_jaccard_top1,group_all,20,22,0.4703979774940837,0.0001,True,all
+full_NC_vs_jaccard_top3,group_all,20,22,0.3436798377550116,0.0016,True,all
+full_NC_vs_jaccard_top5,group_all,20,22,0.3215203464358188,0.0028,True,all

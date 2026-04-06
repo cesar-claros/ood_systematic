@@ -1,0 +1,17 @@
+nc_metric,method_distance,r,p,significant
+var_collapse,spearman_rank,0.3779951457740121,0.0053,True
+var_collapse,jaccard_top1,0.4249083075331551,0.0032,True
+equiangular_uc,spearman_rank,0.4832473917180568,0.0002,True
+equiangular_uc,jaccard_top1,0.024283217033180086,0.3434,False
+equiangular_wc,spearman_rank,0.7145108499635066,0.0001,True
+equiangular_wc,jaccard_top1,0.05883641123059048,0.2895,False
+equinorm_uc,spearman_rank,0.4219835092090527,0.0006,True
+equinorm_uc,jaccard_top1,0.46656410276003313,0.0007,True
+equinorm_wc,spearman_rank,0.613619474111811,0.0001,True
+equinorm_wc,jaccard_top1,0.30685156069200287,0.0219,True
+max_equiangular_uc,spearman_rank,0.37831707159025774,0.0015,True
+max_equiangular_uc,jaccard_top1,0.03215366682259023,0.3172,False
+max_equiangular_wc,spearman_rank,0.8864822213244568,0.0001,True
+max_equiangular_wc,jaccard_top1,0.051541848011137176,0.2532,False
+self_duality,spearman_rank,0.8866606802008539,0.0001,True
+self_duality,jaccard_top1,0.1196884254560299,0.1332,False
