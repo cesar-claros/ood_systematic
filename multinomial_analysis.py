@@ -384,16 +384,22 @@ def run_classification(
 
 
 # ── OOD group support ────────────────────────────────────────────────────────
-def _load_ood_groups(clip_dir: str, datasets: list[str]) -> dict[str, str]:
-    """Load OOD group assignments, return global {ood_set: group_name}."""
+def _load_ood_groups(clip_dir: str, datasets: list[str]) -> dict[str, dict[str, str]]:
+    """Load source-specific OOD group assignments.
+
+    Returns
+    -------
+    {source_dataset: {ood_set: group_name}}
+    """
     GROUP_NAMES = {1: "near", 2: "mid", 3: "far"}
-    ood_group_votes: dict[str, list[str]] = {}
+    per_source: dict[str, dict[str, str]] = {}
 
     for ds in datasets:
         path = os.path.join(clip_dir, f"clip_distances_{ds}.csv")
         if not os.path.exists(path):
             continue
         df = pd.read_csv(path, header=[0, 1], index_col=0)
+        ds_groups: dict[str, str] = {}
         for ood_set in df.index:
             try:
                 g = int(df.loc[ood_set, ("group", "")])
@@ -403,12 +409,10 @@ def _load_ood_groups(clip_dir: str, datasets: list[str]) -> dict[str, str]:
                 except (KeyError, ValueError):
                     continue
             if g in GROUP_NAMES:
-                ood_group_votes.setdefault(ood_set, []).append(GROUP_NAMES[g])
+                ds_groups[ood_set] = GROUP_NAMES[g]
+        per_source[ds] = ds_groups
 
-    return {
-        ood: Counter(votes).most_common(1)[0][0]
-        for ood, votes in ood_group_votes.items()
-    }
+    return per_source
 
 
 def _normalise(s: str) -> str:
@@ -493,33 +497,63 @@ def main():
 
     # ── Run classification ───────────────────────────────────────────────
     if args.ood_group:
-        # Per OOD group
-        ood_group_global = _load_ood_groups(args.clip_dir, datasets)
-        if not ood_group_global:
+        # Per OOD group (source-specific assignments)
+        per_source_groups = _load_ood_groups(args.clip_dir, datasets)
+        if not per_source_groups:
             logger.error(f"No OOD group labels from {args.clip_dir}")
             return
 
-        ood_group_norm = {_normalise(k): v for k, v in ood_group_global.items()}
-        group_to_cols: dict[str, list[str]] = {}
-        for col in ood_cols:
-            group = ood_group_norm.get(_normalise(col))
-            if group:
-                group_to_cols.setdefault(group, []).append(col)
+        # Build source-specific group → column mapping
+        # {source_ds: {group_name: [ood_col, ...]}}
+        source_group_cols: dict[str, dict[str, list[str]]] = {}
+        for src_ds, ood_map in per_source_groups.items():
+            norm_map = {_normalise(k): v for k, v in ood_map.items()}
+            g2c: dict[str, list[str]] = {}
+            for col in ood_cols:
+                group = norm_map.get(_normalise(col))
+                if group:
+                    g2c.setdefault(group, []).append(col)
+            source_group_cols[src_ds] = g2c
+
+        # Log source-specific assignments for transparency
+        for src_ds in sorted(source_group_cols):
+            for grp in ["near", "mid", "far"]:
+                cols = source_group_cols[src_ds].get(grp, [])
+                if cols:
+                    logger.info(f"  {src_ds} {grp}: {cols}")
 
         for group_label in ["near", "mid", "far", "all"]:
-            if group_label == "all":
-                cols = ood_cols
-            else:
-                cols = group_to_cols.get(group_label, [])
-            if not cols:
-                logger.warning(f"No OOD columns for group '{group_label}'")
-                continue
-
             group_merged = merged.copy()
-            group_merged["group_mean_score"] = group_merged[cols].mean(axis=1)
 
-            logger.info(f"\n{'='*60}")
-            logger.info(f"OOD group: {group_label} ({len(cols)} OOD sets: {cols})")
+            if group_label == "all":
+                group_merged["group_mean_score"] = group_merged[ood_cols].mean(axis=1)
+                logger.info(f"\n{'='*60}")
+                logger.info(f"OOD group: all ({len(ood_cols)} OOD sets)")
+            else:
+                # Compute per-row group mean using source-specific assignments
+                group_merged["group_mean_score"] = np.nan
+                for src_ds, g2c in source_group_cols.items():
+                    cols = g2c.get(group_label, [])
+                    if not cols:
+                        continue
+                    mask = group_merged["dataset"] == src_ds
+                    group_merged.loc[mask, "group_mean_score"] = (
+                        group_merged.loc[mask, cols].mean(axis=1)
+                    )
+
+                # Drop rows with no group assignment (source has no OOD sets in this group)
+                n_before = len(group_merged)
+                group_merged = group_merged.dropna(subset=["group_mean_score"])
+                if len(group_merged) < n_before:
+                    logger.info(f"  Dropped {n_before - len(group_merged)} rows with "
+                                f"no {group_label}-OOD sets for their source dataset")
+
+                logger.info(f"\n{'='*60}")
+                logger.info(f"OOD group: {group_label} (source-specific assignments)")
+
+            if group_merged.empty:
+                logger.warning(f"No rows for group '{group_label}'")
+                continue
 
             block_df = build_block_dataset(group_merged, "group_mean_score", ascending)
             if len(block_df) < 5:
