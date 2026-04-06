@@ -1,21 +1,21 @@
-dataset,architecture,study,dropout,run,best_method,predicted_method,correct
-cifar10,ViT,vit,True,0,pNML,ViM,False
-cifar10,ViT,vit,True,1,PCA RecError global,ViM,False
-cifar10,ViT,vit,True,2,pNML,ViM,False
-cifar10,ViT,vit,True,3,pNML,ViM,False
-cifar10,ViT,vit,True,4,pNML,ViM,False
-cifar100,ViT,vit,True,0,ViM,pNML,False
-cifar100,ViT,vit,True,1,ViM,pNML,False
-cifar100,ViT,vit,True,2,ViM,pNML,False
-cifar100,ViT,vit,True,3,ViM,pNML,False
-cifar100,ViT,vit,True,4,ViM,pNML,False
-supercifar100,ViT,vit,False,0,ViM,PE,False
-supercifar100,ViT,vit,False,1,ViM,PE,False
-supercifar100,ViT,vit,False,2,PCA RecError global,PE,False
-supercifar100,ViT,vit,False,3,PCA RecError global,PE,False
-supercifar100,ViT,vit,False,4,ViM,PE,False
-tinyimagenet,ViT,vit,False,0,PE,PCA RecError global,False
-tinyimagenet,ViT,vit,False,1,PE,PCA RecError global,False
-tinyimagenet,ViT,vit,False,2,PE,PCA RecError global,False
-tinyimagenet,ViT,vit,False,3,PE,PCA RecError global,False
-tinyimagenet,ViT,vit,False,4,PE,ViM,False
+dataset,architecture,study,dropout,run,reward_val,best_method,predicted_method,correct
+cifar10,ViT,vit,True,0,0.0,pNML,ViM,False
+cifar10,ViT,vit,True,1,0.0,PCA RecError global,ViM,False
+cifar10,ViT,vit,True,2,0.0,pNML,ViM,False
+cifar10,ViT,vit,True,3,0.0,pNML,ViM,False
+cifar10,ViT,vit,True,4,0.0,pNML,ViM,False
+cifar100,ViT,vit,True,0,0.0,ViM,pNML,False
+cifar100,ViT,vit,True,1,0.0,ViM,pNML,False
+cifar100,ViT,vit,True,2,0.0,ViM,pNML,False
+cifar100,ViT,vit,True,3,0.0,ViM,pNML,False
+cifar100,ViT,vit,True,4,0.0,ViM,pNML,False
+supercifar100,ViT,vit,False,0,0.0,ViM,PE,False
+supercifar100,ViT,vit,False,1,0.0,ViM,PE,False
+supercifar100,ViT,vit,False,2,0.0,PCA RecError global,PE,False
+supercifar100,ViT,vit,False,3,0.0,PCA RecError global,PE,False
+supercifar100,ViT,vit,False,4,0.0,ViM,PE,False
+tinyimagenet,ViT,vit,False,0,0.0,PE,PCA RecError global,False
+tinyimagenet,ViT,vit,False,1,0.0,PE,PCA RecError global,False
+tinyimagenet,ViT,vit,False,2,0.0,PE,PCA RecError global,False
+tinyimagenet,ViT,vit,False,3,0.0,PE,PCA RecError global,False
+tinyimagenet,ViT,vit,False,4,0.0,PE,ViM,False
