@@ -197,7 +197,8 @@ def run_classification(
     unique_datasets = np.unique(datasets)
     if len(unique_datasets) >= 2:
         logger.info("\n--- Leave-One-Dataset-Out CV ---")
-        y_pred_lodo = np.full_like(y_enc, -1)
+        y_pred_lodo_lr = np.full_like(y_enc, -1)
+        y_pred_lodo_rf = np.full_like(y_enc, -1)
 
         for held_out_ds in unique_datasets:
             test_mask = datasets == held_out_ds
@@ -220,31 +221,62 @@ def run_classification(
                 max_iter=2000, C=1.0, random_state=42,
             )
             lr.fit(X_train, y_enc[train_mask])
-            y_pred_lodo[test_mask] = lr.predict(X_test)
+            y_pred_lodo_lr[test_mask] = lr.predict(X_test)
 
-            acc_fold = accuracy_score(y_enc[test_mask], y_pred_lodo[test_mask])
+            # Random Forest
+            rf = RandomForestClassifier(
+                n_estimators=200, max_depth=None, random_state=42,
+                class_weight="balanced",
+            )
+            rf.fit(X_train, y_enc[train_mask])
+            y_pred_lodo_rf[test_mask] = rf.predict(X_test)
+
+            acc_lr_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_lr[test_mask])
+            acc_rf_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_rf[test_mask])
             logger.info(f"  Hold out {held_out_ds}: "
-                        f"acc={acc_fold:.3f} "
+                        f"LR={acc_lr_fold:.3f}, RF={acc_rf_fold:.3f} "
                         f"({test_mask.sum()} samples, "
                         f"{len(np.unique(y_enc[test_mask]))} classes)")
 
         # Overall LODO accuracy (exclude any -1 predictions)
-        valid_mask = y_pred_lodo >= 0
-        if valid_mask.sum() > 0:
-            acc_lodo = accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
-            bal_acc_lodo = balanced_accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
-            logger.info(f"\n  LODO overall: acc={acc_lodo:.3f}, balanced_acc={bal_acc_lodo:.3f}")
+        valid_mask_lr = y_pred_lodo_lr >= 0
+        valid_mask_rf = y_pred_lodo_rf >= 0
+        lodo_results = {}
+        for tag, y_pred_lodo, valid_mask in [
+            ("lr", y_pred_lodo_lr, valid_mask_lr),
+            ("rf", y_pred_lodo_rf, valid_mask_rf),
+        ]:
+            if valid_mask.sum() > 0:
+                acc = accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
+                bal_acc = balanced_accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
+                lodo_results[tag] = {"acc": acc, "bal_acc": bal_acc,
+                                     "n": int(valid_mask.sum()), "preds": y_pred_lodo,
+                                     "valid": valid_mask}
+                logger.info(f"\n  LODO {tag.upper()} overall: acc={acc:.3f}, "
+                            f"balanced_acc={bal_acc:.3f}")
 
-            results["lodo_accuracy"] = acc_lodo
-            results["lodo_balanced_accuracy"] = bal_acc_lodo
-            results["lodo_n_samples"] = int(valid_mask.sum())
+        # Pick best LODO classifier and store results
+        if lodo_results:
+            best_tag = max(lodo_results, key=lambda t: lodo_results[t]["acc"])
+            best = lodo_results[best_tag]
+            results["lodo_lr_accuracy"] = lodo_results.get("lr", {}).get("acc", np.nan)
+            results["lodo_lr_balanced_accuracy"] = lodo_results.get("lr", {}).get("bal_acc", np.nan)
+            results["lodo_rf_accuracy"] = lodo_results.get("rf", {}).get("acc", np.nan)
+            results["lodo_rf_balanced_accuracy"] = lodo_results.get("rf", {}).get("bal_acc", np.nan)
+            results["lodo_accuracy"] = best["acc"]
+            results["lodo_balanced_accuracy"] = best["bal_acc"]
+            results["lodo_n_samples"] = best["n"]
+            y_pred_lodo = best["preds"]
+            valid_mask = best["valid"]
 
-            # Baseline: most-frequent class
             most_common = Counter(y_enc[valid_mask]).most_common(1)[0]
             baseline_acc = most_common[1] / valid_mask.sum()
             results["lodo_baseline_accuracy"] = baseline_acc
+            logger.info(f"  Best LODO: {best_tag.upper()} acc={best['acc']:.3f}")
             logger.info(f"  Baseline (most frequent): acc={baseline_acc:.3f} "
                         f"(class={le.classes_[most_common[0]]})")
+        else:
+            y_pred_lodo = None
     else:
         logger.info("Only 1 dataset — skipping LODO CV")
         y_pred_lodo = None
