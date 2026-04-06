@@ -1,2 +1,0 @@
-lodo_accuracy,lodo_balanced_accuracy,lodo_n_samples,lodo_baseline_accuracy,kfold_lr_accuracy,kfold_lr_balanced_accuracy,kfold_rf_accuracy,kfold_rf_balanced_accuracy,kfold_n_folds,kfold_baseline_accuracy,label,n_samples,n_classes,n_features,classes
-0.65,0.2857142857142857,40,0.375,0.825,0.5476190476190477,0.9,0.7965367965367965,2,0.375,group_mid,40,7,8,"CTM,Energy,Maha,NNGuide,ViM,fDBD,pNML"

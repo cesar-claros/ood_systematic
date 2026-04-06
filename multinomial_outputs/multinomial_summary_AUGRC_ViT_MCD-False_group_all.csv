@@ -1,2 +1,0 @@
-lodo_accuracy,lodo_balanced_accuracy,lodo_n_samples,lodo_baseline_accuracy,kfold_lr_accuracy,kfold_lr_balanced_accuracy,kfold_rf_accuracy,kfold_rf_balanced_accuracy,kfold_n_folds,kfold_baseline_accuracy,label,n_samples,n_classes,n_features,classes
-0.0,0.0,18,0.3333333333333333,0.7222222222222222,0.5666666666666667,0.7777777777777778,0.6,2,0.3333333333333333,group_all,18,5,8,"CTMmeanOC,GE,KPCA RecError global,ViM,pNML"
