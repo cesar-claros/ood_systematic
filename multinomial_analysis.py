@@ -37,7 +37,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.model_selection import StratifiedGroupKFold, cross_val_predict
+from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
@@ -126,13 +126,17 @@ def build_block_dataset(
     best = ranked.groupby(BLOCK_KEYS, as_index=False).first()
     best = best.rename(columns={"methods": "best_method", score_col: "best_score"})
 
-    # Top-3 methods per block (pipe-separated string)
-    top3 = (
-        ranked.groupby(BLOCK_KEYS)["methods"]
-        .apply(lambda x: "|".join(x.iloc[:3]))
-        .reset_index()
-        .rename(columns={"methods": "top3_methods"})
-    )
+    # Top-3 methods per block (pipe-separated string + individual rank columns)
+    def _top3_info(group):
+        methods = group["methods"].iloc[:3].tolist()
+        return pd.Series({
+            "top3_methods": "|".join(methods),
+            "rank1_method": methods[0] if len(methods) >= 1 else np.nan,
+            "rank2_method": methods[1] if len(methods) >= 2 else np.nan,
+            "rank3_method": methods[2] if len(methods) >= 3 else np.nan,
+        })
+
+    top3 = ranked.groupby(BLOCK_KEYS).apply(_top3_info).reset_index()
     best = best.merge(top3, on=BLOCK_KEYS, how="left")
 
     # Merge NC metrics
@@ -155,6 +159,39 @@ def build_block_dataset(
     logger.info(f"Best method distribution:\n{result['best_method'].value_counts().to_string()}")
 
     return result
+
+
+RANK_WEIGHTS = {0: 3.0, 1: 2.0, 2: 1.0}  # rank-1 → 3, rank-2 → 2, rank-3 → 1
+
+
+def _expand_top3_training(
+    X: np.ndarray,
+    df: pd.DataFrame,
+    le,
+    mask: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Replicate samples for top-3 training with rank-based weights.
+
+    Each original sample becomes up to 3 training rows (one per ranked method).
+    Returns (X_expanded, y_expanded, sample_weights).
+    """
+    rank_cols = ["rank1_method", "rank2_method", "rank3_method"]
+    indices = np.where(mask)[0] if mask is not None else np.arange(len(X))
+
+    known_classes = set(le.classes_)
+    X_parts, y_parts, w_parts = [], [], []
+    for rank_i, col in enumerate(rank_cols):
+        methods = df.iloc[indices][col].values
+        # Only keep methods that exist in the label encoder (not filtered as rare)
+        valid = np.array([pd.notna(m) and m in known_classes for m in methods])
+        if valid.sum() == 0:
+            continue
+        valid_idx = np.where(valid)[0]
+        X_parts.append(X[indices[valid_idx]])
+        y_parts.append(le.transform(methods[valid]))
+        w_parts.append(np.full(valid.sum(), RANK_WEIGHTS[rank_i]))
+
+    return np.vstack(X_parts), np.concatenate(y_parts), np.concatenate(w_parts)
 
 
 def _top_k_hit_rate(y_pred_labels: np.ndarray, top_k_lists: list[set[str]]) -> float:
@@ -232,9 +269,14 @@ def run_classification(
                 logger.warning(f"  LODO {held_out_ds}: only 1 class in train, skipping")
                 continue
 
-            # Fit scaler on train only
+            # Expand training data with top-3 labels and rank-based weights
+            X_train_exp, y_train_exp, w_train = _expand_top3_training(
+                X, df, le, mask=train_mask,
+            )
+
+            # Fit scaler on expanded train data
             scaler_lodo = StandardScaler()
-            X_train = scaler_lodo.fit_transform(X[train_mask])
+            X_train_exp = scaler_lodo.fit_transform(X_train_exp)
             X_test = scaler_lodo.transform(X[test_mask])
 
             # Logistic Regression
@@ -242,7 +284,7 @@ def run_classification(
                 solver="lbfgs",
                 max_iter=2000, C=1.0, random_state=42,
             )
-            lr.fit(X_train, y_enc[train_mask])
+            lr.fit(X_train_exp, y_train_exp, sample_weight=w_train)
             y_pred_lodo_lr[test_mask] = lr.predict(X_test)
 
             # Random Forest
@@ -250,7 +292,7 @@ def run_classification(
                 n_estimators=200, max_depth=None, random_state=42,
                 class_weight="balanced",
             )
-            rf.fit(X_train, y_enc[train_mask])
+            rf.fit(X_train_exp, y_train_exp, sample_weight=w_train)
             y_pred_lodo_rf[test_mask] = rf.predict(X_test)
 
             acc_lr_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_lr[test_mask])
@@ -339,6 +381,11 @@ def run_classification(
             fold_ids[test_idx] = fold_i
             fold_groups = np.unique(groups[test_idx])
 
+            # Expand training data with top-3 labels and rank-based weights
+            train_mask = np.zeros(len(X), dtype=bool)
+            train_mask[train_idx] = True
+            X_tr_exp, y_tr_exp, w_tr = _expand_top3_training(X_scaled, df, le, mask=train_mask)
+
             lr_cv = LogisticRegression(
                 solver="lbfgs", max_iter=2000, C=1.0, random_state=42,
             )
@@ -346,8 +393,8 @@ def run_classification(
                 n_estimators=200, max_depth=None, random_state=42,
                 class_weight="balanced",
             )
-            lr_cv.fit(X_scaled[train_idx], y_enc[train_idx])
-            rf_cv.fit(X_scaled[train_idx], y_enc[train_idx])
+            lr_cv.fit(X_tr_exp, y_tr_exp, sample_weight=w_tr)
+            rf_cv.fit(X_tr_exp, y_tr_exp, sample_weight=w_tr)
 
             y_pred_lr[test_idx] = lr_cv.predict(X_scaled[test_idx])
             y_pred_rf[test_idx] = rf_cv.predict(X_scaled[test_idx])
@@ -408,18 +455,21 @@ def run_classification(
     # ── 3. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
 
-    # Fit on full data for importance analysis
+    # Expand full data with top-3 labels for fitting
+    X_full_exp, y_full_exp, w_full_exp = _expand_top3_training(X_scaled, df, le)
+
+    # Fit on expanded full data for importance analysis
     lr_full = LogisticRegression(
         solver="lbfgs",
         max_iter=2000, C=1.0, random_state=42,
     )
-    lr_full.fit(X_scaled, y_enc)
+    lr_full.fit(X_full_exp, y_full_exp, sample_weight=w_full_exp)
 
     rf_full = RandomForestClassifier(
         n_estimators=200, max_depth=None, random_state=42,
         class_weight="balanced",
     )
-    rf_full.fit(X_scaled, y_enc)
+    rf_full.fit(X_full_exp, y_full_exp, sample_weight=w_full_exp)
 
     # LR: coefficient magnitudes (mean absolute across classes)
     lr_importance = np.abs(lr_full.coef_).mean(axis=0)
@@ -459,15 +509,24 @@ def run_classification(
     # interpretable if/then rules with thresholds in original NC units.
     logger.info("\n--- Decision Tree Rules ---")
 
+    # Expand full unscaled data for DT training
+    X_dt_exp, y_dt_exp, w_dt_exp = _expand_top3_training(X, df, le)
+
     best_dt = None
     best_dt_acc = -1
+    best_dt_depth = 2
     for depth in [2, 3, 4, 5]:
-        dt = DecisionTreeClassifier(
-            max_depth=depth, random_state=42,
-            class_weight="balanced",
-        )
         if n_folds >= 2:
-            y_pred_dt = cross_val_predict(dt, X, y_enc, cv=sgkf, groups=groups)
+            y_pred_dt = np.full_like(y_enc, -1)
+            for tr_idx, te_idx in sgkf.split(X, y_enc, groups):
+                tr_mask = np.zeros(len(X), dtype=bool)
+                tr_mask[tr_idx] = True
+                X_tr_dt, y_tr_dt, w_tr_dt = _expand_top3_training(X, df, le, mask=tr_mask)
+                dt = DecisionTreeClassifier(
+                    max_depth=depth, random_state=42, class_weight="balanced",
+                )
+                dt.fit(X_tr_dt, y_tr_dt, sample_weight=w_tr_dt)
+                y_pred_dt[te_idx] = dt.predict(X[te_idx])
             dt_acc = accuracy_score(y_enc, y_pred_dt)
         else:
             dt_acc = 0.0
@@ -475,22 +534,25 @@ def run_classification(
             best_dt_acc = dt_acc
             best_dt_depth = depth
 
-    # Refit best depth on full data
+    # Refit best depth on expanded full data
     best_dt = DecisionTreeClassifier(
         max_depth=best_dt_depth, random_state=42,
         class_weight="balanced",
     )
-    best_dt.fit(X, y_enc)
+    best_dt.fit(X_dt_exp, y_dt_exp, sample_weight=w_dt_exp)
 
-    # Evaluate DT with CV using same grouped folds
+    # Evaluate DT with CV using same grouped folds and expanded training
     if n_folds >= 2:
         y_pred_dt_cv = np.full_like(y_enc, -1)
         for train_idx, test_idx in sgkf.split(X, y_enc, groups):
+            tr_mask = np.zeros(len(X), dtype=bool)
+            tr_mask[train_idx] = True
+            X_tr_dt, y_tr_dt, w_tr_dt = _expand_top3_training(X, df, le, mask=tr_mask)
             dt_fold = DecisionTreeClassifier(
                 max_depth=best_dt_depth, random_state=42,
                 class_weight="balanced",
             )
-            dt_fold.fit(X[train_idx], y_enc[train_idx])
+            dt_fold.fit(X_tr_dt, y_tr_dt, sample_weight=w_tr_dt)
             y_pred_dt_cv[test_idx] = dt_fold.predict(X[test_idx])
         dt_cv_acc = accuracy_score(y_enc, y_pred_dt_cv)
         dt_cv_bal_acc = balanced_accuracy_score(y_enc, y_pred_dt_cv)
