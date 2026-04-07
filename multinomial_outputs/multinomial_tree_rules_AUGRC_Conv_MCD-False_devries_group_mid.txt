@@ -1,12 +1,27 @@
 Decision Tree Rules (group_mid)
-Depth: 2, Train acc: 0.324, CV acc: 0.297, Balanced CV acc: 0.224
+Depth: 3, Train acc: 0.946, CV acc: 0.189, Balanced CV acc: 0.204
 Classes: ['CTM', 'CTMmean', 'Confidence', 'Energy', 'GradNorm', 'ViM', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- equinorm_wc <= 0.0581
-|   |--- max_equiangular_wc <= 0.1445
-|   |   |--- class: Confidence
-|   |--- max_equiangular_wc >  0.1445
-|   |   |--- class: GradNorm
-|--- equinorm_wc >  0.0581
-|   |--- class: CTMmean
+|--- equiangular_wc <= 0.1146
+|   |--- max_equiangular_wc <= 0.0602
+|   |   |--- equinorm_wc <= 0.0447
+|   |   |   |--- class: CTM
+|   |   |--- equinorm_wc >  0.0447
+|   |   |   |--- class: CTMmean
+|   |--- max_equiangular_wc >  0.0602
+|   |   |--- max_equiangular_uc <= 0.0847
+|   |   |   |--- class: Confidence
+|   |   |--- max_equiangular_uc >  0.0847
+|   |   |   |--- class: ViM
+|--- equiangular_wc >  0.1146
+|   |--- equiangular_uc <= 0.1716
+|   |   |--- var_collapse <= 0.0246
+|   |   |   |--- class: Energy
+|   |   |--- var_collapse >  0.0246
+|   |   |   |--- class: pNML
+|   |--- equiangular_uc >  0.1716
+|   |   |--- max_equiangular_wc <= 0.1445
+|   |   |   |--- class: pNML
+|   |   |--- max_equiangular_wc >  0.1445
+|   |   |   |--- class: GradNorm

@@ -1,41 +1,41 @@
 dataset,architecture,study,dropout,run,reward_val,fold,true_method,top3_methods,pred_lr,pred_rf,correct_lr,correct_rf,top3_hit_lr,top3_hit_rf,pred_dt,correct_dt,top3_hit_dt
-cifar10,VGG13,confidnet,False,1,2.2,1,CTM,CTM|GEN|fDBD,CTM,CTM,True,True,True,True,CTM,True,True
-cifar10,VGG13,confidnet,False,2,2.2,1,CTM,CTM|GEN|REN,CTM,CTM,True,True,True,True,CTM,True,True
-cifar10,VGG13,confidnet,False,3,2.2,1,CTM,CTM|GEN|fDBD,CTM,CTM,True,True,True,True,CTM,True,True
-cifar10,VGG13,confidnet,False,4,2.2,1,CTM,CTM|GEN|fDBD,CTM,CTM,True,True,True,True,CTM,True,True
-cifar10,VGG13,confidnet,False,5,2.2,1,CTM,CTM|GEN|fDBD,CTM,CTM,True,True,True,True,CTM,True,True
+cifar10,VGG13,confidnet,False,1,2.2,1,CTM,CTM|GEN|fDBD,CTM,CTM,True,True,True,True,CTMmean,False,False
+cifar10,VGG13,confidnet,False,2,2.2,1,CTM,CTM|GEN|REN,CTM,CTM,True,True,True,True,CTMmean,False,False
+cifar10,VGG13,confidnet,False,3,2.2,1,CTM,CTM|GEN|fDBD,CTM,CTM,True,True,True,True,CTMmean,False,False
+cifar10,VGG13,confidnet,False,4,2.2,1,CTM,CTM|GEN|fDBD,CTM,CTM,True,True,True,True,CTMmean,False,False
+cifar10,VGG13,confidnet,False,5,2.2,1,CTM,CTM|GEN|fDBD,CTM,CTM,True,True,True,True,CTMmean,False,False
 cifar10,VGG13,confidnet,True,1,2.2,1,Energy,Energy|NNGuide|MLS,Energy,Maha,True,False,True,False,Energy,True,True
-cifar10,VGG13,confidnet,True,2,2.2,1,Energy,Energy|MLS|NeCo,Energy,Energy,True,True,True,True,Energy,True,True
-cifar10,VGG13,confidnet,True,3,2.2,1,NNGuide,NNGuide|Energy|MLS,Energy,Energy,False,False,True,True,Energy,False,True
-cifar10,VGG13,confidnet,True,4,2.2,1,NNGuide,NNGuide|Energy|MLS,Energy,Energy,False,False,True,True,Energy,False,True
+cifar10,VGG13,confidnet,True,2,2.2,1,Energy,Energy|MLS|NeCo,Energy,Maha,True,False,True,False,Energy,True,True
+cifar10,VGG13,confidnet,True,3,2.2,1,NNGuide,NNGuide|Energy|MLS,Energy,Maha,False,False,True,False,Energy,False,True
+cifar10,VGG13,confidnet,True,4,2.2,1,NNGuide,NNGuide|Energy|MLS,Energy,Maha,False,False,True,False,Energy,False,True
 cifar10,VGG13,confidnet,True,5,2.2,1,Energy,Energy|NNGuide|NeCo,Energy,Maha,True,False,True,False,Energy,True,True
-cifar100,VGG13,confidnet,False,1,2.2,0,ViM,ViM|fDBD|CTM,CTMmean,CTMmean,False,False,False,False,CTMmean,False,False
-cifar100,VGG13,confidnet,False,2,2.2,0,fDBD,fDBD|ViM|CTM,CTMmean,CTMmean,False,False,False,False,CTMmean,False,False
-cifar100,VGG13,confidnet,False,3,2.2,0,fDBD,fDBD|ViM|CTM,CTMmean,CTMmean,False,False,False,False,CTMmean,False,False
-cifar100,VGG13,confidnet,False,4,2.2,0,fDBD,fDBD|CTM|ViM,CTMmean,CTMmean,False,False,False,False,CTMmean,False,False
-cifar100,VGG13,confidnet,False,5,2.2,0,ViM,ViM|fDBD|CTM,CTMmean,CTMmean,False,False,False,False,CTMmean,False,False
-cifar100,VGG13,confidnet,True,1,2.2,0,Energy,Energy|NNGuide|NeCo,Energy,Energy,True,True,True,True,Maha,False,False
-cifar100,VGG13,confidnet,True,2,2.2,0,Energy,Energy|NNGuide|NeCo,Energy,Energy,True,True,True,True,Maha,False,False
-cifar100,VGG13,confidnet,True,3,2.2,0,Energy,Energy|NeCo|KPCA RecError global,Energy,Energy,True,True,True,True,Maha,False,False
-cifar100,VGG13,confidnet,True,4,2.2,0,Energy,Energy|NNGuide|NeCo,Energy,Energy,True,True,True,True,Maha,False,False
-cifar100,VGG13,confidnet,True,5,2.2,0,Energy,Energy|NeCo|KPCA RecError global,Energy,Energy,True,True,True,True,Maha,False,False
-supercifar100,VGG13,confidnet,False,1,2.2,2,CTM,CTM|KPCA RecError global|CTMmean,CTM,CTM,True,True,True,True,Maha,False,False
-supercifar100,VGG13,confidnet,False,2,2.2,2,CTM,CTM|KPCA RecError global|fDBD,CTM,CTM,True,True,True,True,Maha,False,False
+cifar100,VGG13,confidnet,False,1,2.2,0,ViM,ViM|fDBD|CTM,CTMmean,CTM,False,False,False,True,Maha,False,False
+cifar100,VGG13,confidnet,False,2,2.2,0,fDBD,fDBD|ViM|CTM,CTMmean,CTM,False,False,False,True,Maha,False,False
+cifar100,VGG13,confidnet,False,3,2.2,0,fDBD,fDBD|ViM|CTM,CTMmean,CTM,False,False,False,True,Maha,False,False
+cifar100,VGG13,confidnet,False,4,2.2,0,fDBD,fDBD|CTM|ViM,CTMmean,CTM,False,False,False,True,Maha,False,False
+cifar100,VGG13,confidnet,False,5,2.2,0,ViM,ViM|fDBD|CTM,CTMmean,CTM,False,False,False,True,Maha,False,False
+cifar100,VGG13,confidnet,True,1,2.2,0,Energy,Energy|NNGuide|NeCo,pNML,Energy,False,True,False,True,Maha,False,False
+cifar100,VGG13,confidnet,True,2,2.2,0,Energy,Energy|NNGuide|NeCo,pNML,Energy,False,True,False,True,Maha,False,False
+cifar100,VGG13,confidnet,True,3,2.2,0,Energy,Energy|NeCo|KPCA RecError global,pNML,Energy,False,True,False,True,Maha,False,False
+cifar100,VGG13,confidnet,True,4,2.2,0,Energy,Energy|NNGuide|NeCo,pNML,Energy,False,True,False,True,Maha,False,False
+cifar100,VGG13,confidnet,True,5,2.2,0,Energy,Energy|NeCo|KPCA RecError global,pNML,Energy,False,True,False,True,Maha,False,False
+supercifar100,VGG13,confidnet,False,1,2.2,2,CTM,CTM|KPCA RecError global|CTMmean,CTM,CTM,True,True,True,True,CTM,True,True
+supercifar100,VGG13,confidnet,False,2,2.2,2,CTM,CTM|KPCA RecError global|fDBD,CTM,CTM,True,True,True,True,CTM,True,True
 supercifar100,VGG13,confidnet,False,3,2.2,2,CTM,CTM|KPCA RecError global|fDBD,CTM,CTM,True,True,True,True,CTM,True,True
-supercifar100,VGG13,confidnet,False,4,2.2,2,CTM,CTM|KPCA RecError global|fDBD,CTM,CTM,True,True,True,True,Maha,False,False
-supercifar100,VGG13,confidnet,False,5,2.2,2,CTM,CTM|REN|KPCA RecError global,CTM,CTM,True,True,True,True,Maha,False,False
-supercifar100,VGG13,confidnet,True,1,2.2,2,Energy,Energy|GradNorm|pNML,Energy,Energy,True,True,True,True,Energy,True,True
+supercifar100,VGG13,confidnet,False,4,2.2,2,CTM,CTM|KPCA RecError global|fDBD,CTM,CTM,True,True,True,True,CTM,True,True
+supercifar100,VGG13,confidnet,False,5,2.2,2,CTM,CTM|REN|KPCA RecError global,CTM,CTM,True,True,True,True,CTM,True,True
+supercifar100,VGG13,confidnet,True,1,2.2,2,Energy,Energy|GradNorm|pNML,Energy,Energy,True,True,True,True,NNGuide,False,False
 supercifar100,VGG13,confidnet,True,2,2.2,2,pNML,pNML|Residual|Energy,Energy,NNGuide,False,False,True,False,NNGuide,False,False
 supercifar100,VGG13,confidnet,True,3,2.2,2,pNML,pNML|Energy|Residual,Energy,NNGuide,False,False,True,False,NNGuide,False,False
 supercifar100,VGG13,confidnet,True,4,2.2,2,Energy,Energy|pNML|GradNorm,Energy,NNGuide,True,False,True,False,NNGuide,False,False
 supercifar100,VGG13,confidnet,True,5,2.2,2,Energy,Energy|GradNorm|pNML,Energy,NNGuide,True,False,True,False,NNGuide,False,False
-tinyimagenet,VGG13,confidnet,False,1,2.2,3,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,CTM,False,False,True,True,NNGuide,False,False
-tinyimagenet,VGG13,confidnet,False,2,2.2,3,CTM,CTM|CTMmean|CTMmeanOC,CTM,CTM,True,True,True,True,NNGuide,False,False
-tinyimagenet,VGG13,confidnet,False,3,2.2,3,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,CTM,False,False,True,True,NNGuide,False,False
-tinyimagenet,VGG13,confidnet,False,4,2.2,3,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,CTM,False,False,True,True,NNGuide,False,False
-tinyimagenet,VGG13,confidnet,False,5,2.2,3,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,CTM,False,False,True,True,NNGuide,False,False
-tinyimagenet,VGG13,confidnet,True,1,2.2,3,Maha,Maha|Residual,Energy,CTM,False,False,False,False,CTM,False,False
-tinyimagenet,VGG13,confidnet,True,2,2.2,3,Maha,Maha|Residual,Energy,CTM,False,False,False,False,CTM,False,False
-tinyimagenet,VGG13,confidnet,True,3,2.2,3,Maha,Maha|Residual,CTM,CTM,False,False,False,False,CTM,False,False
-tinyimagenet,VGG13,confidnet,True,4,2.2,3,Maha,Maha|Residual,Energy,CTM,False,False,False,False,CTM,False,False
-tinyimagenet,VGG13,confidnet,True,5,2.2,3,Maha,Maha|Residual,CTM,CTM,False,False,False,False,CTM,False,False
+tinyimagenet,VGG13,confidnet,False,1,2.2,3,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,CTM,False,False,True,True,CTM,False,True
+tinyimagenet,VGG13,confidnet,False,2,2.2,3,CTM,CTM|CTMmean|CTMmeanOC,CTM,CTM,True,True,True,True,CTM,True,True
+tinyimagenet,VGG13,confidnet,False,3,2.2,3,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,CTM,False,False,True,True,CTM,False,True
+tinyimagenet,VGG13,confidnet,False,4,2.2,3,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,CTM,False,False,True,True,CTM,False,True
+tinyimagenet,VGG13,confidnet,False,5,2.2,3,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,CTM,False,False,True,True,CTM,False,True
+tinyimagenet,VGG13,confidnet,True,1,2.2,3,Maha,Maha|Residual,pNML,pNML,False,False,False,False,pNML,False,False
+tinyimagenet,VGG13,confidnet,True,2,2.2,3,Maha,Maha|Residual,pNML,pNML,False,False,False,False,pNML,False,False
+tinyimagenet,VGG13,confidnet,True,3,2.2,3,Maha,Maha|Residual,pNML,pNML,False,False,False,False,pNML,False,False
+tinyimagenet,VGG13,confidnet,True,4,2.2,3,Maha,Maha|Residual,pNML,pNML,False,False,False,False,pNML,False,False
+tinyimagenet,VGG13,confidnet,True,5,2.2,3,Maha,Maha|Residual,pNML,pNML,False,False,False,False,pNML,False,False

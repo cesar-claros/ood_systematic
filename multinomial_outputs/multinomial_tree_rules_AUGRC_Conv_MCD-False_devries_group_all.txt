@@ -1,21 +1,12 @@
 Decision Tree Rules (group_all)
-Depth: 3, Train acc: 0.919, CV acc: 0.189, Balanced CV acc: 0.137
+Depth: 2, Train acc: 0.595, CV acc: 0.243, Balanced CV acc: 0.157
 Classes: ['CTM', 'Confidence', 'Energy', 'GradNorm', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- max_equiangular_wc <= 0.1445
-|   |--- equinorm_wc <= 0.0288
-|   |   |--- max_equiangular_wc <= 0.0602
-|   |   |   |--- class: CTM
-|   |   |--- max_equiangular_wc >  0.0602
-|   |   |   |--- class: Confidence
-|   |--- equinorm_wc >  0.0288
-|   |   |--- max_equiangular_uc <= 0.0785
-|   |   |   |--- class: fDBD
-|   |   |--- max_equiangular_uc >  0.0785
-|   |   |   |--- class: Energy
-|--- max_equiangular_wc >  0.1445
-|   |--- equinorm_uc <= 0.1778
-|   |   |--- class: GradNorm
-|   |--- equinorm_uc >  0.1778
-|   |   |--- class: GradNorm
+|--- equinorm_wc <= 0.0581
+|   |--- max_equiangular_wc <= 0.0602
+|   |   |--- class: CTM
+|   |--- max_equiangular_wc >  0.0602
+|   |   |--- class: Confidence
+|--- equinorm_wc >  0.0581
+|   |--- class: fDBD

@@ -3,18 +3,18 @@ cifar10,ViT,vit,True,0,0.0,pNML,pNML|Residual|PCA RecError global,Residual,False
 cifar10,ViT,vit,True,2,0.0,pNML,pNML|Residual|ViM,Residual,False,True
 cifar10,ViT,vit,True,3,0.0,pNML,pNML|Residual|ViM,Residual,False,True
 cifar10,ViT,vit,True,4,0.0,pNML,pNML|Residual|ViM,Residual,False,True
-cifar100,ViT,vit,True,0,0.0,Residual,Residual|ViM|Maha,pNML,False,False
-cifar100,ViT,vit,True,1,0.0,Residual,Residual|ViM|Maha,pNML,False,False
-cifar100,ViT,vit,True,2,0.0,Residual,Residual|ViM|Maha,pNML,False,False
-cifar100,ViT,vit,True,3,0.0,Residual,Residual|ViM|Maha,pNML,False,False
-cifar100,ViT,vit,True,4,0.0,Residual,Residual|ViM|Maha,pNML,False,False
+cifar100,ViT,vit,True,0,0.0,Residual,Residual|ViM|Maha,Residual,True,True
+cifar100,ViT,vit,True,1,0.0,Residual,Residual|ViM|Maha,Residual,True,True
+cifar100,ViT,vit,True,2,0.0,Residual,Residual|ViM|Maha,Residual,True,True
+cifar100,ViT,vit,True,3,0.0,Residual,Residual|ViM|Maha,Residual,True,True
+cifar100,ViT,vit,True,4,0.0,Residual,Residual|ViM|Maha,Residual,True,True
 supercifar100,ViT,vit,False,0,0.0,Residual,Residual|pNML|PCA RecError global,GradNorm,False,False
 supercifar100,ViT,vit,False,1,0.0,Residual,Residual|pNML|Maha,GradNorm,False,False
 supercifar100,ViT,vit,False,2,0.0,Residual,Residual|PCA RecError global|pNML,GradNorm,False,False
 supercifar100,ViT,vit,False,3,0.0,Residual,Residual|PCA RecError global|pNML,GradNorm,False,False
 supercifar100,ViT,vit,False,4,0.0,Residual,Residual|pNML|Maha,GradNorm,False,False
-tinyimagenet,ViT,vit,False,0,0.0,GradNorm,GradNorm|Energy|GE,Residual,False,False
-tinyimagenet,ViT,vit,False,1,0.0,GradNorm,GradNorm|GE|MLS,Residual,False,False
-tinyimagenet,ViT,vit,False,2,0.0,KPCA RecError global,KPCA RecError global|GradNorm|Energy,Residual,False,False
-tinyimagenet,ViT,vit,False,3,0.0,GradNorm,GradNorm|GE|MLS,Residual,False,False
-tinyimagenet,ViT,vit,False,4,0.0,KPCA RecError global,KPCA RecError global|GradNorm|GE,Residual,False,False
+tinyimagenet,ViT,vit,False,0,0.0,GradNorm,GradNorm|Energy|GE,pNML,False,False
+tinyimagenet,ViT,vit,False,1,0.0,GradNorm,GradNorm|GE|MLS,pNML,False,False
+tinyimagenet,ViT,vit,False,2,0.0,KPCA RecError global,KPCA RecError global|GradNorm|Energy,pNML,False,False
+tinyimagenet,ViT,vit,False,3,0.0,GradNorm,GradNorm|GE|MLS,pNML,False,False
+tinyimagenet,ViT,vit,False,4,0.0,KPCA RecError global,KPCA RecError global|GradNorm|GE,pNML,False,False

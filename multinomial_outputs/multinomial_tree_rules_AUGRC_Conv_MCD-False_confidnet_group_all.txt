@@ -1,12 +1,15 @@
 Decision Tree Rules (group_all)
-Depth: 2, Train acc: 0.744, CV acc: 0.513, Balanced CV acc: 0.259
+Depth: 2, Train acc: 0.641, CV acc: 0.462, Balanced CV acc: 0.222
 Classes: ['CTM', 'Energy', 'Maha', 'NNGuide', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- equinorm_wc <= 0.0632
-|   |--- equiangular_uc <= 0.1137
+|--- equiangular_wc <= 0.1145
+|   |--- equiangular_uc <= 0.1295
 |   |   |--- class: CTM
-|   |--- equiangular_uc >  0.1137
-|   |   |--- class: Energy
-|--- equinorm_wc >  0.0632
-|   |--- class: fDBD
+|   |--- equiangular_uc >  0.1295
+|   |   |--- class: Maha
+|--- equiangular_wc >  0.1145
+|   |--- equinorm_wc <= 0.0325
+|   |   |--- class: pNML
+|   |--- equinorm_wc >  0.0325
+|   |   |--- class: NNGuide

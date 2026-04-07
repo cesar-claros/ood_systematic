@@ -1,5 +1,5 @@
 Decision Tree Rules (group_far)
-Depth: 2, Train acc: 0.947, CV acc: 0.263, Balanced CV acc: 0.125
+Depth: 2, Train acc: 0.684, CV acc: 0.474, Balanced CV acc: 0.225
 Classes: ['GradNorm', 'KPCA RecError global', 'Residual', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
@@ -9,7 +9,7 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- equinorm_wc >  0.0176
 |   |   |--- class: GradNorm
 |--- equinorm_wc >  0.0196
-|   |--- equiangular_uc <= 0.1427
-|   |   |--- class: pNML
-|   |--- equiangular_uc >  0.1427
+|   |--- var_collapse <= 0.0083
 |   |   |--- class: Residual
+|   |--- var_collapse >  0.0083
+|   |   |--- class: pNML

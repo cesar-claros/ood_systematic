@@ -4,17 +4,17 @@ cifar10,ViT,vit,True,1,0.0,PCA RecError global,PCA RecError global|pNML|ViM,ViM,
 cifar10,ViT,vit,True,2,0.0,pNML,pNML|ViM|PCA RecError global,ViM,False,True
 cifar10,ViT,vit,True,3,0.0,pNML,pNML|ViM|Residual,ViM,False,True
 cifar10,ViT,vit,True,4,0.0,pNML,pNML|ViM|PCA RecError global,ViM,False,True
-cifar100,ViT,vit,True,0,0.0,ViM,ViM|Maha|NeCo,pNML,False,False
-cifar100,ViT,vit,True,1,0.0,ViM,ViM|Maha|fDBD,pNML,False,False
-cifar100,ViT,vit,True,2,0.0,ViM,ViM|Maha|NeCo,pNML,False,False
-cifar100,ViT,vit,True,3,0.0,ViM,ViM|Maha|NeCo,pNML,False,False
-cifar100,ViT,vit,True,4,0.0,ViM,ViM|Maha|NeCo,pNML,False,False
+cifar100,ViT,vit,True,0,0.0,ViM,ViM|Maha|NeCo,ViM,True,True
+cifar100,ViT,vit,True,1,0.0,ViM,ViM|Maha|fDBD,ViM,True,True
+cifar100,ViT,vit,True,2,0.0,ViM,ViM|Maha|NeCo,ViM,True,True
+cifar100,ViT,vit,True,3,0.0,ViM,ViM|Maha|NeCo,ViM,True,True
+cifar100,ViT,vit,True,4,0.0,ViM,ViM|Maha|NeCo,ViM,True,True
 supercifar100,ViT,vit,False,0,0.0,ViM,ViM|pNML|Residual,PE,False,False
 supercifar100,ViT,vit,False,1,0.0,ViM,ViM|Residual|Maha,PE,False,False
 supercifar100,ViT,vit,False,2,0.0,PCA RecError global,PCA RecError global|pNML|Residual,PE,False,False
 supercifar100,ViT,vit,False,3,0.0,PCA RecError global,PCA RecError global|ViM|CTMmeanOC,PE,False,False
 supercifar100,ViT,vit,False,4,0.0,ViM,ViM|CTMmeanOC|Maha,PE,False,False
-tinyimagenet,ViT,vit,False,0,0.0,PE,PE|GradNorm|GE,PCA RecError global,False,False
+tinyimagenet,ViT,vit,False,0,0.0,PE,PE|GradNorm|GE,ViM,False,False
 tinyimagenet,ViT,vit,False,1,0.0,PE,PE|GradNorm|GE,PCA RecError global,False,False
 tinyimagenet,ViT,vit,False,2,0.0,PE,PE|GE|GradNorm,PCA RecError global,False,False
 tinyimagenet,ViT,vit,False,3,0.0,PE,PE|GE|GradNorm,PCA RecError global,False,False

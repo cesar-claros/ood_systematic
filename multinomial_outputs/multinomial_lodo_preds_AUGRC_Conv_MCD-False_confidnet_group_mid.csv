@@ -34,8 +34,8 @@ tinyimagenet,VGG13,confidnet,False,2,2.2,CTM,CTM|CTMmean|CTMmeanOC,CTM,True,True
 tinyimagenet,VGG13,confidnet,False,3,2.2,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,False,True
 tinyimagenet,VGG13,confidnet,False,4,2.2,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,False,True
 tinyimagenet,VGG13,confidnet,False,5,2.2,CTMmean,CTMmean|CTMmeanOC|CTM,CTM,False,True
-tinyimagenet,VGG13,confidnet,True,1,2.2,Maha,Maha|Residual,CTM,False,False
-tinyimagenet,VGG13,confidnet,True,2,2.2,Maha,Maha|Residual,CTM,False,False
-tinyimagenet,VGG13,confidnet,True,3,2.2,Maha,Maha|Residual,CTM,False,False
-tinyimagenet,VGG13,confidnet,True,4,2.2,Maha,Maha|Residual,CTM,False,False
-tinyimagenet,VGG13,confidnet,True,5,2.2,Maha,Maha|Residual,CTM,False,False
+tinyimagenet,VGG13,confidnet,True,1,2.2,Maha,Maha|Residual,NNGuide,False,False
+tinyimagenet,VGG13,confidnet,True,2,2.2,Maha,Maha|Residual,NNGuide,False,False
+tinyimagenet,VGG13,confidnet,True,3,2.2,Maha,Maha|Residual,NNGuide,False,False
+tinyimagenet,VGG13,confidnet,True,4,2.2,Maha,Maha|Residual,NNGuide,False,False
+tinyimagenet,VGG13,confidnet,True,5,2.2,Maha,Maha|Residual,NNGuide,False,False

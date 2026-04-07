@@ -9,11 +9,11 @@ cifar10,VGG13,devries,True,2,2.2,Energy,Energy|NNGuide|NeCo,Energy,True,True
 cifar10,VGG13,devries,True,3,2.2,Energy,Energy|NeCo|MLS,Energy,True,True
 cifar10,VGG13,devries,True,4,2.2,Energy,Energy|MLS|NeCo,Energy,True,True
 cifar10,VGG13,devries,True,5,2.2,Energy,Energy|NeCo|MLS,Energy,True,True
-cifar100,VGG13,devries,False,1,2.2,fDBD,fDBD|CTM|CTMmeanOC,CTM,False,True
-cifar100,VGG13,devries,False,2,2.2,fDBD,fDBD|CTM|CTMmeanOC,CTM,False,True
-cifar100,VGG13,devries,False,3,2.2,fDBD,fDBD|CTM|CTMmeanOC,CTM,False,True
-cifar100,VGG13,devries,False,4,2.2,fDBD,fDBD|CTM|NNGuide,CTM,False,True
-cifar100,VGG13,devries,False,5,2.2,NNGuide,NNGuide|fDBD|CTM,CTM,False,True
+cifar100,VGG13,devries,False,1,2.2,fDBD,fDBD|CTM|CTMmeanOC,NNGuide,False,False
+cifar100,VGG13,devries,False,2,2.2,fDBD,fDBD|CTM|CTMmeanOC,NNGuide,False,False
+cifar100,VGG13,devries,False,3,2.2,fDBD,fDBD|CTM|CTMmeanOC,NNGuide,False,False
+cifar100,VGG13,devries,False,4,2.2,fDBD,fDBD|CTM|NNGuide,NNGuide,False,True
+cifar100,VGG13,devries,False,5,2.2,NNGuide,NNGuide|fDBD|CTM,NNGuide,True,True
 cifar100,VGG13,devries,True,1,2.2,GradNorm,GradNorm|pNML|PCA RecError global,Energy,False,False
 cifar100,VGG13,devries,True,2,2.2,GradNorm,GradNorm|pNML|PCA RecError global,Energy,False,False
 cifar100,VGG13,devries,True,3,2.2,GradNorm,GradNorm|pNML|PCA RecError global,Energy,False,False

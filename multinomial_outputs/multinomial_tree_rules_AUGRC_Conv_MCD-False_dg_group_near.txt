@@ -1,24 +1,57 @@
 Decision Tree Rules (group_near)
-Depth: 4, Train acc: 0.500, CV acc: 0.135, Balanced CV acc: 0.071
+Depth: 5, Train acc: 0.568, CV acc: 0.095, Balanced CV acc: 0.096
 Classes: ['CTM', 'CTMmeanOC', 'Confidence', 'Energy', 'GradNorm', 'NNGuide', 'PCA RecError global', 'PE', 'REN', 'Residual', 'ViM', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- max_equiangular_uc <= 0.0329
-|   |--- class: Residual
-|--- max_equiangular_uc >  0.0329
-|   |--- equiangular_wc <= 0.1273
-|   |   |--- equiangular_uc <= 0.1503
-|   |   |   |--- self_duality <= 0.1347
-|   |   |   |   |--- class: CTM
-|   |   |   |--- self_duality >  0.1347
-|   |   |   |   |--- class: fDBD
-|   |   |--- equiangular_uc >  0.1503
-|   |   |   |--- equiangular_uc <= 0.1583
-|   |   |   |   |--- class: NNGuide
-|   |   |   |--- equiangular_uc >  0.1583
+|--- equiangular_wc <= 0.1273
+|   |--- equiangular_uc <= 0.1503
+|   |   |--- var_collapse <= 0.0073
+|   |   |   |--- equinorm_uc <= 0.0302
+|   |   |   |   |--- equinorm_uc <= 0.0265
+|   |   |   |   |   |--- class: CTM
+|   |   |   |   |--- equinorm_uc >  0.0265
+|   |   |   |   |   |--- class: CTM
+|   |   |   |--- equinorm_uc >  0.0302
+|   |   |   |   |--- equiangular_wc <= 0.0718
+|   |   |   |   |   |--- class: CTMmeanOC
+|   |   |   |   |--- equiangular_wc >  0.0718
+|   |   |   |   |   |--- class: CTMmeanOC
+|   |   |--- var_collapse >  0.0073
+|   |   |   |--- equiangular_uc <= 0.0469
+|   |   |   |   |--- class: Residual
+|   |   |   |--- equiangular_uc >  0.0469
+|   |   |   |   |--- equinorm_wc <= 0.0143
+|   |   |   |   |   |--- class: PE
+|   |   |   |   |--- equinorm_wc >  0.0143
+|   |   |   |   |   |--- class: ViM
+|   |--- equiangular_uc >  0.1503
+|   |   |--- max_equiangular_wc <= 0.0947
+|   |   |   |--- equinorm_uc <= 0.0985
+|   |   |   |   |--- var_collapse <= 0.0122
+|   |   |   |   |   |--- class: Energy
+|   |   |   |   |--- var_collapse >  0.0122
+|   |   |   |   |   |--- class: NNGuide
+|   |   |   |--- equinorm_uc >  0.0985
 |   |   |   |   |--- class: Energy
-|   |--- equiangular_wc >  0.1273
-|   |   |--- max_equiangular_uc <= 0.1372
-|   |   |   |--- class: PCA RecError global
-|   |   |--- max_equiangular_uc >  0.1372
+|   |   |--- max_equiangular_wc >  0.0947
+|   |   |   |--- equinorm_wc <= 0.0270
+|   |   |   |   |--- class: NNGuide
+|   |   |   |--- equinorm_wc >  0.0270
+|   |   |   |   |--- class: NNGuide
+|--- equiangular_wc >  0.1273
+|   |--- equinorm_wc <= 0.0267
+|   |   |--- equinorm_uc <= 0.1468
 |   |   |   |--- class: GradNorm
+|   |   |--- equinorm_uc >  0.1468
+|   |   |   |--- equinorm_uc <= 0.1487
+|   |   |   |   |--- class: GradNorm
+|   |   |   |--- equinorm_uc >  0.1487
+|   |   |   |   |--- equiangular_uc <= 0.1937
+|   |   |   |   |   |--- class: GradNorm
+|   |   |   |   |--- equiangular_uc >  0.1937
+|   |   |   |   |   |--- class: GradNorm
+|   |--- equinorm_wc >  0.0267
+|   |   |--- var_collapse <= 0.0147
+|   |   |   |--- class: PCA RecError global
+|   |   |--- var_collapse >  0.0147
+|   |   |   |--- class: PCA RecError global
