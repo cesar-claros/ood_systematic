@@ -1,21 +1,21 @@
 dataset,architecture,study,dropout,run,reward_val,fold,true_method,top3_methods,pred_lr,pred_rf,correct_lr,correct_rf,top3_hit_lr,top3_hit_rf,pred_dt,correct_dt,top3_hit_dt
-cifar10,ViT,vit,True,0,0.0,0,pNML,pNML|PCA RecError global|ViM,ViM,ViM,False,False,True,True,ViM,False,True
-cifar10,ViT,vit,True,1,0.0,0,PCA RecError global,PCA RecError global|pNML|ViM,ViM,ViM,False,False,True,True,ViM,False,True
-cifar10,ViT,vit,True,2,0.0,0,pNML,pNML|ViM|PCA RecError global,ViM,ViM,False,False,True,True,ViM,False,True
-cifar10,ViT,vit,True,3,0.0,0,pNML,pNML|ViM|Residual,ViM,ViM,False,False,True,True,ViM,False,True
-cifar10,ViT,vit,True,4,0.0,0,pNML,pNML|ViM|PCA RecError global,ViM,ViM,False,False,True,True,ViM,False,True
-cifar100,ViT,vit,True,0,0.0,1,ViM,ViM|Maha|NeCo,ViM,ViM,True,True,True,True,pNML,False,False
-cifar100,ViT,vit,True,1,0.0,1,ViM,ViM|Maha|fDBD,ViM,ViM,True,True,True,True,pNML,False,False
-cifar100,ViT,vit,True,2,0.0,1,ViM,ViM|Maha|NeCo,ViM,ViM,True,True,True,True,pNML,False,False
-cifar100,ViT,vit,True,3,0.0,1,ViM,ViM|Maha|NeCo,ViM,ViM,True,True,True,True,pNML,False,False
-cifar100,ViT,vit,True,4,0.0,1,ViM,ViM|Maha|NeCo,ViM,ViM,True,True,True,True,pNML,False,False
-supercifar100,ViT,vit,False,0,0.0,2,ViM,ViM|pNML|Residual,PE,PE,False,False,False,False,ViM,True,True
-supercifar100,ViT,vit,False,1,0.0,2,ViM,ViM|Residual|Maha,PE,PE,False,False,False,False,ViM,True,True
-supercifar100,ViT,vit,False,2,0.0,2,PCA RecError global,PCA RecError global|pNML|Residual,PE,PE,False,False,False,False,ViM,False,False
-supercifar100,ViT,vit,False,3,0.0,2,PCA RecError global,PCA RecError global|ViM|CTMmeanOC,PE,PE,False,False,False,False,pNML,False,False
-supercifar100,ViT,vit,False,4,0.0,2,ViM,ViM|CTMmeanOC|Maha,PE,PE,False,False,False,False,ViM,True,True
-tinyimagenet,ViT,vit,False,0,0.0,3,PE,PE|GradNorm|GE,ViM,ViM,False,False,False,False,ViM,False,False
-tinyimagenet,ViT,vit,False,1,0.0,3,PE,PE|GradNorm|GE,ViM,ViM,False,False,False,False,ViM,False,False
-tinyimagenet,ViT,vit,False,2,0.0,3,PE,PE|GE|GradNorm,ViM,ViM,False,False,False,False,ViM,False,False
-tinyimagenet,ViT,vit,False,3,0.0,3,PE,PE|GE|GradNorm,ViM,ViM,False,False,False,False,ViM,False,False
-tinyimagenet,ViT,vit,False,4,0.0,3,PE,PE|GE|MLS,ViM,ViM,False,False,False,False,ViM,False,False
+cifar10,ViT,vit,True,0,0.0,0,pNML,pNML|PCA RecError global|ViM,pNML,pNML,True,True,True,True,pNML,True,True
+cifar10,ViT,vit,True,1,0.0,0,PCA RecError global,PCA RecError global|pNML|ViM,pNML,pNML,False,False,True,True,pNML,False,True
+cifar10,ViT,vit,True,2,0.0,2,pNML,pNML|ViM|PCA RecError global,ViM,pNML,False,True,True,True,pNML,True,True
+cifar10,ViT,vit,True,3,0.0,0,pNML,pNML|ViM|Residual,pNML,ViM,True,False,True,True,pNML,True,True
+cifar10,ViT,vit,True,4,0.0,1,pNML,pNML|ViM|PCA RecError global,PCA RecError global,pNML,False,True,True,True,pNML,True,True
+cifar100,ViT,vit,True,0,0.0,2,ViM,ViM|Maha|NeCo,ViM,ViM,True,True,True,True,ViM,True,True
+cifar100,ViT,vit,True,1,0.0,0,ViM,ViM|Maha|fDBD,ViM,ViM,True,True,True,True,ViM,True,True
+cifar100,ViT,vit,True,2,0.0,1,ViM,ViM|Maha|NeCo,ViM,ViM,True,True,True,True,ViM,True,True
+cifar100,ViT,vit,True,3,0.0,2,ViM,ViM|Maha|NeCo,ViM,ViM,True,True,True,True,ViM,True,True
+cifar100,ViT,vit,True,4,0.0,1,ViM,ViM|Maha|NeCo,ViM,ViM,True,True,True,True,ViM,True,True
+supercifar100,ViT,vit,False,0,0.0,0,ViM,ViM|pNML|Residual,PCA RecError global,PCA RecError global,False,False,False,False,pNML,False,True
+supercifar100,ViT,vit,False,1,0.0,2,ViM,ViM|Residual|Maha,ViM,ViM,True,True,True,True,pNML,False,False
+supercifar100,ViT,vit,False,2,0.0,1,PCA RecError global,PCA RecError global|pNML|Residual,ViM,ViM,False,False,False,False,pNML,False,True
+supercifar100,ViT,vit,False,3,0.0,2,PCA RecError global,PCA RecError global|ViM|CTMmeanOC,ViM,ViM,False,False,True,True,pNML,False,False
+supercifar100,ViT,vit,False,4,0.0,1,ViM,ViM|CTMmeanOC|Maha,ViM,ViM,True,True,True,True,ViM,True,True
+tinyimagenet,ViT,vit,False,0,0.0,0,PE,PE|GradNorm|GE,PE,PE,True,True,True,True,PE,True,True
+tinyimagenet,ViT,vit,False,1,0.0,0,PE,PE|GradNorm|GE,PE,PE,True,True,True,True,PE,True,True
+tinyimagenet,ViT,vit,False,2,0.0,1,PE,PE|GE|GradNorm,PE,PE,True,True,True,True,PE,True,True
+tinyimagenet,ViT,vit,False,3,0.0,1,PE,PE|GE|GradNorm,PE,PE,True,True,True,True,PE,True,True
+tinyimagenet,ViT,vit,False,4,0.0,2,PE,PE|GE|MLS,PE,PE,True,True,True,True,PE,True,True

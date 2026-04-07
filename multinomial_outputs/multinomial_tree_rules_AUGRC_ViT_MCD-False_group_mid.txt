@@ -1,5 +1,5 @@
 Decision Tree Rules (group_mid)
-Depth: 2, Train acc: 0.684, CV acc: 0.684, Balanced CV acc: 0.333
+Depth: 2, Train acc: 0.684, CV acc: 0.737, Balanced CV acc: 0.615
 Classes: ['KPCA RecError global', 'Residual', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 

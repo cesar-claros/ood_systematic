@@ -1,5 +1,5 @@
 Decision Tree Rules (group_far)
-Depth: 3, Train acc: 1.000, CV acc: 0.243, Balanced CV acc: 0.167
+Depth: 3, Train acc: 1.000, CV acc: 1.000, Balanced CV acc: 1.000
 Classes: ['CTM', 'CTMmeanOC', 'Maha', 'NNGuide', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 

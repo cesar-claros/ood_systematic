@@ -1,14 +1,29 @@
 Decision Tree Rules (group_near)
-Depth: 3, Train acc: 0.919, CV acc: 0.514, Balanced CV acc: 0.292
+Depth: 5, Train acc: 0.973, CV acc: 0.865, Balanced CV acc: 0.792
 Classes: ['CTM', 'Energy', 'Maha', 'NNGuide', 'NeCo', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 |--- max_equiangular_wc <= 0.0874
 |   |--- equiangular_wc <= 0.0913
 |   |   |--- equinorm_uc <= 0.0711
-|   |   |   |--- class: CTM
+|   |   |   |--- equiangular_wc <= 0.0776
+|   |   |   |   |--- equinorm_uc <= 0.0244
+|   |   |   |   |   |--- class: CTM
+|   |   |   |   |--- equinorm_uc >  0.0244
+|   |   |   |   |   |--- class: CTM
+|   |   |   |--- equiangular_wc >  0.0776
+|   |   |   |   |--- max_equiangular_uc <= 0.0517
+|   |   |   |   |   |--- class: CTM
+|   |   |   |   |--- max_equiangular_uc >  0.0517
+|   |   |   |   |   |--- class: CTM
 |   |   |--- equinorm_uc >  0.0711
-|   |   |   |--- class: fDBD
+|   |   |   |--- equinorm_wc <= 0.0833
+|   |   |   |   |--- class: fDBD
+|   |   |   |--- equinorm_wc >  0.0833
+|   |   |   |   |--- equiangular_uc <= 0.1112
+|   |   |   |   |   |--- class: fDBD
+|   |   |   |   |--- equiangular_uc >  0.1112
+|   |   |   |   |   |--- class: fDBD
 |   |--- equiangular_wc >  0.0913
 |   |   |--- class: Maha
 |--- max_equiangular_wc >  0.0874
@@ -16,9 +31,24 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- equinorm_uc <= 0.0867
 |   |   |   |--- class: Energy
 |   |   |--- equinorm_uc >  0.0867
-|   |   |   |--- class: NNGuide
+|   |   |   |--- var_collapse <= 0.0161
+|   |   |   |   |--- equiangular_wc <= 0.1351
+|   |   |   |   |   |--- class: NNGuide
+|   |   |   |   |--- equiangular_wc >  0.1351
+|   |   |   |   |   |--- class: NNGuide
+|   |   |   |--- var_collapse >  0.0161
+|   |   |   |   |--- class: NNGuide
 |   |--- self_duality >  0.0940
 |   |   |--- equiangular_wc <= 0.1368
 |   |   |   |--- class: Energy
 |   |   |--- equiangular_wc >  0.1368
-|   |   |   |--- class: NeCo
+|   |   |   |--- var_collapse <= 0.0077
+|   |   |   |   |--- equinorm_uc <= 0.1578
+|   |   |   |   |   |--- class: NeCo
+|   |   |   |   |--- equinorm_uc >  0.1578
+|   |   |   |   |   |--- class: NeCo
+|   |   |   |--- var_collapse >  0.0077
+|   |   |   |   |--- equiangular_uc <= 0.1638
+|   |   |   |   |   |--- class: NeCo
+|   |   |   |   |--- equiangular_uc >  0.1638
+|   |   |   |   |   |--- class: Energy

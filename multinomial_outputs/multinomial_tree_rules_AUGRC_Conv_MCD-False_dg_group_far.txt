@@ -1,24 +1,60 @@
 Decision Tree Rules (group_far)
-Depth: 3, Train acc: 0.413, CV acc: 0.067, Balanced CV acc: 0.042
+Depth: 5, Train acc: 0.747, CV acc: 0.480, Balanced CV acc: 0.396
 Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Confidence', 'Energy', 'GradNorm', 'KPCA RecError global', 'Maha', 'NNGuide', 'PCA RecError global', 'PE', 'REN', 'Residual', 'ViM', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 |--- equiangular_wc <= 0.1273
 |   |--- equiangular_uc <= 0.1503
 |   |   |--- max_equiangular_wc <= 0.0583
-|   |   |   |--- class: Maha
+|   |   |   |--- max_equiangular_uc <= 0.0454
+|   |   |   |   |--- equiangular_uc <= 0.0464
+|   |   |   |   |   |--- class: Residual
+|   |   |   |   |--- equiangular_uc >  0.0464
+|   |   |   |   |   |--- class: Maha
+|   |   |   |--- max_equiangular_uc >  0.0454
+|   |   |   |   |--- equiangular_wc <= 0.0544
+|   |   |   |   |   |--- class: Confidence
+|   |   |   |   |--- equiangular_wc >  0.0544
+|   |   |   |   |   |--- class: fDBD
 |   |   |--- max_equiangular_wc >  0.0583
-|   |   |   |--- class: PE
+|   |   |   |--- equiangular_uc <= 0.1052
+|   |   |   |   |--- self_duality <= 0.0363
+|   |   |   |   |   |--- class: PE
+|   |   |   |   |--- self_duality >  0.0363
+|   |   |   |   |   |--- class: REN
+|   |   |   |--- equiangular_uc >  0.1052
+|   |   |   |   |--- equinorm_uc <= 0.0924
+|   |   |   |   |   |--- class: ViM
+|   |   |   |   |--- equinorm_uc >  0.0924
+|   |   |   |   |   |--- class: ViM
 |   |--- equiangular_uc >  0.1503
 |   |   |--- self_duality <= 0.0883
-|   |   |   |--- class: NNGuide
+|   |   |   |--- self_duality <= 0.0878
+|   |   |   |   |--- equinorm_wc <= 0.0221
+|   |   |   |   |   |--- class: NNGuide
+|   |   |   |   |--- equinorm_wc >  0.0221
+|   |   |   |   |   |--- class: NNGuide
+|   |   |   |--- self_duality >  0.0878
+|   |   |   |   |--- class: Energy
 |   |   |--- self_duality >  0.0883
-|   |   |   |--- class: Energy
+|   |   |   |--- equiangular_uc <= 0.1643
+|   |   |   |   |--- class: Energy
+|   |   |   |--- equiangular_uc >  0.1643
+|   |   |   |   |--- class: Energy
 |--- equiangular_wc >  0.1273
-|   |--- equinorm_uc <= 0.1191
+|   |--- max_equiangular_uc <= 0.1372
 |   |   |--- class: PCA RecError global
-|   |--- equinorm_uc >  0.1191
-|   |   |--- equinorm_wc <= 0.0232
+|   |--- max_equiangular_uc >  0.1372
+|   |   |--- self_duality <= 0.1921
 |   |   |   |--- class: GradNorm
-|   |   |--- equinorm_wc >  0.0232
-|   |   |   |--- class: GradNorm
+|   |   |--- self_duality >  0.1921
+|   |   |   |--- var_collapse <= 0.0071
+|   |   |   |   |--- equinorm_wc <= 0.0234
+|   |   |   |   |   |--- class: GradNorm
+|   |   |   |   |--- equinorm_wc >  0.0234
+|   |   |   |   |   |--- class: GradNorm
+|   |   |   |--- var_collapse >  0.0071
+|   |   |   |   |--- self_duality <= 0.1955
+|   |   |   |   |   |--- class: GradNorm
+|   |   |   |   |--- self_duality >  0.1955
+|   |   |   |   |   |--- class: GradNorm

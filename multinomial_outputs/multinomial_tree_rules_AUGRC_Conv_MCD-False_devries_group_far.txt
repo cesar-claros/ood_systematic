@@ -1,15 +1,45 @@
 Decision Tree Rules (group_far)
-Depth: 2, Train acc: 0.513, CV acc: 0.179, Balanced CV acc: 0.150
+Depth: 4, Train acc: 0.718, CV acc: 0.487, Balanced CV acc: 0.429
 Classes: ['CTM', 'CTMmean', 'Confidence', 'Energy', 'GradNorm', 'KPCA RecError global', 'REN', 'ViM', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 |--- equiangular_wc <= 0.1138
 |   |--- self_duality <= 0.0318
-|   |   |--- class: REN
+|   |   |--- equinorm_wc <= 0.0143
+|   |   |   |--- var_collapse <= 0.0081
+|   |   |   |   |--- class: REN
+|   |   |   |--- var_collapse >  0.0081
+|   |   |   |   |--- class: REN
+|   |   |--- equinorm_wc >  0.0143
+|   |   |   |--- class: REN
 |   |--- self_duality >  0.0318
-|   |   |--- class: Confidence
+|   |   |--- max_equiangular_wc <= 0.0602
+|   |   |   |--- equinorm_wc <= 0.0447
+|   |   |   |   |--- class: CTM
+|   |   |   |--- equinorm_wc >  0.0447
+|   |   |   |   |--- class: fDBD
+|   |   |--- max_equiangular_wc >  0.0602
+|   |   |   |--- equinorm_wc <= 0.0208
+|   |   |   |   |--- class: Confidence
+|   |   |   |--- equinorm_wc >  0.0208
+|   |   |   |   |--- class: Confidence
 |--- equiangular_wc >  0.1138
-|   |--- equinorm_wc <= 0.0440
-|   |   |--- class: Energy
-|   |--- equinorm_wc >  0.0440
-|   |   |--- class: GradNorm
+|   |--- max_equiangular_uc <= 0.1399
+|   |   |--- equinorm_wc <= 0.0398
+|   |   |   |--- equinorm_wc <= 0.0362
+|   |   |   |   |--- class: Energy
+|   |   |   |--- equinorm_wc >  0.0362
+|   |   |   |   |--- class: Energy
+|   |   |--- equinorm_wc >  0.0398
+|   |   |   |--- class: pNML
+|   |--- max_equiangular_uc >  0.1399
+|   |   |--- equiangular_uc <= 0.1901
+|   |   |   |--- equinorm_wc <= 0.0482
+|   |   |   |   |--- class: GradNorm
+|   |   |   |--- equinorm_wc >  0.0482
+|   |   |   |   |--- class: pNML
+|   |   |--- equiangular_uc >  0.1901
+|   |   |   |--- equinorm_wc <= 0.0488
+|   |   |   |   |--- class: GradNorm
+|   |   |   |--- equinorm_wc >  0.0488
+|   |   |   |   |--- class: GradNorm

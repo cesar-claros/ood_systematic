@@ -1,24 +1,39 @@
 Decision Tree Rules (group_mid)
-Depth: 3, Train acc: 0.397, CV acc: 0.192, Balanced CV acc: 0.134
+Depth: 4, Train acc: 0.575, CV acc: 0.452, Balanced CV acc: 0.375
 Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Confidence', 'Energy', 'GradNorm', 'Maha', 'NNGuide', 'PCA RecError global', 'PE', 'REN', 'Residual', 'ViM']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 |--- equiangular_wc <= 0.1613
 |   |--- equiangular_uc <= 0.1521
 |   |   |--- equinorm_wc <= 0.0143
-|   |   |   |--- class: PE
+|   |   |   |--- max_equiangular_uc <= 0.0430
+|   |   |   |   |--- class: Residual
+|   |   |   |--- max_equiangular_uc >  0.0430
+|   |   |   |   |--- class: PE
 |   |   |--- equinorm_wc >  0.0143
-|   |   |   |--- class: Confidence
+|   |   |   |--- equiangular_wc <= 0.1157
+|   |   |   |   |--- class: Confidence
+|   |   |   |--- equiangular_wc >  0.1157
+|   |   |   |   |--- class: PCA RecError global
 |   |--- equiangular_uc >  0.1521
-|   |   |--- var_collapse <= 0.0130
-|   |   |   |--- class: NNGuide
-|   |   |--- var_collapse >  0.0130
-|   |   |   |--- class: Energy
+|   |   |--- equiangular_uc <= 0.1613
+|   |   |   |--- max_equiangular_wc <= 0.0959
+|   |   |   |   |--- class: Energy
+|   |   |   |--- max_equiangular_wc >  0.0959
+|   |   |   |   |--- class: Energy
+|   |   |--- equiangular_uc >  0.1613
+|   |   |   |--- equinorm_wc <= 0.0242
+|   |   |   |   |--- class: Energy
+|   |   |   |--- equinorm_wc >  0.0242
+|   |   |   |   |--- class: NNGuide
 |--- equiangular_wc >  0.1613
 |   |--- equinorm_uc <= 0.1468
 |   |   |--- class: GradNorm
 |   |--- equinorm_uc >  0.1468
-|   |   |--- max_equiangular_wc <= 0.1481
+|   |   |--- equiangular_uc <= 0.1930
 |   |   |   |--- class: GradNorm
-|   |   |--- max_equiangular_wc >  0.1481
-|   |   |   |--- class: GradNorm
+|   |   |--- equiangular_uc >  0.1930
+|   |   |   |--- max_equiangular_uc <= 0.1511
+|   |   |   |   |--- class: GradNorm
+|   |   |   |--- max_equiangular_uc >  0.1511
+|   |   |   |   |--- class: GradNorm

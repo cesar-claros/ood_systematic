@@ -1,5 +1,5 @@
 Decision Tree Rules (group_near)
-Depth: 2, Train acc: 0.800, CV acc: 0.150, Balanced CV acc: 0.094
+Depth: 2, Train acc: 0.800, CV acc: 0.750, Balanced CV acc: 0.688
 Classes: ['PCA RecError global', 'PE', 'ViM', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
