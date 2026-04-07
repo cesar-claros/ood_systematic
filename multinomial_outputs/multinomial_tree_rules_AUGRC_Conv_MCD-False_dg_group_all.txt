@@ -1,5 +1,5 @@
 Decision Tree Rules (group_all)
-Depth: 5, Train acc: 0.425, CV acc: 0.493, Balanced CV acc: 0.481
+Depth: 4, Train acc: 0.329, CV acc: 0.233, Balanced CV acc: 0.143
 Classes: ['CTM', 'CTMmeanOC', 'Confidence', 'Energy', 'GradNorm', 'NNGuide', 'PCA RecError global', 'PE', 'REN', 'Residual', 'ViM', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
@@ -9,19 +9,13 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- equiangular_uc >  0.0464
 |   |   |--- self_duality <= 0.1728
 |   |   |   |--- max_equiangular_uc <= 0.0776
-|   |   |   |   |--- max_equiangular_wc <= 0.0583
-|   |   |   |   |   |--- class: CTMmeanOC
-|   |   |   |   |--- max_equiangular_wc >  0.0583
-|   |   |   |   |   |--- class: PE
+|   |   |   |   |--- class: CTMmeanOC
 |   |   |   |--- max_equiangular_uc >  0.0776
-|   |   |   |   |--- var_collapse <= 0.0086
-|   |   |   |   |   |--- class: fDBD
-|   |   |   |   |--- var_collapse >  0.0086
-|   |   |   |   |   |--- class: NNGuide
+|   |   |   |   |--- class: NNGuide
 |   |   |--- self_duality >  0.1728
-|   |   |   |--- equinorm_wc <= 0.0232
+|   |   |   |--- equinorm_uc <= 0.1468
 |   |   |   |   |--- class: GradNorm
-|   |   |   |--- equinorm_wc >  0.0232
+|   |   |   |--- equinorm_uc >  0.1468
 |   |   |   |   |--- class: GradNorm
 |--- var_collapse >  0.0142
 |   |--- max_equiangular_uc <= 0.1196

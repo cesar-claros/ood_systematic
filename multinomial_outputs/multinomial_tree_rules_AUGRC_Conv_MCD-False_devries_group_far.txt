@@ -1,5 +1,5 @@
 Decision Tree Rules (group_far)
-Depth: 4, Train acc: 0.590, CV acc: 0.359, Balanced CV acc: 0.362
+Depth: 5, Train acc: 0.667, CV acc: 0.205, Balanced CV acc: 0.142
 Classes: ['CTM', 'CTMmean', 'Confidence', 'Energy', 'GradNorm', 'KPCA RecError global', 'REN', 'ViM', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
@@ -11,9 +11,15 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |   |--- class: REN
 |   |   |--- self_duality >  0.0313
 |   |   |   |--- equiangular_wc <= 0.1138
-|   |   |   |   |--- class: CTM
+|   |   |   |   |--- equinorm_uc <= 0.0597
+|   |   |   |   |   |--- class: CTM
+|   |   |   |   |--- equinorm_uc >  0.0597
+|   |   |   |   |   |--- class: CTMmean
 |   |   |   |--- equiangular_wc >  0.1138
-|   |   |   |   |--- class: Energy
+|   |   |   |   |--- max_equiangular_uc <= 0.0841
+|   |   |   |   |   |--- class: Energy
+|   |   |   |   |--- max_equiangular_uc >  0.0841
+|   |   |   |   |   |--- class: Energy
 |--- equiangular_uc >  0.1716
 |   |--- equiangular_uc <= 0.1901
 |   |   |--- class: pNML

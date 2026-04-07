@@ -1,21 +1,21 @@
 dataset,architecture,study,dropout,run,reward_val,fold,true_method,pred_lr,pred_rf,correct_lr,correct_rf,pred_dt,correct_dt
-cifar10,ViT,vit,True,0,0.0,0,pNML,pNML,pNML,True,True,pNML,True
-cifar10,ViT,vit,True,1,0.0,0,PCA RecError global,pNML,pNML,False,False,pNML,False
-cifar10,ViT,vit,True,2,0.0,2,pNML,pNML,pNML,True,True,PCA RecError global,False
-cifar10,ViT,vit,True,3,0.0,0,pNML,pNML,pNML,True,True,pNML,True
-cifar10,ViT,vit,True,4,0.0,1,pNML,PCA RecError global,pNML,False,True,PCA RecError global,False
-cifar100,ViT,vit,True,0,0.0,2,ViM,ViM,ViM,True,True,ViM,True
-cifar100,ViT,vit,True,1,0.0,0,ViM,ViM,ViM,True,True,ViM,True
-cifar100,ViT,vit,True,2,0.0,1,ViM,ViM,ViM,True,True,ViM,True
-cifar100,ViT,vit,True,3,0.0,2,ViM,ViM,ViM,True,True,ViM,True
-cifar100,ViT,vit,True,4,0.0,1,ViM,ViM,ViM,True,True,ViM,True
-supercifar100,ViT,vit,False,0,0.0,0,ViM,PCA RecError global,PCA RecError global,False,False,PCA RecError global,False
-supercifar100,ViT,vit,False,1,0.0,2,ViM,ViM,ViM,True,True,ViM,True
-supercifar100,ViT,vit,False,2,0.0,1,PCA RecError global,ViM,ViM,False,False,ViM,False
-supercifar100,ViT,vit,False,3,0.0,2,PCA RecError global,ViM,ViM,False,False,ViM,False
-supercifar100,ViT,vit,False,4,0.0,1,ViM,ViM,ViM,True,True,ViM,True
-tinyimagenet,ViT,vit,False,0,0.0,0,PE,PE,PE,True,True,PE,True
-tinyimagenet,ViT,vit,False,1,0.0,0,PE,PE,PE,True,True,PE,True
-tinyimagenet,ViT,vit,False,2,0.0,1,PE,PE,PE,True,True,PE,True
-tinyimagenet,ViT,vit,False,3,0.0,1,PE,PE,PE,True,True,ViM,False
-tinyimagenet,ViT,vit,False,4,0.0,2,PE,PE,PE,True,True,PE,True
+cifar10,ViT,vit,True,0,0.0,0,pNML,ViM,ViM,False,False,ViM,False
+cifar10,ViT,vit,True,1,0.0,0,PCA RecError global,ViM,ViM,False,False,ViM,False
+cifar10,ViT,vit,True,2,0.0,0,pNML,ViM,ViM,False,False,ViM,False
+cifar10,ViT,vit,True,3,0.0,0,pNML,ViM,ViM,False,False,ViM,False
+cifar10,ViT,vit,True,4,0.0,0,pNML,ViM,ViM,False,False,ViM,False
+cifar100,ViT,vit,True,0,0.0,1,ViM,pNML,pNML,False,False,PCA RecError global,False
+cifar100,ViT,vit,True,1,0.0,1,ViM,pNML,pNML,False,False,PCA RecError global,False
+cifar100,ViT,vit,True,2,0.0,1,ViM,pNML,pNML,False,False,PCA RecError global,False
+cifar100,ViT,vit,True,3,0.0,1,ViM,pNML,pNML,False,False,PCA RecError global,False
+cifar100,ViT,vit,True,4,0.0,1,ViM,pNML,pNML,False,False,PCA RecError global,False
+supercifar100,ViT,vit,False,0,0.0,2,ViM,PE,PE,False,False,PE,False
+supercifar100,ViT,vit,False,1,0.0,2,ViM,PE,PE,False,False,PE,False
+supercifar100,ViT,vit,False,2,0.0,2,PCA RecError global,PE,PE,False,False,PE,False
+supercifar100,ViT,vit,False,3,0.0,2,PCA RecError global,PE,PE,False,False,pNML,False
+supercifar100,ViT,vit,False,4,0.0,2,ViM,PE,PE,False,False,PE,False
+tinyimagenet,ViT,vit,False,0,0.0,3,PE,ViM,ViM,False,False,ViM,False
+tinyimagenet,ViT,vit,False,1,0.0,3,PE,ViM,ViM,False,False,ViM,False
+tinyimagenet,ViT,vit,False,2,0.0,3,PE,ViM,ViM,False,False,ViM,False
+tinyimagenet,ViT,vit,False,3,0.0,3,PE,ViM,ViM,False,False,ViM,False
+tinyimagenet,ViT,vit,False,4,0.0,3,PE,ViM,ViM,False,False,ViM,False

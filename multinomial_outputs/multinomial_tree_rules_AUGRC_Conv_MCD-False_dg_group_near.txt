@@ -1,5 +1,5 @@
 Decision Tree Rules (group_near)
-Depth: 5, Train acc: 0.568, CV acc: 0.419, Balanced CV acc: 0.401
+Depth: 4, Train acc: 0.500, CV acc: 0.135, Balanced CV acc: 0.071
 Classes: ['CTM', 'CTMmeanOC', 'Confidence', 'Energy', 'GradNorm', 'NNGuide', 'PCA RecError global', 'PE', 'REN', 'Residual', 'ViM', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
@@ -9,25 +9,16 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- equiangular_wc <= 0.1273
 |   |   |--- equiangular_uc <= 0.1503
 |   |   |   |--- self_duality <= 0.1347
-|   |   |   |   |--- max_equiangular_wc <= 0.0226
-|   |   |   |   |   |--- class: pNML
-|   |   |   |   |--- max_equiangular_wc >  0.0226
-|   |   |   |   |   |--- class: CTM
+|   |   |   |   |--- class: CTM
 |   |   |   |--- self_duality >  0.1347
-|   |   |   |   |--- equiangular_wc <= 0.0563
-|   |   |   |   |   |--- class: NNGuide
-|   |   |   |   |--- equiangular_wc >  0.0563
-|   |   |   |   |   |--- class: fDBD
+|   |   |   |   |--- class: fDBD
 |   |   |--- equiangular_uc >  0.1503
 |   |   |   |--- equiangular_uc <= 0.1583
 |   |   |   |   |--- class: NNGuide
 |   |   |   |--- equiangular_uc >  0.1583
-|   |   |   |   |--- self_duality <= 0.0872
-|   |   |   |   |   |--- class: NNGuide
-|   |   |   |   |--- self_duality >  0.0872
-|   |   |   |   |   |--- class: Energy
+|   |   |   |   |--- class: Energy
 |   |--- equiangular_wc >  0.1273
-|   |   |--- equinorm_uc <= 0.1191
+|   |   |--- max_equiangular_uc <= 0.1372
 |   |   |   |--- class: PCA RecError global
-|   |   |--- equinorm_uc >  0.1191
+|   |   |--- max_equiangular_uc >  0.1372
 |   |   |   |--- class: GradNorm

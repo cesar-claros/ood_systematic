@@ -1,5 +1,5 @@
 Decision Tree Rules (group_mid)
-Depth: 5, Train acc: 0.438, CV acc: 0.425, Balanced CV acc: 0.403
+Depth: 3, Train acc: 0.288, CV acc: 0.123, Balanced CV acc: 0.087
 Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Confidence', 'Energy', 'GradNorm', 'Maha', 'NNGuide', 'PCA RecError global', 'PE', 'REN', 'Residual', 'ViM']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
@@ -8,16 +8,7 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- equiangular_uc <= 0.0464
 |   |   |   |--- class: Residual
 |   |   |--- equiangular_uc >  0.0464
-|   |   |   |--- equinorm_wc <= 0.0143
-|   |   |   |   |--- equiangular_uc <= 0.0548
-|   |   |   |   |   |--- class: Confidence
-|   |   |   |   |--- equiangular_uc >  0.0548
-|   |   |   |   |   |--- class: PE
-|   |   |   |--- equinorm_wc >  0.0143
-|   |   |   |   |--- equiangular_wc <= 0.0373
-|   |   |   |   |   |--- class: Maha
-|   |   |   |   |--- equiangular_wc >  0.0373
-|   |   |   |   |   |--- class: CTM
+|   |   |   |--- class: ViM
 |   |--- equiangular_wc >  0.1273
 |   |   |--- class: PCA RecError global
 |--- equiangular_wc >  0.1613

@@ -1,25 +1,13 @@
 Decision Tree Rules (group_far)
-Depth: 5, Train acc: 1.000, CV acc: 1.000, Balanced CV acc: 1.000
+Depth: 2, Train acc: 0.514, CV acc: 0.081, Balanced CV acc: 0.056
 Classes: ['CTM', 'CTMmeanOC', 'Maha', 'NNGuide', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 |--- self_duality <= 0.1837
 |   |--- self_duality <= 0.1626
-|   |   |--- self_duality <= 0.0510
-|   |   |   |--- class: CTM
-|   |   |--- self_duality >  0.0510
-|   |   |   |--- max_equiangular_uc <= 0.0962
-|   |   |   |   |--- class: fDBD
-|   |   |   |--- max_equiangular_uc >  0.0962
-|   |   |   |   |--- equinorm_uc <= 0.0875
-|   |   |   |   |   |--- class: Maha
-|   |   |   |   |--- equinorm_uc >  0.0875
-|   |   |   |   |   |--- class: NNGuide
+|   |   |--- class: CTM
 |   |--- self_duality >  0.1626
-|   |   |--- max_equiangular_uc <= 0.1228
-|   |   |   |--- class: pNML
-|   |   |--- max_equiangular_uc >  0.1228
-|   |   |   |--- class: pNML
+|   |   |--- class: pNML
 |--- self_duality >  0.1837
 |   |--- equinorm_wc <= 0.0414
 |   |   |--- class: CTMmeanOC
