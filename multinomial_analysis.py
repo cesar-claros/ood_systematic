@@ -10,9 +10,7 @@ are the features. We fit:
 Evaluation:
   - Leave-one-dataset-out cross-validation (LODO): train on 3 source datasets,
     predict on the held-out one.  Tests generalisation across datasets.
-  - Grouped stratified k-fold CV (groups=dataset): ensures that all runs from
-    the same dataset stay in the same fold, preventing leakage from correlated
-    runs (same data, different seeds) across train/test splits.
+  - Stratified k-fold CV (within-distribution evaluation).
   - Feature importance: logistic regression coefficients + random forest importances.
 
 Also supports OOD-group stratification: instead of averaging across all OOD sets,
@@ -37,7 +35,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.model_selection import StratifiedGroupKFold
+from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
@@ -355,31 +353,26 @@ def run_classification(
         logger.info("Only 1 dataset — skipping LODO CV")
         y_pred_lodo = None
 
-    # ── 2. Grouped Stratified K-Fold CV ────────────────────────────────────
-    # Group by dataset so correlated runs (same data, different seeds)
-    # never leak across folds. This gives a realistic cross-dataset estimate.
-    logger.info("\n--- Grouped Stratified K-Fold CV (groups=dataset) ---")
+    # ── 2. Stratified K-Fold CV ───────────────────────────────────────────
+    logger.info("\n--- Stratified K-Fold CV ---")
 
-    groups = datasets
-    n_groups = len(np.unique(groups))
-    # Need at least 2 groups for grouped CV
-    n_folds = min(5, n_groups)
+    min_count = min(Counter(y_enc).values())
+    n_folds = min(5, min_count)
     if n_folds < 2:
-        logger.warning(f"Only {n_groups} dataset group(s), skipping grouped k-fold CV")
+        logger.warning(f"Min class count={min_count}, skipping k-fold CV")
         n_folds = 0
 
     if n_folds >= 2:
-        sgkf = StratifiedGroupKFold(n_splits=n_folds, shuffle=True, random_state=42)
+        skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
 
         y_pred_lr = np.full_like(y_enc, -1)
         y_pred_rf = np.full_like(y_enc, -1)
         fold_ids = np.full(len(y_enc), -1, dtype=int)
 
         for fold_i, (train_idx, test_idx) in enumerate(
-            sgkf.split(X_scaled, y_enc, groups)
+            skf.split(X_scaled, y_enc)
         ):
             fold_ids[test_idx] = fold_i
-            fold_groups = np.unique(groups[test_idx])
 
             # Expand training data with top-3 labels and rank-based weights
             train_mask = np.zeros(len(X), dtype=bool)
@@ -410,7 +403,6 @@ def run_classification(
                         f"LR={fold_acc_lr:.3f} (top3={fold_t3_lr:.3f}), "
                         f"RF={fold_acc_rf:.3f} (top3={fold_t3_rf:.3f}) "
                         f"({len(test_idx)} samples, "
-                        f"groups: {list(fold_groups)}, "
                         f"classes: {list(fold_classes)})")
 
         acc_lr = accuracy_score(y_enc, y_pred_lr)
@@ -430,7 +422,6 @@ def run_classification(
         results["kfold_rf_balanced_accuracy"] = bal_acc_rf
         results["kfold_rf_top3_hit"] = t3_rf
         results["kfold_n_folds"] = n_folds
-        results["kfold_n_groups"] = n_groups
 
         # Baseline
         most_common = Counter(y_enc).most_common(1)[0]
@@ -518,7 +509,7 @@ def run_classification(
     for depth in [2, 3, 4, 5]:
         if n_folds >= 2:
             y_pred_dt = np.full_like(y_enc, -1)
-            for tr_idx, te_idx in sgkf.split(X, y_enc, groups):
+            for tr_idx, te_idx in skf.split(X, y_enc):
                 tr_mask = np.zeros(len(X), dtype=bool)
                 tr_mask[tr_idx] = True
                 X_tr_dt, y_tr_dt, w_tr_dt = _expand_top3_training(X, df, le, mask=tr_mask)
@@ -541,10 +532,10 @@ def run_classification(
     )
     best_dt.fit(X_dt_exp, y_dt_exp, sample_weight=w_dt_exp)
 
-    # Evaluate DT with CV using same grouped folds and expanded training
+    # Evaluate DT with CV using same folds and expanded training
     if n_folds >= 2:
         y_pred_dt_cv = np.full_like(y_enc, -1)
-        for train_idx, test_idx in sgkf.split(X, y_enc, groups):
+        for train_idx, test_idx in skf.split(X, y_enc):
             tr_mask = np.zeros(len(X), dtype=bool)
             tr_mask[train_idx] = True
             X_tr_dt, y_tr_dt, w_tr_dt = _expand_top3_training(X, df, le, mask=tr_mask)
