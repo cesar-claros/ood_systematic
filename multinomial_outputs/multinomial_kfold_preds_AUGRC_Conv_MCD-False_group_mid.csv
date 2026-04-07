@@ -1,0 +1,156 @@
+dataset,architecture,study,dropout,run,reward_val,fold,true_method,pred_lr,pred_rf,correct_lr,correct_rf,pred_dt,correct_dt
+cifar10,VGG13,confidnet,False,1,2.2,0,CTM,CTM,CTM,True,True,PE,False
+cifar10,VGG13,confidnet,False,2,2.2,1,CTM,CTM,CTM,True,True,CTM,True
+cifar10,VGG13,confidnet,False,3,2.2,0,CTM,CTM,PE,True,False,PE,False
+cifar10,VGG13,confidnet,False,4,2.2,1,CTM,CTM,CTM,True,True,CTM,True
+cifar10,VGG13,confidnet,False,5,2.2,0,CTM,CTM,CTM,True,True,CTMmean,False
+cifar10,VGG13,confidnet,True,1,2.2,1,Energy,Energy,Energy,True,True,Energy,True
+cifar10,VGG13,confidnet,True,2,2.2,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+cifar10,VGG13,confidnet,True,3,2.2,0,NNGuide,Energy,NNGuide,False,True,PCA RecError global,False
+cifar10,VGG13,confidnet,True,4,2.2,1,NNGuide,Energy,Energy,False,False,Energy,False
+cifar10,VGG13,confidnet,True,5,2.2,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+cifar10,VGG13,devries,False,1,2.2,1,Confidence,CTM,Confidence,False,True,CTM,False
+cifar10,VGG13,devries,False,2,2.2,1,Confidence,CTM,Confidence,False,True,CTM,False
+cifar10,VGG13,devries,False,3,2.2,0,Confidence,CTM,CTM,False,False,CTMmean,False
+cifar10,VGG13,devries,False,4,2.2,1,Confidence,CTM,Confidence,False,True,CTM,False
+cifar10,VGG13,devries,False,5,2.2,0,Confidence,CTM,Confidence,False,True,PE,False
+cifar10,VGG13,devries,True,1,2.2,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+cifar10,VGG13,devries,True,2,2.2,1,Energy,Energy,Energy,True,True,PCA RecError global,False
+cifar10,VGG13,devries,True,3,2.2,1,NNGuide,Energy,Energy,False,False,PCA RecError global,False
+cifar10,VGG13,devries,True,4,2.2,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+cifar10,VGG13,devries,True,5,2.2,1,Energy,Energy,Energy,True,True,PCA RecError global,False
+cifar10,VGG13,dg,False,1,2.2,0,Confidence,Confidence,Confidence,True,True,CTMmean,False
+cifar10,VGG13,dg,False,1,10.0,0,PE,CTM,PE,False,True,PE,True
+cifar10,VGG13,dg,False,2,2.2,1,Confidence,Confidence,Confidence,True,True,CTM,False
+cifar10,VGG13,dg,False,2,10.0,0,PE,CTM,PE,False,True,PE,True
+cifar10,VGG13,dg,False,3,2.2,0,Confidence,Confidence,Confidence,True,True,PE,False
+cifar10,VGG13,dg,False,3,10.0,1,PE,CTM,PE,False,True,CTM,False
+cifar10,VGG13,dg,False,4,2.2,1,Confidence,Confidence,Confidence,True,True,CTM,False
+cifar10,VGG13,dg,False,4,10.0,1,PE,CTM,CTM,False,False,CTM,False
+cifar10,VGG13,dg,False,5,2.2,1,Confidence,Confidence,Confidence,True,True,CTM,False
+cifar10,VGG13,dg,False,5,10.0,0,PE,CTM,CTM,False,False,PE,True
+cifar10,VGG13,dg,True,1,2.2,0,Residual,Residual,Residual,True,True,Residual,True
+cifar10,VGG13,dg,True,1,3.0,0,NNGuide,ViM,NNGuide,False,True,PCA RecError global,False
+cifar10,VGG13,dg,True,1,10.0,1,PCA RecError global,Energy,PCA RecError global,False,True,Energy,False
+cifar10,VGG13,dg,True,2,2.2,1,Residual,CTM,Residual,False,True,CTM,False
+cifar10,VGG13,dg,True,2,3.0,0,Energy,Maha,NNGuide,False,False,PCA RecError global,False
+cifar10,VGG13,dg,True,2,10.0,0,PCA RecError global,Energy,PCA RecError global,False,True,PCA RecError global,True
+cifar10,VGG13,dg,True,3,2.2,1,Residual,Residual,Residual,True,True,CTM,False
+cifar10,VGG13,dg,True,3,3.0,0,Energy,ViM,NNGuide,False,False,PCA RecError global,False
+cifar10,VGG13,dg,True,3,10.0,0,PCA RecError global,Energy,PCA RecError global,False,True,PCA RecError global,True
+cifar10,VGG13,dg,True,4,2.2,0,Residual,Residual,Residual,True,True,Residual,True
+cifar10,VGG13,dg,True,4,3.0,0,Energy,ViM,NNGuide,False,False,PCA RecError global,False
+cifar10,VGG13,dg,True,4,10.0,0,PCA RecError global,Energy,PCA RecError global,False,True,PCA RecError global,True
+cifar10,VGG13,dg,True,5,2.2,1,Residual,CTM,Residual,False,True,Residual,True
+cifar10,VGG13,dg,True,5,3.0,1,NNGuide,Energy,Energy,False,False,PCA RecError global,False
+cifar10,VGG13,dg,True,5,10.0,1,PCA RecError global,Energy,PCA RecError global,False,True,PCA RecError global,True
+cifar100,VGG13,confidnet,False,1,2.2,1,ViM,NNGuide,ViM,False,True,CTMmean,False
+cifar100,VGG13,confidnet,False,2,2.2,0,fDBD,fDBD,fDBD,True,True,fDBD,True
+cifar100,VGG13,confidnet,False,3,2.2,1,fDBD,NNGuide,ViM,False,False,CTMmean,False
+cifar100,VGG13,confidnet,False,4,2.2,1,fDBD,NNGuide,ViM,False,False,CTMmean,False
+cifar100,VGG13,confidnet,False,5,2.2,0,ViM,fDBD,fDBD,False,False,fDBD,False
+cifar100,VGG13,confidnet,True,1,2.2,1,Energy,GradNorm,Energy,False,True,Energy,True
+cifar100,VGG13,confidnet,True,2,2.2,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+cifar100,VGG13,confidnet,True,3,2.2,1,Energy,GradNorm,Energy,False,True,Energy,True
+cifar100,VGG13,confidnet,True,4,2.2,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+cifar100,VGG13,confidnet,True,5,2.2,1,Energy,GradNorm,Energy,False,True,Energy,True
+cifar100,VGG13,devries,False,1,2.2,0,CTMmean,CTMmean,CTMmean,True,True,CTMmean,True
+cifar100,VGG13,devries,False,2,2.2,1,CTMmean,CTMmean,CTMmean,True,True,CTMmean,True
+cifar100,VGG13,devries,False,3,2.2,0,CTMmean,CTMmean,CTMmean,True,True,CTMmean,True
+cifar100,VGG13,devries,False,4,2.2,1,CTMmean,CTMmean,CTMmeanOC,True,False,CTMmean,True
+cifar100,VGG13,devries,False,5,2.2,0,fDBD,CTMmean,CTMmean,False,False,CTMmean,False
+cifar100,VGG13,devries,True,1,2.2,1,pNML,GradNorm,GradNorm,False,False,Energy,False
+cifar100,VGG13,devries,True,2,2.2,0,GradNorm,pNML,GradNorm,False,True,GradNorm,True
+cifar100,VGG13,devries,True,3,2.2,1,GradNorm,GradNorm,Energy,True,False,Energy,False
+cifar100,VGG13,devries,True,4,2.2,1,pNML,GradNorm,Energy,False,False,Energy,False
+cifar100,VGG13,devries,True,5,2.2,1,GradNorm,GradNorm,GradNorm,True,True,Energy,False
+cifar100,VGG13,dg,False,1,6.0,1,CTMmeanOC,CTM,CTM,False,False,CTM,False
+cifar100,VGG13,dg,False,1,10.0,1,REN,CTMmean,Confidence,False,False,CTMmean,False
+cifar100,VGG13,dg,False,1,15.0,0,NNGuide,fDBD,NNGuide,False,True,CTMmean,False
+cifar100,VGG13,dg,False,2,6.0,0,CTMmeanOC,CTMmean,CTMmeanOC,False,True,CTMmean,False
+cifar100,VGG13,dg,False,2,10.0,1,Confidence,CTMmean,Confidence,False,True,CTMmean,False
+cifar100,VGG13,dg,False,2,15.0,0,NNGuide,fDBD,NNGuide,False,True,CTMmean,False
+cifar100,VGG13,dg,False,3,6.0,0,CTMmeanOC,CTMmean,CTMmeanOC,False,True,CTMmean,False
+cifar100,VGG13,dg,False,3,10.0,0,REN,CTMmean,Confidence,False,False,CTMmean,False
+cifar100,VGG13,dg,False,3,15.0,0,CTMmean,fDBD,NNGuide,False,False,CTMmean,True
+cifar100,VGG13,dg,False,4,6.0,0,CTMmeanOC,CTMmean,CTMmeanOC,False,True,CTMmean,False
+cifar100,VGG13,dg,False,4,10.0,0,Confidence,CTMmean,Confidence,False,True,CTMmean,False
+cifar100,VGG13,dg,False,4,15.0,0,CTMmean,fDBD,NNGuide,False,False,CTMmean,True
+cifar100,VGG13,dg,False,5,6.0,1,CTMmeanOC,CTMmean,CTMmeanOC,False,True,CTMmean,False
+cifar100,VGG13,dg,False,5,10.0,0,Confidence,CTMmean,REN,False,False,CTMmean,False
+cifar100,VGG13,dg,False,5,15.0,1,NNGuide,CTMmean,NNGuide,False,True,CTMmean,False
+cifar100,VGG13,dg,True,1,20.0,0,GradNorm,GradNorm,GradNorm,True,True,GradNorm,True
+cifar100,VGG13,dg,True,2,20.0,1,GradNorm,GradNorm,GradNorm,True,True,GradNorm,True
+cifar100,VGG13,dg,True,3,20.0,1,GradNorm,GradNorm,GradNorm,True,True,GradNorm,True
+cifar100,VGG13,dg,True,4,20.0,0,GradNorm,GradNorm,GradNorm,True,True,GradNorm,True
+cifar100,VGG13,dg,True,5,20.0,0,GradNorm,GradNorm,GradNorm,True,True,GradNorm,True
+supercifar100,VGG13,confidnet,False,1,2.2,0,CTM,CTM,CTM,True,True,PE,False
+supercifar100,VGG13,confidnet,False,2,2.2,1,CTM,CTM,CTM,True,True,CTM,True
+supercifar100,VGG13,confidnet,False,3,2.2,0,CTM,CTM,CTM,True,True,CTMmean,False
+supercifar100,VGG13,confidnet,False,4,2.2,1,CTM,CTM,CTM,True,True,CTM,True
+supercifar100,VGG13,confidnet,False,5,2.2,0,CTM,CTM,CTM,True,True,CTMmean,False
+supercifar100,VGG13,confidnet,True,1,2.2,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+supercifar100,VGG13,confidnet,True,2,2.2,1,pNML,Energy,Energy,False,False,Energy,False
+supercifar100,VGG13,confidnet,True,3,2.2,0,pNML,Energy,Energy,False,False,PCA RecError global,False
+supercifar100,VGG13,confidnet,True,4,2.2,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+supercifar100,VGG13,confidnet,True,5,2.2,1,Energy,Energy,pNML,True,False,Energy,True
+supercifar100,VGG13,devries,False,1,2.2,0,ViM,CTM,Confidence,False,False,PE,False
+supercifar100,VGG13,devries,False,2,2.2,1,KPCA RecError global,CTM,CTM,False,False,CTM,False
+supercifar100,VGG13,devries,False,3,2.2,0,CTM,CTM,Confidence,True,False,PE,False
+supercifar100,VGG13,devries,False,4,2.2,0,CTM,CTM,CTM,True,True,CTMmean,False
+supercifar100,VGG13,devries,False,5,2.2,0,ViM,CTM,KPCA RecError global,False,False,PE,False
+supercifar100,VGG13,devries,True,1,2.2,1,Energy,Energy,pNML,True,False,Energy,True
+supercifar100,VGG13,devries,True,2,2.2,1,pNML,Energy,pNML,False,True,Energy,False
+supercifar100,VGG13,devries,True,3,2.2,1,Energy,Energy,pNML,True,False,Energy,True
+supercifar100,VGG13,devries,True,4,2.2,0,pNML,Energy,Energy,False,False,PCA RecError global,False
+supercifar100,VGG13,devries,True,5,2.2,1,Energy,Energy,pNML,True,False,Energy,True
+supercifar100,VGG13,dg,False,1,2.2,0,pNML,Confidence,Maha,False,False,CTMmean,False
+supercifar100,VGG13,dg,False,1,3.0,0,Confidence,Confidence,Confidence,True,True,CTMmean,False
+supercifar100,VGG13,dg,False,1,10.0,0,KPCA RecError global,CTM,CTM,False,False,CTMmean,False
+supercifar100,VGG13,dg,False,2,2.2,1,Maha,Confidence,pNML,False,False,CTM,False
+supercifar100,VGG13,dg,False,2,3.0,1,Confidence,Confidence,Confidence,True,True,CTM,False
+supercifar100,VGG13,dg,False,2,10.0,1,CTM,CTM,CTM,True,True,CTM,True
+supercifar100,VGG13,dg,False,3,2.2,0,Maha,Confidence,Maha,False,True,CTMmean,False
+supercifar100,VGG13,dg,False,3,3.0,0,Confidence,Confidence,Confidence,True,True,CTMmean,False
+supercifar100,VGG13,dg,False,3,10.0,0,CTM,CTM,CTM,True,True,CTMmean,False
+supercifar100,VGG13,dg,False,4,2.2,1,ViM,Confidence,Maha,False,False,CTM,False
+supercifar100,VGG13,dg,False,4,3.0,1,Confidence,Confidence,Confidence,True,True,CTM,False
+supercifar100,VGG13,dg,False,4,10.0,0,CTM,Confidence,CTM,False,True,CTMmean,False
+supercifar100,VGG13,dg,False,5,2.2,0,Maha,Confidence,ViM,False,False,CTMmean,False
+supercifar100,VGG13,dg,False,5,3.0,0,Confidence,Confidence,CTM,True,False,CTMmean,False
+supercifar100,VGG13,dg,False,5,10.0,1,CTM,Confidence,CTM,False,True,CTM,True
+supercifar100,VGG13,dg,True,1,20.0,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+supercifar100,VGG13,dg,True,2,20.0,1,Energy,Energy,Energy,True,True,Energy,True
+supercifar100,VGG13,dg,True,3,20.0,1,Energy,Energy,Energy,True,True,Energy,True
+supercifar100,VGG13,dg,True,4,20.0,1,Energy,Energy,Energy,True,True,Energy,True
+supercifar100,VGG13,dg,True,5,20.0,0,Energy,Energy,Energy,True,True,PCA RecError global,False
+tinyimagenet,VGG13,confidnet,False,1,2.2,0,CTMmean,CTM,CTMmean,False,True,CTMmean,True
+tinyimagenet,VGG13,confidnet,False,2,2.2,1,CTM,CTMmean,CTMmean,False,False,CTMmean,False
+tinyimagenet,VGG13,confidnet,False,3,2.2,0,CTMmean,CTM,CTMmean,False,True,CTMmean,True
+tinyimagenet,VGG13,confidnet,False,4,2.2,1,CTMmean,CTMmean,CTMmean,True,True,CTMmean,True
+tinyimagenet,VGG13,confidnet,False,5,2.2,1,CTMmean,CTMmean,CTMmean,True,True,CTMmean,True
+tinyimagenet,VGG13,confidnet,True,1,2.2,0,Maha,ViM,Maha,False,True,CTMmean,False
+tinyimagenet,VGG13,confidnet,True,2,2.2,1,Maha,ViM,Maha,False,True,CTM,False
+tinyimagenet,VGG13,confidnet,True,3,2.2,1,Maha,ViM,Maha,False,True,CTM,False
+tinyimagenet,VGG13,confidnet,True,4,2.2,1,Maha,ViM,Maha,False,True,CTM,False
+tinyimagenet,VGG13,confidnet,True,5,2.2,0,Maha,ViM,Maha,False,True,CTMmean,False
+tinyimagenet,VGG13,devries,False,1,2.2,1,CTM,CTM,CTM,True,True,CTM,True
+tinyimagenet,VGG13,devries,False,2,2.2,1,CTM,CTM,CTM,True,True,CTM,True
+tinyimagenet,VGG13,devries,False,3,2.2,1,CTM,CTM,CTM,True,True,CTM,True
+tinyimagenet,VGG13,devries,False,4,2.2,1,CTM,CTM,CTM,True,True,CTM,True
+tinyimagenet,VGG13,devries,False,5,2.2,0,CTM,CTM,CTM,True,True,CTMmean,False
+tinyimagenet,VGG13,devries,True,1,2.2,0,ViM,ViM,ViM,True,True,CTMmean,False
+tinyimagenet,VGG13,devries,True,2,2.2,1,ViM,ViM,ViM,True,True,CTM,False
+tinyimagenet,VGG13,devries,True,3,2.2,0,ViM,ViM,ViM,True,True,CTMmean,False
+tinyimagenet,VGG13,devries,True,4,2.2,1,ViM,ViM,ViM,True,True,CTM,False
+tinyimagenet,VGG13,devries,True,5,2.2,1,ViM,ViM,ViM,True,True,CTM,False
+tinyimagenet,VGG13,dg,False,1,15.0,0,CTM,CTM,CTM,True,True,CTMmean,False
+tinyimagenet,VGG13,dg,False,2,15.0,1,CTM,CTM,CTM,True,True,CTM,True
+tinyimagenet,VGG13,dg,False,3,15.0,1,CTMmean,CTM,CTM,False,False,CTM,False
+tinyimagenet,VGG13,dg,False,4,15.0,1,CTM,CTM,CTM,True,True,CTM,True
+tinyimagenet,VGG13,dg,False,5,15.0,0,CTM,CTM,CTM,True,True,CTMmean,False
+tinyimagenet,VGG13,dg,True,1,20.0,1,ViM,NNGuide,ViM,False,True,CTMmean,False
+tinyimagenet,VGG13,dg,True,2,20.0,1,ViM,ViM,ViM,True,True,CTM,False
+tinyimagenet,VGG13,dg,True,3,20.0,0,ViM,ViM,ViM,True,True,CTMmean,False
+tinyimagenet,VGG13,dg,True,4,20.0,1,ViM,ViM,ViM,True,True,CTM,False
+tinyimagenet,VGG13,dg,True,5,20.0,0,ViM,ViM,ViM,True,True,CTMmean,False

@@ -1,0 +1,20 @@
+dataset,architecture,study,dropout,run,reward_val,fold,true_method,pred_lr,pred_rf,correct_lr,correct_rf,pred_dt,correct_dt
+cifar10,ViT,vit,True,0,0.0,2,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+cifar10,ViT,vit,True,1,0.0,2,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+cifar10,ViT,vit,True,2,0.0,0,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+cifar10,ViT,vit,True,3,0.0,1,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+cifar10,ViT,vit,True,4,0.0,0,pNML,KPCA RecError global,KPCA RecError global,False,False,KPCA RecError global,False
+cifar100,ViT,vit,True,0,0.0,1,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+cifar100,ViT,vit,True,1,0.0,0,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+cifar100,ViT,vit,True,2,0.0,0,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+cifar100,ViT,vit,True,3,0.0,2,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+cifar100,ViT,vit,True,4,0.0,0,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+supercifar100,ViT,vit,False,0,0.0,1,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+supercifar100,ViT,vit,False,2,0.0,2,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+supercifar100,ViT,vit,False,3,0.0,0,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+supercifar100,ViT,vit,False,4,0.0,1,KPCA RecError global,KPCA RecError global,KPCA RecError global,True,True,KPCA RecError global,True
+tinyimagenet,ViT,vit,False,0,0.0,1,pNML,Residual,Residual,False,False,Residual,False
+tinyimagenet,ViT,vit,False,1,0.0,2,Residual,Residual,Residual,True,True,Residual,True
+tinyimagenet,ViT,vit,False,2,0.0,1,Residual,Residual,Residual,True,True,pNML,False
+tinyimagenet,ViT,vit,False,3,0.0,2,pNML,Residual,Residual,False,False,Residual,False
+tinyimagenet,ViT,vit,False,4,0.0,0,Residual,Residual,Residual,True,True,Residual,True
