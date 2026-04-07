@@ -737,7 +737,7 @@ def run_classification(
     tree_rules = export_text(
         best_dt,
         feature_names=nc_features,
-        class_names=list(le.classes_),
+        class_names=list(le.inverse_transform(best_dt.classes_)),
         decimals=4,
     )
     logger.info(f"\nDecision Tree Rules:\n{tree_rules}")
