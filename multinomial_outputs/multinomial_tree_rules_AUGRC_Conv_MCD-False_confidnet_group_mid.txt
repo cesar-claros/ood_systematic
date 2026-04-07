@@ -1,39 +1,30 @@
 Decision Tree Rules (group_mid)
-Depth: 4, Train acc: 0.750, CV acc: 0.675, Balanced CV acc: 0.710
+Depth: 5, Train acc: 1.000, CV acc: 0.800, Balanced CV acc: 0.623
 Classes: ['CTM', 'CTMmean', 'Energy', 'Maha', 'NNGuide', 'ViM', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- equiangular_wc <= 0.1145
-|   |--- equiangular_uc <= 0.1295
-|   |   |--- var_collapse <= 0.0058
-|   |   |   |--- max_equiangular_uc <= 0.0663
-|   |   |   |   |--- class: CTMmean
-|   |   |   |--- max_equiangular_uc >  0.0663
-|   |   |   |   |--- class: CTMmean
-|   |   |--- var_collapse >  0.0058
-|   |   |   |--- equinorm_uc <= 0.0583
-|   |   |   |   |--- class: CTM
-|   |   |   |--- equinorm_uc >  0.0583
-|   |   |   |   |--- class: ViM
-|   |--- equiangular_uc >  0.1295
-|   |   |--- class: Maha
-|--- equiangular_wc >  0.1145
-|   |--- equinorm_wc <= 0.0325
-|   |   |--- equinorm_wc <= 0.0294
-|   |   |   |--- max_equiangular_uc <= 0.1230
+|--- self_duality <= 0.0747
+|   |--- equiangular_uc <= 0.0894
+|   |   |--- equinorm_wc <= 0.0127
+|   |   |   |--- class: CTM
+|   |   |--- equinorm_wc >  0.0127
+|   |   |   |--- class: CTM
+|   |--- equiangular_uc >  0.0894
+|   |   |--- class: CTMmean
+|--- self_duality >  0.0747
+|   |--- max_equiangular_uc <= 0.0962
+|   |   |--- equinorm_uc <= 0.0874
+|   |   |   |--- class: ViM
+|   |   |--- equinorm_uc >  0.0874
+|   |   |   |--- class: fDBD
+|   |--- max_equiangular_uc >  0.0962
+|   |   |--- max_equiangular_uc <= 0.1130
+|   |   |   |--- class: Maha
+|   |   |--- max_equiangular_uc >  0.1130
+|   |   |   |--- equinorm_wc <= 0.0294
 |   |   |   |   |--- class: pNML
-|   |   |   |--- max_equiangular_uc >  0.1230
-|   |   |   |   |--- class: pNML
-|   |   |--- equinorm_wc >  0.0294
-|   |   |   |--- equinorm_uc <= 0.1060
-|   |   |   |   |--- class: pNML
-|   |   |   |--- equinorm_uc >  0.1060
-|   |   |   |   |--- class: Energy
-|   |--- equinorm_wc >  0.0325
-|   |   |--- equiangular_uc <= 0.1875
-|   |   |   |--- equinorm_uc <= 0.0867
-|   |   |   |   |--- class: Energy
-|   |   |   |--- equinorm_uc >  0.0867
-|   |   |   |   |--- class: NNGuide
-|   |   |--- equiangular_uc >  0.1875
-|   |   |   |--- class: Energy
+|   |   |   |--- equinorm_wc >  0.0294
+|   |   |   |   |--- self_duality <= 0.0920
+|   |   |   |   |   |--- class: NNGuide
+|   |   |   |   |--- self_duality >  0.0920
+|   |   |   |   |   |--- class: Energy

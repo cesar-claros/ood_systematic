@@ -1,24 +1,18 @@
 Decision Tree Rules (group_all)
-Depth: 3, Train acc: 0.821, CV acc: 0.821, Balanced CV acc: 0.759
+Depth: 4, Train acc: 0.923, CV acc: 0.846, Balanced CV acc: 0.778
 Classes: ['CTM', 'Energy', 'Maha', 'NNGuide', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- equiangular_wc <= 0.1145
-|   |--- equiangular_uc <= 0.1295
-|   |   |--- max_equiangular_wc <= 0.0450
-|   |   |   |--- class: fDBD
-|   |   |--- max_equiangular_wc >  0.0450
-|   |   |   |--- class: CTM
-|   |--- equiangular_uc >  0.1295
-|   |   |--- class: Maha
-|--- equiangular_wc >  0.1145
-|   |--- equinorm_wc <= 0.0325
-|   |   |--- equiangular_uc <= 0.1607
-|   |   |   |--- class: pNML
-|   |   |--- equiangular_uc >  0.1607
-|   |   |   |--- class: pNML
-|   |--- equinorm_wc >  0.0325
-|   |   |--- equiangular_wc <= 0.1854
-|   |   |   |--- class: NNGuide
-|   |   |--- equiangular_wc >  0.1854
-|   |   |   |--- class: Energy
+|--- equinorm_wc <= 0.0632
+|   |--- equiangular_uc <= 0.1137
+|   |   |--- class: CTM
+|   |--- equiangular_uc >  0.1137
+|   |   |--- equinorm_wc <= 0.0235
+|   |   |   |--- class: Maha
+|   |   |--- equinorm_wc >  0.0235
+|   |   |   |--- equiangular_wc <= 0.1303
+|   |   |   |   |--- class: pNML
+|   |   |   |--- equiangular_wc >  0.1303
+|   |   |   |   |--- class: Energy
+|--- equinorm_wc >  0.0632
+|   |--- class: fDBD

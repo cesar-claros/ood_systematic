@@ -1,19 +1,19 @@
-dataset,architecture,study,dropout,run,reward_val,best_method,top3_methods,predicted_method,correct,top3_hit
-cifar10,ViT,vit,True,0,0.0,pNML,pNML|PCA RecError global|ViM,ViM,False,True
-cifar10,ViT,vit,True,2,0.0,pNML,pNML|ViM|PCA RecError global,ViM,False,True
-cifar10,ViT,vit,True,3,0.0,pNML,pNML|ViM|KPCA RecError global,KPCA RecError global,False,True
-cifar10,ViT,vit,True,4,0.0,pNML,pNML|PCA RecError global|ViM,CTMmeanOC,False,False
-cifar100,ViT,vit,True,0,0.0,KPCA RecError global,KPCA RecError global|ViM|fDBD,KPCA RecError global,True,True
-cifar100,ViT,vit,True,1,0.0,ViM,ViM|KPCA RecError global|fDBD,KPCA RecError global,False,True
-cifar100,ViT,vit,True,2,0.0,KPCA RecError global,KPCA RecError global|fDBD|ViM,KPCA RecError global,True,True
-cifar100,ViT,vit,True,3,0.0,ViM,ViM|fDBD|CTM,KPCA RecError global,False,False
-cifar100,ViT,vit,True,4,0.0,KPCA RecError global,KPCA RecError global|ViM|fDBD,KPCA RecError global,True,True
-supercifar100,ViT,vit,False,0,0.0,KPCA RecError global,KPCA RecError global|pNML|PCA RecError global,GE,False,False
-supercifar100,ViT,vit,False,1,0.0,CTMmeanOC,CTMmeanOC|CTMmean|GradNorm,GE,False,False
-supercifar100,ViT,vit,False,2,0.0,KPCA RecError global,KPCA RecError global|PCA RecError global|pNML,GE,False,False
-supercifar100,ViT,vit,False,3,0.0,CTMmeanOC,CTMmeanOC|CTMmean|KPCA RecError global,GE,False,False
-supercifar100,ViT,vit,False,4,0.0,KPCA RecError global,KPCA RecError global|CTMmeanOC|CTMmean,GE,False,False
-tinyimagenet,ViT,vit,False,0,0.0,GE,GE|PE|MLS,CTMmeanOC,False,False
-tinyimagenet,ViT,vit,False,2,0.0,GE,GE|MLS|Energy,CTMmeanOC,False,False
-tinyimagenet,ViT,vit,False,3,0.0,GE,GE|PE|MLS,CTMmeanOC,False,False
-tinyimagenet,ViT,vit,False,4,0.0,GE,GE|PE|MLS,CTMmeanOC,False,False
+dataset,architecture,study,dropout,run,reward_val,best_method,top3_methods,clique_methods,predicted_method,correct,top3_hit,clique_hit
+cifar10,ViT,vit,True,0,0.0,pNML,pNML|PCA RecError global|ViM,PCA RecError global|ViM|pNML,KPCA RecError global,False,False,False
+cifar10,ViT,vit,True,2,0.0,pNML,pNML|ViM|PCA RecError global,PCA RecError global|ViM|pNML,ViM,False,True,True
+cifar10,ViT,vit,True,3,0.0,pNML,pNML|ViM|KPCA RecError global,PCA RecError global|ViM|pNML,ViM,False,True,True
+cifar10,ViT,vit,True,4,0.0,pNML,pNML|PCA RecError global|ViM,PCA RecError global|ViM|pNML,KPCA RecError global,False,False,False
+cifar100,ViT,vit,True,0,0.0,KPCA RecError global,KPCA RecError global|ViM|fDBD,CTM|KPCA RecError global|ViM|fDBD,GE,False,False,False
+cifar100,ViT,vit,True,1,0.0,ViM,ViM|KPCA RecError global|fDBD,CTM|KPCA RecError global|ViM|fDBD,GE,False,False,False
+cifar100,ViT,vit,True,2,0.0,KPCA RecError global,KPCA RecError global|fDBD|ViM,CTM|KPCA RecError global|ViM|fDBD,GE,False,False,False
+cifar100,ViT,vit,True,3,0.0,ViM,ViM|fDBD|CTM,CTM|KPCA RecError global|ViM|fDBD,ViM,True,True,True
+cifar100,ViT,vit,True,4,0.0,KPCA RecError global,KPCA RecError global|ViM|fDBD,CTM|KPCA RecError global|ViM|fDBD,GE,False,False,False
+supercifar100,ViT,vit,False,0,0.0,KPCA RecError global,KPCA RecError global|pNML|PCA RecError global,CTMmean|CTMmeanOC|GradNorm|KPCA RecError global,GE,False,False,False
+supercifar100,ViT,vit,False,1,0.0,CTMmeanOC,CTMmeanOC|CTMmean|GradNorm,CTMmean|CTMmeanOC|GradNorm|KPCA RecError global,GE,False,False,False
+supercifar100,ViT,vit,False,2,0.0,KPCA RecError global,KPCA RecError global|PCA RecError global|pNML,CTMmean|CTMmeanOC|GradNorm|KPCA RecError global,GE,False,False,False
+supercifar100,ViT,vit,False,3,0.0,CTMmeanOC,CTMmeanOC|CTMmean|KPCA RecError global,CTMmean|CTMmeanOC|GradNorm|KPCA RecError global,GE,False,False,False
+supercifar100,ViT,vit,False,4,0.0,KPCA RecError global,KPCA RecError global|CTMmeanOC|CTMmean,CTMmean|CTMmeanOC|GradNorm|KPCA RecError global,GE,False,False,False
+tinyimagenet,ViT,vit,False,0,0.0,GE,GE|PE|MLS,GE|PE,CTMmeanOC,False,False,False
+tinyimagenet,ViT,vit,False,2,0.0,GE,GE|MLS|Energy,GE|PE,CTMmeanOC,False,False,False
+tinyimagenet,ViT,vit,False,3,0.0,GE,GE|PE|MLS,GE|PE,CTMmeanOC,False,False,False
+tinyimagenet,ViT,vit,False,4,0.0,GE,GE|PE|MLS,GE|PE,KPCA RecError global,False,False,False

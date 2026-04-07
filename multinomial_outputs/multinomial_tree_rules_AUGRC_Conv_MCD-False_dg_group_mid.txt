@@ -1,39 +1,24 @@
 Decision Tree Rules (group_mid)
-Depth: 4, Train acc: 0.575, CV acc: 0.452, Balanced CV acc: 0.375
+Depth: 5, Train acc: 0.438, CV acc: 0.425, Balanced CV acc: 0.403
 Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Confidence', 'Energy', 'GradNorm', 'Maha', 'NNGuide', 'PCA RecError global', 'PE', 'REN', 'Residual', 'ViM']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 |--- equiangular_wc <= 0.1613
-|   |--- equiangular_uc <= 0.1521
-|   |   |--- equinorm_wc <= 0.0143
-|   |   |   |--- max_equiangular_uc <= 0.0430
-|   |   |   |   |--- class: Residual
-|   |   |   |--- max_equiangular_uc >  0.0430
-|   |   |   |   |--- class: PE
-|   |   |--- equinorm_wc >  0.0143
-|   |   |   |--- equiangular_wc <= 0.1157
-|   |   |   |   |--- class: Confidence
-|   |   |   |--- equiangular_wc >  0.1157
-|   |   |   |   |--- class: PCA RecError global
-|   |--- equiangular_uc >  0.1521
-|   |   |--- equiangular_uc <= 0.1613
-|   |   |   |--- max_equiangular_wc <= 0.0959
-|   |   |   |   |--- class: Energy
-|   |   |   |--- max_equiangular_wc >  0.0959
-|   |   |   |   |--- class: Energy
-|   |   |--- equiangular_uc >  0.1613
-|   |   |   |--- equinorm_wc <= 0.0242
-|   |   |   |   |--- class: Energy
-|   |   |   |--- equinorm_wc >  0.0242
-|   |   |   |   |--- class: NNGuide
+|   |--- equiangular_wc <= 0.1273
+|   |   |--- equiangular_uc <= 0.0464
+|   |   |   |--- class: Residual
+|   |   |--- equiangular_uc >  0.0464
+|   |   |   |--- equinorm_wc <= 0.0143
+|   |   |   |   |--- equiangular_uc <= 0.0548
+|   |   |   |   |   |--- class: Confidence
+|   |   |   |   |--- equiangular_uc >  0.0548
+|   |   |   |   |   |--- class: PE
+|   |   |   |--- equinorm_wc >  0.0143
+|   |   |   |   |--- equiangular_wc <= 0.0373
+|   |   |   |   |   |--- class: Maha
+|   |   |   |   |--- equiangular_wc >  0.0373
+|   |   |   |   |   |--- class: CTM
+|   |--- equiangular_wc >  0.1273
+|   |   |--- class: PCA RecError global
 |--- equiangular_wc >  0.1613
-|   |--- equinorm_uc <= 0.1468
-|   |   |--- class: GradNorm
-|   |--- equinorm_uc >  0.1468
-|   |   |--- equiangular_uc <= 0.1930
-|   |   |   |--- class: GradNorm
-|   |   |--- equiangular_uc >  0.1930
-|   |   |   |--- max_equiangular_uc <= 0.1511
-|   |   |   |   |--- class: GradNorm
-|   |   |   |--- max_equiangular_uc >  0.1511
-|   |   |   |   |--- class: GradNorm
+|   |--- class: GradNorm

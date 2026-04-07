@@ -1,21 +1,30 @@
 Decision Tree Rules (group_all)
-Depth: 3, Train acc: 0.778, CV acc: 0.667, Balanced CV acc: 0.667
+Depth: 4, Train acc: 0.667, CV acc: 0.667, Balanced CV acc: 0.733
 Classes: ['CTMmeanOC', 'GE', 'KPCA RecError global', 'ViM', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- var_collapse <= 0.0250
-|   |--- equinorm_uc <= 0.1372
+|--- equinorm_wc <= 0.0196
+|   |--- class: GE
+|--- equinorm_wc >  0.0196
+|   |--- equiangular_uc <= 0.1934
 |   |   |--- equinorm_wc <= 0.0229
-|   |   |   |--- class: KPCA RecError global
+|   |   |   |--- max_equiangular_uc <= 0.1164
+|   |   |   |   |--- class: ViM
+|   |   |   |--- max_equiangular_uc >  0.1164
+|   |   |   |   |--- class: ViM
 |   |   |--- equinorm_wc >  0.0229
-|   |   |   |--- class: pNML
-|   |--- equinorm_uc >  0.1372
-|   |   |--- max_equiangular_uc <= 0.1969
-|   |   |   |--- class: CTMmeanOC
-|   |   |--- max_equiangular_uc >  0.1969
-|   |   |   |--- class: pNML
-|--- var_collapse >  0.0250
-|   |--- equinorm_uc <= 0.1887
-|   |   |--- class: GE
-|   |--- equinorm_uc >  0.1887
-|   |   |--- class: GE
+|   |   |   |--- equinorm_uc <= 0.0789
+|   |   |   |   |--- class: pNML
+|   |   |   |--- equinorm_uc >  0.0789
+|   |   |   |   |--- class: pNML
+|   |--- equiangular_uc >  0.1934
+|   |   |--- equinorm_wc <= 0.0221
+|   |   |   |--- equinorm_wc <= 0.0207
+|   |   |   |   |--- class: CTMmeanOC
+|   |   |   |--- equinorm_wc >  0.0207
+|   |   |   |   |--- class: CTMmeanOC
+|   |   |--- equinorm_wc >  0.0221
+|   |   |   |--- max_equiangular_uc <= 0.1847
+|   |   |   |   |--- class: CTMmeanOC
+|   |   |   |--- max_equiangular_uc >  0.1847
+|   |   |   |   |--- class: CTMmeanOC
