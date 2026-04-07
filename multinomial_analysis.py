@@ -10,7 +10,9 @@ are the features. We fit:
 Evaluation:
   - Leave-one-dataset-out cross-validation (LODO): train on 3 source datasets,
     predict on the held-out one.  Tests generalisation across datasets.
-  - Stratified 5-fold CV (as a secondary check within the full dataset).
+  - Grouped stratified k-fold CV (groups=dataset): ensures that all runs from
+    the same dataset stay in the same fold, preventing leakage from correlated
+    runs (same data, different seeds) across train/test splits.
   - Feature importance: logistic regression coefficients + random forest importances.
 
 Also supports OOD-group stratification: instead of averaging across all OOD sets,
@@ -35,7 +37,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.model_selection import StratifiedGroupKFold, cross_val_predict
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
@@ -282,25 +284,31 @@ def run_classification(
         logger.info("Only 1 dataset — skipping LODO CV")
         y_pred_lodo = None
 
-    # ── 2. Stratified 5-Fold CV ──────────────────────────────────────────
-    logger.info("\n--- Stratified 5-Fold CV ---")
+    # ── 2. Grouped Stratified K-Fold CV ────────────────────────────────────
+    # Group by dataset so correlated runs (same data, different seeds)
+    # never leak across folds. This gives a realistic cross-dataset estimate.
+    logger.info("\n--- Grouped Stratified K-Fold CV (groups=dataset) ---")
 
-    # Ensure each class has at least 5 samples, otherwise reduce folds
-    min_count = min(Counter(y_enc).values())
-    n_folds = min(5, min_count)
+    groups = datasets
+    n_groups = len(np.unique(groups))
+    # Need at least 2 groups for grouped CV
+    n_folds = min(5, n_groups)
     if n_folds < 2:
-        logger.warning(f"Min class count={min_count}, skipping k-fold CV")
+        logger.warning(f"Only {n_groups} dataset group(s), skipping grouped k-fold CV")
         n_folds = 0
 
     if n_folds >= 2:
-        skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
+        sgkf = StratifiedGroupKFold(n_splits=n_folds, shuffle=True, random_state=42)
 
         y_pred_lr = np.full_like(y_enc, -1)
         y_pred_rf = np.full_like(y_enc, -1)
         fold_ids = np.full(len(y_enc), -1, dtype=int)
 
-        for fold_i, (train_idx, test_idx) in enumerate(skf.split(X_scaled, y_enc)):
+        for fold_i, (train_idx, test_idx) in enumerate(
+            sgkf.split(X_scaled, y_enc, groups)
+        ):
             fold_ids[test_idx] = fold_i
+            fold_groups = np.unique(groups[test_idx])
 
             lr_cv = LogisticRegression(
                 solver="lbfgs", max_iter=2000, C=1.0, random_state=42,
@@ -321,7 +329,9 @@ def run_classification(
             fold_classes = le.inverse_transform(np.unique(y_enc[test_idx]))
             logger.info(f"  Fold {fold_i+1}/{n_folds}: "
                         f"LR={fold_acc_lr:.3f}, RF={fold_acc_rf:.3f} "
-                        f"({len(test_idx)} samples, classes: {list(fold_classes)})")
+                        f"({len(test_idx)} samples, "
+                        f"groups: {list(fold_groups)}, "
+                        f"classes: {list(fold_classes)})")
 
         acc_lr = accuracy_score(y_enc, y_pred_lr)
         acc_rf = accuracy_score(y_enc, y_pred_rf)
@@ -336,6 +346,7 @@ def run_classification(
         results["kfold_rf_accuracy"] = acc_rf
         results["kfold_rf_balanced_accuracy"] = bal_acc_rf
         results["kfold_n_folds"] = n_folds
+        results["kfold_n_groups"] = n_groups
 
         # Baseline
         most_common = Counter(y_enc).most_common(1)[0]
@@ -414,7 +425,7 @@ def run_classification(
             class_weight="balanced",
         )
         if n_folds >= 2:
-            y_pred_dt = cross_val_predict(dt, X, y_enc, cv=skf)
+            y_pred_dt = cross_val_predict(dt, X, y_enc, cv=sgkf, groups=groups)
             dt_acc = accuracy_score(y_enc, y_pred_dt)
         else:
             dt_acc = 0.0
@@ -429,10 +440,10 @@ def run_classification(
     )
     best_dt.fit(X, y_enc)
 
-    # Evaluate DT with CV using same folds
+    # Evaluate DT with CV using same grouped folds
     if n_folds >= 2:
         y_pred_dt_cv = np.full_like(y_enc, -1)
-        for train_idx, test_idx in skf.split(X, y_enc):
+        for train_idx, test_idx in sgkf.split(X, y_enc, groups):
             dt_fold = DecisionTreeClassifier(
                 max_depth=best_dt_depth, random_state=42,
                 class_weight="balanced",
