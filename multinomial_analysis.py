@@ -293,27 +293,43 @@ def run_classification(
         n_folds = 0
 
     if n_folds >= 2:
-        lr_cv = LogisticRegression(
-            solver="lbfgs",
-            max_iter=2000, C=1.0, random_state=42,
-        )
-        rf_cv = RandomForestClassifier(
-            n_estimators=200, max_depth=None, random_state=42,
-            class_weight="balanced",
-        )
-
         skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
 
-        y_pred_lr = cross_val_predict(lr_cv, X_scaled, y_enc, cv=skf)
-        y_pred_rf = cross_val_predict(rf_cv, X_scaled, y_enc, cv=skf)
+        y_pred_lr = np.full_like(y_enc, -1)
+        y_pred_rf = np.full_like(y_enc, -1)
+        fold_ids = np.full(len(y_enc), -1, dtype=int)
+
+        for fold_i, (train_idx, test_idx) in enumerate(skf.split(X_scaled, y_enc)):
+            fold_ids[test_idx] = fold_i
+
+            lr_cv = LogisticRegression(
+                solver="lbfgs", max_iter=2000, C=1.0, random_state=42,
+            )
+            rf_cv = RandomForestClassifier(
+                n_estimators=200, max_depth=None, random_state=42,
+                class_weight="balanced",
+            )
+            lr_cv.fit(X_scaled[train_idx], y_enc[train_idx])
+            rf_cv.fit(X_scaled[train_idx], y_enc[train_idx])
+
+            y_pred_lr[test_idx] = lr_cv.predict(X_scaled[test_idx])
+            y_pred_rf[test_idx] = rf_cv.predict(X_scaled[test_idx])
+
+            # Per-fold metrics
+            fold_acc_lr = accuracy_score(y_enc[test_idx], y_pred_lr[test_idx])
+            fold_acc_rf = accuracy_score(y_enc[test_idx], y_pred_rf[test_idx])
+            fold_classes = le.inverse_transform(np.unique(y_enc[test_idx]))
+            logger.info(f"  Fold {fold_i+1}/{n_folds}: "
+                        f"LR={fold_acc_lr:.3f}, RF={fold_acc_rf:.3f} "
+                        f"({len(test_idx)} samples, classes: {list(fold_classes)})")
 
         acc_lr = accuracy_score(y_enc, y_pred_lr)
         acc_rf = accuracy_score(y_enc, y_pred_rf)
         bal_acc_lr = balanced_accuracy_score(y_enc, y_pred_lr)
         bal_acc_rf = balanced_accuracy_score(y_enc, y_pred_rf)
 
-        logger.info(f"  Logistic Regression: acc={acc_lr:.3f}, balanced_acc={bal_acc_lr:.3f}")
-        logger.info(f"  Random Forest:       acc={acc_rf:.3f}, balanced_acc={bal_acc_rf:.3f}")
+        logger.info(f"\n  Overall LR: acc={acc_lr:.3f}, balanced_acc={bal_acc_lr:.3f}")
+        logger.info(f"  Overall RF: acc={acc_rf:.3f}, balanced_acc={bal_acc_rf:.3f}")
 
         results["kfold_lr_accuracy"] = acc_lr
         results["kfold_lr_balanced_accuracy"] = bal_acc_lr
@@ -326,6 +342,15 @@ def run_classification(
         baseline_acc = most_common[1] / len(y_enc)
         results["kfold_baseline_accuracy"] = baseline_acc
         logger.info(f"  Baseline (most frequent): acc={baseline_acc:.3f}")
+
+        # Save per-sample fold predictions
+        kfold_pred_df = df[BLOCK_KEYS].copy()
+        kfold_pred_df["fold"] = fold_ids
+        kfold_pred_df["true_method"] = y
+        kfold_pred_df["pred_lr"] = le.inverse_transform(y_pred_lr)
+        kfold_pred_df["pred_rf"] = le.inverse_transform(y_pred_rf)
+        kfold_pred_df["correct_lr"] = (y_pred_lr == y_enc)
+        kfold_pred_df["correct_rf"] = (y_pred_rf == y_enc)
 
     # ── 3. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
@@ -404,14 +429,22 @@ def run_classification(
     )
     best_dt.fit(X, y_enc)
 
-    # Also evaluate with cross_val_predict for the chosen depth
+    # Evaluate DT with CV using same folds
     if n_folds >= 2:
-        y_pred_dt_best = cross_val_predict(best_dt.__class__(
-            max_depth=best_dt_depth, random_state=42,
-            class_weight="balanced",
-        ), X, y_enc, cv=skf)
-        dt_cv_acc = accuracy_score(y_enc, y_pred_dt_best)
-        dt_cv_bal_acc = balanced_accuracy_score(y_enc, y_pred_dt_best)
+        y_pred_dt_cv = np.full_like(y_enc, -1)
+        for train_idx, test_idx in skf.split(X, y_enc):
+            dt_fold = DecisionTreeClassifier(
+                max_depth=best_dt_depth, random_state=42,
+                class_weight="balanced",
+            )
+            dt_fold.fit(X[train_idx], y_enc[train_idx])
+            y_pred_dt_cv[test_idx] = dt_fold.predict(X[test_idx])
+        dt_cv_acc = accuracy_score(y_enc, y_pred_dt_cv)
+        dt_cv_bal_acc = balanced_accuracy_score(y_enc, y_pred_dt_cv)
+
+        # Add DT predictions to kfold_pred_df
+        kfold_pred_df["pred_dt"] = le.inverse_transform(y_pred_dt_cv)
+        kfold_pred_df["correct_dt"] = (y_pred_dt_cv == y_enc)
     else:
         dt_cv_acc = dt_cv_bal_acc = np.nan
 
@@ -461,6 +494,12 @@ def run_classification(
     coef_path = os.path.join(output_dir, f"multinomial_coefs_{file_prefix}_{label}.csv")
     coef_df.to_csv(coef_path)
     logger.info(f"Saved coefficients: {coef_path}")
+
+    # k-Fold predictions per sample
+    if n_folds >= 2:
+        kfold_path = os.path.join(output_dir, f"multinomial_kfold_preds_{file_prefix}_{label}.csv")
+        kfold_pred_df.to_csv(kfold_path, index=False)
+        logger.info(f"Saved k-fold predictions: {kfold_path}")
 
     # Decision tree rules
     rules_path = os.path.join(output_dir, f"multinomial_tree_rules_{file_prefix}_{label}.txt")
