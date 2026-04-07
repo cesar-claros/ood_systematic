@@ -116,14 +116,24 @@ def build_block_dataset(
         .mean(numeric_only=True)
     )
 
-    # For each block, find the best method
+    # For each block, find the best method and top-3 methods
     if ascending:
-        idx_best = block_scores.groupby(BLOCK_KEYS)[score_col].idxmin()
+        ranked = block_scores.sort_values(BLOCK_KEYS + [score_col], ascending=True)
     else:
-        idx_best = block_scores.groupby(BLOCK_KEYS)[score_col].idxmax()
+        ranked = block_scores.sort_values(BLOCK_KEYS + [score_col], ascending=False)
 
-    best = block_scores.loc[idx_best, BLOCK_KEYS + ["methods", score_col]].copy()
+    # Best method (rank 1)
+    best = ranked.groupby(BLOCK_KEYS, as_index=False).first()
     best = best.rename(columns={"methods": "best_method", score_col: "best_score"})
+
+    # Top-3 methods per block (pipe-separated string)
+    top3 = (
+        ranked.groupby(BLOCK_KEYS)["methods"]
+        .apply(lambda x: "|".join(x.iloc[:3]))
+        .reset_index()
+        .rename(columns={"methods": "top3_methods"})
+    )
+    best = best.merge(top3, on=BLOCK_KEYS, how="left")
 
     # Merge NC metrics
     result = best.merge(block_nc, on=BLOCK_KEYS, how="inner")
@@ -145,6 +155,12 @@ def build_block_dataset(
     logger.info(f"Best method distribution:\n{result['best_method'].value_counts().to_string()}")
 
     return result
+
+
+def _top_k_hit_rate(y_pred_labels: np.ndarray, top_k_lists: list[set[str]]) -> float:
+    """Fraction of predictions that land in the top-k set for that sample."""
+    hits = sum(1 for pred, topk in zip(y_pred_labels, top_k_lists) if pred in topk)
+    return hits / len(y_pred_labels) if len(y_pred_labels) > 0 else 0.0
 
 
 # ── Classification ───────────────────────────────────────────────────────────
@@ -181,6 +197,9 @@ def run_classification(
     X = df[nc_features].values
     y = df["best_method"].values
     datasets = df["dataset"].values
+
+    # Parse top-3 method sets for relaxed evaluation
+    top3_sets = [set(s.split("|")) for s in df["top3_methods"].values]
 
     le = LabelEncoder()
     y_enc = le.fit_transform(y)
@@ -236,8 +255,13 @@ def run_classification(
 
             acc_lr_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_lr[test_mask])
             acc_rf_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_rf[test_mask])
+            # Top-3 hit rate per fold
+            test_top3 = [top3_sets[i] for i in np.where(test_mask)[0]]
+            t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_lr[test_mask]), test_top3)
+            t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_rf[test_mask]), test_top3)
             logger.info(f"  Hold out {held_out_ds}: "
-                        f"LR={acc_lr_fold:.3f}, RF={acc_rf_fold:.3f} "
+                        f"LR={acc_lr_fold:.3f} (top3={t3_lr:.3f}), "
+                        f"RF={acc_rf_fold:.3f} (top3={t3_rf:.3f}) "
                         f"({test_mask.sum()} samples, "
                         f"{len(np.unique(y_enc[test_mask]))} classes)")
 
@@ -252,11 +276,13 @@ def run_classification(
             if valid_mask.sum() > 0:
                 acc = accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
                 bal_acc = balanced_accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
-                lodo_results[tag] = {"acc": acc, "bal_acc": bal_acc,
+                valid_top3 = [top3_sets[i] for i in np.where(valid_mask)[0]]
+                t3_hit = _top_k_hit_rate(le.inverse_transform(y_pred_lodo[valid_mask]), valid_top3)
+                lodo_results[tag] = {"acc": acc, "bal_acc": bal_acc, "top3_hit": t3_hit,
                                      "n": int(valid_mask.sum()), "preds": y_pred_lodo,
                                      "valid": valid_mask}
                 logger.info(f"\n  LODO {tag.upper()} overall: acc={acc:.3f}, "
-                            f"balanced_acc={bal_acc:.3f}")
+                            f"balanced_acc={bal_acc:.3f}, top3_hit={t3_hit:.3f}")
 
         # Pick best LODO classifier and store results
         if lodo_results:
@@ -264,10 +290,13 @@ def run_classification(
             best = lodo_results[best_tag]
             results["lodo_lr_accuracy"] = lodo_results.get("lr", {}).get("acc", np.nan)
             results["lodo_lr_balanced_accuracy"] = lodo_results.get("lr", {}).get("bal_acc", np.nan)
+            results["lodo_lr_top3_hit"] = lodo_results.get("lr", {}).get("top3_hit", np.nan)
             results["lodo_rf_accuracy"] = lodo_results.get("rf", {}).get("acc", np.nan)
             results["lodo_rf_balanced_accuracy"] = lodo_results.get("rf", {}).get("bal_acc", np.nan)
+            results["lodo_rf_top3_hit"] = lodo_results.get("rf", {}).get("top3_hit", np.nan)
             results["lodo_accuracy"] = best["acc"]
             results["lodo_balanced_accuracy"] = best["bal_acc"]
+            results["lodo_top3_hit"] = best["top3_hit"]
             results["lodo_n_samples"] = best["n"]
             y_pred_lodo = best["preds"]
             valid_mask = best["valid"]
@@ -326,9 +355,13 @@ def run_classification(
             # Per-fold metrics
             fold_acc_lr = accuracy_score(y_enc[test_idx], y_pred_lr[test_idx])
             fold_acc_rf = accuracy_score(y_enc[test_idx], y_pred_rf[test_idx])
+            fold_top3 = [top3_sets[i] for i in test_idx]
+            fold_t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr[test_idx]), fold_top3)
+            fold_t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf[test_idx]), fold_top3)
             fold_classes = le.inverse_transform(np.unique(y_enc[test_idx]))
             logger.info(f"  Fold {fold_i+1}/{n_folds}: "
-                        f"LR={fold_acc_lr:.3f}, RF={fold_acc_rf:.3f} "
+                        f"LR={fold_acc_lr:.3f} (top3={fold_t3_lr:.3f}), "
+                        f"RF={fold_acc_rf:.3f} (top3={fold_t3_rf:.3f}) "
                         f"({len(test_idx)} samples, "
                         f"groups: {list(fold_groups)}, "
                         f"classes: {list(fold_classes)})")
@@ -337,14 +370,18 @@ def run_classification(
         acc_rf = accuracy_score(y_enc, y_pred_rf)
         bal_acc_lr = balanced_accuracy_score(y_enc, y_pred_lr)
         bal_acc_rf = balanced_accuracy_score(y_enc, y_pred_rf)
+        t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr), top3_sets)
+        t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf), top3_sets)
 
-        logger.info(f"\n  Overall LR: acc={acc_lr:.3f}, balanced_acc={bal_acc_lr:.3f}")
-        logger.info(f"  Overall RF: acc={acc_rf:.3f}, balanced_acc={bal_acc_rf:.3f}")
+        logger.info(f"\n  Overall LR: acc={acc_lr:.3f}, balanced_acc={bal_acc_lr:.3f}, top3_hit={t3_lr:.3f}")
+        logger.info(f"  Overall RF: acc={acc_rf:.3f}, balanced_acc={bal_acc_rf:.3f}, top3_hit={t3_rf:.3f}")
 
         results["kfold_lr_accuracy"] = acc_lr
         results["kfold_lr_balanced_accuracy"] = bal_acc_lr
+        results["kfold_lr_top3_hit"] = t3_lr
         results["kfold_rf_accuracy"] = acc_rf
         results["kfold_rf_balanced_accuracy"] = bal_acc_rf
+        results["kfold_rf_top3_hit"] = t3_rf
         results["kfold_n_folds"] = n_folds
         results["kfold_n_groups"] = n_groups
 
@@ -358,10 +395,15 @@ def run_classification(
         kfold_pred_df = df[BLOCK_KEYS].copy()
         kfold_pred_df["fold"] = fold_ids
         kfold_pred_df["true_method"] = y
+        kfold_pred_df["top3_methods"] = df["top3_methods"].values
         kfold_pred_df["pred_lr"] = le.inverse_transform(y_pred_lr)
         kfold_pred_df["pred_rf"] = le.inverse_transform(y_pred_rf)
         kfold_pred_df["correct_lr"] = (y_pred_lr == y_enc)
         kfold_pred_df["correct_rf"] = (y_pred_rf == y_enc)
+        pred_lr_labels = le.inverse_transform(y_pred_lr)
+        pred_rf_labels = le.inverse_transform(y_pred_rf)
+        kfold_pred_df["top3_hit_lr"] = [p in t for p, t in zip(pred_lr_labels, top3_sets)]
+        kfold_pred_df["top3_hit_rf"] = [p in t for p, t in zip(pred_rf_labels, top3_sets)]
 
     # ── 3. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
@@ -454,23 +496,28 @@ def run_classification(
         dt_cv_bal_acc = balanced_accuracy_score(y_enc, y_pred_dt_cv)
 
         # Add DT predictions to kfold_pred_df
-        kfold_pred_df["pred_dt"] = le.inverse_transform(y_pred_dt_cv)
+        pred_dt_labels = le.inverse_transform(y_pred_dt_cv)
+        kfold_pred_df["pred_dt"] = pred_dt_labels
         kfold_pred_df["correct_dt"] = (y_pred_dt_cv == y_enc)
+        kfold_pred_df["top3_hit_dt"] = [p in t for p, t in zip(pred_dt_labels, top3_sets)]
+        dt_cv_t3 = _top_k_hit_rate(pred_dt_labels, top3_sets)
     else:
         dt_cv_acc = dt_cv_bal_acc = np.nan
+        dt_cv_t3 = np.nan
 
     results["dt_depth"] = best_dt_depth
     results["dt_cv_accuracy"] = dt_cv_acc
     results["dt_cv_balanced_accuracy"] = dt_cv_bal_acc
+    results["dt_cv_top3_hit"] = dt_cv_t3
 
     # Train accuracy (how well the tree fits the data)
     dt_train_acc = accuracy_score(y_enc, best_dt.predict(X))
 
     logger.info(f"  Best depth: {best_dt_depth}")
     logger.info(f"  Train accuracy: {dt_train_acc:.3f}")
-    logger.info(f"  CV accuracy:    {dt_cv_acc:.3f} (balanced: {dt_cv_bal_acc:.3f})")
+    logger.info(f"  CV accuracy:    {dt_cv_acc:.3f} (balanced: {dt_cv_bal_acc:.3f}, top3_hit: {dt_cv_t3:.3f})")
     if n_folds >= 2:
-        logger.info(f"  RF CV accuracy: {acc_rf:.3f} (for comparison)")
+        logger.info(f"  RF CV accuracy: {acc_rf:.3f} (top3_hit: {t3_rf:.3f}) (for comparison)")
 
     # Extract rules in text form
     tree_rules = export_text(
@@ -530,8 +577,12 @@ def run_classification(
             pred_df = df[valid_mask].copy()
             pred_df["predicted_method"] = le.inverse_transform(y_pred_lodo[valid_mask])
             pred_df["correct"] = pred_df["best_method"] == pred_df["predicted_method"]
+            valid_top3 = [top3_sets[i] for i in np.where(valid_mask)[0]]
+            pred_df["top3_hit"] = [p in t for p, t in
+                                   zip(pred_df["predicted_method"], valid_top3)]
             pred_path = os.path.join(output_dir, f"multinomial_lodo_preds_{file_prefix}_{label}.csv")
-            pred_df[BLOCK_KEYS + ["best_method", "predicted_method", "correct"]].to_csv(
+            pred_df[BLOCK_KEYS + ["best_method", "top3_methods", "predicted_method",
+                                  "correct", "top3_hit"]].to_csv(
                 pred_path, index=False)
             logger.info(f"Saved LODO predictions: {pred_path}")
 
