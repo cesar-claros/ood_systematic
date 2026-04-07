@@ -1,0 +1,27 @@
+Decision Tree Rules (group_all)
+Depth: 5, Train acc: 1.000, CV acc: 0.865, Balanced CV acc: 0.759
+Classes: ['CTM', 'Confidence', 'Energy', 'GradNorm', 'fDBD', 'pNML']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+|--- max_equiangular_wc <= 0.1445
+|   |--- equinorm_wc <= 0.0288
+|   |   |--- max_equiangular_wc <= 0.0602
+|   |   |   |--- class: CTM
+|   |   |--- max_equiangular_wc >  0.0602
+|   |   |   |--- max_equiangular_uc <= 0.0508
+|   |   |   |   |--- class: Confidence
+|   |   |   |--- max_equiangular_uc >  0.0508
+|   |   |   |   |--- class: Confidence
+|   |--- equinorm_wc >  0.0288
+|   |   |--- equinorm_uc <= 0.0733
+|   |   |   |--- class: fDBD
+|   |   |--- equinorm_uc >  0.0733
+|   |   |   |--- equinorm_wc <= 0.0398
+|   |   |   |   |--- class: Energy
+|   |   |   |--- equinorm_wc >  0.0398
+|   |   |   |   |--- class: pNML
+|--- max_equiangular_wc >  0.1445
+|   |--- equinorm_wc <= 0.0487
+|   |   |--- class: GradNorm
+|   |--- equinorm_wc >  0.0487
+|   |   |--- class: GradNorm
