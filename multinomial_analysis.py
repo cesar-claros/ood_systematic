@@ -102,12 +102,24 @@ def _compute_top_cliques(
     if ascending:  # lower raw score is better (e.g., AUGRC)
         merged[score_col] = -merged[score_col]
 
+    # Block keys within a dataset (exclude "dataset" since it's the groupby)
+    inner_block_keys = [k for k in BLOCK_KEYS if k != "dataset"]
+
     cliques: dict[str, list[str]] = {}
     for ds, ds_data in merged.groupby("dataset"):
         ds_data = ds_data.copy()
         ds_data["_block"] = (
-            ds_data[BLOCK_KEYS].astype(str).agg("|".join, axis=1)
+            ds_data[inner_block_keys].astype(str).agg("|".join, axis=1)
         )
+
+        # Keep only methods present in ALL blocks (complete block design)
+        block_methods = ds_data.groupby("_block")["methods"].apply(set)
+        common_methods = set.intersection(*block_methods) if len(block_methods) > 0 else set()
+        if len(common_methods) < 2:
+            logger.warning(f"  Clique {ds}: only {len(common_methods)} common methods "
+                           f"across {len(block_methods)} blocks, skipping")
+            continue
+        ds_data = ds_data[ds_data["methods"].isin(common_methods)]
 
         n_methods = ds_data["methods"].nunique()
         n_blocks = ds_data["_block"].nunique()
