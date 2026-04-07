@@ -44,7 +44,14 @@ from sklearn.metrics import (
 )
 from loguru import logger
 
-from src.utils_stats import HIGHER_BETTER
+from src.utils_stats import (
+    HIGHER_BETTER,
+    friedman_blocked,
+    conover_posthoc_from_pivot,
+    maximal_cliques_from_pmatrix,
+    rank_cliques,
+    greedy_exclusive_layers,
+)
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -73,11 +80,75 @@ PAPYAN_NC_METRICS = [
 BLOCK_KEYS = ["dataset", "architecture", "study", "dropout", "run", "reward_val"]
 
 
+# ── Clique computation ──────────────────────────────────────────────────────
+def _compute_top_cliques(
+    merged: pd.DataFrame,
+    score_col: str,
+    ascending: bool,
+    alpha: float = 0.05,
+) -> dict[str, list[str]]:
+    """Compute the top Friedman/Conover clique per source dataset.
+
+    For each source dataset, performs a Friedman test across methods with
+    model configurations as blocks, then extracts the top clique of
+    statistically indistinguishable methods via Conover post-hoc.
+
+    Returns
+    -------
+    {dataset: [method1, method2, ...]}  — top clique members per source.
+    """
+    merged = merged.copy()
+    # Standardize so higher = better (Friedman ranks descending)
+    if ascending:  # lower raw score is better (e.g., AUGRC)
+        merged[score_col] = -merged[score_col]
+
+    cliques: dict[str, list[str]] = {}
+    for ds, ds_data in merged.groupby("dataset"):
+        ds_data = ds_data.copy()
+        ds_data["_block"] = (
+            ds_data[BLOCK_KEYS].astype(str).agg("|".join, axis=1)
+        )
+
+        n_methods = ds_data["methods"].nunique()
+        n_blocks = ds_data["_block"].nunique()
+        if n_blocks < 2 or n_methods < 2:
+            logger.warning(f"  Clique {ds}: only {n_blocks} blocks or "
+                           f"{n_methods} methods, skipping")
+            continue
+
+        try:
+            stat, p, pivot = friedman_blocked(
+                ds_data, entity_col="methods", block_col="_block",
+                value_col=score_col,
+            )
+            if not (isinstance(stat, float) and not np.isnan(stat)):
+                logger.warning(f"  Clique {ds}: Friedman stat={stat}, skipping")
+                continue
+
+            ph = conover_posthoc_from_pivot(pivot)
+            ranks = pivot.rank(axis=1, ascending=False)
+            avg_ranks = ranks.mean(axis=0).sort_values()
+            clique_list = maximal_cliques_from_pmatrix(ph, alpha)
+            scored = rank_cliques(clique_list, list(avg_ranks.index), avg_ranks)
+            layers = greedy_exclusive_layers(scored)
+            if layers:
+                top_members = layers[0]["members"]
+                cliques[ds] = top_members
+                logger.info(f"  Clique {ds}: {top_members} "
+                            f"(mean_rank={layers[0]['mean_rank']:.2f}, "
+                            f"Friedman p={p:.4f})")
+        except Exception as e:
+            logger.warning(f"  Clique computation failed for {ds}: {e}")
+
+    return cliques
+
+
 # ── Build block-level dataset ────────────────────────────────────────────────
 def build_block_dataset(
     merged: pd.DataFrame,
     score_col: str,
     ascending: bool,
+    cliques: dict[str, list[str]] | None = None,
 ) -> pd.DataFrame:
     """
     Build a block-level dataset where each row is one model (block) with:
@@ -137,6 +208,14 @@ def build_block_dataset(
     top3 = ranked.groupby(BLOCK_KEYS).apply(_top3_info).reset_index()
     best = best.merge(top3, on=BLOCK_KEYS, how="left")
 
+    # Add clique members per block (looked up from source dataset)
+    if cliques:
+        best["clique_methods"] = best["dataset"].map(
+            lambda ds: "|".join(cliques[ds]) if ds in cliques else ""
+        )
+    else:
+        best["clique_methods"] = ""
+
     # Merge NC metrics
     result = best.merge(block_nc, on=BLOCK_KEYS, how="inner")
 
@@ -192,6 +271,43 @@ def _expand_top3_training(
     return np.vstack(X_parts), np.concatenate(y_parts), np.concatenate(w_parts)
 
 
+def _expand_clique_training(
+    X: np.ndarray,
+    df: pd.DataFrame,
+    le,
+    mask: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Replicate samples using top-clique members with equal weights.
+
+    Each original sample becomes N training rows (one per clique member).
+    All clique members get equal weight since they are statistically tied.
+    Falls back to best_method if no clique is available for that block.
+    Returns (X_expanded, y_expanded, sample_weights).
+    """
+    indices = np.where(mask)[0] if mask is not None else np.arange(len(X))
+    known_classes = set(le.classes_)
+
+    X_parts, y_parts, w_parts = [], [], []
+    for i in indices:
+        clique_str = df.iloc[i].get("clique_methods", "")
+        if pd.notna(clique_str) and clique_str != "":
+            methods = [m for m in clique_str.split("|") if m in known_classes]
+        else:
+            # Fallback to best_method only
+            bm = df.iloc[i]["best_method"]
+            methods = [bm] if bm in known_classes else []
+
+        for method in methods:
+            X_parts.append(X[i : i + 1])
+            y_parts.append(le.transform([method]))
+            w_parts.append([1.0])
+
+    if not X_parts:
+        return np.empty((0, X.shape[1])), np.array([], dtype=int), np.array([])
+
+    return np.vstack(X_parts), np.concatenate(y_parts), np.concatenate(w_parts)
+
+
 def _top_k_hit_rate(y_pred_labels: np.ndarray, top_k_lists: list[set[str]]) -> float:
     """Fraction of predictions that land in the top-k set for that sample."""
     hits = sum(1 for pred, topk in zip(y_pred_labels, top_k_lists) if pred in topk)
@@ -206,6 +322,7 @@ def run_classification(
     output_dir: str,
     file_prefix: str,
     min_class_count: int = 2,
+    use_cliques: bool = False,
 ):
     """
     Run multinomial classification: NC features -> best_method.
@@ -236,14 +353,31 @@ def run_classification(
     # Parse top-3 method sets for relaxed evaluation
     top3_sets = [set(s.split("|")) for s in df["top3_methods"].values]
 
+    # Parse clique sets for evaluation
+    clique_sets = []
+    for s in df["clique_methods"].values:
+        if pd.notna(s) and s != "":
+            clique_sets.append(set(s.split("|")))
+        else:
+            clique_sets.append(set())
+
+    # Select expansion function based on mode
+    _expand_fn = _expand_clique_training if use_cliques else _expand_top3_training
+    train_mode = "clique" if use_cliques else "top3"
+
     le = LabelEncoder()
     y_enc = le.fit_transform(y)
     n_classes = len(le.classes_)
 
     logger.info(f"\n{'='*60}")
-    logger.info(f"Classification: {label}")
+    logger.info(f"Classification: {label} (training={train_mode})")
     logger.info(f"  {len(df)} samples, {n_classes} classes, {len(nc_features)} features")
     logger.info(f"  Classes: {list(le.classes_)}")
+    if use_cliques:
+        clique_sizes = [len(c) for c in clique_sets if c]
+        if clique_sizes:
+            logger.info(f"  Clique sizes: min={min(clique_sizes)}, "
+                        f"max={max(clique_sizes)}, mean={np.mean(clique_sizes):.1f}")
 
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
@@ -268,7 +402,7 @@ def run_classification(
                 continue
 
             # Expand training data with top-3 labels and rank-based weights
-            X_train_exp, y_train_exp, w_train = _expand_top3_training(
+            X_train_exp, y_train_exp, w_train = _expand_fn(
                 X, df, le, mask=train_mask,
             )
 
@@ -295,13 +429,17 @@ def run_classification(
 
             acc_lr_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_lr[test_mask])
             acc_rf_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_rf[test_mask])
-            # Top-3 hit rate per fold
-            test_top3 = [top3_sets[i] for i in np.where(test_mask)[0]]
+            # Top-3 and clique hit rates per fold
+            test_indices = np.where(test_mask)[0]
+            test_top3 = [top3_sets[i] for i in test_indices]
+            test_cliques = [clique_sets[i] for i in test_indices]
             t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_lr[test_mask]), test_top3)
             t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_rf[test_mask]), test_top3)
+            cq_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_lr[test_mask]), test_cliques)
+            cq_rf = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_rf[test_mask]), test_cliques)
             logger.info(f"  Hold out {held_out_ds}: "
-                        f"LR={acc_lr_fold:.3f} (top3={t3_lr:.3f}), "
-                        f"RF={acc_rf_fold:.3f} (top3={t3_rf:.3f}) "
+                        f"LR={acc_lr_fold:.3f} (top3={t3_lr:.3f}, clique={cq_lr:.3f}), "
+                        f"RF={acc_rf_fold:.3f} (top3={t3_rf:.3f}, clique={cq_rf:.3f}) "
                         f"({test_mask.sum()} samples, "
                         f"{len(np.unique(y_enc[test_mask]))} classes)")
 
@@ -316,13 +454,18 @@ def run_classification(
             if valid_mask.sum() > 0:
                 acc = accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
                 bal_acc = balanced_accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
-                valid_top3 = [top3_sets[i] for i in np.where(valid_mask)[0]]
+                valid_indices = np.where(valid_mask)[0]
+                valid_top3 = [top3_sets[i] for i in valid_indices]
+                valid_cliques = [clique_sets[i] for i in valid_indices]
                 t3_hit = _top_k_hit_rate(le.inverse_transform(y_pred_lodo[valid_mask]), valid_top3)
-                lodo_results[tag] = {"acc": acc, "bal_acc": bal_acc, "top3_hit": t3_hit,
+                cq_hit = _top_k_hit_rate(le.inverse_transform(y_pred_lodo[valid_mask]), valid_cliques)
+                lodo_results[tag] = {"acc": acc, "bal_acc": bal_acc,
+                                     "top3_hit": t3_hit, "clique_hit": cq_hit,
                                      "n": int(valid_mask.sum()), "preds": y_pred_lodo,
                                      "valid": valid_mask}
                 logger.info(f"\n  LODO {tag.upper()} overall: acc={acc:.3f}, "
-                            f"balanced_acc={bal_acc:.3f}, top3_hit={t3_hit:.3f}")
+                            f"balanced_acc={bal_acc:.3f}, top3_hit={t3_hit:.3f}, "
+                            f"clique_hit={cq_hit:.3f}")
 
         # Pick best LODO classifier and store results
         if lodo_results:
@@ -331,12 +474,15 @@ def run_classification(
             results["lodo_lr_accuracy"] = lodo_results.get("lr", {}).get("acc", np.nan)
             results["lodo_lr_balanced_accuracy"] = lodo_results.get("lr", {}).get("bal_acc", np.nan)
             results["lodo_lr_top3_hit"] = lodo_results.get("lr", {}).get("top3_hit", np.nan)
+            results["lodo_lr_clique_hit"] = lodo_results.get("lr", {}).get("clique_hit", np.nan)
             results["lodo_rf_accuracy"] = lodo_results.get("rf", {}).get("acc", np.nan)
             results["lodo_rf_balanced_accuracy"] = lodo_results.get("rf", {}).get("bal_acc", np.nan)
             results["lodo_rf_top3_hit"] = lodo_results.get("rf", {}).get("top3_hit", np.nan)
+            results["lodo_rf_clique_hit"] = lodo_results.get("rf", {}).get("clique_hit", np.nan)
             results["lodo_accuracy"] = best["acc"]
             results["lodo_balanced_accuracy"] = best["bal_acc"]
             results["lodo_top3_hit"] = best["top3_hit"]
+            results["lodo_clique_hit"] = best["clique_hit"]
             results["lodo_n_samples"] = best["n"]
             y_pred_lodo = best["preds"]
             valid_mask = best["valid"]
@@ -377,7 +523,7 @@ def run_classification(
             # Expand training data with top-3 labels and rank-based weights
             train_mask = np.zeros(len(X), dtype=bool)
             train_mask[train_idx] = True
-            X_tr_exp, y_tr_exp, w_tr = _expand_top3_training(X_scaled, df, le, mask=train_mask)
+            X_tr_exp, y_tr_exp, w_tr = _expand_fn(X_scaled, df, le, mask=train_mask)
 
             lr_cv = LogisticRegression(
                 solver="lbfgs", max_iter=2000, C=1.0, random_state=42,
@@ -396,12 +542,15 @@ def run_classification(
             fold_acc_lr = accuracy_score(y_enc[test_idx], y_pred_lr[test_idx])
             fold_acc_rf = accuracy_score(y_enc[test_idx], y_pred_rf[test_idx])
             fold_top3 = [top3_sets[i] for i in test_idx]
+            fold_cliques = [clique_sets[i] for i in test_idx]
             fold_t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr[test_idx]), fold_top3)
             fold_t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf[test_idx]), fold_top3)
+            fold_cq_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr[test_idx]), fold_cliques)
+            fold_cq_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf[test_idx]), fold_cliques)
             fold_classes = le.inverse_transform(np.unique(y_enc[test_idx]))
             logger.info(f"  Fold {fold_i+1}/{n_folds}: "
-                        f"LR={fold_acc_lr:.3f} (top3={fold_t3_lr:.3f}), "
-                        f"RF={fold_acc_rf:.3f} (top3={fold_t3_rf:.3f}) "
+                        f"LR={fold_acc_lr:.3f} (top3={fold_t3_lr:.3f}, clique={fold_cq_lr:.3f}), "
+                        f"RF={fold_acc_rf:.3f} (top3={fold_t3_rf:.3f}, clique={fold_cq_rf:.3f}) "
                         f"({len(test_idx)} samples, "
                         f"classes: {list(fold_classes)})")
 
@@ -411,16 +560,20 @@ def run_classification(
         bal_acc_rf = balanced_accuracy_score(y_enc, y_pred_rf)
         t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr), top3_sets)
         t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf), top3_sets)
+        cq_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr), clique_sets)
+        cq_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf), clique_sets)
 
-        logger.info(f"\n  Overall LR: acc={acc_lr:.3f}, balanced_acc={bal_acc_lr:.3f}, top3_hit={t3_lr:.3f}")
-        logger.info(f"  Overall RF: acc={acc_rf:.3f}, balanced_acc={bal_acc_rf:.3f}, top3_hit={t3_rf:.3f}")
+        logger.info(f"\n  Overall LR: acc={acc_lr:.3f}, bal={bal_acc_lr:.3f}, top3={t3_lr:.3f}, clique={cq_lr:.3f}")
+        logger.info(f"  Overall RF: acc={acc_rf:.3f}, bal={bal_acc_rf:.3f}, top3={t3_rf:.3f}, clique={cq_rf:.3f}")
 
         results["kfold_lr_accuracy"] = acc_lr
         results["kfold_lr_balanced_accuracy"] = bal_acc_lr
         results["kfold_lr_top3_hit"] = t3_lr
+        results["kfold_lr_clique_hit"] = cq_lr
         results["kfold_rf_accuracy"] = acc_rf
         results["kfold_rf_balanced_accuracy"] = bal_acc_rf
         results["kfold_rf_top3_hit"] = t3_rf
+        results["kfold_rf_clique_hit"] = cq_rf
         results["kfold_n_folds"] = n_folds
 
         # Baseline
@@ -434,6 +587,7 @@ def run_classification(
         kfold_pred_df["fold"] = fold_ids
         kfold_pred_df["true_method"] = y
         kfold_pred_df["top3_methods"] = df["top3_methods"].values
+        kfold_pred_df["clique_methods"] = df["clique_methods"].values
         kfold_pred_df["pred_lr"] = le.inverse_transform(y_pred_lr)
         kfold_pred_df["pred_rf"] = le.inverse_transform(y_pred_rf)
         kfold_pred_df["correct_lr"] = (y_pred_lr == y_enc)
@@ -442,12 +596,14 @@ def run_classification(
         pred_rf_labels = le.inverse_transform(y_pred_rf)
         kfold_pred_df["top3_hit_lr"] = [p in t for p, t in zip(pred_lr_labels, top3_sets)]
         kfold_pred_df["top3_hit_rf"] = [p in t for p, t in zip(pred_rf_labels, top3_sets)]
+        kfold_pred_df["clique_hit_lr"] = [p in t for p, t in zip(pred_lr_labels, clique_sets)]
+        kfold_pred_df["clique_hit_rf"] = [p in t for p, t in zip(pred_rf_labels, clique_sets)]
 
     # ── 3. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
 
     # Expand full data with top-3 labels for fitting
-    X_full_exp, y_full_exp, w_full_exp = _expand_top3_training(X_scaled, df, le)
+    X_full_exp, y_full_exp, w_full_exp = _expand_fn(X_scaled, df, le)
 
     # Fit on expanded full data for importance analysis
     lr_full = LogisticRegression(
@@ -501,7 +657,7 @@ def run_classification(
     logger.info("\n--- Decision Tree Rules ---")
 
     # Expand full unscaled data for DT training
-    X_dt_exp, y_dt_exp, w_dt_exp = _expand_top3_training(X, df, le)
+    X_dt_exp, y_dt_exp, w_dt_exp = _expand_fn(X, df, le)
 
     best_dt = None
     best_dt_acc = -1
@@ -512,7 +668,7 @@ def run_classification(
             for tr_idx, te_idx in skf.split(X, y_enc):
                 tr_mask = np.zeros(len(X), dtype=bool)
                 tr_mask[tr_idx] = True
-                X_tr_dt, y_tr_dt, w_tr_dt = _expand_top3_training(X, df, le, mask=tr_mask)
+                X_tr_dt, y_tr_dt, w_tr_dt = _expand_fn(X, df, le, mask=tr_mask)
                 dt = DecisionTreeClassifier(
                     max_depth=depth, random_state=42, class_weight="balanced",
                 )
@@ -538,7 +694,7 @@ def run_classification(
         for train_idx, test_idx in skf.split(X, y_enc):
             tr_mask = np.zeros(len(X), dtype=bool)
             tr_mask[train_idx] = True
-            X_tr_dt, y_tr_dt, w_tr_dt = _expand_top3_training(X, df, le, mask=tr_mask)
+            X_tr_dt, y_tr_dt, w_tr_dt = _expand_fn(X, df, le, mask=tr_mask)
             dt_fold = DecisionTreeClassifier(
                 max_depth=best_dt_depth, random_state=42,
                 class_weight="balanced",
@@ -553,22 +709,26 @@ def run_classification(
         kfold_pred_df["pred_dt"] = pred_dt_labels
         kfold_pred_df["correct_dt"] = (y_pred_dt_cv == y_enc)
         kfold_pred_df["top3_hit_dt"] = [p in t for p, t in zip(pred_dt_labels, top3_sets)]
+        kfold_pred_df["clique_hit_dt"] = [p in t for p, t in zip(pred_dt_labels, clique_sets)]
         dt_cv_t3 = _top_k_hit_rate(pred_dt_labels, top3_sets)
+        dt_cv_cq = _top_k_hit_rate(pred_dt_labels, clique_sets)
     else:
         dt_cv_acc = dt_cv_bal_acc = np.nan
-        dt_cv_t3 = np.nan
+        dt_cv_t3 = dt_cv_cq = np.nan
 
     results["dt_depth"] = best_dt_depth
     results["dt_cv_accuracy"] = dt_cv_acc
     results["dt_cv_balanced_accuracy"] = dt_cv_bal_acc
     results["dt_cv_top3_hit"] = dt_cv_t3
+    results["dt_cv_clique_hit"] = dt_cv_cq
 
     # Train accuracy (how well the tree fits the data)
     dt_train_acc = accuracy_score(y_enc, best_dt.predict(X))
 
     logger.info(f"  Best depth: {best_dt_depth}")
     logger.info(f"  Train accuracy: {dt_train_acc:.3f}")
-    logger.info(f"  CV accuracy:    {dt_cv_acc:.3f} (balanced: {dt_cv_bal_acc:.3f}, top3_hit: {dt_cv_t3:.3f})")
+    logger.info(f"  CV accuracy:    {dt_cv_acc:.3f} (balanced: {dt_cv_bal_acc:.3f}, "
+                f"top3: {dt_cv_t3:.3f}, clique: {dt_cv_cq:.3f})")
     if n_folds >= 2:
         logger.info(f"  RF CV accuracy: {acc_rf:.3f} (top3_hit: {t3_rf:.3f}) (for comparison)")
 
@@ -630,12 +790,17 @@ def run_classification(
             pred_df = df[valid_mask].copy()
             pred_df["predicted_method"] = le.inverse_transform(y_pred_lodo[valid_mask])
             pred_df["correct"] = pred_df["best_method"] == pred_df["predicted_method"]
-            valid_top3 = [top3_sets[i] for i in np.where(valid_mask)[0]]
+            valid_indices = np.where(valid_mask)[0]
+            valid_top3 = [top3_sets[i] for i in valid_indices]
+            valid_cliques = [clique_sets[i] for i in valid_indices]
             pred_df["top3_hit"] = [p in t for p, t in
                                    zip(pred_df["predicted_method"], valid_top3)]
+            pred_df["clique_hit"] = [p in t for p, t in
+                                     zip(pred_df["predicted_method"], valid_cliques)]
             pred_path = os.path.join(output_dir, f"multinomial_lodo_preds_{file_prefix}_{label}.csv")
-            pred_df[BLOCK_KEYS + ["best_method", "top3_methods", "predicted_method",
-                                  "correct", "top3_hit"]].to_csv(
+            pred_df[BLOCK_KEYS + ["best_method", "top3_methods", "clique_methods",
+                                  "predicted_method", "correct", "top3_hit",
+                                  "clique_hit"]].to_csv(
                 pred_path, index=False)
             logger.info(f"Saved LODO predictions: {pred_path}")
 
@@ -705,6 +870,11 @@ def main():
                         help="Directory with clip_distances_{dataset}.csv")
     parser.add_argument("--papyan-only", action="store_true",
                         help="Restrict NC metrics to the 8 Papyan et al. (2020) metrics")
+    parser.add_argument("--use-cliques", action="store_true",
+                        help="Use Friedman/Conover top clique for training expansion "
+                             "(instead of top-3 rank-based expansion)")
+    parser.add_argument("--clique-alpha", type=float, default=0.05,
+                        help="Significance level for Conover post-hoc clique test (default: 0.05)")
     parser.add_argument("--output-dir", type=str, default="multinomial_outputs")
     args = parser.parse_args()
 
@@ -814,7 +984,18 @@ def main():
                 logger.warning(f"No rows for group '{group_label}'")
                 continue
 
-            block_df = build_block_dataset(group_merged, "group_mean_score", ascending)
+            # Compute cliques if requested
+            cliques = None
+            if args.use_cliques:
+                logger.info(f"Computing Friedman/Conover cliques (alpha={args.clique_alpha})...")
+                cliques = _compute_top_cliques(
+                    group_merged, "group_mean_score", ascending,
+                    alpha=args.clique_alpha,
+                )
+
+            block_df = build_block_dataset(
+                group_merged, "group_mean_score", ascending, cliques=cliques,
+            )
             if len(block_df) < 5:
                 logger.warning(f"Too few blocks ({len(block_df)}) for group {group_label}")
                 continue
@@ -825,11 +1006,23 @@ def main():
                 output_dir=args.output_dir,
                 file_prefix=file_prefix,
                 min_class_count=args.min_class_count,
+                use_cliques=args.use_cliques,
             )
     else:
         # Default: mean across all OOD sets
         merged = compute_mean_ood_score(merged, ood_cols)
-        block_df = build_block_dataset(merged, "mean_ood_score", ascending)
+
+        cliques = None
+        if args.use_cliques:
+            logger.info(f"Computing Friedman/Conover cliques (alpha={args.clique_alpha})...")
+            cliques = _compute_top_cliques(
+                merged, "mean_ood_score", ascending,
+                alpha=args.clique_alpha,
+            )
+
+        block_df = build_block_dataset(
+            merged, "mean_ood_score", ascending, cliques=cliques,
+        )
 
         if len(block_df) < 5:
             logger.error(f"Too few blocks ({len(block_df)})")
@@ -841,6 +1034,7 @@ def main():
             output_dir=args.output_dir,
             file_prefix=file_prefix,
             min_class_count=args.min_class_count,
+            use_cliques=args.use_cliques,
         )
 
 
