@@ -1,6 +1,6 @@
 Decision Tree Rules (group_far)
 Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
-Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'NNGuide', 'NeCo', 'fDBD']
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'KPCA RecError global', 'MLS', 'NNGuide', 'NeCo', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
@@ -10,21 +10,18 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- class: not_CTM
 
 === CTMmean ===
-|--- var_collapse <= 0.0056
+|--- equiangular_wc <= 0.1009
 |   |--- class: CTMmean
-|--- var_collapse >  0.0056
-|   |--- equiangular_uc <= 0.0974
-|   |   |--- class: not_CTMmean
-|   |--- equiangular_uc >  0.0974
-|   |   |--- class: not_CTMmean
+|--- equiangular_wc >  0.1009
+|   |--- class: not_CTMmean
 
 === CTMmeanOC ===
-|--- var_collapse <= 0.0056
+|--- equinorm_wc <= 0.0253
 |   |--- class: CTMmeanOC
-|--- var_collapse >  0.0056
-|   |--- equiangular_uc <= 0.0974
+|--- equinorm_wc >  0.0253
+|   |--- equiangular_uc <= 0.0947
 |   |   |--- class: not_CTMmeanOC
-|   |--- equiangular_uc >  0.0974
+|   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_CTMmeanOC
 
 === Energy ===
@@ -35,6 +32,24 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_Energy
 |--- var_collapse >  0.0132
 |   |--- class: Energy
+
+=== KPCA RecError global ===
+|--- equinorm_wc <= 0.0253
+|   |--- class: KPCA RecError global
+|--- equinorm_wc >  0.0253
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_KPCA RecError global
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_KPCA RecError global
+
+=== MLS ===
+|--- var_collapse <= 0.0132
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_MLS
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_MLS
+|--- var_collapse >  0.0132
+|   |--- class: MLS
 
 === NNGuide ===
 |--- var_collapse <= 0.0132

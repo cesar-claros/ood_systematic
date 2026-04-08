@@ -1,0 +1,19 @@
+dataset,architecture,study,run,fold,true_methods,top3_methods,clique_methods,pred_lr,pred_rf,exact_match_lr,exact_match_rf,top3_hit_lr,top3_hit_rf,clique_hit_lr,clique_hit_rf,pred_cc,exact_match_cc,top3_hit_cc,clique_hit_cc,pred_dt,exact_match_dt,top3_hit_dt,clique_hit_dt
+cifar10,ViT,vit,0,0,pNML,pNML|PCA RecError global|ViM,,pNML,pNML,True,True,True,True,True,True,pNML,True,True,True,CTMmeanOC,False,False,False
+cifar10,ViT,vit,2,1,pNML,pNML|ViM|PCA RecError global,,pNML,pNML,True,True,True,True,True,True,pNML,True,True,True,pNML,True,True,True
+cifar10,ViT,vit,3,0,pNML,pNML|ViM|KPCA RecError global,,pNML,pNML,True,True,True,True,True,True,pNML,True,True,True,CTMmeanOC,False,False,False
+cifar10,ViT,vit,4,1,pNML,pNML|PCA RecError global|ViM,,CTMmeanOC|pNML,pNML,False,True,True,True,True,True,CTMmeanOC|pNML,False,True,True,pNML,True,True,True
+cifar100,ViT,vit,0,1,KPCA RecError global,KPCA RecError global|ViM|fDBD,,KPCA RecError global,KPCA RecError global,True,True,True,True,True,True,KPCA RecError global,True,True,True,KPCA RecError global|ViM,False,True,True
+cifar100,ViT,vit,1,1,ViM,ViM|KPCA RecError global|fDBD,,KPCA RecError global,ViM,False,True,True,True,False,True,KPCA RecError global,False,True,False,KPCA RecError global|ViM,False,True,True
+cifar100,ViT,vit,2,0,KPCA RecError global,KPCA RecError global|fDBD|ViM,,KPCA RecError global,KPCA RecError global,True,True,True,True,True,True,KPCA RecError global,True,True,True,ViM,False,True,False
+cifar100,ViT,vit,3,0,ViM,ViM|fDBD|CTM,,KPCA RecError global,KPCA RecError global,False,False,False,False,False,False,KPCA RecError global,False,False,False,CTMmeanOC,False,False,False
+cifar100,ViT,vit,4,1,KPCA RecError global,KPCA RecError global|ViM|fDBD,,KPCA RecError global,ViM,True,False,True,True,True,False,KPCA RecError global,True,True,True,KPCA RecError global|ViM,False,True,True
+supercifar100,ViT,vit,0,0,KPCA RecError global,KPCA RecError global|pNML|PCA RecError global,,KPCA RecError global,KPCA RecError global,True,True,True,True,True,True,KPCA RecError global,True,True,True,KPCA RecError global,True,True,True
+supercifar100,ViT,vit,1,1,CTMmeanOC,CTMmeanOC|CTMmean|GradNorm,,KPCA RecError global,KPCA RecError global,False,False,False,False,False,False,KPCA RecError global,False,False,False,CTMmeanOC,True,True,True
+supercifar100,ViT,vit,2,1,KPCA RecError global,KPCA RecError global|PCA RecError global|pNML,,KPCA RecError global,KPCA RecError global,True,True,True,True,True,True,KPCA RecError global,True,True,True,KPCA RecError global,True,True,True
+supercifar100,ViT,vit,3,0,CTMmeanOC,CTMmeanOC|CTMmean|KPCA RecError global,,KPCA RecError global,KPCA RecError global,False,False,True,True,False,False,KPCA RecError global,False,True,False,CTMmeanOC,True,True,True
+supercifar100,ViT,vit,4,0,KPCA RecError global,KPCA RecError global|CTMmeanOC|CTMmean,,CTMmeanOC,CTMmeanOC,False,False,True,True,False,False,CTMmeanOC,False,True,False,CTMmeanOC,False,True,False
+tinyimagenet,ViT,vit,0,0,GE,GE|PE|MLS,,GE,GE,True,True,True,True,True,True,GE,True,True,True,GE,True,True,True
+tinyimagenet,ViT,vit,2,0,GE,GE|MLS|Energy,,GE,GE,True,True,True,True,True,True,GE,True,True,True,GE,True,True,True
+tinyimagenet,ViT,vit,3,1,GE,GE|PE|MLS,,GE,GE,True,True,True,True,True,True,GE,True,True,True,GE|KPCA RecError global,False,True,True
+tinyimagenet,ViT,vit,4,1,GE,GE|PE|MLS,,GE,GE,True,True,True,True,True,True,GE,True,True,True,GE,True,True,True

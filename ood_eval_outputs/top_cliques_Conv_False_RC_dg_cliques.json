@@ -1,0 +1,102 @@
+{
+  "cifar10": {
+    "test": [
+      "GEN",
+      "REN"
+    ],
+    "near": [
+      "CTM",
+      "Energy",
+      "MLS",
+      "NNGuide"
+    ],
+    "mid": [
+      "Confidence",
+      "CTM",
+      "PE"
+    ],
+    "far": [
+      "CTM",
+      "Energy",
+      "MLS",
+      "NNGuide"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "CTM",
+      "CTMmean",
+      "CTMmeanOC"
+    ],
+    "near": [
+      "Energy",
+      "GE",
+      "MLS",
+      "NeCo",
+      "NNGuide"
+    ],
+    "mid": [
+      "Energy",
+      "GE",
+      "Maha",
+      "NeCo",
+      "pNML",
+      "Residual"
+    ],
+    "far": [
+      "Maha",
+      "Residual"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "GEN",
+      "MSR",
+      "PCE"
+    ],
+    "near": [
+      "CTM",
+      "CTMmeanOC",
+      "fDBD",
+      "GE",
+      "GEN",
+      "GradNorm",
+      "MSR",
+      "NeCo",
+      "NNGuide",
+      "PCE",
+      "PE",
+      "REN"
+    ],
+    "mid": [
+      "Confidence",
+      "CTMmean",
+      "CTMmeanOC",
+      "fDBD",
+      "NNGuide"
+    ],
+    "far": [
+      "fDBD"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "CTM",
+      "MSR"
+    ],
+    "near": [
+      "CTM"
+    ],
+    "mid": [
+      "CTM",
+      "CTMmean",
+      "CTMmeanOC"
+    ],
+    "far": [
+      "CTM",
+      "CTMmean",
+      "CTMmeanOC",
+      "KPCA RecError global"
+    ]
+  }
+}

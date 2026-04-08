@@ -1,6 +1,6 @@
 Decision Tree Rules (group_mid)
 Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
-Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Confidence', 'Energy', 'GE', 'KPCA RecError global', 'MLS', 'NNGuide', 'PE', 'ViM', 'fDBD', 'pNML']
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'NNGuide', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
@@ -13,25 +13,16 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- class: not_CTM
 
 === CTMmean ===
-|--- var_collapse <= 0.0089
-|   |--- class: CTMmean
-|--- var_collapse >  0.0089
+|--- equinorm_wc <= 0.0465
 |   |--- class: not_CTMmean
+|--- equinorm_wc >  0.0465
+|   |--- class: CTMmean
 
 === CTMmeanOC ===
-|--- var_collapse <= 0.0089
-|   |--- class: CTMmeanOC
-|--- var_collapse >  0.0089
+|--- equinorm_wc <= 0.0465
 |   |--- class: not_CTMmeanOC
-
-=== Confidence ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
-|   |   |--- class: not_Confidence
-|   |--- self_duality >  0.0430
-|   |   |--- class: Confidence
-|--- self_duality >  0.0859
-|   |--- class: not_Confidence
+|--- equinorm_wc >  0.0465
+|   |--- class: CTMmeanOC
 
 === Energy ===
 |--- var_collapse <= 0.0089
@@ -39,71 +30,14 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |--- var_collapse >  0.0089
 |   |--- class: Energy
 
-=== GE ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
-|   |   |--- class: not_GE
-|   |--- self_duality >  0.0430
-|   |   |--- class: GE
-|--- self_duality >  0.0859
-|   |--- class: not_GE
-
-=== KPCA RecError global ===
-|--- var_collapse <= 0.0102
-|   |--- class: not_KPCA RecError global
-|--- var_collapse >  0.0102
-|   |--- self_duality <= 0.0859
-|   |   |--- class: not_KPCA RecError global
-|   |--- self_duality >  0.0859
-|   |   |--- class: KPCA RecError global
-
-=== MLS ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
-|   |   |--- class: not_MLS
-|   |--- self_duality >  0.0430
-|   |   |--- class: MLS
-|--- self_duality >  0.0859
-|   |--- class: not_MLS
-
 === NNGuide ===
-|--- equinorm_uc <= 0.0696
-|   |--- equiangular_uc <= 0.0915
-|   |   |--- class: NNGuide
-|   |--- equiangular_uc >  0.0915
-|   |   |--- class: not_NNGuide
-|--- equinorm_uc >  0.0696
+|--- equinorm_wc <= 0.0465
+|   |--- class: not_NNGuide
+|--- equinorm_wc >  0.0465
 |   |--- class: NNGuide
-
-=== PE ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
-|   |   |--- class: not_PE
-|   |--- self_duality >  0.0430
-|   |   |--- class: PE
-|--- self_duality >  0.0859
-|   |--- class: not_PE
-
-=== ViM ===
-|--- var_collapse <= 0.0102
-|   |--- class: not_ViM
-|--- var_collapse >  0.0102
-|   |--- self_duality <= 0.0859
-|   |   |--- class: not_ViM
-|   |--- self_duality >  0.0859
-|   |   |--- class: ViM
 
 === fDBD ===
 |--- equinorm_wc <= 0.0465
 |   |--- class: not_fDBD
 |--- equinorm_wc >  0.0465
 |   |--- class: fDBD
-
-=== pNML ===
-|--- var_collapse <= 0.0102
-|   |--- class: not_pNML
-|--- var_collapse >  0.0102
-|   |--- self_duality <= 0.0859
-|   |   |--- class: not_pNML
-|   |--- self_duality >  0.0859
-|   |   |--- class: pNML

@@ -13,16 +13,22 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_CTM
 
 === CTMmean ===
-|--- var_collapse <= 0.0094
+|--- var_collapse <= 0.0051
 |   |--- class: CTMmean
-|--- var_collapse >  0.0094
-|   |--- class: not_CTMmean
+|--- var_collapse >  0.0051
+|   |--- max_equiangular_uc <= 0.0862
+|   |   |--- class: not_CTMmean
+|   |--- max_equiangular_uc >  0.0862
+|   |   |--- class: CTMmean
 
 === CTMmeanOC ===
-|--- var_collapse <= 0.0094
+|--- var_collapse <= 0.0051
 |   |--- class: CTMmeanOC
-|--- var_collapse >  0.0094
-|   |--- class: not_CTMmeanOC
+|--- var_collapse >  0.0051
+|   |--- max_equiangular_uc <= 0.0862
+|   |   |--- class: not_CTMmeanOC
+|   |--- max_equiangular_uc >  0.0862
+|   |   |--- class: CTMmeanOC
 
 === Energy ===
 |--- equinorm_uc <= 0.0556

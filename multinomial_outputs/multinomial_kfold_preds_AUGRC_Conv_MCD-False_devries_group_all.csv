@@ -1,0 +1,18 @@
+dataset,architecture,study,run,fold,true_methods,top3_methods,clique_methods,pred_lr,pred_rf,exact_match_lr,exact_match_rf,top3_hit_lr,top3_hit_rf,clique_hit_lr,clique_hit_rf,pred_cc,exact_match_cc,top3_hit_cc,clique_hit_cc,pred_dt,exact_match_dt,top3_hit_dt,clique_hit_dt
+cifar10,VGG13,devries,1,0,Energy,Energy|NNGuide|NeCo,,Energy,Energy,True,True,True,True,True,True,Energy,True,True,True,Energy,True,True,True
+cifar10,VGG13,devries,2,0,Energy,Energy|NeCo|MLS,,Energy,Energy,True,True,True,True,True,True,Energy,True,True,True,Energy,True,True,True
+cifar10,VGG13,devries,3,3,Energy,Energy|NNGuide|NeCo,,Energy,Energy,True,True,True,True,True,True,Energy,True,True,True,Energy,True,True,True
+cifar10,VGG13,devries,4,1,Energy,Energy|NeCo|MLS,,Energy,Energy,True,True,True,True,True,True,Energy,True,True,True,Energy,True,True,True
+cifar100,VGG13,devries,1,1,fDBD,fDBD|CTMmean|CTMmeanOC,,fDBD,fDBD,True,True,True,True,True,True,fDBD,True,True,True,fDBD,True,True,True
+cifar100,VGG13,devries,2,2,fDBD,fDBD|CTMmean|CTMmeanOC,,fDBD,fDBD,True,True,True,True,True,True,fDBD,True,True,True,fDBD,True,True,True
+cifar100,VGG13,devries,4,3,fDBD,fDBD|CTMmean|CTMmeanOC,,fDBD,fDBD,True,True,True,True,True,True,fDBD,True,True,True,fDBD,True,True,True
+cifar100,VGG13,devries,5,0,fDBD,fDBD|NNGuide|CTMmean,,fDBD,fDBD,True,True,True,True,True,True,fDBD,True,True,True,fDBD,True,True,True
+supercifar100,VGG13,devries,1,2,Energy,Energy|GE|NeCo,,Energy,Energy,True,True,True,True,True,True,Energy,True,True,True,CTM|Energy,False,True,True
+supercifar100,VGG13,devries,3,2,CTM,CTM|KPCA RecError global|ViM,,Energy,CTM,False,True,False,True,False,True,Energy,False,False,False,CTM,True,True,True
+supercifar100,VGG13,devries,4,3,CTM,CTM|ViM|CTMmean,,Energy,CTM,False,True,False,True,False,True,Energy,False,False,False,CTM,True,True,True
+supercifar100,VGG13,devries,5,1,Energy,Energy|GE|KPCA RecError global,,CTM,CTM,False,False,False,False,False,False,CTM,False,False,False,Energy,True,True,True
+tinyimagenet,VGG13,devries,1,0,CTM,CTM|CTMmeanOC|CTMmean,,CTM,CTM,True,True,True,True,True,True,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,devries,2,2,CTM,CTM|CTMmeanOC|CTMmean,,CTM,CTM,True,True,True,True,True,True,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,devries,3,3,CTM,CTM|CTMmeanOC|CTMmean,,CTM,CTM,True,True,True,True,True,True,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,devries,4,1,CTM,CTM|CTMmeanOC|CTMmean,,CTM,CTM,True,True,True,True,True,True,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,devries,5,0,CTM,CTM|CTMmeanOC|CTMmean,,CTM,CTM,True,True,True,True,True,True,CTM,True,True,True,CTM,True,True,True

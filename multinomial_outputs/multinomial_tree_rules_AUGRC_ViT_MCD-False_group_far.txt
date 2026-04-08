@@ -1,6 +1,6 @@
 Decision Tree Rules (group_far)
 Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
-Classes: ['GE', 'GradNorm', 'Maha', 'PCA RecError global', 'Residual', 'ViM', 'pNML']
+Classes: ['GE', 'GradNorm', 'Residual', 'ViM', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === GE ===
@@ -21,24 +21,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_GradNorm
 
-=== Maha ===
-|--- var_collapse <= 0.0083
-|   |--- class: Maha
-|--- var_collapse >  0.0083
-|   |--- equiangular_uc <= 0.1246
-|   |   |--- class: not_Maha
-|   |--- equiangular_uc >  0.1246
-|   |   |--- class: not_Maha
-
-=== PCA RecError global ===
-|--- max_equiangular_uc <= 0.1731
-|   |--- equiangular_uc <= 0.1246
-|   |   |--- class: not_PCA RecError global
-|   |--- equiangular_uc >  0.1246
-|   |   |--- class: not_PCA RecError global
-|--- max_equiangular_uc >  0.1731
-|   |--- class: PCA RecError global
-
 === Residual ===
 |--- equinorm_wc <= 0.0196
 |   |--- class: not_Residual
@@ -49,13 +31,10 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: Residual
 
 === ViM ===
-|--- var_collapse <= 0.0083
+|--- var_collapse <= 0.0128
 |   |--- class: ViM
-|--- var_collapse >  0.0083
-|   |--- equiangular_uc <= 0.1246
-|   |   |--- class: not_ViM
-|   |--- equiangular_uc >  0.1246
-|   |   |--- class: not_ViM
+|--- var_collapse >  0.0128
+|   |--- class: not_ViM
 
 === pNML ===
 |--- max_equiangular_wc <= 0.0414

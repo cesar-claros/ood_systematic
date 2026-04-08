@@ -1,13 +1,16 @@
 Decision Tree Rules (group_near)
 Depth: 2, Train acc: 1.000, CV acc: 1.000, CV jaccard: 1.000
-Classes: ['CTM', 'Energy', 'GE', 'GEN', 'GradNorm', 'MLS', 'NNGuide', 'NeCo', 'PE', 'REN']
+Classes: ['CTM', 'Energy', 'GE', 'GradNorm', 'MLS', 'NNGuide', 'NeCo']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
-|--- equiangular_wc <= 0.1009
+|--- var_collapse <= 0.0056
 |   |--- class: CTM
-|--- equiangular_wc >  0.1009
-|   |--- class: not_CTM
+|--- var_collapse >  0.0056
+|   |--- equiangular_uc <= 0.0974
+|   |   |--- class: not_CTM
+|   |--- equiangular_uc >  0.0974
+|   |   |--- class: not_CTM
 
 === Energy ===
 |--- var_collapse <= 0.0056
@@ -27,15 +30,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |--- equinorm_wc >  0.0466
 |   |--- class: GE
 
-=== GEN ===
-|--- equinorm_wc <= 0.0253
-|   |--- class: GEN
-|--- equinorm_wc >  0.0253
-|   |--- equiangular_uc <= 0.0947
-|   |   |--- class: not_GEN
-|   |--- equiangular_uc >  0.0947
-|   |   |--- class: not_GEN
-
 === GradNorm ===
 |--- equinorm_wc <= 0.0253
 |   |--- class: GradNorm
@@ -46,21 +40,15 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_GradNorm
 
 === MLS ===
-|--- equinorm_wc <= 0.0466
-|   |--- equiangular_uc <= 0.0947
-|   |   |--- class: not_MLS
-|   |--- equiangular_uc >  0.0947
-|   |   |--- class: not_MLS
-|--- equinorm_wc >  0.0466
+|--- equiangular_wc <= 0.1009
+|   |--- class: not_MLS
+|--- equiangular_wc >  0.1009
 |   |--- class: MLS
 
 === NNGuide ===
-|--- var_collapse <= 0.0132
-|   |--- equiangular_uc <= 0.0947
-|   |   |--- class: not_NNGuide
-|   |--- equiangular_uc >  0.0947
-|   |   |--- class: not_NNGuide
-|--- var_collapse >  0.0132
+|--- equiangular_wc <= 0.1009
+|   |--- class: not_NNGuide
+|--- equiangular_wc >  0.1009
 |   |--- class: NNGuide
 
 === NeCo ===
@@ -68,21 +56,3 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- class: not_NeCo
 |--- equiangular_wc >  0.1009
 |   |--- class: NeCo
-
-=== PE ===
-|--- equinorm_wc <= 0.0253
-|   |--- class: PE
-|--- equinorm_wc >  0.0253
-|   |--- equiangular_uc <= 0.0947
-|   |   |--- class: not_PE
-|   |--- equiangular_uc >  0.0947
-|   |   |--- class: not_PE
-
-=== REN ===
-|--- equinorm_wc <= 0.0253
-|   |--- class: REN
-|--- equinorm_wc >  0.0253
-|   |--- equiangular_uc <= 0.0947
-|   |   |--- class: not_REN
-|   |--- equiangular_uc >  0.0947
-|   |   |--- class: not_REN
