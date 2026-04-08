@@ -530,10 +530,15 @@ def run_classification(
             y_pred_lodo_rf[test_mask] = _predict_indicator_matrix(rf, X_test)
             valid_mask_rf[test_mask] = True
 
-            cc = _make_cc()
-            cc.fit(X_train, y_train)
-            y_pred_lodo_cc[test_mask] = _predict_indicator_matrix(cc, X_test)
-            valid_mask_cc[test_mask] = True
+            # CC requires every label column to have both classes in train
+            cc_ok = np.all(y_train.sum(axis=0) > 0) and np.all(y_train.sum(axis=0) < y_train.shape[0])
+            if cc_ok:
+                cc = _make_cc()
+                cc.fit(X_train, y_train)
+                y_pred_lodo_cc[test_mask] = _predict_indicator_matrix(cc, X_test)
+                valid_mask_cc[test_mask] = True
+            else:
+                logger.warning(f"  LODO {held_out_ds}: skipping CC (single-class label column in train)")
 
             test_indices = np.where(test_mask)[0]
             test_top3 = [top3_sets[i] for i in test_indices]
@@ -544,19 +549,22 @@ def run_classification(
             metrics_rf = _multilabel_metrics(
                 y_multi[test_mask], y_pred_lodo_rf[test_mask], test_top3, test_cliques, mlb.classes_
             )
-            metrics_cc = _multilabel_metrics(
-                y_multi[test_mask], y_pred_lodo_cc[test_mask], test_top3, test_cliques, mlb.classes_
-            )
+            cc_str = ""
+            if cc_ok:
+                metrics_cc = _multilabel_metrics(
+                    y_multi[test_mask], y_pred_lodo_cc[test_mask], test_top3, test_cliques, mlb.classes_
+                )
+                cc_str = (f", CC={metrics_cc['accuracy']:.3f} "
+                          f"(jaccard={metrics_cc['jaccard']:.3f}, top3={metrics_cc['top3_hit']:.3f}, "
+                          f"clique={metrics_cc['clique_hit']:.3f})")
             logger.info(f"  Hold out {held_out_ds}: "
                         f"LR={metrics_lr['accuracy']:.3f} "
                         f"(jaccard={metrics_lr['jaccard']:.3f}, top3={metrics_lr['top3_hit']:.3f}, "
                         f"clique={metrics_lr['clique_hit']:.3f}), "
                         f"RF={metrics_rf['accuracy']:.3f} "
                         f"(jaccard={metrics_rf['jaccard']:.3f}, top3={metrics_rf['top3_hit']:.3f}, "
-                        f"clique={metrics_rf['clique_hit']:.3f}), "
-                        f"CC={metrics_cc['accuracy']:.3f} "
-                        f"(jaccard={metrics_cc['jaccard']:.3f}, top3={metrics_cc['top3_hit']:.3f}, "
-                        f"clique={metrics_cc['clique_hit']:.3f}) "
+                        f"clique={metrics_rf['clique_hit']:.3f})"
+                        f"{cc_str} "
                         f"({test_mask.sum()} samples, "
                         f"{int(y_multi[test_mask].sum(axis=0).astype(bool).sum())} active classes)")
 
@@ -646,14 +654,19 @@ def run_classification(
 
             lr_cv = _make_lr()
             rf_cv = _make_rf()
-            cc_cv = _make_cc()
             lr_cv.fit(X_train, y_train)
             rf_cv.fit(X_train, y_train)
-            cc_cv.fit(X_train, y_train)
 
             y_pred_lr[test_idx] = _predict_indicator_matrix(lr_cv, X_test)
             y_pred_rf[test_idx] = _predict_indicator_matrix(rf_cv, X_test)
-            y_pred_cc[test_idx] = _predict_indicator_matrix(cc_cv, X_test)
+
+            cc_fold_ok = np.all(y_train.sum(axis=0) > 0) and np.all(y_train.sum(axis=0) < y_train.shape[0])
+            if cc_fold_ok:
+                cc_cv = _make_cc()
+                cc_cv.fit(X_train, y_train)
+                y_pred_cc[test_idx] = _predict_indicator_matrix(cc_cv, X_test)
+            else:
+                logger.warning(f"  Fold {fold_i+1}: skipping CC (single-class label column in train)")
 
             fold_top3 = [top3_sets[i] for i in test_idx]
             fold_cliques = [clique_sets[i] for i in test_idx]
@@ -663,9 +676,14 @@ def run_classification(
             metrics_rf = _multilabel_metrics(
                 y_multi[test_idx], y_pred_rf[test_idx], fold_top3, fold_cliques, mlb.classes_
             )
-            metrics_cc = _multilabel_metrics(
-                y_multi[test_idx], y_pred_cc[test_idx], fold_top3, fold_cliques, mlb.classes_
-            )
+            cc_str = ""
+            if cc_fold_ok:
+                metrics_cc = _multilabel_metrics(
+                    y_multi[test_idx], y_pred_cc[test_idx], fold_top3, fold_cliques, mlb.classes_
+                )
+                cc_str = (f", CC={metrics_cc['accuracy']:.3f} "
+                          f"(jaccard={metrics_cc['jaccard']:.3f}, top3={metrics_cc['top3_hit']:.3f}, "
+                          f"clique={metrics_cc['clique_hit']:.3f})")
             fold_classes = sorted({method for idx in test_idx for method in target_sets[idx]})
             logger.info(f"  Fold {fold_i+1}/{n_folds}: "
                         f"LR={metrics_lr['accuracy']:.3f} "
@@ -673,16 +691,13 @@ def run_classification(
                         f"clique={metrics_lr['clique_hit']:.3f}), "
                         f"RF={metrics_rf['accuracy']:.3f} "
                         f"(jaccard={metrics_rf['jaccard']:.3f}, top3={metrics_rf['top3_hit']:.3f}, "
-                        f"clique={metrics_rf['clique_hit']:.3f}), "
-                        f"CC={metrics_cc['accuracy']:.3f} "
-                        f"(jaccard={metrics_cc['jaccard']:.3f}, top3={metrics_cc['top3_hit']:.3f}, "
-                        f"clique={metrics_cc['clique_hit']:.3f}) "
+                        f"clique={metrics_rf['clique_hit']:.3f})"
+                        f"{cc_str} "
                         f"({len(test_idx)} samples, "
                         f"classes: {fold_classes})")
 
         overall_lr = _multilabel_metrics(y_multi, y_pred_lr, top3_sets, clique_sets, mlb.classes_)
         overall_rf = _multilabel_metrics(y_multi, y_pred_rf, top3_sets, clique_sets, mlb.classes_)
-        overall_cc = _multilabel_metrics(y_multi, y_pred_cc, top3_sets, clique_sets, mlb.classes_)
         logger.info(
             f"\n  Overall LR: acc={overall_lr['accuracy']:.3f}, "
             f"jaccard={overall_lr['jaccard']:.3f}, f1={overall_lr['f1']:.3f}, "
@@ -693,13 +708,24 @@ def run_classification(
             f"jaccard={overall_rf['jaccard']:.3f}, f1={overall_rf['f1']:.3f}, "
             f"top3={overall_rf['top3_hit']:.3f}, clique={overall_rf['clique_hit']:.3f}"
         )
-        logger.info(
-            f"  Overall CC: acc={overall_cc['accuracy']:.3f}, "
-            f"jaccard={overall_cc['jaccard']:.3f}, f1={overall_cc['f1']:.3f}, "
-            f"top3={overall_cc['top3_hit']:.3f}, clique={overall_cc['clique_hit']:.3f}"
-        )
 
-        for model_tag, metrics in [("lr", overall_lr), ("rf", overall_rf), ("cc", overall_cc)]:
+        # CC may have zeros for skipped folds; only report if any fold succeeded
+        cc_any_predicted = y_pred_cc.sum() > 0
+        if cc_any_predicted:
+            overall_cc = _multilabel_metrics(y_multi, y_pred_cc, top3_sets, clique_sets, mlb.classes_)
+            logger.info(
+                f"  Overall CC: acc={overall_cc['accuracy']:.3f}, "
+                f"jaccard={overall_cc['jaccard']:.3f}, f1={overall_cc['f1']:.3f}, "
+                f"top3={overall_cc['top3_hit']:.3f}, clique={overall_cc['clique_hit']:.3f}"
+            )
+        else:
+            overall_cc = None
+            logger.warning("  CC: skipped in all folds (single-class label columns)")
+
+        all_kfold = [("lr", overall_lr), ("rf", overall_rf)]
+        if overall_cc is not None:
+            all_kfold.append(("cc", overall_cc))
+        for model_tag, metrics in all_kfold:
             prefix = f"kfold_{model_tag}"
             results[f"{prefix}_accuracy"] = metrics["accuracy"]
             results[f"{prefix}_jaccard"] = metrics["jaccard"]
@@ -722,19 +748,20 @@ def run_classification(
         kfold_pred_df["clique_methods"] = df["clique_methods"].values
         pred_lr_sets = _indicator_to_method_sets(y_pred_lr, mlb.classes_)
         pred_rf_sets = _indicator_to_method_sets(y_pred_rf, mlb.classes_)
-        pred_cc_sets = _indicator_to_method_sets(y_pred_cc, mlb.classes_)
         kfold_pred_df["pred_lr"] = _method_sets_to_strings(pred_lr_sets)
         kfold_pred_df["pred_rf"] = _method_sets_to_strings(pred_rf_sets)
-        kfold_pred_df["pred_cc"] = _method_sets_to_strings(pred_cc_sets)
         kfold_pred_df["exact_match_lr"] = np.all(y_pred_lr == y_multi, axis=1)
         kfold_pred_df["exact_match_rf"] = np.all(y_pred_rf == y_multi, axis=1)
-        kfold_pred_df["exact_match_cc"] = np.all(y_pred_cc == y_multi, axis=1)
         kfold_pred_df["top3_hit_lr"] = [bool(p & t) for p, t in zip(pred_lr_sets, top3_sets)]
         kfold_pred_df["top3_hit_rf"] = [bool(p & t) for p, t in zip(pred_rf_sets, top3_sets)]
-        kfold_pred_df["top3_hit_cc"] = [bool(p & t) for p, t in zip(pred_cc_sets, top3_sets)]
         kfold_pred_df["clique_hit_lr"] = [bool(p & t) for p, t in zip(pred_lr_sets, clique_sets)]
         kfold_pred_df["clique_hit_rf"] = [bool(p & t) for p, t in zip(pred_rf_sets, clique_sets)]
-        kfold_pred_df["clique_hit_cc"] = [bool(p & t) for p, t in zip(pred_cc_sets, clique_sets)]
+        if cc_any_predicted:
+            pred_cc_sets = _indicator_to_method_sets(y_pred_cc, mlb.classes_)
+            kfold_pred_df["pred_cc"] = _method_sets_to_strings(pred_cc_sets)
+            kfold_pred_df["exact_match_cc"] = np.all(y_pred_cc == y_multi, axis=1)
+            kfold_pred_df["top3_hit_cc"] = [bool(p & t) for p, t in zip(pred_cc_sets, top3_sets)]
+            kfold_pred_df["clique_hit_cc"] = [bool(p & t) for p, t in zip(pred_cc_sets, clique_sets)]
 
     # ── 3. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
