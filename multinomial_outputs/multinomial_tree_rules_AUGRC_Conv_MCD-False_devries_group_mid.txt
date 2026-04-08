@@ -1,33 +1,21 @@
 Decision Tree Rules (group_mid)
-Depth: 5, Train acc: 0.946, CV acc: 0.757, Balanced CV acc: 0.742
-Classes: ['CTM', 'CTMmean', 'Confidence', 'Energy', 'GradNorm', 'ViM', 'pNML']
+Depth: 3, Train acc: 0.706, CV acc: 0.765, Balanced CV acc: 0.754
+Classes: ['CTM', 'CTMmean', 'Energy', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- equinorm_wc <= 0.0581
-|   |--- max_equiangular_wc <= 0.1445
-|   |   |--- equinorm_wc <= 0.0294
-|   |   |   |--- self_duality <= 0.0336
-|   |   |   |   |--- class: Confidence
-|   |   |   |--- self_duality >  0.0336
-|   |   |   |   |--- var_collapse <= 0.0082
-|   |   |   |   |   |--- class: CTM
-|   |   |   |   |--- var_collapse >  0.0082
-|   |   |   |   |   |--- class: ViM
-|   |   |--- equinorm_wc >  0.0294
-|   |   |   |--- equinorm_wc <= 0.0369
-|   |   |   |   |--- equinorm_wc <= 0.0324
-|   |   |   |   |   |--- class: Energy
-|   |   |   |   |--- equinorm_wc >  0.0324
-|   |   |   |   |   |--- class: Energy
-|   |   |   |--- equinorm_wc >  0.0369
-|   |   |   |   |--- equiangular_uc <= 0.1716
-|   |   |   |   |   |--- class: pNML
-|   |   |   |   |--- equiangular_uc >  0.1716
-|   |   |   |   |   |--- class: pNML
-|   |--- max_equiangular_wc >  0.1445
-|   |   |--- equinorm_uc <= 0.1778
-|   |   |   |--- class: GradNorm
-|   |   |--- equinorm_uc >  0.1778
-|   |   |   |--- class: GradNorm
-|--- equinorm_wc >  0.0581
-|   |--- class: CTMmean
+|--- var_collapse <= 0.0094
+|   |--- equiangular_uc <= 0.1065
+|   |   |--- class: CTM
+|   |--- equiangular_uc >  0.1065
+|   |   |--- equinorm_wc <= 0.0645
+|   |   |   |--- class: CTMmean
+|   |   |--- equinorm_wc >  0.0645
+|   |   |   |--- class: CTMmean
+|--- var_collapse >  0.0094
+|   |--- max_equiangular_uc <= 0.0789
+|   |   |--- class: Energy
+|   |--- max_equiangular_uc >  0.0789
+|   |   |--- equinorm_uc <= 0.0632
+|   |   |   |--- class: pNML
+|   |   |--- equinorm_uc >  0.0632
+|   |   |   |--- class: pNML

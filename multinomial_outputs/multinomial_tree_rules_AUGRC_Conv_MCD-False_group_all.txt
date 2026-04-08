@@ -1,18 +1,15 @@
 Decision Tree Rules (group_all)
-Depth: 3, Train acc: 0.203, CV acc: 0.418, Balanced CV acc: 0.236
-Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Confidence', 'Energy', 'GradNorm', 'Maha', 'NNGuide', 'PCA RecError global', 'PE', 'REN', 'Residual', 'ViM', 'fDBD', 'pNML']
+Depth: 2, Train acc: 0.491, CV acc: 0.491, Balanced CV acc: 0.452
+Classes: ['CTM', 'CTMmeanOC', 'Energy', 'NNGuide', 'ViM', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- max_equiangular_uc <= 0.0329
-|   |--- class: Residual
-|--- max_equiangular_uc >  0.0329
-|   |--- equiangular_wc <= 0.1064
-|   |   |--- equinorm_wc <= 0.0642
-|   |   |   |--- class: ViM
-|   |   |--- equinorm_wc >  0.0642
-|   |   |   |--- class: CTMmean
-|   |--- equiangular_wc >  0.1064
-|   |   |--- max_equiangular_wc <= 0.1448
-|   |   |   |--- class: PCA RecError global
-|   |   |--- max_equiangular_wc >  0.1448
-|   |   |   |--- class: GradNorm
+|--- self_duality <= 0.1078
+|   |--- self_duality <= 0.0430
+|   |   |--- class: CTM
+|   |--- self_duality >  0.0430
+|   |   |--- class: Energy
+|--- self_duality >  0.1078
+|   |--- var_collapse <= 0.0081
+|   |   |--- class: CTMmeanOC
+|   |--- var_collapse >  0.0081
+|   |   |--- class: CTMmeanOC

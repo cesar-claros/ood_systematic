@@ -1,18 +1,15 @@
 Decision Tree Rules (group_near)
-Depth: 4, Train acc: 0.784, CV acc: 0.784, Balanced CV acc: 0.675
-Classes: ['CTM', 'Energy', 'Maha', 'NNGuide', 'NeCo', 'fDBD']
+Depth: 2, Train acc: 0.550, CV acc: 0.550, Balanced CV acc: 0.533
+Classes: ['CTM', 'Energy', 'NNGuide', 'NeCo', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- self_duality <= 0.0747
-|   |--- class: CTM
-|--- self_duality >  0.0747
-|   |--- equiangular_uc <= 0.1245
-|   |   |--- class: fDBD
-|   |--- equiangular_uc >  0.1245
-|   |   |--- equinorm_wc <= 0.0235
-|   |   |   |--- class: Maha
-|   |   |--- equinorm_wc >  0.0235
-|   |   |   |--- equiangular_wc <= 0.1375
-|   |   |   |   |--- class: NNGuide
-|   |   |   |--- equiangular_wc >  0.1375
-|   |   |   |   |--- class: NeCo
+|--- equiangular_wc <= 0.1009
+|   |--- equinorm_wc <= 0.0267
+|   |   |--- class: CTM
+|   |--- equinorm_wc >  0.0267
+|   |   |--- class: CTM
+|--- equiangular_wc >  0.1009
+|   |--- var_collapse <= 0.0112
+|   |   |--- class: NeCo
+|   |--- var_collapse >  0.0112
+|   |   |--- class: NNGuide
