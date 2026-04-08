@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 dataset,architecture,study,run,best_method,top3_methods,clique_methods,predicted_method,correct,top3_hit,clique_hit
 cifar10,VGG13,confidnet,1,NNGuide,NNGuide|Energy|NeCo,Energy|NNGuide,fDBD,False,False,False
 cifar10,VGG13,confidnet,2,Energy,Energy|NeCo|MLS,Energy|NNGuide,fDBD,False,False,False
@@ -18,3 +19,25 @@ tinyimagenet,VGG13,confidnet,2,CTM,CTM|CTMmeanOC|CTMmean,CTM,CTM,True,True,True
 tinyimagenet,VGG13,confidnet,3,CTM,CTM|CTMmean|CTMmeanOC,CTM,CTM,True,True,True
 tinyimagenet,VGG13,confidnet,4,CTM,CTM|CTMmeanOC|CTMmean,CTM,CTM,True,True,True
 tinyimagenet,VGG13,confidnet,5,CTM,CTM|CTMmean|CTMmeanOC,CTM,CTM,True,True,True
+=======
+dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
+cifar10,VGG13,confidnet,1,NNGuide global,Energy|NNGuide|NNGuide global,NNGuide global|NNGuide|Energy,,CTM class avg|PCA RecError class|PCA RecError class pred,False,False,False
+cifar10,VGG13,confidnet,2,Energy global,Energy|Energy global,Energy global|Energy|NeCo,,CTM class avg|Energy|PCA RecError class|PCA RecError class pred,False,True,False
+cifar10,VGG13,confidnet,3,NNGuide global,Energy|NNGuide|NNGuide global,NNGuide global|NNGuide|Energy,,CTM class avg|PCA RecError class|PCA RecError class pred,False,False,False
+cifar10,VGG13,confidnet,4,NNGuide global,NNGuide|NNGuide global,NNGuide global|NNGuide|NNGuide class pred,,CTM class avg|Energy|PCA RecError class|PCA RecError class pred,False,False,False
+cifar10,VGG13,confidnet,5,NNGuide global,Energy|Energy global|NNGuide global,NNGuide global|Energy global|Energy,,CTM class avg|Energy|PCA RecError class|PCA RecError class pred,False,True,False
+cifar100,VGG13,confidnet,1,NNGuide global,Energy|Energy global|NNGuide global,NNGuide global|Energy|Energy global,,CTM|CTM global|CTMmean global|Energy global,False,True,False
+cifar100,VGG13,confidnet,3,PCA RecError class pred,CTM class avg|PCA RecError class|PCA RecError class pred,PCA RecError class pred|CTM class avg|PCA RecError class,,CTM|CTM global|CTMmean global,False,False,False
+cifar100,VGG13,confidnet,4,PCA RecError class pred,PCA RecError class|PCA RecError class pred|pNML class pred,PCA RecError class pred|PCA RecError class|pNML class pred,,CTM|CTM global|CTMmean global,False,False,False
+cifar100,VGG13,confidnet,5,PCA RecError class pred,Energy|PCA RecError class|PCA RecError class pred,PCA RecError class pred|PCA RecError class|Energy,,CTM|CTM global|CTMmean global|Energy global,False,False,False
+supercifar100,VGG13,confidnet,1,Energy,Energy|Energy global,Energy|Maha class pred|Energy global,,CTM|CTM global,False,False,False
+supercifar100,VGG13,confidnet,2,PCA RecError class,CTM global|PCA RecError class|PCA RecError class pred,PCA RecError class|PCA RecError class pred|CTM global,,CTM|CTM global,False,True,False
+supercifar100,VGG13,confidnet,3,pNML class pred,pNML class pred,pNML class pred|KPCA RecError class|KPCA RecError class pred,,CTM|CTM global,False,False,False
+supercifar100,VGG13,confidnet,4,CTM class avg,CTM|CTM class avg|CTM global,CTM class avg|CTM global|CTM,,CTM|CTM global,False,True,False
+supercifar100,VGG13,confidnet,5,CTM global,CTM|CTM class avg|CTM global,CTM global|CTM class avg|CTM,,CTM|CTM global,False,True,True
+tinyimagenet,VGG13,confidnet,1,CTM global,CTM|CTM global|CTMmean class avg,CTM global|CTM|CTMmean class avg,,CTM class avg|PCA RecError class|PCA RecError class pred|pNML class pred,False,False,False
+tinyimagenet,VGG13,confidnet,2,CTM global,CTM|CTM global|CTMmean class avg,CTM global|CTM|CTMmean class avg,,CTM class avg|PCA RecError class|PCA RecError class pred|pNML class pred,False,False,False
+tinyimagenet,VGG13,confidnet,3,CTM global,CTM|CTM global|CTMmean global,CTM global|CTM|CTMmean global,,CTM class avg|PCA RecError class|PCA RecError class pred|pNML class pred,False,False,False
+tinyimagenet,VGG13,confidnet,4,CTM global,CTM|CTM global|CTMmean global,CTM global|CTM|CTMmean global,,CTM class avg|PCA RecError class|PCA RecError class pred|pNML class pred,False,False,False
+tinyimagenet,VGG13,confidnet,5,CTM global,CTM|CTM global|CTMmean class avg,CTM global|CTM|CTMmean class avg,,CTM class avg|PCA RecError class|PCA RecError class pred|pNML class pred,False,False,False
+>>>>>>> e9edc33 (refactor: update multinomial analysis pipeline to include new ETF-based features and expanded target classes)

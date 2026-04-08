@@ -1,20 +1,24 @@
 """
-Approach 2: Multinomial Classification (NC -> Best Method).
+Approach 2: Multilabel Classification (NC -> Set of Strong Methods).
 
-For each model (block = dataset × architecture × study × run), the label is the
-rank-1 OOD detection method (by mean AUGRC across OOD sets). The 13 NC metrics
-are the features. We fit:
-  (a) Multinomial logistic regression (with L2 regularisation)
-  (b) Random forest classifier
+For each model block (dataset × architecture × study × run), the 13 NC metrics
+are the features and the target is a set of competitive OOD detection methods:
+  - top-3 methods by mean score across OOD sets, or
+  - the Friedman/Conover top clique for the source dataset.
+
+We fit:
+  (a) One-vs-rest logistic regression
+  (b) Multilabel random forest
+  (c) One-vs-rest shallow decision tree for interpretability
 
 Evaluation:
-  - Leave-one-dataset-out cross-validation (LODO): train on 3 source datasets,
-    predict on the held-out one.  Tests generalisation across datasets.
-  - Stratified k-fold CV (within-distribution evaluation).
-  - Feature importance: logistic regression coefficients + random forest importances.
+  - Leave-one-dataset-out cross-validation (LODO)
+  - Stratified k-fold CV using the rank-1 method as the stratification proxy
+  - Exact-match, Jaccard, F1, and set-overlap hit rates
+  - Feature importance and per-class logistic coefficients
 
 Also supports OOD-group stratification: instead of averaging across all OOD sets,
-the label is the best method for a specific OOD proximity group (near/mid/far).
+the targets are derived from a specific OOD proximity group (near/mid/far).
 
 Usage:
     python multinomial_analysis.py --backbone Conv
@@ -30,17 +34,18 @@ from collections import Counter
 
 import numpy as np
 import pandas as pd
-from scipy import stats
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier, export_text
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
+from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import (
     accuracy_score,
-    balanced_accuracy_score,
-    classification_report,
-    confusion_matrix,
+    f1_score,
+    jaccard_score,
+    precision_score,
+    recall_score,
 )
 from loguru import logger
 
@@ -250,80 +255,160 @@ def build_block_dataset(
     return result
 
 
-RANK_WEIGHTS = {0: 3.0, 1: 2.0, 2: 1.0}  # rank-1 → 3, rank-2 → 2, rank-3 → 1
+def _parse_method_set(method_str: str, fallback: str | None = None) -> set[str]:
+    """Parse a pipe-separated method string into a set."""
+    if pd.notna(method_str) and method_str != "":
+        return {m for m in method_str.split("|") if m}
+    if fallback:
+        return {fallback}
+    return set()
 
 
-def _expand_top3_training(
-    X: np.ndarray,
+def _build_target_sets(
     df: pd.DataFrame,
-    le,
-    mask: np.ndarray | None = None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Replicate samples for top-3 training with rank-based weights.
-
-    Each original sample becomes up to 3 training rows (one per ranked method).
-    Returns (X_expanded, y_expanded, sample_weights).
-    """
-    rank_cols = ["rank1_method", "rank2_method", "rank3_method"]
-    indices = np.where(mask)[0] if mask is not None else np.arange(len(X))
-
-    known_classes = set(le.classes_)
-    X_parts, y_parts, w_parts = [], [], []
-    for rank_i, col in enumerate(rank_cols):
-        methods = df.iloc[indices][col].values
-        # Only keep methods that exist in the label encoder (not filtered as rare)
-        valid = np.array([pd.notna(m) and m in known_classes for m in methods])
-        if valid.sum() == 0:
-            continue
-        valid_idx = np.where(valid)[0]
-        X_parts.append(X[indices[valid_idx]])
-        y_parts.append(le.transform(methods[valid]))
-        w_parts.append(np.full(valid.sum(), RANK_WEIGHTS[rank_i]))
-
-    return np.vstack(X_parts), np.concatenate(y_parts), np.concatenate(w_parts)
+    use_cliques: bool,
+) -> tuple[list[set[str]], list[set[str]], list[set[str]]]:
+    """Return target sets plus auxiliary top-3 and clique sets."""
+    top3_sets = [
+        _parse_method_set(method_str, fallback=best_method)
+        for method_str, best_method in zip(df["top3_methods"], df["best_method"])
+    ]
+    clique_sets = [
+        _parse_method_set(method_str, fallback=best_method)
+        for method_str, best_method in zip(df["clique_methods"], df["best_method"])
+    ]
+    target_sets = clique_sets if use_cliques else top3_sets
+    return target_sets, top3_sets, clique_sets
 
 
-def _expand_clique_training(
-    X: np.ndarray,
+def _filter_target_sets(
     df: pd.DataFrame,
-    le,
-    mask: np.ndarray | None = None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Replicate samples using top-clique members with equal weights.
+    target_sets: list[set[str]],
+    top3_sets: list[set[str]],
+    clique_sets: list[set[str]],
+    min_class_count: int,
+) -> tuple[pd.DataFrame, list[set[str]], list[set[str]], list[set[str]], list[str]]:
+    """Drop rare methods from the multilabel targets and remove empty samples."""
+    method_counts = Counter(method for methods in target_sets for method in methods)
+    rare_methods = sorted(
+        method for method, count in method_counts.items() if count < min_class_count
+    )
+    if rare_methods:
+        logger.info(
+            f"Dropping {len(rare_methods)} rare methods (count < {min_class_count}): "
+            f"{rare_methods}"
+        )
 
-    Each original sample becomes N training rows (one per clique member).
-    All clique members get equal weight since they are statistically tied.
-    Falls back to best_method if no clique is available for that block.
-    Returns (X_expanded, y_expanded, sample_weights).
-    """
-    indices = np.where(mask)[0] if mask is not None else np.arange(len(X))
-    known_classes = set(le.classes_)
+    keep_methods = {method for method, count in method_counts.items() if count >= min_class_count}
+    filtered_targets = [methods & keep_methods for methods in target_sets]
+    filtered_top3 = [methods & keep_methods for methods in top3_sets]
+    filtered_cliques = [methods & keep_methods for methods in clique_sets]
 
-    X_parts, y_parts, w_parts = [], [], []
-    for i in indices:
-        clique_str = df.iloc[i].get("clique_methods", "")
-        if pd.notna(clique_str) and clique_str != "":
-            methods = [m for m in clique_str.split("|") if m in known_classes]
-        else:
-            # Fallback to best_method only
-            bm = df.iloc[i]["best_method"]
-            methods = [bm] if bm in known_classes else []
+    keep_mask = np.array([len(methods) > 0 for methods in filtered_targets], dtype=bool)
+    dropped_samples = int((~keep_mask).sum())
+    if dropped_samples > 0:
+        logger.info(
+            f"Dropping {dropped_samples} samples with no remaining multilabel targets"
+        )
 
-        for method in methods:
-            X_parts.append(X[i : i + 1])
-            y_parts.append(le.transform([method]))
-            w_parts.append([1.0])
-
-    if not X_parts:
-        return np.empty((0, X.shape[1])), np.array([], dtype=int), np.array([])
-
-    return np.vstack(X_parts), np.concatenate(y_parts), np.concatenate(w_parts)
+    filtered_df = df.loc[keep_mask].reset_index(drop=True)
+    return (
+        filtered_df,
+        [filtered_targets[i] for i in np.where(keep_mask)[0]],
+        [filtered_top3[i] for i in np.where(keep_mask)[0]],
+        [filtered_cliques[i] for i in np.where(keep_mask)[0]],
+        rare_methods,
+    )
 
 
-def _top_k_hit_rate(y_pred_labels: np.ndarray, top_k_lists: list[set[str]]) -> float:
-    """Fraction of predictions that land in the top-k set for that sample."""
-    hits = sum(1 for pred, topk in zip(y_pred_labels, top_k_lists) if pred in topk)
-    return hits / len(y_pred_labels) if len(y_pred_labels) > 0 else 0.0
+def _indicator_to_method_sets(
+    y_indicator: np.ndarray,
+    classes: np.ndarray,
+) -> list[set[str]]:
+    """Convert a binary indicator matrix to predicted method sets."""
+    return [
+        {str(classes[j]) for j, value in enumerate(row) if value > 0}
+        for row in y_indicator
+    ]
+
+
+def _method_sets_to_strings(method_sets: list[set[str]]) -> list[str]:
+    """Serialize method sets to stable pipe-separated strings."""
+    return ["|".join(sorted(methods)) for methods in method_sets]
+
+
+def _set_hit_rate(pred_sets: list[set[str]], target_sets: list[set[str]]) -> float:
+    """Fraction of samples with any overlap between predicted and target sets."""
+    if not pred_sets:
+        return 0.0
+    hits = sum(1 for pred, target in zip(pred_sets, target_sets) if pred & target)
+    return hits / len(pred_sets)
+
+
+def _sample_exact_match(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Exact-match multilabel accuracy."""
+    return accuracy_score(y_true, y_pred)
+
+
+def _sample_jaccard(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Sample-wise Jaccard score."""
+    return jaccard_score(y_true, y_pred, average="samples", zero_division=0)
+
+
+def _sample_f1(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Sample-wise F1 score."""
+    return f1_score(y_true, y_pred, average="samples", zero_division=0)
+
+
+def _sample_precision(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Sample-wise precision."""
+    return precision_score(y_true, y_pred, average="samples", zero_division=0)
+
+
+def _sample_recall(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Sample-wise recall."""
+    return recall_score(y_true, y_pred, average="samples", zero_division=0)
+
+
+def _multilabel_metrics(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    top3_sets: list[set[str]],
+    clique_sets: list[set[str]],
+    classes: np.ndarray,
+) -> dict[str, float]:
+    """Compute multilabel exact-match and set-overlap metrics."""
+    pred_sets = _indicator_to_method_sets(y_pred, classes)
+    return {
+        "accuracy": _sample_exact_match(y_true, y_pred),
+        "jaccard": _sample_jaccard(y_true, y_pred),
+        "f1": _sample_f1(y_true, y_pred),
+        "precision": _sample_precision(y_true, y_pred),
+        "recall": _sample_recall(y_true, y_pred),
+        "top3_hit": _set_hit_rate(pred_sets, top3_sets),
+        "clique_hit": _set_hit_rate(pred_sets, clique_sets),
+    }
+
+
+def _predict_indicator_matrix(model, X: np.ndarray, threshold: float = 0.5) -> np.ndarray:
+    """Predict a multilabel indicator matrix with non-empty fallback."""
+    probs = model.predict_proba(X)
+    if isinstance(probs, list):
+        pos_probs = np.column_stack(
+            [p[:, 1] if p.ndim == 2 and p.shape[1] > 1 else p.ravel() for p in probs]
+        )
+    else:
+        pos_probs = np.asarray(probs)
+        if pos_probs.ndim == 1:
+            pos_probs = pos_probs[:, None]
+
+    y_pred = (pos_probs >= threshold).astype(int)
+    empty_rows = y_pred.sum(axis=1) == 0
+    if empty_rows.any():
+        best_idx = np.argmax(pos_probs[empty_rows], axis=1)
+        y_pred[empty_rows] = 0
+        y_pred[np.where(empty_rows)[0], best_idx] = 1
+    return y_pred
 
 
 # ── Classification ───────────────────────────────────────────────────────────
@@ -337,7 +422,7 @@ def run_classification(
     use_cliques: bool = False,
 ):
     """
-    Run multinomial classification: NC features -> best_method.
+    Run multilabel classification: NC features -> set of strong methods.
 
     Uses:
       1. Leave-one-dataset-out CV (LODO)
@@ -346,165 +431,170 @@ def run_classification(
     """
     df = block_df.copy()
 
-    # Filter out methods that appear fewer than min_class_count times
-    method_counts = df["best_method"].value_counts()
-    rare_methods = method_counts[method_counts < min_class_count].index.tolist()
-    if rare_methods:
-        logger.info(f"Dropping {len(rare_methods)} rare methods (count < {min_class_count}): "
-                     f"{rare_methods}")
-        df = df[~df["best_method"].isin(rare_methods)]
+    target_sets, top3_sets, clique_sets = _build_target_sets(df, use_cliques)
+    df, target_sets, top3_sets, clique_sets, _ = _filter_target_sets(
+        df, target_sets, top3_sets, clique_sets, min_class_count
+    )
 
-    if df.empty or df["best_method"].nunique() < 2:
-        logger.warning(f"Not enough classes for classification ({label})")
+    if df.empty:
+        logger.warning(f"Not enough multilabel targets for classification ({label})")
         return
 
-    X = df[nc_features].values
-    y = df["best_method"].values
-    datasets = df["dataset"].values
+    mlb = MultiLabelBinarizer()
+    y_multi = mlb.fit_transform(target_sets)
+    n_classes = len(mlb.classes_)
+    if n_classes < 2:
+        logger.warning(f"Need at least 2 classes for classification ({label})")
+        return
 
-    # Parse top-3 method sets for relaxed evaluation
-    top3_sets = [set(s.split("|")) for s in df["top3_methods"].values]
-
-    # Parse clique sets for evaluation
-    clique_sets = []
-    for s in df["clique_methods"].values:
-        if pd.notna(s) and s != "":
-            clique_sets.append(set(s.split("|")))
-        else:
-            clique_sets.append(set())
-
-    # Select expansion function based on mode
-    _expand_fn = _expand_clique_training if use_cliques else _expand_top3_training
+    X = df[nc_features].to_numpy()
+    datasets = df["dataset"].to_numpy()
+    primary_labels = df["best_method"].to_numpy()
+    primary_counts = Counter(primary_labels)
+    min_count = min(primary_counts.values())
     train_mode = "clique" if use_cliques else "top3"
 
-    le = LabelEncoder()
-    y_enc = le.fit_transform(y)
-    n_classes = len(le.classes_)
-
     logger.info(f"\n{'='*60}")
-    logger.info(f"Classification: {label} (training={train_mode})")
+    logger.info(f"Classification: {label} (target={train_mode})")
     logger.info(f"  {len(df)} samples, {n_classes} classes, {len(nc_features)} features")
-    logger.info(f"  Classes: {list(le.classes_)}")
+    logger.info(f"  Classes: {list(mlb.classes_)}")
     if use_cliques:
         clique_sizes = [len(c) for c in clique_sets if c]
         if clique_sizes:
             logger.info(f"  Clique sizes: min={min(clique_sizes)}, "
                         f"max={max(clique_sizes)}, mean={np.mean(clique_sizes):.1f}")
 
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-
     results = {}
+
+    def _make_lr():
+        return OneVsRestClassifier(
+            LogisticRegression(solver="lbfgs", max_iter=2000, C=1.0, random_state=42)
+        )
+
+    def _make_rf():
+        return RandomForestClassifier(
+            n_estimators=200,
+            max_depth=None,
+            random_state=42,
+            class_weight="balanced_subsample",
+        )
+
+    def _make_dt(depth: int):
+        return OneVsRestClassifier(
+            DecisionTreeClassifier(
+                max_depth=depth,
+                random_state=42,
+                class_weight="balanced",
+            )
+        )
 
     # ── 1. Leave-One-Dataset-Out CV ──────────────────────────────────────
     unique_datasets = np.unique(datasets)
     if len(unique_datasets) >= 2:
         logger.info("\n--- Leave-One-Dataset-Out CV ---")
-        y_pred_lodo_lr = np.full_like(y_enc, -1)
-        y_pred_lodo_rf = np.full_like(y_enc, -1)
+        y_pred_lodo_lr = np.zeros_like(y_multi)
+        y_pred_lodo_rf = np.zeros_like(y_multi)
+        valid_mask_lr = np.zeros(len(df), dtype=bool)
+        valid_mask_rf = np.zeros(len(df), dtype=bool)
 
         for held_out_ds in unique_datasets:
             test_mask = datasets == held_out_ds
             train_mask = ~test_mask
 
-            # Check that train set has at least 2 classes
-            train_classes = np.unique(y_enc[train_mask])
-            if len(train_classes) < 2:
+            if y_multi[train_mask].sum(axis=0).astype(bool).sum() < 2:
                 logger.warning(f"  LODO {held_out_ds}: only 1 class in train, skipping")
                 continue
 
-            # Expand training data with top-3 labels and rank-based weights
-            X_train_exp, y_train_exp, w_train = _expand_fn(
-                X, df, le, mask=train_mask,
-            )
-
-            # Fit scaler on expanded train data
             scaler_lodo = StandardScaler()
-            X_train_exp = scaler_lodo.fit_transform(X_train_exp)
+            X_train = scaler_lodo.fit_transform(X[train_mask])
             X_test = scaler_lodo.transform(X[test_mask])
+            y_train = y_multi[train_mask]
 
-            # Logistic Regression
-            lr = LogisticRegression(
-                solver="lbfgs",
-                max_iter=2000, C=1.0, random_state=42,
-            )
-            lr.fit(X_train_exp, y_train_exp, sample_weight=w_train)
-            y_pred_lodo_lr[test_mask] = lr.predict(X_test)
+            lr = _make_lr()
+            lr.fit(X_train, y_train)
+            y_pred_lodo_lr[test_mask] = _predict_indicator_matrix(lr, X_test)
+            valid_mask_lr[test_mask] = True
 
-            # Random Forest
-            rf = RandomForestClassifier(
-                n_estimators=200, max_depth=None, random_state=42,
-                class_weight="balanced",
-            )
-            rf.fit(X_train_exp, y_train_exp, sample_weight=w_train)
-            y_pred_lodo_rf[test_mask] = rf.predict(X_test)
+            rf = _make_rf()
+            rf.fit(X_train, y_train)
+            y_pred_lodo_rf[test_mask] = _predict_indicator_matrix(rf, X_test)
+            valid_mask_rf[test_mask] = True
 
-            acc_lr_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_lr[test_mask])
-            acc_rf_fold = accuracy_score(y_enc[test_mask], y_pred_lodo_rf[test_mask])
-            # Top-3 and clique hit rates per fold
             test_indices = np.where(test_mask)[0]
             test_top3 = [top3_sets[i] for i in test_indices]
             test_cliques = [clique_sets[i] for i in test_indices]
-            t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_lr[test_mask]), test_top3)
-            t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_rf[test_mask]), test_top3)
-            cq_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_lr[test_mask]), test_cliques)
-            cq_rf = _top_k_hit_rate(le.inverse_transform(y_pred_lodo_rf[test_mask]), test_cliques)
+            metrics_lr = _multilabel_metrics(
+                y_multi[test_mask], y_pred_lodo_lr[test_mask], test_top3, test_cliques, mlb.classes_
+            )
+            metrics_rf = _multilabel_metrics(
+                y_multi[test_mask], y_pred_lodo_rf[test_mask], test_top3, test_cliques, mlb.classes_
+            )
             logger.info(f"  Hold out {held_out_ds}: "
-                        f"LR={acc_lr_fold:.3f} (top3={t3_lr:.3f}, clique={cq_lr:.3f}), "
-                        f"RF={acc_rf_fold:.3f} (top3={t3_rf:.3f}, clique={cq_rf:.3f}) "
+                        f"LR={metrics_lr['accuracy']:.3f} "
+                        f"(jaccard={metrics_lr['jaccard']:.3f}, top3={metrics_lr['top3_hit']:.3f}, "
+                        f"clique={metrics_lr['clique_hit']:.3f}), "
+                        f"RF={metrics_rf['accuracy']:.3f} "
+                        f"(jaccard={metrics_rf['jaccard']:.3f}, top3={metrics_rf['top3_hit']:.3f}, "
+                        f"clique={metrics_rf['clique_hit']:.3f}) "
                         f"({test_mask.sum()} samples, "
-                        f"{len(np.unique(y_enc[test_mask]))} classes)")
+                        f"{int(y_multi[test_mask].sum(axis=0).astype(bool).sum())} active classes)")
 
-        # Overall LODO accuracy (exclude any -1 predictions)
-        valid_mask_lr = y_pred_lodo_lr >= 0
-        valid_mask_rf = y_pred_lodo_rf >= 0
         lodo_results = {}
         for tag, y_pred_lodo, valid_mask in [
             ("lr", y_pred_lodo_lr, valid_mask_lr),
             ("rf", y_pred_lodo_rf, valid_mask_rf),
         ]:
             if valid_mask.sum() > 0:
-                acc = accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
-                bal_acc = balanced_accuracy_score(y_enc[valid_mask], y_pred_lodo[valid_mask])
                 valid_indices = np.where(valid_mask)[0]
                 valid_top3 = [top3_sets[i] for i in valid_indices]
                 valid_cliques = [clique_sets[i] for i in valid_indices]
-                t3_hit = _top_k_hit_rate(le.inverse_transform(y_pred_lodo[valid_mask]), valid_top3)
-                cq_hit = _top_k_hit_rate(le.inverse_transform(y_pred_lodo[valid_mask]), valid_cliques)
-                lodo_results[tag] = {"acc": acc, "bal_acc": bal_acc,
-                                     "top3_hit": t3_hit, "clique_hit": cq_hit,
-                                     "n": int(valid_mask.sum()), "preds": y_pred_lodo,
-                                     "valid": valid_mask}
-                logger.info(f"\n  LODO {tag.upper()} overall: acc={acc:.3f}, "
-                            f"balanced_acc={bal_acc:.3f}, top3_hit={t3_hit:.3f}, "
-                            f"clique_hit={cq_hit:.3f}")
+                metrics = _multilabel_metrics(
+                    y_multi[valid_mask], y_pred_lodo[valid_mask],
+                    valid_top3, valid_cliques, mlb.classes_
+                )
+                metrics["n"] = int(valid_mask.sum())
+                metrics["preds"] = y_pred_lodo.copy()
+                metrics["valid"] = valid_mask.copy()
+                lodo_results[tag] = metrics
+                logger.info(
+                    f"\n  LODO {tag.upper()} overall: acc={metrics['accuracy']:.3f}, "
+                    f"jaccard={metrics['jaccard']:.3f}, f1={metrics['f1']:.3f}, "
+                    f"top3_hit={metrics['top3_hit']:.3f}, clique_hit={metrics['clique_hit']:.3f}"
+                )
 
-        # Pick best LODO classifier and store results
         if lodo_results:
-            best_tag = max(lodo_results, key=lambda t: lodo_results[t]["acc"])
+            best_tag = max(lodo_results, key=lambda t: lodo_results[t]["accuracy"])
             best = lodo_results[best_tag]
-            results["lodo_lr_accuracy"] = lodo_results.get("lr", {}).get("acc", np.nan)
-            results["lodo_lr_balanced_accuracy"] = lodo_results.get("lr", {}).get("bal_acc", np.nan)
-            results["lodo_lr_top3_hit"] = lodo_results.get("lr", {}).get("top3_hit", np.nan)
-            results["lodo_lr_clique_hit"] = lodo_results.get("lr", {}).get("clique_hit", np.nan)
-            results["lodo_rf_accuracy"] = lodo_results.get("rf", {}).get("acc", np.nan)
-            results["lodo_rf_balanced_accuracy"] = lodo_results.get("rf", {}).get("bal_acc", np.nan)
-            results["lodo_rf_top3_hit"] = lodo_results.get("rf", {}).get("top3_hit", np.nan)
-            results["lodo_rf_clique_hit"] = lodo_results.get("rf", {}).get("clique_hit", np.nan)
-            results["lodo_accuracy"] = best["acc"]
-            results["lodo_balanced_accuracy"] = best["bal_acc"]
+            for model_tag in ["lr", "rf"]:
+                prefix = f"lodo_{model_tag}"
+                model_metrics = lodo_results.get(model_tag, {})
+                results[f"{prefix}_accuracy"] = model_metrics.get("accuracy", np.nan)
+                results[f"{prefix}_jaccard"] = model_metrics.get("jaccard", np.nan)
+                results[f"{prefix}_f1"] = model_metrics.get("f1", np.nan)
+                results[f"{prefix}_precision"] = model_metrics.get("precision", np.nan)
+                results[f"{prefix}_recall"] = model_metrics.get("recall", np.nan)
+                results[f"{prefix}_top3_hit"] = model_metrics.get("top3_hit", np.nan)
+                results[f"{prefix}_clique_hit"] = model_metrics.get("clique_hit", np.nan)
+
+            results["lodo_accuracy"] = best["accuracy"]
+            results["lodo_jaccard"] = best["jaccard"]
+            results["lodo_f1"] = best["f1"]
             results["lodo_top3_hit"] = best["top3_hit"]
             results["lodo_clique_hit"] = best["clique_hit"]
             results["lodo_n_samples"] = best["n"]
             y_pred_lodo = best["preds"]
             valid_mask = best["valid"]
 
-            most_common = Counter(y_enc[valid_mask]).most_common(1)[0]
-            baseline_acc = most_common[1] / valid_mask.sum()
+            observed_sets = Counter(_method_sets_to_strings(target_sets))
+            baseline_set = observed_sets.most_common(1)[0][0]
+            baseline_acc = np.mean(
+                np.array(_method_sets_to_strings([target_sets[i] for i in np.where(valid_mask)[0]]))
+                == baseline_set
+            )
             results["lodo_baseline_accuracy"] = baseline_acc
-            logger.info(f"  Best LODO: {best_tag.upper()} acc={best['acc']:.3f}")
-            logger.info(f"  Baseline (most frequent): acc={baseline_acc:.3f} "
-                        f"(class={le.classes_[most_common[0]]})")
+            results["lodo_best_model"] = best_tag.upper()
+            logger.info(f"  Best LODO: {best_tag.upper()} acc={best['accuracy']:.3f}")
+            logger.info(f"  Baseline (most frequent label-set): acc={baseline_acc:.3f}")
         else:
             y_pred_lodo = None
     else:
@@ -513,8 +603,6 @@ def run_classification(
 
     # ── 2. Stratified K-Fold CV ───────────────────────────────────────────
     logger.info("\n--- Stratified K-Fold CV ---")
-
-    min_count = min(Counter(y_enc).values())
     n_folds = min(5, min_count)
     if n_folds < 2:
         logger.warning(f"Min class count={min_count}, skipping k-fold CV")
@@ -522,128 +610,111 @@ def run_classification(
 
     if n_folds >= 2:
         skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
+        y_pred_lr = np.zeros_like(y_multi)
+        y_pred_rf = np.zeros_like(y_multi)
+        fold_ids = np.full(len(y_multi), -1, dtype=int)
 
-        y_pred_lr = np.full_like(y_enc, -1)
-        y_pred_rf = np.full_like(y_enc, -1)
-        fold_ids = np.full(len(y_enc), -1, dtype=int)
-
-        for fold_i, (train_idx, test_idx) in enumerate(
-            skf.split(X_scaled, y_enc)
-        ):
+        for fold_i, (train_idx, test_idx) in enumerate(skf.split(X, primary_labels)):
             fold_ids[test_idx] = fold_i
+            scaler_fold = StandardScaler()
+            X_train = scaler_fold.fit_transform(X[train_idx])
+            X_test = scaler_fold.transform(X[test_idx])
+            y_train = y_multi[train_idx]
 
-            # Expand training data with top-3 labels and rank-based weights
-            train_mask = np.zeros(len(X), dtype=bool)
-            train_mask[train_idx] = True
-            X_tr_exp, y_tr_exp, w_tr = _expand_fn(X_scaled, df, le, mask=train_mask)
+            lr_cv = _make_lr()
+            rf_cv = _make_rf()
+            lr_cv.fit(X_train, y_train)
+            rf_cv.fit(X_train, y_train)
 
-            lr_cv = LogisticRegression(
-                solver="lbfgs", max_iter=2000, C=1.0, random_state=42,
-            )
-            rf_cv = RandomForestClassifier(
-                n_estimators=200, max_depth=None, random_state=42,
-                class_weight="balanced",
-            )
-            lr_cv.fit(X_tr_exp, y_tr_exp, sample_weight=w_tr)
-            rf_cv.fit(X_tr_exp, y_tr_exp, sample_weight=w_tr)
+            y_pred_lr[test_idx] = _predict_indicator_matrix(lr_cv, X_test)
+            y_pred_rf[test_idx] = _predict_indicator_matrix(rf_cv, X_test)
 
-            y_pred_lr[test_idx] = lr_cv.predict(X_scaled[test_idx])
-            y_pred_rf[test_idx] = rf_cv.predict(X_scaled[test_idx])
-
-            # Per-fold metrics
-            fold_acc_lr = accuracy_score(y_enc[test_idx], y_pred_lr[test_idx])
-            fold_acc_rf = accuracy_score(y_enc[test_idx], y_pred_rf[test_idx])
             fold_top3 = [top3_sets[i] for i in test_idx]
             fold_cliques = [clique_sets[i] for i in test_idx]
-            fold_t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr[test_idx]), fold_top3)
-            fold_t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf[test_idx]), fold_top3)
-            fold_cq_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr[test_idx]), fold_cliques)
-            fold_cq_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf[test_idx]), fold_cliques)
-            fold_classes = le.inverse_transform(np.unique(y_enc[test_idx]))
+            metrics_lr = _multilabel_metrics(
+                y_multi[test_idx], y_pred_lr[test_idx], fold_top3, fold_cliques, mlb.classes_
+            )
+            metrics_rf = _multilabel_metrics(
+                y_multi[test_idx], y_pred_rf[test_idx], fold_top3, fold_cliques, mlb.classes_
+            )
+            fold_classes = sorted({method for idx in test_idx for method in target_sets[idx]})
             logger.info(f"  Fold {fold_i+1}/{n_folds}: "
-                        f"LR={fold_acc_lr:.3f} (top3={fold_t3_lr:.3f}, clique={fold_cq_lr:.3f}), "
-                        f"RF={fold_acc_rf:.3f} (top3={fold_t3_rf:.3f}, clique={fold_cq_rf:.3f}) "
+                        f"LR={metrics_lr['accuracy']:.3f} "
+                        f"(jaccard={metrics_lr['jaccard']:.3f}, top3={metrics_lr['top3_hit']:.3f}, "
+                        f"clique={metrics_lr['clique_hit']:.3f}), "
+                        f"RF={metrics_rf['accuracy']:.3f} "
+                        f"(jaccard={metrics_rf['jaccard']:.3f}, top3={metrics_rf['top3_hit']:.3f}, "
+                        f"clique={metrics_rf['clique_hit']:.3f}) "
                         f"({len(test_idx)} samples, "
-                        f"classes: {list(fold_classes)})")
+                        f"classes: {fold_classes})")
 
-        acc_lr = accuracy_score(y_enc, y_pred_lr)
-        acc_rf = accuracy_score(y_enc, y_pred_rf)
-        bal_acc_lr = balanced_accuracy_score(y_enc, y_pred_lr)
-        bal_acc_rf = balanced_accuracy_score(y_enc, y_pred_rf)
-        t3_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr), top3_sets)
-        t3_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf), top3_sets)
-        cq_lr = _top_k_hit_rate(le.inverse_transform(y_pred_lr), clique_sets)
-        cq_rf = _top_k_hit_rate(le.inverse_transform(y_pred_rf), clique_sets)
+        overall_lr = _multilabel_metrics(y_multi, y_pred_lr, top3_sets, clique_sets, mlb.classes_)
+        overall_rf = _multilabel_metrics(y_multi, y_pred_rf, top3_sets, clique_sets, mlb.classes_)
+        logger.info(
+            f"\n  Overall LR: acc={overall_lr['accuracy']:.3f}, "
+            f"jaccard={overall_lr['jaccard']:.3f}, f1={overall_lr['f1']:.3f}, "
+            f"top3={overall_lr['top3_hit']:.3f}, clique={overall_lr['clique_hit']:.3f}"
+        )
+        logger.info(
+            f"  Overall RF: acc={overall_rf['accuracy']:.3f}, "
+            f"jaccard={overall_rf['jaccard']:.3f}, f1={overall_rf['f1']:.3f}, "
+            f"top3={overall_rf['top3_hit']:.3f}, clique={overall_rf['clique_hit']:.3f}"
+        )
 
-        logger.info(f"\n  Overall LR: acc={acc_lr:.3f}, bal={bal_acc_lr:.3f}, top3={t3_lr:.3f}, clique={cq_lr:.3f}")
-        logger.info(f"  Overall RF: acc={acc_rf:.3f}, bal={bal_acc_rf:.3f}, top3={t3_rf:.3f}, clique={cq_rf:.3f}")
-
-        results["kfold_lr_accuracy"] = acc_lr
-        results["kfold_lr_balanced_accuracy"] = bal_acc_lr
-        results["kfold_lr_top3_hit"] = t3_lr
-        results["kfold_lr_clique_hit"] = cq_lr
-        results["kfold_rf_accuracy"] = acc_rf
-        results["kfold_rf_balanced_accuracy"] = bal_acc_rf
-        results["kfold_rf_top3_hit"] = t3_rf
-        results["kfold_rf_clique_hit"] = cq_rf
+        for model_tag, metrics in [("lr", overall_lr), ("rf", overall_rf)]:
+            prefix = f"kfold_{model_tag}"
+            results[f"{prefix}_accuracy"] = metrics["accuracy"]
+            results[f"{prefix}_jaccard"] = metrics["jaccard"]
+            results[f"{prefix}_f1"] = metrics["f1"]
+            results[f"{prefix}_precision"] = metrics["precision"]
+            results[f"{prefix}_recall"] = metrics["recall"]
+            results[f"{prefix}_top3_hit"] = metrics["top3_hit"]
+            results[f"{prefix}_clique_hit"] = metrics["clique_hit"]
         results["kfold_n_folds"] = n_folds
 
-        # Baseline
-        most_common = Counter(y_enc).most_common(1)[0]
-        baseline_acc = most_common[1] / len(y_enc)
+        baseline_set = Counter(_method_sets_to_strings(target_sets)).most_common(1)[0][0]
+        baseline_acc = np.mean(np.array(_method_sets_to_strings(target_sets)) == baseline_set)
         results["kfold_baseline_accuracy"] = baseline_acc
-        logger.info(f"  Baseline (most frequent): acc={baseline_acc:.3f}")
+        logger.info(f"  Baseline (most frequent label-set): acc={baseline_acc:.3f}")
 
-        # Save per-sample fold predictions
         kfold_pred_df = df[BLOCK_KEYS].copy()
         kfold_pred_df["fold"] = fold_ids
-        kfold_pred_df["true_method"] = y
+        kfold_pred_df["true_methods"] = _method_sets_to_strings(target_sets)
         kfold_pred_df["top3_methods"] = df["top3_methods"].values
         kfold_pred_df["clique_methods"] = df["clique_methods"].values
-        kfold_pred_df["pred_lr"] = le.inverse_transform(y_pred_lr)
-        kfold_pred_df["pred_rf"] = le.inverse_transform(y_pred_rf)
-        kfold_pred_df["correct_lr"] = (y_pred_lr == y_enc)
-        kfold_pred_df["correct_rf"] = (y_pred_rf == y_enc)
-        pred_lr_labels = le.inverse_transform(y_pred_lr)
-        pred_rf_labels = le.inverse_transform(y_pred_rf)
-        kfold_pred_df["top3_hit_lr"] = [p in t for p, t in zip(pred_lr_labels, top3_sets)]
-        kfold_pred_df["top3_hit_rf"] = [p in t for p, t in zip(pred_rf_labels, top3_sets)]
-        kfold_pred_df["clique_hit_lr"] = [p in t for p, t in zip(pred_lr_labels, clique_sets)]
-        kfold_pred_df["clique_hit_rf"] = [p in t for p, t in zip(pred_rf_labels, clique_sets)]
+        pred_lr_sets = _indicator_to_method_sets(y_pred_lr, mlb.classes_)
+        pred_rf_sets = _indicator_to_method_sets(y_pred_rf, mlb.classes_)
+        kfold_pred_df["pred_lr"] = _method_sets_to_strings(pred_lr_sets)
+        kfold_pred_df["pred_rf"] = _method_sets_to_strings(pred_rf_sets)
+        kfold_pred_df["exact_match_lr"] = np.all(y_pred_lr == y_multi, axis=1)
+        kfold_pred_df["exact_match_rf"] = np.all(y_pred_rf == y_multi, axis=1)
+        kfold_pred_df["top3_hit_lr"] = [bool(p & t) for p, t in zip(pred_lr_sets, top3_sets)]
+        kfold_pred_df["top3_hit_rf"] = [bool(p & t) for p, t in zip(pred_rf_sets, top3_sets)]
+        kfold_pred_df["clique_hit_lr"] = [bool(p & t) for p, t in zip(pred_lr_sets, clique_sets)]
+        kfold_pred_df["clique_hit_rf"] = [bool(p & t) for p, t in zip(pred_rf_sets, clique_sets)]
 
     # ── 3. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
+    scaler_full = StandardScaler()
+    X_scaled = scaler_full.fit_transform(X)
 
-    # Expand full data with top-3 labels for fitting
-    X_full_exp, y_full_exp, w_full_exp = _expand_fn(X_scaled, df, le)
+    lr_full = _make_lr()
+    lr_full.fit(X_scaled, y_multi)
+    rf_full = _make_rf()
+    rf_full.fit(X_scaled, y_multi)
 
-    # Fit on expanded full data for importance analysis
-    lr_full = LogisticRegression(
-        solver="lbfgs",
-        max_iter=2000, C=1.0, random_state=42,
-    )
-    lr_full.fit(X_full_exp, y_full_exp, sample_weight=w_full_exp)
-
-    rf_full = RandomForestClassifier(
-        n_estimators=200, max_depth=None, random_state=42,
-        class_weight="balanced",
-    )
-    rf_full.fit(X_full_exp, y_full_exp, sample_weight=w_full_exp)
-
-    # LR: coefficient magnitudes (mean absolute across classes)
-    lr_importance = np.abs(lr_full.coef_).mean(axis=0)
+    lr_coefs = np.vstack([est.coef_.ravel() for est in lr_full.estimators_])
+    lr_importance = np.abs(lr_coefs).mean(axis=0)
     lr_importance_df = pd.DataFrame({
         "feature": nc_features,
         "lr_mean_abs_coef": lr_importance,
     }).sort_values("lr_mean_abs_coef", ascending=False)
 
-    # RF: Gini importance
     rf_importance_df = pd.DataFrame({
         "feature": nc_features,
         "rf_gini_importance": rf_full.feature_importances_,
     }).sort_values("rf_gini_importance", ascending=False)
 
-    # Merge
     importance_df = lr_importance_df.merge(rf_importance_df, on="feature")
     importance_df["lr_rank"] = importance_df["lr_mean_abs_coef"].rank(ascending=False).astype(int)
     importance_df["rf_rank"] = importance_df["rf_gini_importance"].rank(ascending=False).astype(int)
@@ -651,15 +722,9 @@ def run_classification(
 
     logger.info(f"\n{importance_df.to_string(index=False)}")
 
-    # Per-class LR coefficients
-    # Binary case: sklearn returns shape (1, n_features); expand to both classes
-    coefs = lr_full.coef_
-    lr_classes = le.inverse_transform(lr_full.classes_)
-    if coefs.shape[0] == 1 and len(lr_classes) == 2:
-        coefs = np.vstack([coefs, -coefs])
     coef_df = pd.DataFrame(
-        coefs,
-        index=lr_classes,
+        lr_coefs,
+        index=mlb.classes_,
         columns=nc_features,
     )
     logger.info(f"\nLR coefficients per class:\n{coef_df.round(3).to_string()}")
@@ -669,151 +734,143 @@ def run_classification(
     # interpretable if/then rules with thresholds in original NC units.
     logger.info("\n--- Decision Tree Rules ---")
 
-    # Expand full unscaled data for DT training
-    X_dt_exp, y_dt_exp, w_dt_exp = _expand_fn(X, df, le)
-
-    best_dt = None
     best_dt_acc = -1
     best_dt_depth = 2
     for depth in [2, 3, 4, 5]:
         if n_folds >= 2:
-            y_pred_dt = np.full_like(y_enc, -1)
-            for tr_idx, te_idx in skf.split(X, y_enc):
-                tr_mask = np.zeros(len(X), dtype=bool)
-                tr_mask[tr_idx] = True
-                X_tr_dt, y_tr_dt, w_tr_dt = _expand_fn(X, df, le, mask=tr_mask)
-                dt = DecisionTreeClassifier(
-                    max_depth=depth, random_state=42, class_weight="balanced",
-                )
-                dt.fit(X_tr_dt, y_tr_dt, sample_weight=w_tr_dt)
-                y_pred_dt[te_idx] = dt.predict(X[te_idx])
-            dt_acc = accuracy_score(y_enc, y_pred_dt)
+            y_pred_dt = np.zeros_like(y_multi)
+            for tr_idx, te_idx in skf.split(X, primary_labels):
+                dt = _make_dt(depth)
+                dt.fit(X[tr_idx], y_multi[tr_idx])
+                y_pred_dt[te_idx] = _predict_indicator_matrix(dt, X[te_idx])
+            dt_acc = _sample_exact_match(y_multi, y_pred_dt)
         else:
             dt_acc = 0.0
         if dt_acc > best_dt_acc:
             best_dt_acc = dt_acc
             best_dt_depth = depth
 
-    # Refit best depth on expanded full data
-    best_dt = DecisionTreeClassifier(
-        max_depth=best_dt_depth, random_state=42,
-        class_weight="balanced",
-    )
-    best_dt.fit(X_dt_exp, y_dt_exp, sample_weight=w_dt_exp)
+    best_dt = _make_dt(best_dt_depth)
+    best_dt.fit(X, y_multi)
 
-    # Evaluate DT with CV using same folds and expanded training
     if n_folds >= 2:
-        y_pred_dt_cv = np.full_like(y_enc, -1)
-        for train_idx, test_idx in skf.split(X, y_enc):
-            tr_mask = np.zeros(len(X), dtype=bool)
-            tr_mask[train_idx] = True
-            X_tr_dt, y_tr_dt, w_tr_dt = _expand_fn(X, df, le, mask=tr_mask)
-            dt_fold = DecisionTreeClassifier(
-                max_depth=best_dt_depth, random_state=42,
-                class_weight="balanced",
-            )
-            dt_fold.fit(X_tr_dt, y_tr_dt, sample_weight=w_tr_dt)
-            y_pred_dt_cv[test_idx] = dt_fold.predict(X[test_idx])
-        dt_cv_acc = accuracy_score(y_enc, y_pred_dt_cv)
-        dt_cv_bal_acc = balanced_accuracy_score(y_enc, y_pred_dt_cv)
+        y_pred_dt_cv = np.zeros_like(y_multi)
+        for train_idx, test_idx in skf.split(X, primary_labels):
+            dt_fold = _make_dt(best_dt_depth)
+            dt_fold.fit(X[train_idx], y_multi[train_idx])
+            y_pred_dt_cv[test_idx] = _predict_indicator_matrix(dt_fold, X[test_idx])
+        dt_metrics = _multilabel_metrics(
+            y_multi, y_pred_dt_cv, top3_sets, clique_sets, mlb.classes_
+        )
+        dt_cv_acc = dt_metrics["accuracy"]
+        dt_cv_jaccard = dt_metrics["jaccard"]
+        dt_cv_f1 = dt_metrics["f1"]
+        dt_cv_t3 = dt_metrics["top3_hit"]
+        dt_cv_cq = dt_metrics["clique_hit"]
 
-        # Add DT predictions to kfold_pred_df
-        pred_dt_labels = le.inverse_transform(y_pred_dt_cv)
-        kfold_pred_df["pred_dt"] = pred_dt_labels
-        kfold_pred_df["correct_dt"] = (y_pred_dt_cv == y_enc)
-        kfold_pred_df["top3_hit_dt"] = [p in t for p, t in zip(pred_dt_labels, top3_sets)]
-        kfold_pred_df["clique_hit_dt"] = [p in t for p, t in zip(pred_dt_labels, clique_sets)]
-        dt_cv_t3 = _top_k_hit_rate(pred_dt_labels, top3_sets)
-        dt_cv_cq = _top_k_hit_rate(pred_dt_labels, clique_sets)
+        pred_dt_sets = _indicator_to_method_sets(y_pred_dt_cv, mlb.classes_)
+        kfold_pred_df["pred_dt"] = _method_sets_to_strings(pred_dt_sets)
+        kfold_pred_df["exact_match_dt"] = np.all(y_pred_dt_cv == y_multi, axis=1)
+        kfold_pred_df["top3_hit_dt"] = [bool(p & t) for p, t in zip(pred_dt_sets, top3_sets)]
+        kfold_pred_df["clique_hit_dt"] = [bool(p & t) for p, t in zip(pred_dt_sets, clique_sets)]
     else:
-        dt_cv_acc = dt_cv_bal_acc = np.nan
+        dt_cv_acc = dt_cv_jaccard = dt_cv_f1 = np.nan
         dt_cv_t3 = dt_cv_cq = np.nan
 
     results["dt_depth"] = best_dt_depth
     results["dt_cv_accuracy"] = dt_cv_acc
-    results["dt_cv_balanced_accuracy"] = dt_cv_bal_acc
+    results["dt_cv_jaccard"] = dt_cv_jaccard
+    results["dt_cv_f1"] = dt_cv_f1
     results["dt_cv_top3_hit"] = dt_cv_t3
     results["dt_cv_clique_hit"] = dt_cv_cq
 
-    # Train accuracy (how well the tree fits the data)
-    dt_train_acc = accuracy_score(y_enc, best_dt.predict(X))
+    dt_train_pred = _predict_indicator_matrix(best_dt, X)
+    dt_train_acc = _sample_exact_match(y_multi, dt_train_pred)
 
     logger.info(f"  Best depth: {best_dt_depth}")
     logger.info(f"  Train accuracy: {dt_train_acc:.3f}")
-    logger.info(f"  CV accuracy:    {dt_cv_acc:.3f} (balanced: {dt_cv_bal_acc:.3f}, "
+    logger.info(f"  CV accuracy:    {dt_cv_acc:.3f} (jaccard: {dt_cv_jaccard:.3f}, "
                 f"top3: {dt_cv_t3:.3f}, clique: {dt_cv_cq:.3f})")
     if n_folds >= 2:
-        logger.info(f"  RF CV accuracy: {acc_rf:.3f} (top3_hit: {t3_rf:.3f}) (for comparison)")
+        logger.info(f"  RF CV accuracy: {overall_rf['accuracy']:.3f} "
+                    f"(top3_hit: {overall_rf['top3_hit']:.3f}) (for comparison)")
 
-    # Extract rules in text form
-    tree_rules = export_text(
-        best_dt,
-        feature_names=nc_features,
-        class_names=list(le.inverse_transform(best_dt.classes_)),
-        decimals=4,
-    )
+    tree_rule_blocks = []
+    for class_name, estimator in zip(mlb.classes_, best_dt.estimators_):
+        class_rules = export_text(
+            estimator,
+            feature_names=nc_features,
+            class_names=[f"not_{class_name}", str(class_name)],
+            decimals=4,
+        )
+        tree_rule_blocks.append(f"=== {class_name} ===\n{class_rules}")
+    tree_rules = "\n".join(tree_rule_blocks)
     logger.info(f"\nDecision Tree Rules:\n{tree_rules}")
 
-    # ── Save results ─────────────────────────────────────────────────────
     os.makedirs(output_dir, exist_ok=True)
 
-    # Summary
     results["label"] = label
     results["n_samples"] = len(df)
     results["n_classes"] = n_classes
     results["n_features"] = len(nc_features)
-    results["classes"] = ",".join(le.classes_)
+    results["classes"] = ",".join(mlb.classes_)
+    results["target_mode"] = train_mode
 
     summary_df = pd.DataFrame([results])
     summary_path = os.path.join(output_dir, f"multinomial_summary_{file_prefix}_{label}.csv")
     summary_df.to_csv(summary_path, index=False)
     logger.info(f"Saved summary: {summary_path}")
 
-    # Feature importance
     imp_path = os.path.join(output_dir, f"multinomial_importance_{file_prefix}_{label}.csv")
     importance_df.to_csv(imp_path, index=False)
     logger.info(f"Saved importance: {imp_path}")
 
-    # Per-class coefficients
     coef_path = os.path.join(output_dir, f"multinomial_coefs_{file_prefix}_{label}.csv")
     coef_df.to_csv(coef_path)
     logger.info(f"Saved coefficients: {coef_path}")
 
-    # k-Fold predictions per sample
     if n_folds >= 2:
         kfold_path = os.path.join(output_dir, f"multinomial_kfold_preds_{file_prefix}_{label}.csv")
         kfold_pred_df.to_csv(kfold_path, index=False)
         logger.info(f"Saved k-fold predictions: {kfold_path}")
 
-    # Decision tree rules
     rules_path = os.path.join(output_dir, f"multinomial_tree_rules_{file_prefix}_{label}.txt")
     with open(rules_path, "w") as f:
         f.write(f"Decision Tree Rules ({label})\n")
         f.write(f"Depth: {best_dt_depth}, Train acc: {dt_train_acc:.3f}, "
-                f"CV acc: {dt_cv_acc:.3f}, Balanced CV acc: {dt_cv_bal_acc:.3f}\n")
-        f.write(f"Classes: {list(le.classes_)}\n")
+                f"CV acc: {dt_cv_acc:.3f}, CV jaccard: {dt_cv_jaccard:.3f}\n")
+        f.write(f"Classes: {list(mlb.classes_)}\n")
         f.write(f"Features: {nc_features}\n\n")
         f.write(tree_rules)
     logger.info(f"Saved tree rules: {rules_path}")
 
-    # LODO predictions
     if y_pred_lodo is not None:
-        valid_mask = y_pred_lodo >= 0
         if valid_mask.sum() > 0:
             pred_df = df[valid_mask].copy()
-            pred_df["predicted_method"] = le.inverse_transform(y_pred_lodo[valid_mask])
-            pred_df["correct"] = pred_df["best_method"] == pred_df["predicted_method"]
             valid_indices = np.where(valid_mask)[0]
             valid_top3 = [top3_sets[i] for i in valid_indices]
             valid_cliques = [clique_sets[i] for i in valid_indices]
-            pred_df["top3_hit"] = [p in t for p, t in
-                                   zip(pred_df["predicted_method"], valid_top3)]
-            pred_df["clique_hit"] = [p in t for p, t in
-                                     zip(pred_df["predicted_method"], valid_cliques)]
+            pred_sets = _indicator_to_method_sets(y_pred_lodo[valid_mask], mlb.classes_)
+            pred_df["true_methods"] = _method_sets_to_strings([target_sets[i] for i in valid_indices])
+            pred_df["predicted_methods"] = _method_sets_to_strings(pred_sets)
+            pred_df["exact_match"] = np.all(
+                y_pred_lodo[valid_mask] == y_multi[valid_mask], axis=1
+            )
+            pred_df["top3_hit"] = [bool(p & t) for p, t in zip(pred_sets, valid_top3)]
+            pred_df["clique_hit"] = [bool(p & t) for p, t in zip(pred_sets, valid_cliques)]
             pred_path = os.path.join(output_dir, f"multinomial_lodo_preds_{file_prefix}_{label}.csv")
-            pred_df[BLOCK_KEYS + ["best_method", "top3_methods", "clique_methods",
-                                  "predicted_method", "correct", "top3_hit",
-                                  "clique_hit"]].to_csv(
+            pred_df[
+                BLOCK_KEYS + [
+                    "best_method",
+                    "true_methods",
+                    "top3_methods",
+                    "clique_methods",
+                    "predicted_methods",
+                    "exact_match",
+                    "top3_hit",
+                    "clique_hit",
+                ]
+            ].to_csv(
                 pred_path, index=False)
             logger.info(f"Saved LODO predictions: {pred_path}")
 

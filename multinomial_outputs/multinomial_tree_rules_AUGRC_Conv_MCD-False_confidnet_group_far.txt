@@ -1,4 +1,5 @@
 Decision Tree Rules (group_far)
+<<<<<<< HEAD
 Depth: 2, Train acc: 0.765, CV acc: 0.824, Balanced CV acc: 0.889
 Classes: ['CTM', 'NNGuide', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
@@ -10,3 +11,122 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: fDBD
 |--- var_collapse >  0.0132
 |   |--- class: NNGuide
+=======
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTM global', 'CTMmean class avg', 'CTMmean global', 'Energy global', 'KPCA RecError class', 'KPCA RecError class pred', 'Maha class pred', 'NNGuide', 'NNGuide global', 'fDBD', 'fDBD class pred', 'fDBD global', 'pNML class pred']
+Features: ['var_collapse', 'cdnv_score', 'bias_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'w_etf_diff', 'M_etf_diff', 'wM_etf_diff']
+
+=== CTM global ===
+|--- self_duality <= 0.0392
+|   |--- class: CTM global
+|--- self_duality >  0.0392
+|   |--- max_equiangular_uc <= 0.0689
+|   |   |--- class: not_CTM global
+|   |--- max_equiangular_uc >  0.0689
+|   |   |--- class: not_CTM global
+
+=== CTMmean class avg ===
+|--- var_collapse <= 0.0027
+|   |--- class: CTMmean class avg
+|--- var_collapse >  0.0027
+|   |--- class: not_CTMmean class avg
+
+=== CTMmean global ===
+|--- self_duality <= 0.0392
+|   |--- max_equiangular_uc <= 0.0698
+|   |   |--- class: CTMmean global
+|   |--- max_equiangular_uc >  0.0698
+|   |   |--- class: not_CTMmean global
+|--- self_duality >  0.0392
+|   |--- var_collapse <= 0.0026
+|   |   |--- class: not_CTMmean global
+|   |--- var_collapse >  0.0026
+|   |   |--- class: not_CTMmean global
+
+=== Energy global ===
+|--- var_collapse <= 0.0132
+|   |--- max_equiangular_uc <= 0.0689
+|   |   |--- class: not_Energy global
+|   |--- max_equiangular_uc >  0.0689
+|   |   |--- class: not_Energy global
+|--- var_collapse >  0.0132
+|   |--- var_collapse <= 0.0137
+|   |   |--- class: Energy global
+|   |--- var_collapse >  0.0137
+|   |   |--- class: not_Energy global
+
+=== KPCA RecError class ===
+|--- equiangular_wc <= 0.0724
+|   |--- class: KPCA RecError class
+|--- equiangular_wc >  0.0724
+|   |--- class: not_KPCA RecError class
+
+=== KPCA RecError class pred ===
+|--- equiangular_wc <= 0.0724
+|   |--- class: KPCA RecError class pred
+|--- equiangular_wc >  0.0724
+|   |--- class: not_KPCA RecError class pred
+
+=== Maha class pred ===
+|--- equiangular_uc <= 0.0934
+|   |--- wM_etf_diff <= 0.3191
+|   |   |--- class: not_Maha class pred
+|   |--- wM_etf_diff >  0.3191
+|   |   |--- class: Maha class pred
+|--- equiangular_uc >  0.0934
+|   |--- class: not_Maha class pred
+
+=== NNGuide ===
+|--- wM_etf_diff <= 0.3158
+|   |--- class: NNGuide
+|--- wM_etf_diff >  0.3158
+|   |--- class: not_NNGuide
+
+=== NNGuide global ===
+|--- M_etf_diff <= 0.3250
+|   |--- class: NNGuide global
+|--- M_etf_diff >  0.3250
+|   |--- max_equiangular_uc <= 0.0689
+|   |   |--- class: not_NNGuide global
+|   |--- max_equiangular_uc >  0.0689
+|   |   |--- class: not_NNGuide global
+
+=== fDBD ===
+|--- equiangular_uc <= 0.1303
+|   |--- max_equiangular_uc <= 0.0689
+|   |   |--- class: not_fDBD
+|   |--- max_equiangular_uc >  0.0689
+|   |   |--- class: not_fDBD
+|--- equiangular_uc >  0.1303
+|   |--- class: fDBD
+
+=== fDBD class pred ===
+|--- equiangular_uc <= 0.1303
+|   |--- max_equiangular_uc <= 0.0689
+|   |   |--- class: fDBD class pred
+|   |--- max_equiangular_uc >  0.0689
+|   |   |--- class: not_fDBD class pred
+|--- equiangular_uc >  0.1303
+|   |--- class: fDBD class pred
+
+=== fDBD global ===
+|--- equiangular_uc <= 0.1303
+|   |--- max_equiangular_uc <= 0.0689
+|   |   |--- class: not_fDBD global
+|   |--- max_equiangular_uc >  0.0689
+|   |   |--- class: not_fDBD global
+|--- equiangular_uc >  0.1303
+|   |--- class: fDBD global
+
+=== pNML class pred ===
+|--- equiangular_uc <= 0.0891
+|   |--- self_duality <= 0.0809
+|   |   |--- class: pNML class pred
+|   |--- self_duality >  0.0809
+|   |   |--- class: not_pNML class pred
+|--- equiangular_uc >  0.0891
+|   |--- var_collapse <= 0.0026
+|   |   |--- class: not_pNML class pred
+|   |--- var_collapse >  0.0026
+|   |   |--- class: not_pNML class pred
+>>>>>>> e9edc33 (refactor: update multinomial analysis pipeline to include new ETF-based features and expanded target classes)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 dataset,architecture,study,run,best_method,top3_methods,clique_methods,predicted_method,correct,top3_hit,clique_hit
 cifar10,VGG13,confidnet,1,NNGuide,NNGuide|Energy|NeCo,Energy|NNGuide|NeCo,fDBD,False,False,False
 cifar10,VGG13,confidnet,3,NNGuide,NNGuide|Energy|NeCo,Energy|NNGuide|NeCo,fDBD,False,False,False
@@ -16,3 +17,26 @@ tinyimagenet,VGG13,confidnet,1,CTM,CTM|CTMmeanOC|CTMmean,CTM|CTMmean|CTMmeanOC,C
 tinyimagenet,VGG13,confidnet,2,CTM,CTM|CTMmeanOC|CTMmean,CTM|CTMmean|CTMmeanOC,CTM,True,True,True
 tinyimagenet,VGG13,confidnet,3,CTM,CTM|CTMmean|CTMmeanOC,CTM|CTMmean|CTMmeanOC,CTM,True,True,True
 tinyimagenet,VGG13,confidnet,4,CTM,CTM|CTMmean|CTMmeanOC,CTM|CTMmean|CTMmeanOC,CTM,True,True,True
+=======
+dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
+cifar10,VGG13,confidnet,1,NNGuide global,NNGuide|NNGuide global,NNGuide global|NNGuide|Energy,,Energy global|NNGuide|NNGuide global,False,True,True
+cifar10,VGG13,confidnet,2,NNGuide global,Energy global|NNGuide global,NNGuide global|Energy global|MLS global,,Energy global|NNGuide|NNGuide global,False,True,True
+cifar10,VGG13,confidnet,3,NNGuide global,Energy global|NNGuide|NNGuide global,NNGuide global|NNGuide|Energy global,,Energy global|NNGuide|NNGuide global,True,True,True
+cifar10,VGG13,confidnet,4,NNGuide global,NNGuide|NNGuide global,NNGuide global|NNGuide|NNGuide class pred,,Energy global|NNGuide|NNGuide global,False,True,True
+cifar10,VGG13,confidnet,5,NNGuide global,Energy global|NNGuide|NNGuide global,NNGuide global|NNGuide|Energy global,,Energy global|NNGuide|NNGuide global,True,True,True
+cifar100,VGG13,confidnet,1,fDBD global,fDBD|fDBD class pred|fDBD global,fDBD global|fDBD class pred|fDBD,,fDBD|fDBD global,False,True,True
+cifar100,VGG13,confidnet,2,fDBD class pred,fDBD|fDBD class pred|fDBD global,fDBD class pred|fDBD global|fDBD,,fDBD|fDBD global,False,True,False
+cifar100,VGG13,confidnet,3,fDBD global,fDBD|fDBD class pred|fDBD global,fDBD global|fDBD class pred|fDBD,,fDBD|fDBD global,False,True,True
+cifar100,VGG13,confidnet,4,fDBD global,fDBD|fDBD class pred|fDBD global,fDBD global|fDBD class pred|fDBD,,fDBD|fDBD global,False,True,True
+cifar100,VGG13,confidnet,5,fDBD global,fDBD|fDBD class pred|fDBD global,fDBD global|fDBD class pred|fDBD,,fDBD|fDBD global,False,True,True
+supercifar100,VGG13,confidnet,1,Maha class pred,KPCA RecError class|KPCA RecError class pred|Maha class pred,Maha class pred|KPCA RecError class pred|KPCA RecError class,,Energy global|KPCA RecError class|KPCA RecError class pred|Maha class pred|NNGuide global|pNML class pred,False,True,True
+supercifar100,VGG13,confidnet,2,pNML class pred,Maha class pred|fDBD class pred|pNML class pred,pNML class pred|Maha class pred|fDBD class pred,,Energy global|KPCA RecError class|KPCA RecError class pred|Maha class pred|NNGuide global|pNML class pred,False,True,True
+supercifar100,VGG13,confidnet,3,KPCA RecError class,KPCA RecError class|KPCA RecError class pred|pNML class pred,KPCA RecError class|KPCA RecError class pred|pNML class pred,,Energy global|KPCA RecError class|KPCA RecError class pred|Maha class pred|NNGuide global|pNML class pred,False,True,True
+supercifar100,VGG13,confidnet,4,Maha class pred,KPCA RecError class|KPCA RecError class pred|Maha class pred,Maha class pred|KPCA RecError class|KPCA RecError class pred,,Energy global|KPCA RecError class|KPCA RecError class pred|Maha class pred|NNGuide global|pNML class pred,False,True,True
+supercifar100,VGG13,confidnet,5,KPCA RecError class,KPCA RecError class|KPCA RecError class pred|Maha class pred,KPCA RecError class|KPCA RecError class pred|Maha class pred,,KPCA RecError class|KPCA RecError class pred|Maha class pred|NNGuide global|pNML class pred,False,True,True
+tinyimagenet,VGG13,confidnet,1,CTMmean class avg,CTM global|CTMmean class avg,CTMmean class avg|CTM global|CTM,,CTM global|CTMmean class avg|CTMmean global|fDBD class pred,False,True,True
+tinyimagenet,VGG13,confidnet,2,CTMmean class avg,CTMmean class avg,CTMmean class avg|CTM class pred|CTM class,,CTM global|CTMmean class avg|CTMmean global|fDBD class pred,False,True,True
+tinyimagenet,VGG13,confidnet,3,CTM global,CTM global|CTMmean global,CTM global|fDBD class avg|CTMmean global,,CTM global|CTMmean class avg|CTMmean global|fDBD class pred,False,True,True
+tinyimagenet,VGG13,confidnet,4,CTMmean class avg,CTM global|CTMmean class avg|CTMmean global,CTMmean class avg|CTMmean global|CTM global,,CTM global|CTMmean class avg|CTMmean global|fDBD class pred,False,True,True
+tinyimagenet,VGG13,confidnet,5,CTMmean class avg,CTMmean class avg,CTMmean class avg|CTMmean class pred|CTMmean class,,CTM global|CTMmean class avg|CTMmean global|fDBD class pred,False,True,True
+>>>>>>> e9edc33 (refactor: update multinomial analysis pipeline to include new ETF-based features and expanded target classes)
