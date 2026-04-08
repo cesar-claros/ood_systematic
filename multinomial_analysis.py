@@ -979,6 +979,25 @@ def _load_ood_groups(clip_dir: str, datasets: list[str]) -> dict[str, dict[str, 
     return per_source
 
 
+def _load_clique_file(
+    clique_file: str,
+) -> dict[str, dict[str, list[str]]]:
+    """Load pre-computed cliques from a JSON file exported by stats_eval.py.
+
+    Expected format:
+        {source_dataset: {group_name: [method1, method2, ...]}}
+    where group_name is one of "test", "near", "mid", "far".
+    """
+    import json
+    with open(clique_file) as f:
+        data = json.load(f)
+    logger.info(f"Loaded cliques from {clique_file}")
+    for src in sorted(data):
+        for grp in sorted(data[src]):
+            logger.info(f"  {src} {grp}: {data[src][grp]}")
+    return data
+
+
 def _normalise(s: str) -> str:
     return s.lower().strip().replace("_", " ")
 
@@ -1015,8 +1034,18 @@ def main():
                              "(instead of top-3 rank-based expansion)")
     parser.add_argument("--clique-alpha", type=float, default=0.05,
                         help="Significance level for Conover post-hoc clique test (default: 0.05)")
+    parser.add_argument("--clique-file", type=str, default=None,
+                        help="Path to a JSON clique file exported by stats_eval.py "
+                             "(e.g. top_cliques_Conv_False_RC_cliques.json). "
+                             "When provided, cliques are loaded from this file instead of "
+                             "being recomputed, ensuring targets match the clique plots exactly. "
+                             "Implies --use-cliques.")
     parser.add_argument("--output-dir", type=str, default="multinomial_outputs")
     args = parser.parse_args()
+
+    # --clique-file implies --use-cliques
+    if args.clique_file:
+        args.use_cliques = True
 
     os.makedirs(args.output_dir, exist_ok=True)
 
@@ -1091,6 +1120,11 @@ def main():
                 if cols:
                     logger.info(f"  {src_ds} {grp}: {cols}")
 
+        # Load pre-computed cliques from file if provided
+        file_cliques = None
+        if args.clique_file:
+            file_cliques = _load_clique_file(args.clique_file)
+
         for group_label in ["near", "mid", "far", "all"]:
             group_merged = merged.copy()
 
@@ -1124,9 +1158,24 @@ def main():
                 logger.warning(f"No rows for group '{group_label}'")
                 continue
 
-            # Compute cliques if requested
+            # Resolve cliques: from file or recomputed
             cliques = None
-            if args.use_cliques:
+            if file_cliques is not None:
+                # Extract cliques for this group from the pre-computed file
+                cliques = {}
+                for src_ds, group_map in file_cliques.items():
+                    if group_label in group_map:
+                        cliques[src_ds] = group_map[group_label]
+                if not cliques:
+                    logger.warning(f"No pre-computed cliques for group '{group_label}' "
+                                   f"in {args.clique_file}")
+                    cliques = None
+                else:
+                    logger.info(f"Using pre-computed cliques from {args.clique_file} "
+                                f"for group '{group_label}':")
+                    for src_ds in sorted(cliques):
+                        logger.info(f"  {src_ds}: {cliques[src_ds]}")
+            elif args.use_cliques:
                 logger.info(f"Computing Friedman/Conover cliques (alpha={args.clique_alpha})...")
                 cliques = _compute_top_cliques(
                     group_merged, "group_mean_score", ascending,
@@ -1153,6 +1202,10 @@ def main():
         merged = compute_mean_ood_score(merged, ood_cols)
 
         cliques = None
+        if args.clique_file:
+            logger.warning("--clique-file without --ood-group: the JSON contains "
+                           "per-group cliques, but no group dimension is used here. "
+                           "Falling back to recomputing cliques on mean OOD scores.")
         if args.use_cliques:
             logger.info(f"Computing Friedman/Conover cliques (alpha={args.clique_alpha})...")
             cliques = _compute_top_cliques(

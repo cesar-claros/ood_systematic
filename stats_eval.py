@@ -337,5 +337,17 @@ def main():
     fig.savefig(out_path + '.jpeg', bbox_inches='tight')
     logger.success(f"Saved plot to: {out_path}")
 
+    # Export top cliques as JSON for use by multinomial_analysis.py
+    # Format: {source: {group_name: [method1, method2, ...]}}
+    cliques_export: dict[str, dict[str, list[str]]] = {}
+    for idx in members_all.index:
+        source, group_name = idx.split('->')
+        methods = [col for col in members_all.columns if members_all.loc[idx, col]]
+        cliques_export.setdefault(source, {})[group_name] = methods
+    cliques_path = out_path + '_cliques.json'
+    with open(cliques_path, 'w') as f:
+        json.dump(cliques_export, f, indent=2)
+    logger.success(f"Saved cliques JSON to: {cliques_path}")
+
 if __name__ == "__main__":
     main()
