@@ -1,91 +1,157 @@
 Decision Tree Rules (group_far)
-Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
-Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'KPCA RecError global', 'MLS', 'NNGuide', 'NeCo', 'ViM', 'fDBD']
+Depth: 2, Train acc: 0.383, CV acc: nan, CV jaccard: nan
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'GEN', 'KPCA RecError global', 'MLS', 'Maha', 'NNGuide', 'NeCo', 'REN', 'Residual', 'ViM', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
-|--- equinorm_uc <= 0.0696
-|   |--- equiangular_uc <= 0.0915
-|   |   |--- class: not_CTM
-|   |--- equiangular_uc >  0.0915
+|--- self_duality <= 0.0451
+|   |--- equinorm_wc <= 0.0202
 |   |   |--- class: CTM
-|--- equinorm_uc >  0.0696
-|   |--- class: not_CTM
+|   |--- equinorm_wc >  0.0202
+|   |   |--- class: CTM
+|--- self_duality >  0.0451
+|   |--- max_equiangular_wc <= 0.0600
+|   |   |--- class: CTM
+|   |--- max_equiangular_wc >  0.0600
+|   |   |--- class: not_CTM
 
 === CTMmean ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
-|   |   |--- class: CTMmean
-|   |--- self_duality >  0.0430
+|--- var_collapse <= 0.0082
+|   |--- max_equiangular_uc <= 0.0697
 |   |   |--- class: not_CTMmean
-|--- self_duality >  0.0859
-|   |--- class: CTMmean
+|   |--- max_equiangular_uc >  0.0697
+|   |   |--- class: CTMmean
+|--- var_collapse >  0.0082
+|   |--- var_collapse <= 0.0157
+|   |   |--- class: not_CTMmean
+|   |--- var_collapse >  0.0157
+|   |   |--- class: CTMmean
 
 === CTMmeanOC ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
+|--- var_collapse <= 0.0082
+|   |--- equinorm_wc <= 0.0226
 |   |   |--- class: CTMmeanOC
-|   |--- self_duality >  0.0430
+|   |--- equinorm_wc >  0.0226
+|   |   |--- class: CTMmeanOC
+|--- var_collapse >  0.0082
+|   |--- equiangular_wc <= 0.0801
 |   |   |--- class: not_CTMmeanOC
-|--- self_duality >  0.0859
-|   |--- class: CTMmeanOC
+|   |--- equiangular_wc >  0.0801
+|   |   |--- class: not_CTMmeanOC
 
 === Energy ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
+|--- max_equiangular_wc <= 0.0769
+|   |--- equiangular_uc <= 0.0848
 |   |   |--- class: not_Energy
-|   |--- self_duality >  0.0430
+|   |--- equiangular_uc >  0.0848
+|   |   |--- class: not_Energy
+|--- max_equiangular_wc >  0.0769
+|   |--- equinorm_wc <= 0.0457
 |   |   |--- class: Energy
-|--- self_duality >  0.0859
-|   |--- class: not_Energy
+|   |--- equinorm_wc >  0.0457
+|   |   |--- class: not_Energy
+
+=== GEN ===
+|--- self_duality <= 0.1827
+|   |--- class: not_GEN
+|--- self_duality >  0.1827
+|   |--- var_collapse <= 0.0085
+|   |   |--- class: not_GEN
+|   |--- var_collapse >  0.0085
+|   |   |--- class: GEN
 
 === KPCA RecError global ===
-|--- var_collapse <= 0.0102
-|   |--- class: not_KPCA RecError global
-|--- var_collapse >  0.0102
-|   |--- self_duality <= 0.0859
-|   |   |--- class: not_KPCA RecError global
-|   |--- self_duality >  0.0859
+|--- equinorm_wc <= 0.0279
+|   |--- var_collapse <= 0.0126
 |   |   |--- class: KPCA RecError global
+|   |--- var_collapse >  0.0126
+|   |   |--- class: KPCA RecError global
+|--- equinorm_wc >  0.0279
+|   |--- class: not_KPCA RecError global
 
 === MLS ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
+|--- max_equiangular_wc <= 0.0769
+|   |--- equiangular_uc <= 0.0848
 |   |   |--- class: not_MLS
-|   |--- self_duality >  0.0430
+|   |--- equiangular_uc >  0.0848
+|   |   |--- class: not_MLS
+|--- max_equiangular_wc >  0.0769
+|   |--- equinorm_uc <= 0.0728
 |   |   |--- class: MLS
-|--- self_duality >  0.0859
-|   |--- class: not_MLS
+|   |--- equinorm_uc >  0.0728
+|   |   |--- class: not_MLS
+
+=== Maha ===
+|--- equinorm_wc <= 0.0225
+|   |--- var_collapse <= 0.0117
+|   |   |--- class: Maha
+|   |--- var_collapse >  0.0117
+|   |   |--- class: not_Maha
+|--- equinorm_wc >  0.0225
+|   |--- var_collapse <= 0.0118
+|   |   |--- class: not_Maha
+|   |--- var_collapse >  0.0118
+|   |   |--- class: not_Maha
 
 === NNGuide ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
+|--- var_collapse <= 0.0093
+|   |--- equiangular_uc <= 0.0848
 |   |   |--- class: not_NNGuide
-|   |--- self_duality >  0.0430
+|   |--- equiangular_uc >  0.0848
+|   |   |--- class: not_NNGuide
+|--- var_collapse >  0.0093
+|   |--- self_duality <= 0.0901
 |   |   |--- class: NNGuide
-|--- self_duality >  0.0859
-|   |--- class: not_NNGuide
+|   |--- self_duality >  0.0901
+|   |   |--- class: not_NNGuide
 
 === NeCo ===
-|--- self_duality <= 0.0859
-|   |--- self_duality <= 0.0430
+|--- max_equiangular_wc <= 0.0769
+|   |--- equiangular_uc <= 0.0848
 |   |   |--- class: not_NeCo
-|   |--- self_duality >  0.0430
+|   |--- equiangular_uc >  0.0848
+|   |   |--- class: not_NeCo
+|--- max_equiangular_wc >  0.0769
+|   |--- equinorm_wc <= 0.0457
 |   |   |--- class: NeCo
-|--- self_duality >  0.0859
-|   |--- class: not_NeCo
+|   |--- equinorm_wc >  0.0457
+|   |   |--- class: not_NeCo
+
+=== REN ===
+|--- self_duality <= 0.1381
+|   |--- equiangular_uc <= 0.0843
+|   |   |--- class: REN
+|   |--- equiangular_uc >  0.0843
+|   |   |--- class: not_REN
+|--- self_duality >  0.1381
+|   |--- equiangular_uc <= 0.1185
+|   |   |--- class: not_REN
+|   |--- equiangular_uc >  0.1185
+|   |   |--- class: REN
+
+=== Residual ===
+|--- self_duality <= 0.0927
+|   |--- class: not_Residual
+|--- self_duality >  0.0927
+|   |--- equiangular_uc <= 0.1100
+|   |   |--- class: Residual
+|   |--- equiangular_uc >  0.1100
+|   |   |--- class: not_Residual
 
 === ViM ===
-|--- var_collapse <= 0.0102
+|--- var_collapse <= 0.0092
 |   |--- class: not_ViM
-|--- var_collapse >  0.0102
-|   |--- self_duality <= 0.0859
-|   |   |--- class: not_ViM
-|   |--- self_duality >  0.0859
+|--- var_collapse >  0.0092
+|   |--- max_equiangular_wc <= 0.0769
 |   |   |--- class: ViM
+|   |--- max_equiangular_wc >  0.0769
+|   |   |--- class: not_ViM
 
 === fDBD ===
-|--- self_duality <= 0.0859
-|   |--- class: not_fDBD
-|--- self_duality >  0.0859
+|--- equinorm_wc <= 0.0465
+|   |--- equinorm_wc <= 0.0217
+|   |   |--- class: fDBD
+|   |--- equinorm_wc >  0.0217
+|   |   |--- class: not_fDBD
+|--- equinorm_wc >  0.0465
 |   |--- class: fDBD

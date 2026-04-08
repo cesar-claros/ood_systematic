@@ -1,21 +1,21 @@
 dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
-cifar10,ViT,vit,0,pNML,Residual|pNML,pNML|Residual|PCA RecError global,Residual|pNML,Maha|Residual|ViM,False,True,True
-cifar10,ViT,vit,1,PCA RecError global,Residual|pNML,PCA RecError global|Residual|pNML,Residual|pNML,Maha|PCA RecError global|Residual|ViM|pNML,False,True,True
-cifar10,ViT,vit,2,pNML,Residual|pNML,pNML|Residual|ViM,Residual|pNML,Maha|PCA RecError global|Residual|ViM|pNML,False,True,True
-cifar10,ViT,vit,3,pNML,Residual|pNML,pNML|Residual|ViM,Residual|pNML,Maha|Residual|ViM,False,True,True
-cifar10,ViT,vit,4,pNML,Residual|pNML,pNML|Residual|ViM,Residual|pNML,Maha|PCA RecError global|Residual|ViM|pNML,False,True,True
-cifar100,ViT,vit,0,Residual,Maha|Residual|ViM,Residual|ViM|Maha,Maha|Residual|ViM,Residual|pNML,False,True,True
-cifar100,ViT,vit,1,Residual,Maha|Residual|ViM,Residual|ViM|Maha,Maha|Residual|ViM,Residual|pNML,False,True,True
-cifar100,ViT,vit,2,Residual,Maha|Residual|ViM,Residual|ViM|Maha,Maha|Residual|ViM,Residual|pNML,False,True,True
-cifar100,ViT,vit,3,Residual,Maha|Residual|ViM,Residual|ViM|Maha,Maha|Residual|ViM,Residual|pNML,False,True,True
-cifar100,ViT,vit,4,Residual,Maha|Residual|ViM,Residual|ViM|Maha,Maha|Residual|ViM,Residual|pNML,False,True,True
-supercifar100,ViT,vit,0,Residual,PCA RecError global|Residual|pNML,Residual|pNML|PCA RecError global,PCA RecError global|Residual|pNML,GE|GradNorm,False,False,False
-supercifar100,ViT,vit,1,Residual,PCA RecError global|Residual|pNML,Residual|pNML|Maha,PCA RecError global|Residual|pNML,GE|GradNorm,False,False,False
-supercifar100,ViT,vit,2,Residual,PCA RecError global|Residual|pNML,Residual|PCA RecError global|pNML,PCA RecError global|Residual|pNML,GE|GradNorm,False,False,False
-supercifar100,ViT,vit,3,Residual,PCA RecError global|Residual|pNML,Residual|PCA RecError global|pNML,PCA RecError global|Residual|pNML,GE|GradNorm,False,False,False
-supercifar100,ViT,vit,4,Residual,PCA RecError global|Residual|pNML,Residual|pNML|Maha,PCA RecError global|Residual|pNML,GE|GradNorm,False,False,False
-tinyimagenet,ViT,vit,0,GradNorm,GE|GradNorm,GradNorm|Energy|GE,GE|GradNorm,PCA RecError global|Residual|pNML,False,False,False
-tinyimagenet,ViT,vit,1,GradNorm,GE|GradNorm,GradNorm|GE|MLS,GE|GradNorm,PCA RecError global|Residual|pNML,False,False,False
-tinyimagenet,ViT,vit,2,KPCA RecError global,GE|GradNorm,KPCA RecError global|GradNorm|Energy,GE|GradNorm,PCA RecError global|Residual|pNML,False,False,False
-tinyimagenet,ViT,vit,3,GradNorm,GE|GradNorm,GradNorm|GE|MLS,GE|GradNorm,PCA RecError global|Residual|pNML,False,False,False
-tinyimagenet,ViT,vit,4,KPCA RecError global,GE|GradNorm,KPCA RecError global|GradNorm|GE,GE|GradNorm,PCA RecError global|Residual|pNML,False,False,False
+cifar10,ViT,vit,0,pNML,PCA RecError global|Residual|pNML,pNML|Residual|PCA RecError global,,Maha|PCA RecError global|Residual|ViM,False,True,False
+cifar10,ViT,vit,1,PCA RecError global,PCA RecError global|Residual|pNML,PCA RecError global|Residual|pNML,,Maha|PCA RecError global|Residual|ViM|pNML,False,True,True
+cifar10,ViT,vit,2,pNML,Residual|ViM|pNML,pNML|Residual|ViM,,Maha|Residual|ViM|pNML,False,True,True
+cifar10,ViT,vit,3,pNML,Residual|ViM|pNML,pNML|Residual|ViM,,Maha|Residual|ViM,False,True,False
+cifar10,ViT,vit,4,pNML,Residual|ViM|pNML,pNML|Residual|ViM,,Maha|PCA RecError global|Residual|ViM|pNML,False,True,True
+cifar100,ViT,vit,0,Residual,Maha|Residual|ViM,Residual|ViM|Maha,,Residual|pNML,False,True,True
+cifar100,ViT,vit,1,Residual,Maha|Residual|ViM,Residual|ViM|Maha,,Residual|pNML,False,True,True
+cifar100,ViT,vit,2,Residual,Maha|Residual|ViM,Residual|ViM|Maha,,Residual|pNML,False,True,True
+cifar100,ViT,vit,3,Residual,Maha|Residual|ViM,Residual|ViM|Maha,,Residual|pNML,False,True,True
+cifar100,ViT,vit,4,Residual,Maha|Residual|ViM,Residual|ViM|Maha,,Residual|pNML,False,True,True
+supercifar100,ViT,vit,0,Residual,PCA RecError global|Residual|pNML,Residual|pNML|PCA RecError global,,Energy|GradNorm,False,False,False
+supercifar100,ViT,vit,1,Residual,Maha|Residual|pNML,Residual|pNML|Maha,,GradNorm,False,False,False
+supercifar100,ViT,vit,2,Residual,PCA RecError global|Residual|pNML,Residual|PCA RecError global|pNML,,Energy|GradNorm,False,False,False
+supercifar100,ViT,vit,3,Residual,PCA RecError global|Residual|pNML,Residual|PCA RecError global|pNML,,GradNorm,False,False,False
+supercifar100,ViT,vit,4,Residual,Maha|Residual|pNML,Residual|pNML|Maha,,Energy|GradNorm|ViM,False,False,False
+tinyimagenet,ViT,vit,0,GradNorm,Energy|GE|GradNorm,GradNorm|Energy|GE,,PCA RecError global|Residual|pNML,False,False,False
+tinyimagenet,ViT,vit,1,GradNorm,GE|GradNorm|MLS,GradNorm|GE|MLS,,PCA RecError global|Residual|pNML,False,False,False
+tinyimagenet,ViT,vit,2,KPCA RecError global,Energy|GradNorm|KPCA RecError global,KPCA RecError global|GradNorm|Energy,,PCA RecError global|Residual|pNML,False,False,False
+tinyimagenet,ViT,vit,3,GradNorm,GE|GradNorm|MLS,GradNorm|GE|MLS,,PCA RecError global|Residual|pNML,False,False,False
+tinyimagenet,ViT,vit,4,KPCA RecError global,GE|GradNorm|KPCA RecError global,KPCA RecError global|GradNorm|GE,,PCA RecError global|Residual|pNML,False,False,False
