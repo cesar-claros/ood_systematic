@@ -1,49 +1,34 @@
 Decision Tree Rules (group_mid)
-Depth: 2, Train acc: 0.800, CV acc: nan, CV jaccard: nan
-Classes: ['CTMmean', 'CTMmeanOC', 'GradNorm', 'KPCA RecError global', 'Maha', 'PCA RecError global', 'Residual', 'fDBD', 'pNML']
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTMmeanOC', 'GradNorm', 'KPCA RecError global', 'Maha', 'Residual', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-=== CTMmean ===
+=== CTMmeanOC ===
 |--- max_equiangular_uc <= 0.1731
 |   |--- equiangular_uc <= 0.1246
-|   |   |--- class: not_CTMmean
-|   |--- equiangular_uc >  0.1246
-|   |   |--- class: not_CTMmean
-|--- max_equiangular_uc >  0.1731
-|   |--- equiangular_uc <= 0.2412
-|   |   |--- class: CTMmean
-|   |--- equiangular_uc >  0.2412
-|   |   |--- class: not_CTMmean
-
-=== CTMmeanOC ===
-|--- max_equiangular_wc <= 0.0414
-|   |--- class: not_CTMmeanOC
-|--- max_equiangular_wc >  0.0414
-|   |--- equiangular_wc <= 0.0426
-|   |   |--- class: CTMmeanOC
-|   |--- equiangular_wc >  0.0426
 |   |   |--- class: not_CTMmeanOC
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: not_CTMmeanOC
+|--- max_equiangular_uc >  0.1731
+|   |--- class: CTMmeanOC
 
 === GradNorm ===
-|--- equinorm_wc <= 0.0231
-|   |--- equinorm_wc <= 0.0196
+|--- var_collapse <= 0.0083
+|   |--- class: GradNorm
+|--- var_collapse >  0.0083
+|   |--- equiangular_uc <= 0.2162
 |   |   |--- class: not_GradNorm
-|   |--- equinorm_wc >  0.0196
+|   |--- equiangular_uc >  0.2162
 |   |   |--- class: GradNorm
-|--- equinorm_wc >  0.0231
-|   |--- equinorm_wc <= 0.0237
-|   |   |--- class: not_GradNorm
-|   |--- equinorm_wc >  0.0237
-|   |   |--- class: not_GradNorm
 
 === KPCA RecError global ===
-|--- equinorm_uc <= 0.1510
+|--- equinorm_wc <= 0.0196
+|   |--- class: not_KPCA RecError global
+|--- equinorm_wc >  0.0196
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: KPCA RecError global
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: KPCA RecError global
-|--- equinorm_uc >  0.1510
-|   |--- class: not_KPCA RecError global
 
 === Maha ===
 |--- equinorm_wc <= 0.0196
@@ -53,15 +38,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_Maha
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_Maha
-
-=== PCA RecError global ===
-|--- max_equiangular_uc <= 0.1038
-|   |--- class: PCA RecError global
-|--- max_equiangular_uc >  0.1038
-|   |--- equiangular_uc <= 0.1316
-|   |   |--- class: not_PCA RecError global
-|   |--- equiangular_uc >  0.1316
-|   |   |--- class: not_PCA RecError global
 
 === Residual ===
 |--- equinorm_wc <= 0.0196
@@ -82,10 +58,10 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_fDBD
 
 === pNML ===
-|--- self_duality <= 0.7813
-|   |--- class: pNML
-|--- self_duality >  0.7813
-|   |--- equinorm_wc <= 0.0196
+|--- var_collapse <= 0.0083
+|   |--- class: not_pNML
+|--- var_collapse >  0.0083
+|   |--- equiangular_uc <= 0.2162
 |   |   |--- class: pNML
-|   |--- equinorm_wc >  0.0196
+|   |--- equiangular_uc >  0.2162
 |   |   |--- class: not_pNML

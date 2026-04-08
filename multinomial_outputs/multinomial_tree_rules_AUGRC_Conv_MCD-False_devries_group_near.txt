@@ -1,25 +1,13 @@
 Decision Tree Rules (group_near)
-Depth: 2, Train acc: 0.650, CV acc: nan, CV jaccard: nan
-Classes: ['CTM', 'CTMmeanOC', 'Energy', 'GE', 'GradNorm', 'MLS', 'NNGuide', 'NeCo', 'PE', 'fDBD']
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTM', 'Energy', 'GE', 'MLS', 'NNGuide', 'NeCo', 'PE', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
 |--- var_collapse <= 0.0094
-|   |--- equinorm_uc <= 0.0855
-|   |   |--- class: CTM
-|   |--- equinorm_uc >  0.0855
-|   |   |--- class: not_CTM
+|   |--- class: CTM
 |--- var_collapse >  0.0094
 |   |--- class: not_CTM
-
-=== CTMmeanOC ===
-|--- equiangular_wc <= 0.0859
-|   |--- var_collapse <= 0.0034
-|   |   |--- class: not_CTMmeanOC
-|   |--- var_collapse >  0.0034
-|   |   |--- class: CTMmeanOC
-|--- equiangular_wc >  0.0859
-|   |--- class: not_CTMmeanOC
 
 === Energy ===
 |--- var_collapse <= 0.0094
@@ -36,53 +24,26 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |--- var_collapse >  0.0130
 |   |--- class: GE
 
-=== GradNorm ===
-|--- self_duality <= 0.0963
-|   |--- equiangular_uc <= 0.0847
-|   |   |--- class: not_GradNorm
-|   |--- equiangular_uc >  0.0847
-|   |   |--- class: not_GradNorm
-|--- self_duality >  0.0963
-|   |--- equinorm_wc <= 0.0651
-|   |   |--- class: GradNorm
-|   |--- equinorm_wc >  0.0651
-|   |   |--- class: not_GradNorm
-
 === MLS ===
-|--- max_equiangular_wc <= 0.0769
-|   |--- equiangular_uc <= 0.1009
-|   |   |--- class: not_MLS
-|   |--- equiangular_uc >  0.1009
-|   |   |--- class: not_MLS
-|--- max_equiangular_wc >  0.0769
-|   |--- equinorm_wc <= 0.0230
-|   |   |--- class: MLS
-|   |--- equinorm_wc >  0.0230
-|   |   |--- class: not_MLS
+|--- var_collapse <= 0.0094
+|   |--- class: not_MLS
+|--- var_collapse >  0.0094
+|   |--- class: MLS
 
 === NNGuide ===
-|--- var_collapse <= 0.0124
-|   |--- equinorm_wc <= 0.0651
-|   |   |--- class: NNGuide
-|   |--- equinorm_wc >  0.0651
+|--- equinorm_uc <= 0.0556
+|   |--- class: NNGuide
+|--- equinorm_uc >  0.0556
+|   |--- equiangular_uc <= 0.1009
 |   |   |--- class: not_NNGuide
-|--- var_collapse >  0.0124
-|   |--- equinorm_wc <= 0.0220
-|   |   |--- class: not_NNGuide
-|   |--- equinorm_wc >  0.0220
+|   |--- equiangular_uc >  0.1009
 |   |   |--- class: not_NNGuide
 
 === NeCo ===
-|--- equiangular_wc <= 0.0974
-|   |--- equiangular_uc <= 0.1009
-|   |   |--- class: not_NeCo
-|   |--- equiangular_uc >  0.1009
-|   |   |--- class: not_NeCo
-|--- equiangular_wc >  0.0974
-|   |--- equinorm_uc <= 0.0658
-|   |   |--- class: NeCo
-|   |--- equinorm_uc >  0.0658
-|   |   |--- class: not_NeCo
+|--- var_collapse <= 0.0094
+|   |--- class: not_NeCo
+|--- var_collapse >  0.0094
+|   |--- class: NeCo
 
 === PE ===
 |--- var_collapse <= 0.0130
@@ -91,19 +52,13 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- equiangular_uc >  0.0847
 |   |   |--- class: not_PE
 |--- var_collapse >  0.0130
-|   |--- self_duality <= 0.0950
-|   |   |--- class: PE
-|   |--- self_duality >  0.0950
-|   |   |--- class: not_PE
+|   |--- class: PE
 
 === fDBD ===
-|--- var_collapse <= 0.0094
-|   |--- equiangular_wc <= 0.0812
+|--- equinorm_wc <= 0.0452
+|   |--- equiangular_uc <= 0.0847
 |   |   |--- class: not_fDBD
-|   |--- equiangular_wc >  0.0812
-|   |   |--- class: fDBD
-|--- var_collapse >  0.0094
-|   |--- equinorm_wc <= 0.0220
+|   |--- equiangular_uc >  0.0847
 |   |   |--- class: not_fDBD
-|   |--- equinorm_wc >  0.0220
-|   |   |--- class: not_fDBD
+|--- equinorm_wc >  0.0452
+|   |--- class: fDBD

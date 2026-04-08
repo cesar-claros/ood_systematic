@@ -1,70 +1,58 @@
 Decision Tree Rules (group_near)
-Depth: 2, Train acc: 0.850, CV acc: 0.400, CV jaccard: 0.721
-Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'GradNorm', 'MLS', 'NNGuide', 'NeCo', 'fDBD']
+Depth: 2, Train acc: 1.000, CV acc: 1.000, CV jaccard: 1.000
+Classes: ['CTM', 'Energy', 'GE', 'GEN', 'GradNorm', 'MLS', 'NNGuide', 'NeCo', 'PE', 'REN']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
 |--- equiangular_wc <= 0.1009
-|   |--- equiangular_uc <= 0.0975
-|   |   |--- class: CTM
-|   |--- equiangular_uc >  0.0975
-|   |   |--- class: CTM
+|   |--- class: CTM
 |--- equiangular_wc >  0.1009
 |   |--- class: not_CTM
 
-=== CTMmean ===
-|--- var_collapse <= 0.0056
-|   |--- class: CTMmean
-|--- var_collapse >  0.0056
-|   |--- equiangular_uc <= 0.0974
-|   |   |--- class: not_CTMmean
-|   |--- equiangular_uc >  0.0974
-|   |   |--- class: not_CTMmean
-
-=== CTMmeanOC ===
-|--- var_collapse <= 0.0056
-|   |--- class: CTMmeanOC
-|--- var_collapse >  0.0056
-|   |--- equiangular_uc <= 0.0974
-|   |   |--- class: not_CTMmeanOC
-|   |--- equiangular_uc >  0.0974
-|   |   |--- class: not_CTMmeanOC
-
 === Energy ===
-|--- equiangular_wc <= 0.0791
-|   |--- equinorm_wc <= 0.0202
+|--- var_collapse <= 0.0056
+|   |--- class: not_Energy
+|--- var_collapse >  0.0056
+|   |--- equiangular_uc <= 0.0974
 |   |   |--- class: Energy
-|   |--- equinorm_wc >  0.0202
-|   |   |--- class: not_Energy
-|--- equiangular_wc >  0.0791
-|   |--- equinorm_uc <= 0.1281
+|   |--- equiangular_uc >  0.0974
 |   |   |--- class: Energy
-|   |--- equinorm_uc >  0.1281
-|   |   |--- class: not_Energy
+
+=== GE ===
+|--- equinorm_wc <= 0.0466
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_GE
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_GE
+|--- equinorm_wc >  0.0466
+|   |--- class: GE
+
+=== GEN ===
+|--- equinorm_wc <= 0.0253
+|   |--- class: GEN
+|--- equinorm_wc >  0.0253
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_GEN
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_GEN
 
 === GradNorm ===
 |--- equinorm_wc <= 0.0253
-|   |--- equiangular_wc <= 0.0791
-|   |   |--- class: not_GradNorm
-|   |--- equiangular_wc >  0.0791
-|   |   |--- class: GradNorm
+|   |--- class: GradNorm
 |--- equinorm_wc >  0.0253
-|   |--- equinorm_wc <= 0.0293
+|   |--- equiangular_uc <= 0.0947
 |   |   |--- class: not_GradNorm
-|   |--- equinorm_wc >  0.0293
+|   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_GradNorm
 
 === MLS ===
-|--- equiangular_wc <= 0.1221
+|--- equinorm_wc <= 0.0466
 |   |--- equiangular_uc <= 0.0947
 |   |   |--- class: not_MLS
 |   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_MLS
-|--- equiangular_wc >  0.1221
-|   |--- equinorm_wc <= 0.0619
-|   |   |--- class: MLS
-|   |--- equinorm_wc >  0.0619
-|   |   |--- class: not_MLS
+|--- equinorm_wc >  0.0466
+|   |--- class: MLS
 
 === NNGuide ===
 |--- var_collapse <= 0.0132
@@ -73,28 +61,28 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_NNGuide
 |--- var_collapse >  0.0132
-|   |--- equinorm_uc <= 0.0743
-|   |   |--- class: not_NNGuide
-|   |--- equinorm_uc >  0.0743
-|   |   |--- class: NNGuide
+|   |--- class: NNGuide
 
 === NeCo ===
 |--- equiangular_wc <= 0.1009
 |   |--- class: not_NeCo
 |--- equiangular_wc >  0.1009
-|   |--- equinorm_wc <= 0.0619
-|   |   |--- class: NeCo
-|   |--- equinorm_wc >  0.0619
-|   |   |--- class: not_NeCo
+|   |--- class: NeCo
 
-=== fDBD ===
-|--- equinorm_wc <= 0.0612
+=== PE ===
+|--- equinorm_wc <= 0.0253
+|   |--- class: PE
+|--- equinorm_wc >  0.0253
 |   |--- equiangular_uc <= 0.0947
-|   |   |--- class: not_fDBD
+|   |   |--- class: not_PE
 |   |--- equiangular_uc >  0.0947
-|   |   |--- class: not_fDBD
-|--- equinorm_wc >  0.0612
-|   |--- var_collapse <= 0.0085
-|   |   |--- class: not_fDBD
-|   |--- var_collapse >  0.0085
-|   |   |--- class: fDBD
+|   |   |--- class: not_PE
+
+=== REN ===
+|--- equinorm_wc <= 0.0253
+|   |--- class: REN
+|--- equinorm_wc >  0.0253
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_REN
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_REN
