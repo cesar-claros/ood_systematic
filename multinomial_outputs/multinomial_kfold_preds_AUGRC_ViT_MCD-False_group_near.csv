@@ -1,0 +1,21 @@
+dataset,architecture,study,run,fold,true_methods,top3_methods,clique_methods,pred_lr,pred_rf,exact_match_lr,exact_match_rf,top3_hit_lr,top3_hit_rf,clique_hit_lr,clique_hit_rf,pred_dt,exact_match_dt,top3_hit_dt,clique_hit_dt
+cifar10,ViT,vit,0,0,pNML,pNML|PCA RecError global|ViM,pNML,pNML,pNML,True,True,True,True,True,True,Maha|ViM|pNML,False,True,True
+cifar10,ViT,vit,1,0,pNML,PCA RecError global|pNML|ViM,pNML,pNML,pNML,True,True,True,True,True,True,pNML,True,True,True
+cifar10,ViT,vit,2,2,pNML,pNML|ViM|PCA RecError global,pNML,pNML,pNML,True,True,True,True,True,True,pNML,True,True,True
+cifar10,ViT,vit,3,0,pNML,pNML|ViM|Residual,pNML,pNML,pNML,True,True,True,True,True,True,Maha|ViM|pNML,False,True,True
+cifar10,ViT,vit,4,1,pNML,pNML|ViM|PCA RecError global,pNML,pNML,pNML,True,True,True,True,True,True,pNML,True,True,True
+cifar100,ViT,vit,0,2,Maha|ViM,ViM|Maha|NeCo,Maha|ViM,Maha|ViM,Maha|ViM,True,True,True,True,True,True,Maha|ViM,True,True,True
+cifar100,ViT,vit,1,0,Maha|ViM,ViM|Maha|fDBD,Maha|ViM,Maha|ViM,Maha|ViM,True,True,True,True,True,True,Maha|ViM,True,True,True
+cifar100,ViT,vit,2,1,Maha|ViM,ViM|Maha|NeCo,Maha|ViM,Maha|ViM,Maha|ViM,True,True,True,True,True,True,Maha|ViM,True,True,True
+cifar100,ViT,vit,3,2,Maha|ViM,ViM|Maha|NeCo,Maha|ViM,Maha|ViM,Maha|ViM,True,True,True,True,True,True,Maha|ViM,True,True,True
+cifar100,ViT,vit,4,1,Maha|ViM,ViM|Maha|NeCo,Maha|ViM,Maha|ViM,Maha|ViM,True,True,True,True,True,True,Maha|ViM,True,True,True
+supercifar100,ViT,vit,0,0,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,ViM|pNML|Residual,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True,True,True,True,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True
+supercifar100,ViT,vit,1,2,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,ViM|Residual|Maha,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True,True,True,True,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True
+supercifar100,ViT,vit,2,1,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,PCA RecError global|pNML|Residual,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True,True,True,True,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True
+supercifar100,ViT,vit,3,2,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,PCA RecError global|ViM|CTMmeanOC,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True,True,True,True,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True
+supercifar100,ViT,vit,4,1,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,ViM|CTMmeanOC|Maha,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True,True,True,True,CTMmean|CTMmeanOC|Maha|Residual|ViM|pNML,True,True,True
+tinyimagenet,ViT,vit,0,0,GE|PE,PE|GradNorm|GE,GE|PE,GE|PE,GE|PE,True,True,True,True,True,True,GE|PE,True,True,True
+tinyimagenet,ViT,vit,1,0,GE|PE,PE|GradNorm|GE,GE|PE,GE|PE,GE|PE,True,True,True,True,True,True,GE|PE,True,True,True
+tinyimagenet,ViT,vit,2,1,GE|PE,PE|GE|GradNorm,GE|PE,GE|PE,GE|PE,True,True,True,True,True,True,GE|PE,True,True,True
+tinyimagenet,ViT,vit,3,1,GE|PE,PE|GE|GradNorm,GE|PE,GE|PE,GE|PE,True,True,True,True,True,True,Maha|ViM,False,False,False
+tinyimagenet,ViT,vit,4,2,GE|PE,PE|GE|MLS,GE|PE,GE|PE,GE|PE,True,True,True,True,True,True,GE|PE,True,True,True

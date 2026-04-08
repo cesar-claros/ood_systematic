@@ -1,0 +1,61 @@
+Decision Tree Rules (group_far)
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'NNGuide', 'NeCo', 'fDBD']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+=== CTM ===
+|--- equiangular_wc <= 0.1009
+|   |--- class: CTM
+|--- equiangular_wc >  0.1009
+|   |--- class: not_CTM
+
+=== CTMmean ===
+|--- var_collapse <= 0.0056
+|   |--- class: CTMmean
+|--- var_collapse >  0.0056
+|   |--- equiangular_uc <= 0.0974
+|   |   |--- class: not_CTMmean
+|   |--- equiangular_uc >  0.0974
+|   |   |--- class: not_CTMmean
+
+=== CTMmeanOC ===
+|--- var_collapse <= 0.0056
+|   |--- class: CTMmeanOC
+|--- var_collapse >  0.0056
+|   |--- equiangular_uc <= 0.0974
+|   |   |--- class: not_CTMmeanOC
+|   |--- equiangular_uc >  0.0974
+|   |   |--- class: not_CTMmeanOC
+
+=== Energy ===
+|--- var_collapse <= 0.0132
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_Energy
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_Energy
+|--- var_collapse >  0.0132
+|   |--- class: Energy
+
+=== NNGuide ===
+|--- var_collapse <= 0.0132
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_NNGuide
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_NNGuide
+|--- var_collapse >  0.0132
+|   |--- class: NNGuide
+
+=== NeCo ===
+|--- var_collapse <= 0.0132
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_NeCo
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_NeCo
+|--- var_collapse >  0.0132
+|   |--- class: NeCo
+
+=== fDBD ===
+|--- self_duality <= 0.0859
+|   |--- class: not_fDBD
+|--- self_duality >  0.0859
+|   |--- class: fDBD
