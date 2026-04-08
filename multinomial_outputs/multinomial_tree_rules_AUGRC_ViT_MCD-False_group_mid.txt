@@ -1,12 +1,67 @@
 Decision Tree Rules (group_mid)
-Depth: 2, Train acc: 0.684, CV acc: 0.684, Balanced CV acc: 0.675
-Classes: ['KPCA RecError global', 'Residual', 'pNML']
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTMmeanOC', 'GradNorm', 'KPCA RecError global', 'Maha', 'Residual', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- var_collapse <= 0.0250
-|   |--- equiangular_uc <= 0.1427
-|   |   |--- class: pNML
-|   |--- equiangular_uc >  0.1427
+=== CTMmeanOC ===
+|--- max_equiangular_uc <= 0.1731
+|   |--- equiangular_uc <= 0.1246
+|   |   |--- class: not_CTMmeanOC
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: not_CTMmeanOC
+|--- max_equiangular_uc >  0.1731
+|   |--- class: CTMmeanOC
+
+=== GradNorm ===
+|--- var_collapse <= 0.0083
+|   |--- class: GradNorm
+|--- var_collapse >  0.0083
+|   |--- equiangular_uc <= 0.2162
+|   |   |--- class: not_GradNorm
+|   |--- equiangular_uc >  0.2162
+|   |   |--- class: GradNorm
+
+=== KPCA RecError global ===
+|--- equinorm_wc <= 0.0196
+|   |--- class: not_KPCA RecError global
+|--- equinorm_wc >  0.0196
+|   |--- equiangular_uc <= 0.1246
 |   |   |--- class: KPCA RecError global
-|--- var_collapse >  0.0250
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: KPCA RecError global
+
+=== Maha ===
+|--- equinorm_wc <= 0.0196
+|   |--- class: Maha
+|--- equinorm_wc >  0.0196
+|   |--- equiangular_uc <= 0.1246
+|   |   |--- class: not_Maha
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: not_Maha
+
+=== Residual ===
+|--- equinorm_wc <= 0.0196
 |   |--- class: Residual
+|--- equinorm_wc >  0.0196
+|   |--- equiangular_uc <= 0.1246
+|   |   |--- class: not_Residual
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: not_Residual
+
+=== fDBD ===
+|--- var_collapse <= 0.0083
+|   |--- class: fDBD
+|--- var_collapse >  0.0083
+|   |--- equiangular_uc <= 0.1246
+|   |   |--- class: not_fDBD
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: not_fDBD
+
+=== pNML ===
+|--- var_collapse <= 0.0083
+|   |--- class: not_pNML
+|--- var_collapse >  0.0083
+|   |--- equiangular_uc <= 0.2162
+|   |   |--- class: pNML
+|   |--- equiangular_uc >  0.2162
+|   |   |--- class: not_pNML

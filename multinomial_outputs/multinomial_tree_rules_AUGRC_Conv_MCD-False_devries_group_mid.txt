@@ -1,21 +1,106 @@
 Decision Tree Rules (group_mid)
-Depth: 3, Train acc: 0.706, CV acc: 0.765, Balanced CV acc: 0.754
-Classes: ['CTM', 'CTMmean', 'Energy', 'pNML']
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'GE', 'KPCA RecError global', 'MLS', 'NNGuide', 'NeCo', 'REN', 'ViM', 'fDBD', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- var_collapse <= 0.0094
-|   |--- equiangular_uc <= 0.1065
+=== CTM ===
+|--- equinorm_uc <= 0.0556
+|   |--- class: not_CTM
+|--- equinorm_uc >  0.0556
+|   |--- equiangular_uc <= 0.1009
 |   |   |--- class: CTM
-|   |--- equiangular_uc >  0.1065
-|   |   |--- equinorm_wc <= 0.0645
-|   |   |   |--- class: CTMmean
-|   |   |--- equinorm_wc >  0.0645
-|   |   |   |--- class: CTMmean
+|   |--- equiangular_uc >  0.1009
+|   |   |--- class: CTM
+
+=== CTMmean ===
+|--- self_duality <= 0.0700
+|   |--- class: not_CTMmean
+|--- self_duality >  0.0700
+|   |--- class: CTMmean
+
+=== CTMmeanOC ===
+|--- self_duality <= 0.0700
+|   |--- class: not_CTMmeanOC
+|--- self_duality >  0.0700
+|   |--- class: CTMmeanOC
+
+=== Energy ===
+|--- var_collapse <= 0.0094
+|   |--- class: not_Energy
 |--- var_collapse >  0.0094
-|   |--- max_equiangular_uc <= 0.0789
-|   |   |--- class: Energy
-|   |--- max_equiangular_uc >  0.0789
-|   |   |--- equinorm_uc <= 0.0632
-|   |   |   |--- class: pNML
-|   |   |--- equinorm_uc >  0.0632
-|   |   |   |--- class: pNML
+|   |--- class: Energy
+
+=== GE ===
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_GE
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_GE
+|--- var_collapse >  0.0130
+|   |--- class: GE
+
+=== KPCA RecError global ===
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_KPCA RecError global
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_KPCA RecError global
+|--- var_collapse >  0.0130
+|   |--- class: KPCA RecError global
+
+=== MLS ===
+|--- equinorm_uc <= 0.0556
+|   |--- class: MLS
+|--- equinorm_uc >  0.0556
+|   |--- equiangular_uc <= 0.1009
+|   |   |--- class: not_MLS
+|   |--- equiangular_uc >  0.1009
+|   |   |--- class: not_MLS
+
+=== NNGuide ===
+|--- var_collapse <= 0.0094
+|   |--- class: not_NNGuide
+|--- var_collapse >  0.0094
+|   |--- class: NNGuide
+
+=== NeCo ===
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_NeCo
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_NeCo
+|--- var_collapse >  0.0130
+|   |--- class: NeCo
+
+=== REN ===
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_REN
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_REN
+|--- var_collapse >  0.0130
+|   |--- class: REN
+
+=== ViM ===
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_ViM
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_ViM
+|--- var_collapse >  0.0130
+|   |--- class: ViM
+
+=== fDBD ===
+|--- self_duality <= 0.0700
+|   |--- class: not_fDBD
+|--- self_duality >  0.0700
+|   |--- class: fDBD
+
+=== pNML ===
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_pNML
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_pNML
+|--- var_collapse >  0.0130
+|   |--- class: pNML

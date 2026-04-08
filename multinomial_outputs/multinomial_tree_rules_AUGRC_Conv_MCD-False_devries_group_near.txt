@@ -1,21 +1,64 @@
 Decision Tree Rules (group_near)
-Depth: 3, Train acc: 0.778, CV acc: 0.778, Balanced CV acc: 0.768
-Classes: ['CTM', 'Energy', 'NNGuide', 'fDBD']
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTM', 'Energy', 'GE', 'MLS', 'NNGuide', 'NeCo', 'PE', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- equiangular_wc <= 0.0912
-|   |--- equiangular_uc <= 0.1064
-|   |   |--- class: CTM
-|   |--- equiangular_uc >  0.1064
-|   |   |--- equinorm_wc <= 0.0644
-|   |   |   |--- class: fDBD
-|   |   |--- equinorm_wc >  0.0644
-|   |   |   |--- class: fDBD
-|--- equiangular_wc >  0.0912
-|   |--- max_equiangular_uc <= 0.0795
-|   |   |--- equinorm_uc <= 0.0442
-|   |   |   |--- class: NNGuide
-|   |   |--- equinorm_uc >  0.0442
-|   |   |   |--- class: NNGuide
-|   |--- max_equiangular_uc >  0.0795
-|   |   |--- class: Energy
+=== CTM ===
+|--- var_collapse <= 0.0094
+|   |--- class: CTM
+|--- var_collapse >  0.0094
+|   |--- class: not_CTM
+
+=== Energy ===
+|--- var_collapse <= 0.0094
+|   |--- class: not_Energy
+|--- var_collapse >  0.0094
+|   |--- class: Energy
+
+=== GE ===
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_GE
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_GE
+|--- var_collapse >  0.0130
+|   |--- class: GE
+
+=== MLS ===
+|--- var_collapse <= 0.0094
+|   |--- class: not_MLS
+|--- var_collapse >  0.0094
+|   |--- class: MLS
+
+=== NNGuide ===
+|--- equinorm_uc <= 0.0556
+|   |--- class: NNGuide
+|--- equinorm_uc >  0.0556
+|   |--- equiangular_uc <= 0.1009
+|   |   |--- class: not_NNGuide
+|   |--- equiangular_uc >  0.1009
+|   |   |--- class: not_NNGuide
+
+=== NeCo ===
+|--- var_collapse <= 0.0094
+|   |--- class: not_NeCo
+|--- var_collapse >  0.0094
+|   |--- class: NeCo
+
+=== PE ===
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_PE
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_PE
+|--- var_collapse >  0.0130
+|   |--- class: PE
+
+=== fDBD ===
+|--- equinorm_wc <= 0.0452
+|   |--- equiangular_uc <= 0.0847
+|   |   |--- class: not_fDBD
+|   |--- equiangular_uc >  0.0847
+|   |   |--- class: not_fDBD
+|--- equinorm_wc >  0.0452
+|   |--- class: fDBD

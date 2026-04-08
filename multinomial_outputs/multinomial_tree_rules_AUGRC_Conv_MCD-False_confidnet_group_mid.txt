@@ -1,171 +1,70 @@
 Decision Tree Rules (group_mid)
-<<<<<<< HEAD
-Depth: 2, Train acc: 0.737, CV acc: 0.737, Balanced CV acc: 0.825
-Classes: ['CTM', 'CTMmean', 'Energy', 'NNGuide']
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTM', 'CTMmean', 'Energy', 'KPCA RecError global', 'MLS', 'NNGuide', 'NeCo', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
-|--- equiangular_wc <= 0.1009
-|   |--- equiangular_uc <= 0.0963
-|   |   |--- class: CTMmean
-|   |--- equiangular_uc >  0.0963
-|   |   |--- class: CTM
-|--- equiangular_wc >  0.1009
-|   |--- var_collapse <= 0.0112
-|   |   |--- class: Energy
-|   |--- var_collapse >  0.0112
-|   |   |--- class: NNGuide
-=======
-Depth: 2, Train acc: 0.600, CV acc: nan, CV jaccard: nan
-Classes: ['CTM', 'CTM class avg', 'CTM global', 'CTMmean', 'CTMmean class avg', 'CTMmean global', 'Energy', 'Energy class pred', 'Energy global', 'NNGuide', 'NNGuide class pred', 'NNGuide global', 'PCA RecError class', 'PCA RecError class pred', 'pNML class pred']
-Features: ['var_collapse', 'cdnv_score', 'bias_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'w_etf_diff', 'M_etf_diff', 'wM_etf_diff']
-
 === CTM ===
-|--- equinorm_uc <= 0.0390
+|--- equinorm_wc <= 0.0253
 |   |--- class: CTM
-|--- equinorm_uc >  0.0390
-|   |--- max_equiangular_uc <= 0.0689
+|--- equinorm_wc >  0.0253
+|   |--- equiangular_uc <= 0.0947
 |   |   |--- class: not_CTM
-|   |--- max_equiangular_uc >  0.0689
+|   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_CTM
-
-=== CTM class avg ===
-|--- self_duality <= 0.0803
-|   |--- max_equiangular_uc <= 0.0691
-|   |   |--- class: not_CTM class avg
-|   |--- max_equiangular_uc >  0.0691
-|   |   |--- class: not_CTM class avg
-|--- self_duality >  0.0803
-|   |--- equiangular_uc <= 0.1456
-|   |   |--- class: CTM class avg
-|   |--- equiangular_uc >  0.1456
-|   |   |--- class: not_CTM class avg
-
-=== CTM global ===
-|--- equiangular_wc <= 0.0763
-|   |--- max_equiangular_uc <= 0.0691
-|   |   |--- class: not_CTM global
-|   |--- max_equiangular_uc >  0.0691
-|   |   |--- class: CTM global
-|--- equiangular_wc >  0.0763
-|   |--- var_collapse <= 0.0027
-|   |   |--- class: not_CTM global
-|   |--- var_collapse >  0.0027
-|   |   |--- class: not_CTM global
 
 === CTMmean ===
-|--- w_etf_diff <= 0.7951
+|--- equiangular_wc <= 0.1009
+|   |--- class: CTMmean
+|--- equiangular_wc >  0.1009
 |   |--- class: not_CTMmean
-|--- w_etf_diff >  0.7951
-|   |--- wM_etf_diff <= 0.8412
-|   |   |--- class: not_CTMmean
-|   |--- wM_etf_diff >  0.8412
-|   |   |--- class: CTMmean
-
-=== CTMmean class avg ===
-|--- var_collapse <= 0.0056
-|   |--- class: CTMmean class avg
-|--- var_collapse >  0.0056
-|   |--- max_equiangular_uc <= 0.0689
-|   |   |--- class: not_CTMmean class avg
-|   |--- max_equiangular_uc >  0.0689
-|   |   |--- class: not_CTMmean class avg
-
-=== CTMmean global ===
-|--- var_collapse <= 0.0056
-|   |--- class: CTMmean global
-|--- var_collapse >  0.0056
-|   |--- max_equiangular_uc <= 0.0689
-|   |   |--- class: not_CTMmean global
-|   |--- max_equiangular_uc >  0.0689
-|   |   |--- class: not_CTMmean global
 
 === Energy ===
-|--- self_duality <= 0.0707
+|--- equiangular_wc <= 0.1009
 |   |--- class: not_Energy
-|--- self_duality >  0.0707
-|   |--- cdnv_score <= 1.6675
-|   |   |--- class: Energy
-|   |--- cdnv_score >  1.6675
-|   |   |--- class: not_Energy
+|--- equiangular_wc >  0.1009
+|   |--- class: Energy
 
-=== Energy class pred ===
-|--- M_etf_diff <= 0.3409
-|   |--- self_duality <= 0.0707
-|   |   |--- class: not_Energy class pred
-|   |--- self_duality >  0.0707
-|   |   |--- class: Energy class pred
-|--- M_etf_diff >  0.3409
-|   |--- var_collapse <= 0.0026
-|   |   |--- class: not_Energy class pred
-|   |--- var_collapse >  0.0026
-|   |   |--- class: not_Energy class pred
+=== KPCA RecError global ===
+|--- equinorm_wc <= 0.0253
+|   |--- class: KPCA RecError global
+|--- equinorm_wc >  0.0253
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_KPCA RecError global
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_KPCA RecError global
 
-=== Energy global ===
-|--- equiangular_uc <= 0.1098
-|   |--- class: not_Energy global
-|--- equiangular_uc >  0.1098
-|   |--- equinorm_wc <= 0.0644
-|   |   |--- class: Energy global
-|   |--- equinorm_wc >  0.0644
-|   |   |--- class: not_Energy global
+=== MLS ===
+|--- equinorm_wc <= 0.0466
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_MLS
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_MLS
+|--- equinorm_wc >  0.0466
+|   |--- class: MLS
 
 === NNGuide ===
 |--- var_collapse <= 0.0132
-|   |--- max_equiangular_uc <= 0.0689
+|   |--- equiangular_uc <= 0.0947
 |   |   |--- class: not_NNGuide
-|   |--- max_equiangular_uc >  0.0689
+|   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_NNGuide
 |--- var_collapse >  0.0132
-|   |--- equinorm_wc <= 0.0267
-|   |   |--- class: NNGuide
-|   |--- equinorm_wc >  0.0267
-|   |   |--- class: not_NNGuide
+|   |--- class: NNGuide
 
-=== NNGuide class pred ===
-|--- var_collapse <= 0.0132
-|   |--- max_equiangular_uc <= 0.0689
-|   |   |--- class: not_NNGuide class pred
-|   |--- max_equiangular_uc >  0.0689
-|   |   |--- class: not_NNGuide class pred
-|--- var_collapse >  0.0132
-|   |--- equinorm_wc <= 0.0267
-|   |   |--- class: NNGuide class pred
-|   |--- equinorm_wc >  0.0267
-|   |   |--- class: not_NNGuide class pred
+=== NeCo ===
+|--- equinorm_wc <= 0.0466
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_NeCo
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_NeCo
+|--- equinorm_wc >  0.0466
+|   |--- class: NeCo
 
-=== NNGuide global ===
-|--- wM_etf_diff <= 0.3158
-|   |--- class: NNGuide global
-|--- wM_etf_diff >  0.3158
-|   |--- bias_collapse <= 5.8075
-|   |   |--- class: not_NNGuide global
-|   |--- bias_collapse >  5.8075
-|   |   |--- class: NNGuide global
-
-=== PCA RecError class ===
-|--- equiangular_wc <= 0.1155
-|   |--- max_equiangular_uc <= 0.0689
-|   |   |--- class: PCA RecError class
-|   |--- max_equiangular_uc >  0.0689
-|   |   |--- class: not_PCA RecError class
-|--- equiangular_wc >  0.1155
-|   |--- class: PCA RecError class
-
-=== PCA RecError class pred ===
-|--- equiangular_wc <= 0.1155
-|   |--- max_equiangular_uc <= 0.0689
-|   |   |--- class: PCA RecError class pred
-|   |--- max_equiangular_uc >  0.0689
-|   |   |--- class: not_PCA RecError class pred
-|--- equiangular_wc >  0.1155
-|   |--- class: PCA RecError class pred
-
-=== pNML class pred ===
-|--- self_duality <= 0.0759
-|   |--- class: not_pNML class pred
-|--- self_duality >  0.0759
-|   |--- equinorm_wc <= 0.0185
-|   |   |--- class: not_pNML class pred
-|   |--- equinorm_wc >  0.0185
-|   |   |--- class: pNML class pred
->>>>>>> e9edc33 (refactor: update multinomial analysis pipeline to include new ETF-based features and expanded target classes)
+=== fDBD ===
+|--- equinorm_wc <= 0.0253
+|   |--- class: fDBD
+|--- equinorm_wc >  0.0253
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_fDBD
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_fDBD
