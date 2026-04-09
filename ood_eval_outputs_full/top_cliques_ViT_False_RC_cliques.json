@@ -1,0 +1,146 @@
+{
+  "cifar10": {
+    "test": [
+      "CTMmean",
+      "CTMmean class",
+      "CTMmean class avg",
+      "CTMmean class pred",
+      "CTMmean global",
+      "CTMmeanOC",
+      "GEN global",
+      "MSR global",
+      "PCE global",
+      "PE global"
+    ],
+    "near": [
+      "KPCA RecError class",
+      "KPCA RecError class pred",
+      "PCA RecError class",
+      "PCA RecError class pred",
+      "PCA RecError global",
+      "pNML",
+      "pNML class pred",
+      "ViM"
+    ],
+    "mid": [
+      "KPCA RecError global",
+      "PCA RecError class",
+      "PCA RecError class pred"
+    ],
+    "far": [
+      "KPCA RecError class",
+      "KPCA RecError class pred",
+      "PCA RecError class",
+      "PCA RecError class pred",
+      "PCA RecError global",
+      "pNML",
+      "Residual",
+      "ViM"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "GEN",
+      "GEN class avg",
+      "GEN class pred",
+      "GEN global",
+      "MSR global",
+      "REN global"
+    ],
+    "near": [
+      "CTMmean",
+      "CTMmean global",
+      "CTMmeanOC",
+      "GE",
+      "GE class pred",
+      "GE global",
+      "KPCA RecError class",
+      "KPCA RecError class pred",
+      "MLS global",
+      "NNGuide",
+      "NNGuide global",
+      "PCA RecError class",
+      "PCA RecError class pred",
+      "PCE global",
+      "PE global",
+      "ViM"
+    ],
+    "mid": [
+      "CTMmean class avg",
+      "GradNorm class pred",
+      "KPCA RecError global"
+    ],
+    "far": [
+      "KPCA RecError class",
+      "Maha",
+      "Maha class avg",
+      "PCA RecError global",
+      "pNML",
+      "Residual",
+      "ViM"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "GEN",
+      "GEN class pred",
+      "GEN global",
+      "MSR global",
+      "PCE global",
+      "REN global"
+    ],
+    "near": [
+      "Energy global",
+      "GE global",
+      "GradNorm class pred",
+      "GradNorm global",
+      "Maha",
+      "Maha class avg",
+      "MLS global",
+      "NeCo",
+      "ViM"
+    ],
+    "mid": [
+      "fDBD class avg",
+      "GradNorm class pred",
+      "KPCA RecError global"
+    ],
+    "far": [
+      "Maha",
+      "Maha class avg",
+      "pNML",
+      "Residual",
+      "ViM"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "GEN",
+      "GEN global",
+      "MSR",
+      "MSR global",
+      "PCE global",
+      "REN global"
+    ],
+    "near": [
+      "GradNorm class pred",
+      "MSR class pred",
+      "PCE class pred",
+      "PE class pred"
+    ],
+    "mid": [
+      "Maha",
+      "Maha class avg",
+      "pNML",
+      "Residual",
+      "ViM"
+    ],
+    "far": [
+      "Energy class",
+      "GradNorm",
+      "GradNorm class pred",
+      "MLS class",
+      "MLS class pred"
+    ]
+  }
+}
