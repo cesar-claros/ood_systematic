@@ -1,0 +1,83 @@
+{
+  "cifar10": {
+    "test": [
+      "Confidence",
+      "GEN",
+      "MSR",
+      "REN"
+    ],
+    "near": [
+      "Energy",
+      "MLS"
+    ],
+    "mid": [
+      "Energy"
+    ],
+    "far": [
+      "Energy",
+      "MLS",
+      "NNGuide",
+      "NeCo",
+      "PCA RecError global"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "CTM",
+      "CTMmean",
+      "CTMmeanOC",
+      "PCA RecError global"
+    ],
+    "near": [
+      "Energy",
+      "MLS",
+      "NeCo"
+    ],
+    "mid": [
+      "Energy",
+      "pNML"
+    ],
+    "far": [
+      "pNML"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "GEN",
+      "MSR"
+    ],
+    "near": [
+      "NNGuide",
+      "NeCo",
+      "PCE",
+      "PE",
+      "fDBD"
+    ],
+    "mid": [
+      "CTMmean",
+      "CTMmeanOC",
+      "NNGuide",
+      "fDBD"
+    ],
+    "far": [
+      "fDBD"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "CTM",
+      "MSR",
+      "fDBD"
+    ],
+    "near": [
+      "CTM"
+    ],
+    "mid": [
+      "CTM"
+    ],
+    "far": [
+      "CTM",
+      "CTMmean"
+    ]
+  }
+}

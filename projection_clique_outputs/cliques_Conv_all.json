@@ -1,0 +1,143 @@
+{
+  "cifar10": {
+    "test": [
+      "Confidence",
+      "GEN",
+      "GEN global",
+      "MSR",
+      "MSR global",
+      "REN",
+      "REN class pred",
+      "REN global"
+    ],
+    "near": [
+      "Energy",
+      "Energy class",
+      "Energy class pred",
+      "Energy global",
+      "MLS",
+      "MLS class",
+      "MLS class pred",
+      "NNGuide"
+    ],
+    "mid": [
+      "Energy",
+      "Energy class",
+      "Energy class pred",
+      "Energy global",
+      "MLS class",
+      "NNGuide"
+    ],
+    "far": [
+      "Energy",
+      "Energy class pred",
+      "Energy global",
+      "MLS",
+      "MLS class pred",
+      "MLS global",
+      "NNGuide",
+      "NNGuide class pred",
+      "NNGuide global",
+      "NeCo"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "CTM",
+      "CTM class",
+      "CTM class pred",
+      "CTM global",
+      "CTMmean",
+      "CTMmean class avg",
+      "CTMmean global",
+      "CTMmeanOC",
+      "PCA RecError class pred"
+    ],
+    "near": [
+      "Energy",
+      "Energy class pred",
+      "Energy global",
+      "GE class",
+      "GE class pred",
+      "MLS",
+      "MLS global",
+      "NeCo",
+      "REN class"
+    ],
+    "mid": [
+      "CTM class avg",
+      "Energy",
+      "Energy global",
+      "Maha class pred",
+      "pNML class pred"
+    ],
+    "far": [
+      "Maha class pred",
+      "pNML class pred"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "GEN",
+      "GEN class",
+      "GEN global",
+      "MSR",
+      "MSR class",
+      "MSR global"
+    ],
+    "near": [
+      "Energy class avg",
+      "GE class pred",
+      "NNGuide",
+      "NNGuide class avg",
+      "NNGuide global",
+      "NeCo",
+      "PCE",
+      "PCE class",
+      "PCE global",
+      "PE",
+      "PE class",
+      "PE global",
+      "fDBD",
+      "fDBD class avg",
+      "fDBD class pred",
+      "fDBD global"
+    ],
+    "mid": [
+      "CTM class avg"
+    ],
+    "far": [
+      "fDBD",
+      "fDBD class pred",
+      "fDBD global"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "CTM class",
+      "CTM class pred",
+      "CTM global",
+      "MSR",
+      "MSR global",
+      "fDBD class avg",
+      "fDBD global"
+    ],
+    "near": [
+      "CTM",
+      "CTM global"
+    ],
+    "mid": [
+      "CTM",
+      "CTM global"
+    ],
+    "far": [
+      "CTM",
+      "CTM class",
+      "CTM class pred",
+      "CTM global",
+      "CTMmean class avg",
+      "CTMmean global",
+      "fDBD class avg"
+    ]
+  }
+}

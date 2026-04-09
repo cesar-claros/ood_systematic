@@ -1,0 +1,54 @@
+method,cliques_base,cliques_best_swap,cliques_all,gain_swap_vs_base
+pNML,0,2,0,2
+PCA RecError global,0,2,0,2
+CTM class,0,0,3,0
+CTM,5,5,4,0
+Confidence,1,1,1,0
+CTM global,0,0,5,0
+CTMmean,3,3,1,0
+CTMmean class avg,0,0,2,0
+CTMmean global,0,0,2,0
+Energy,5,5,5,0
+Energy class,0,0,2,0
+Energy class avg,0,0,1,0
+Energy class pred,0,0,4,0
+fDBD class pred,0,0,2,0
+Energy global,0,0,5,0
+fDBD,4,4,2,0
+fDBD class avg,0,0,3,0
+GE class,0,0,1,0
+fDBD global,0,0,3,0
+CTM class avg,0,0,2,0
+CTM class pred,0,0,3,0
+PE class,0,0,1,0
+GE class pred,0,0,2,0
+GEN,2,2,2,0
+GEN class,0,0,1,0
+MLS class pred,0,0,2,0
+MLS class,0,0,2,0
+GEN global,0,0,2,0
+Maha class pred,0,0,2,0
+NeCo,3,3,3,0
+NNGuide class avg,0,0,1,0
+MSR class,0,0,1,0
+MSR global,0,0,3,0
+NNGuide class pred,0,0,1,0
+PCA RecError class pred,0,0,1,0
+MSR,3,3,3,0
+MLS global,0,0,2,0
+REN class,0,0,1,0
+PE global,0,0,1,0
+pNML class pred,0,0,2,0
+NNGuide global,0,0,2,0
+PCE class,0,0,1,0
+PCE global,0,0,1,0
+PE,1,1,1,0
+PCE,1,1,1,0
+REN global,0,0,1,0
+REN class pred,0,0,1,0
+REN,1,1,1,0
+CTMmeanOC,3,2,1,-1
+NNGuide,4,3,4,-1
+MLS,4,3,3,-1
+KPCA RecError global,1,0,0,-1
+ViM,1,0,0,-1

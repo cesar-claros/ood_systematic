@@ -1,0 +1,80 @@
+{
+  "cifar10": {
+    "test": [
+      "CTMmean",
+      "CTMmeanOC",
+      "GEN",
+      "MSR",
+      "PCE"
+    ],
+    "near": [
+      "PCA RecError global",
+      "pNML"
+    ],
+    "mid": [
+      "KPCA RecError global",
+      "PCA RecError global"
+    ],
+    "far": [
+      "Residual",
+      "ViM",
+      "pNML"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "GEN",
+      "MSR"
+    ],
+    "near": [
+      "CTMmean",
+      "CTMmeanOC",
+      "GE",
+      "NNGuide",
+      "PCA RecError global",
+      "ViM"
+    ],
+    "mid": [
+      "GradNorm",
+      "KPCA RecError global"
+    ],
+    "far": [
+      "Residual",
+      "pNML"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "GEN",
+      "MSR"
+    ],
+    "near": [
+      "ViM"
+    ],
+    "mid": [
+      "GradNorm",
+      "KPCA RecError global"
+    ],
+    "far": [
+      "Residual",
+      "ViM"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "GEN",
+      "MSR"
+    ],
+    "near": [
+      "GradNorm"
+    ],
+    "mid": [
+      "Residual",
+      "ViM",
+      "pNML"
+    ],
+    "far": [
+      "GradNorm"
+    ]
+  }
+}
