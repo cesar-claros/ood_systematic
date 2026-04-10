@@ -1,0 +1,43 @@
+Decision Tree Rules (group_far)
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['GE', 'GradNorm', 'Residual', 'ViM', 'pNML']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+=== GE ===
+|--- equinorm_wc <= 0.0196
+|   |--- class: GE
+|--- equinorm_wc >  0.0196
+|   |--- equiangular_uc <= 0.1246
+|   |   |--- class: not_GE
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: not_GE
+
+=== GradNorm ===
+|--- equinorm_wc <= 0.0196
+|   |--- class: GradNorm
+|--- equinorm_wc >  0.0196
+|   |--- equiangular_uc <= 0.1246
+|   |   |--- class: not_GradNorm
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: not_GradNorm
+
+=== Residual ===
+|--- equinorm_wc <= 0.0196
+|   |--- class: not_Residual
+|--- equinorm_wc >  0.0196
+|   |--- equiangular_uc <= 0.1246
+|   |   |--- class: Residual
+|   |--- equiangular_uc >  0.1246
+|   |   |--- class: Residual
+
+=== ViM ===
+|--- var_collapse <= 0.0128
+|   |--- class: ViM
+|--- var_collapse >  0.0128
+|   |--- class: not_ViM
+
+=== pNML ===
+|--- max_equiangular_wc <= 0.0416
+|   |--- class: not_pNML
+|--- max_equiangular_wc >  0.0416
+|   |--- class: pNML

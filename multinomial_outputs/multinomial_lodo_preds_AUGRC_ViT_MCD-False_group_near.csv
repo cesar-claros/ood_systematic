@@ -1,0 +1,21 @@
+dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
+cifar10,ViT,vit,0,pNML,PCA RecError global|pNML,pNML|PCA RecError global|KPCA RecError class pred,PCA RecError global|pNML,Maha|NeCo|PCA RecError global|ViM,False,True,True
+cifar10,ViT,vit,1,PCA RecError class pred,PCA RecError global|pNML,PCA RecError class pred|PCA RecError class|KPCA RecError class pred,PCA RecError global|pNML,Maha|NeCo|PCA RecError global|ViM,False,False,True
+cifar10,ViT,vit,2,pNML,PCA RecError global|pNML,pNML|PCA RecError class pred|PCA RecError class,PCA RecError global|pNML,Maha|NeCo|PCA RecError global|ViM,False,False,True
+cifar10,ViT,vit,3,pNML,PCA RecError global|pNML,pNML|KPCA RecError class pred|KPCA RecError class,PCA RecError global|pNML,Maha|NeCo|PCA RecError global|ViM,False,False,True
+cifar10,ViT,vit,4,pNML,PCA RecError global|pNML,pNML|ViM|PCA RecError global,PCA RecError global|pNML,Maha|NeCo|PCA RecError global|ViM,False,True,True
+cifar100,ViT,vit,0,ViM,Maha|NeCo|ViM,ViM|GradNorm global|Maha,Maha|NeCo|ViM,Maha|NeCo|PCA RecError global|pNML,False,True,True
+cifar100,ViT,vit,1,ViM,Maha|NeCo|ViM,ViM|Maha|Maha class avg,Maha|NeCo|ViM,Maha|NeCo|PCA RecError global|pNML,False,True,True
+cifar100,ViT,vit,2,ViM,Maha|NeCo|ViM,ViM|GradNorm global|GradNorm class pred,Maha|NeCo|ViM,Maha|NeCo|PCA RecError global|pNML,False,False,True
+cifar100,ViT,vit,3,ViM,Maha|NeCo|ViM,ViM|GradNorm global|GradNorm class pred,Maha|NeCo|ViM,Maha|NeCo|PCA RecError global|pNML,False,False,True
+cifar100,ViT,vit,4,ViM,Maha|NeCo|ViM,ViM|GradNorm global|Maha,Maha|NeCo|ViM,Maha|NeCo|PCA RecError global|pNML,False,True,True
+supercifar100,ViT,vit,0,ViM,CTMmean|CTMmeanOC|GE|MLS|NNGuide|ViM|pNML,ViM|pNML|PCA RecError class pred,CTMmean|CTMmeanOC|GE|MLS|NNGuide|pNML|ViM,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE,False,False,True
+supercifar100,ViT,vit,1,PCA RecError class pred,CTMmean|CTMmeanOC|GE|MLS|NNGuide|ViM|pNML,PCA RecError class pred|ViM|PCA RecError class,CTMmean|CTMmeanOC|GE|MLS|NNGuide|pNML|ViM,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE,False,False,True
+supercifar100,ViT,vit,2,PCA RecError global,CTMmean|CTMmeanOC|GE|MLS|NNGuide|ViM|pNML,PCA RecError global|pNML|Residual,CTMmean|CTMmeanOC|GE|MLS|NNGuide|pNML|ViM,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE,False,False,True
+supercifar100,ViT,vit,3,PCA RecError class pred,CTMmean|CTMmeanOC|GE|MLS|NNGuide|ViM|pNML,PCA RecError class pred|PCA RecError class|KPCA RecError class pred,CTMmean|CTMmeanOC|GE|MLS|NNGuide|pNML|ViM,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE,False,False,True
+supercifar100,ViT,vit,4,PCA RecError class pred,CTMmean|CTMmeanOC|GE|MLS|NNGuide|ViM|pNML,PCA RecError class pred|PCA RecError class|KPCA RecError class pred,CTMmean|CTMmeanOC|GE|MLS|NNGuide|pNML|ViM,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE,False,False,True
+tinyimagenet,ViT,vit,0,REN class pred,PE,REN class pred|CTM class avg|PE class pred,PE,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE|ViM|pNML,False,False,True
+tinyimagenet,ViT,vit,1,REN class pred,PE,REN class pred|PE class pred|PCE class pred,PE,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE|ViM|pNML,False,False,True
+tinyimagenet,ViT,vit,2,PE class pred,PE,PE class pred|GradNorm class pred|PCE class pred,PE,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE|ViM|pNML,False,False,True
+tinyimagenet,ViT,vit,3,PE class pred,PE,PE class pred|REN class pred|PCE class pred,PE,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE|ViM|pNML,False,False,True
+tinyimagenet,ViT,vit,4,REN class pred,PE,REN class pred|PE class pred|PCE class pred,PE,CTMmean|CTMmeanOC|GE|MLS|NNGuide|PE|ViM|pNML,False,False,True

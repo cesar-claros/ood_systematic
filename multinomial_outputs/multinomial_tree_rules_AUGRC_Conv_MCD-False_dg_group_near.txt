@@ -1,0 +1,118 @@
+Decision Tree Rules (group_near)
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTM', 'CTMmeanOC', 'Energy', 'GE', 'GEN', 'GradNorm', 'MLS', 'MSR', 'NNGuide', 'NeCo', 'PCE', 'PE', 'REN', 'fDBD']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+=== CTM ===
+|--- var_collapse <= 0.0105
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: CTM
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: CTM
+|--- var_collapse >  0.0105
+|   |--- class: not_CTM
+
+=== CTMmeanOC ===
+|--- equiangular_wc <= 0.0719
+|   |--- class: CTMmeanOC
+|--- equiangular_wc >  0.0719
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: not_CTMmeanOC
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: not_CTMmeanOC
+
+=== Energy ===
+|--- var_collapse <= 0.0088
+|   |--- class: not_Energy
+|--- var_collapse >  0.0088
+|   |--- class: Energy
+
+=== GE ===
+|--- self_duality <= 0.0727
+|   |--- class: not_GE
+|--- self_duality >  0.0727
+|   |--- class: GE
+
+=== GEN ===
+|--- equiangular_wc <= 0.0719
+|   |--- class: GEN
+|--- equiangular_wc >  0.0719
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: not_GEN
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: not_GEN
+
+=== GradNorm ===
+|--- equiangular_wc <= 0.0719
+|   |--- class: GradNorm
+|--- equiangular_wc >  0.0719
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: not_GradNorm
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: not_GradNorm
+
+=== MLS ===
+|--- var_collapse <= 0.0088
+|   |--- class: not_MLS
+|--- var_collapse >  0.0088
+|   |--- class: MLS
+
+=== MSR ===
+|--- equiangular_wc <= 0.0719
+|   |--- class: MSR
+|--- equiangular_wc >  0.0719
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: not_MSR
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: not_MSR
+
+=== NNGuide ===
+|--- var_collapse <= 0.0048
+|   |--- class: not_NNGuide
+|--- var_collapse >  0.0048
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: NNGuide
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: NNGuide
+
+=== NeCo ===
+|--- self_duality <= 0.0727
+|   |--- class: not_NeCo
+|--- self_duality >  0.0727
+|   |--- class: NeCo
+
+=== PCE ===
+|--- equiangular_wc <= 0.0719
+|   |--- class: PCE
+|--- equiangular_wc >  0.0719
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: not_PCE
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: not_PCE
+
+=== PE ===
+|--- equiangular_wc <= 0.0719
+|   |--- class: PE
+|--- equiangular_wc >  0.0719
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: not_PE
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: not_PE
+
+=== REN ===
+|--- equiangular_wc <= 0.0719
+|   |--- class: REN
+|--- equiangular_wc >  0.0719
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: not_REN
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: not_REN
+
+=== fDBD ===
+|--- equiangular_wc <= 0.0719
+|   |--- class: fDBD
+|--- equiangular_wc >  0.0719
+|   |--- equiangular_uc <= 0.0855
+|   |   |--- class: not_fDBD
+|   |--- equiangular_uc >  0.0855
+|   |   |--- class: not_fDBD
