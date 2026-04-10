@@ -38,7 +38,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.multiclass import OneVsRestClassifier
-from sklearn.multioutput import ClassifierChain
+
 from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import (
@@ -480,13 +480,6 @@ def run_classification(
             class_weight="balanced_subsample",
         )
 
-    def _make_cc():
-        return ClassifierChain(
-            LogisticRegression(solver="lbfgs", max_iter=2000, C=1.0, random_state=42),
-            order="random",
-            random_state=42,
-        )
-
     def _make_dt(depth: int):
         return OneVsRestClassifier(
             DecisionTreeClassifier(
@@ -500,133 +493,71 @@ def run_classification(
     unique_datasets = np.unique(datasets)
     if len(unique_datasets) >= 2:
         logger.info("\n--- Leave-One-Dataset-Out CV ---")
-        y_pred_lodo_lr = np.zeros_like(y_multi)
         y_pred_lodo_rf = np.zeros_like(y_multi)
-        y_pred_lodo_cc = np.zeros_like(y_multi)
-        valid_mask_lr = np.zeros(len(df), dtype=bool)
-        valid_mask_rf = np.zeros(len(df), dtype=bool)
-        valid_mask_cc = np.zeros(len(df), dtype=bool)
+        valid_mask_rf = np.ones(len(df), dtype=bool)
 
         for held_out_ds in unique_datasets:
             test_mask = datasets == held_out_ds
             train_mask = ~test_mask
 
-            if y_multi[train_mask].sum(axis=0).astype(bool).sum() < 2:
-                logger.warning(f"  LODO {held_out_ds}: only 1 class in train, skipping")
-                continue
-
-            scaler_lodo = StandardScaler()
-            X_train = scaler_lodo.fit_transform(X[train_mask])
-            X_test = scaler_lodo.transform(X[test_mask])
             y_train = y_multi[train_mask]
+            n_active_classes = y_train.sum(axis=0).astype(bool).sum()
 
-            lr = _make_lr()
-            lr.fit(X_train, y_train)
-            y_pred_lodo_lr[test_mask] = _predict_indicator_matrix(lr, X_test)
-            valid_mask_lr[test_mask] = True
-
-            rf = _make_rf()
-            rf.fit(X_train, y_train)
-            y_pred_lodo_rf[test_mask] = _predict_indicator_matrix(rf, X_test)
-            valid_mask_rf[test_mask] = True
-
-            # CC requires every label column to have both classes in train
-            cc_ok = np.all(y_train.sum(axis=0) > 0) and np.all(y_train.sum(axis=0) < y_train.shape[0])
-            if cc_ok:
-                cc = _make_cc()
-                cc.fit(X_train, y_train)
-                y_pred_lodo_cc[test_mask] = _predict_indicator_matrix(cc, X_test)
-                valid_mask_cc[test_mask] = True
+            if n_active_classes < 2:
+                # Fallback: predict training-set majority label-set
+                majority_row = (y_train.sum(axis=0) > (y_train.shape[0] / 2)).astype(int)
+                y_pred_lodo_rf[test_mask] = np.tile(majority_row, (test_mask.sum(), 1))
+                logger.info(f"  LODO {held_out_ds}: only {n_active_classes} class in train, "
+                            f"using majority fallback for {test_mask.sum()} test samples")
             else:
-                logger.warning(f"  LODO {held_out_ds}: skipping CC (single-class label column in train)")
+                scaler_lodo = StandardScaler()
+                X_train = scaler_lodo.fit_transform(X[train_mask])
+                X_test = scaler_lodo.transform(X[test_mask])
+
+                rf = _make_rf()
+                rf.fit(X_train, y_train)
+                y_pred_lodo_rf[test_mask] = _predict_indicator_matrix(rf, X_test)
 
             test_indices = np.where(test_mask)[0]
             test_top3 = [top3_sets[i] for i in test_indices]
             test_cliques = [clique_sets[i] for i in test_indices]
-            metrics_lr = _multilabel_metrics(
-                y_multi[test_mask], y_pred_lodo_lr[test_mask], test_top3, test_cliques, mlb.classes_
-            )
             metrics_rf = _multilabel_metrics(
                 y_multi[test_mask], y_pred_lodo_rf[test_mask], test_top3, test_cliques, mlb.classes_
             )
-            cc_str = ""
-            if cc_ok:
-                metrics_cc = _multilabel_metrics(
-                    y_multi[test_mask], y_pred_lodo_cc[test_mask], test_top3, test_cliques, mlb.classes_
-                )
-                cc_str = (f", CC={metrics_cc['accuracy']:.3f} "
-                          f"(jaccard={metrics_cc['jaccard']:.3f}, top3={metrics_cc['top3_hit']:.3f}, "
-                          f"clique={metrics_cc['clique_hit']:.3f})")
             logger.info(f"  Hold out {held_out_ds}: "
-                        f"LR={metrics_lr['accuracy']:.3f} "
-                        f"(jaccard={metrics_lr['jaccard']:.3f}, top3={metrics_lr['top3_hit']:.3f}, "
-                        f"clique={metrics_lr['clique_hit']:.3f}), "
-                        f"RF={metrics_rf['accuracy']:.3f} "
-                        f"(jaccard={metrics_rf['jaccard']:.3f}, top3={metrics_rf['top3_hit']:.3f}, "
-                        f"clique={metrics_rf['clique_hit']:.3f})"
-                        f"{cc_str} "
+                        f"RF acc={metrics_rf['accuracy']:.3f}, "
+                        f"jaccard={metrics_rf['jaccard']:.3f}, "
+                        f"top3={metrics_rf['top3_hit']:.3f}, "
+                        f"clique={metrics_rf['clique_hit']:.3f} "
                         f"({test_mask.sum()} samples, "
                         f"{int(y_multi[test_mask].sum(axis=0).astype(bool).sum())} active classes)")
 
-        lodo_results = {}
-        for tag, y_pred_lodo, valid_mask in [
-            ("lr", y_pred_lodo_lr, valid_mask_lr),
-            ("rf", y_pred_lodo_rf, valid_mask_rf),
-            ("cc", y_pred_lodo_cc, valid_mask_cc),
-        ]:
-            if valid_mask.sum() > 0:
-                valid_indices = np.where(valid_mask)[0]
-                valid_top3 = [top3_sets[i] for i in valid_indices]
-                valid_cliques = [clique_sets[i] for i in valid_indices]
-                metrics = _multilabel_metrics(
-                    y_multi[valid_mask], y_pred_lodo[valid_mask],
-                    valid_top3, valid_cliques, mlb.classes_
-                )
-                metrics["n"] = int(valid_mask.sum())
-                metrics["preds"] = y_pred_lodo.copy()
-                metrics["valid"] = valid_mask.copy()
-                lodo_results[tag] = metrics
-                logger.info(
-                    f"\n  LODO {tag.upper()} overall: acc={metrics['accuracy']:.3f}, "
-                    f"jaccard={metrics['jaccard']:.3f}, f1={metrics['f1']:.3f}, "
-                    f"top3_hit={metrics['top3_hit']:.3f}, clique_hit={metrics['clique_hit']:.3f}"
-                )
+        lodo_metrics = _multilabel_metrics(
+            y_multi, y_pred_lodo_rf, top3_sets, clique_sets, mlb.classes_
+        )
+        logger.info(
+            f"\n  LODO RF overall: acc={lodo_metrics['accuracy']:.3f}, "
+            f"jaccard={lodo_metrics['jaccard']:.3f}, f1={lodo_metrics['f1']:.3f}, "
+            f"top3_hit={lodo_metrics['top3_hit']:.3f}, clique_hit={lodo_metrics['clique_hit']:.3f}"
+        )
 
-        if lodo_results:
-            best_tag = max(lodo_results, key=lambda t: lodo_results[t]["accuracy"])
-            best = lodo_results[best_tag]
-            for model_tag in ["lr", "rf", "cc"]:
-                prefix = f"lodo_{model_tag}"
-                model_metrics = lodo_results.get(model_tag, {})
-                results[f"{prefix}_accuracy"] = model_metrics.get("accuracy", np.nan)
-                results[f"{prefix}_jaccard"] = model_metrics.get("jaccard", np.nan)
-                results[f"{prefix}_f1"] = model_metrics.get("f1", np.nan)
-                results[f"{prefix}_precision"] = model_metrics.get("precision", np.nan)
-                results[f"{prefix}_recall"] = model_metrics.get("recall", np.nan)
-                results[f"{prefix}_top3_hit"] = model_metrics.get("top3_hit", np.nan)
-                results[f"{prefix}_clique_hit"] = model_metrics.get("clique_hit", np.nan)
+        results["lodo_accuracy"] = lodo_metrics["accuracy"]
+        results["lodo_jaccard"] = lodo_metrics["jaccard"]
+        results["lodo_f1"] = lodo_metrics["f1"]
+        results["lodo_top3_hit"] = lodo_metrics["top3_hit"]
+        results["lodo_clique_hit"] = lodo_metrics["clique_hit"]
+        results["lodo_n_samples"] = len(df)
+        y_pred_lodo = y_pred_lodo_rf
+        valid_mask = valid_mask_rf
 
-            results["lodo_accuracy"] = best["accuracy"]
-            results["lodo_jaccard"] = best["jaccard"]
-            results["lodo_f1"] = best["f1"]
-            results["lodo_top3_hit"] = best["top3_hit"]
-            results["lodo_clique_hit"] = best["clique_hit"]
-            results["lodo_n_samples"] = best["n"]
-            y_pred_lodo = best["preds"]
-            valid_mask = best["valid"]
-
-            observed_sets = Counter(_method_sets_to_strings(target_sets))
-            baseline_set = observed_sets.most_common(1)[0][0]
-            baseline_acc = np.mean(
-                np.array(_method_sets_to_strings([target_sets[i] for i in np.where(valid_mask)[0]]))
-                == baseline_set
-            )
-            results["lodo_baseline_accuracy"] = baseline_acc
-            results["lodo_best_model"] = best_tag.upper()
-            logger.info(f"  Best LODO: {best_tag.upper()} acc={best['accuracy']:.3f}")
-            logger.info(f"  Baseline (most frequent label-set): acc={baseline_acc:.3f}")
-        else:
-            y_pred_lodo = None
+        observed_sets = Counter(_method_sets_to_strings(target_sets))
+        baseline_set = observed_sets.most_common(1)[0][0]
+        baseline_acc = np.mean(
+            np.array(_method_sets_to_strings(target_sets)) == baseline_set
+        )
+        results["lodo_baseline_accuracy"] = baseline_acc
+        results["lodo_best_model"] = "RF"
+        logger.info(f"  Baseline (most frequent label-set): acc={baseline_acc:.3f}")
     else:
         logger.info("Only 1 dataset — skipping LODO CV")
         y_pred_lodo = None
@@ -640,9 +571,7 @@ def run_classification(
 
     if n_folds >= 2:
         skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
-        y_pred_lr = np.zeros_like(y_multi)
         y_pred_rf = np.zeros_like(y_multi)
-        y_pred_cc = np.zeros_like(y_multi)
         fold_ids = np.full(len(y_multi), -1, dtype=int)
 
         for fold_i, (train_idx, test_idx) in enumerate(skf.split(X, primary_labels)):
@@ -652,88 +581,35 @@ def run_classification(
             X_test = scaler_fold.transform(X[test_idx])
             y_train = y_multi[train_idx]
 
-            lr_cv = _make_lr()
             rf_cv = _make_rf()
-            lr_cv.fit(X_train, y_train)
             rf_cv.fit(X_train, y_train)
-
-            y_pred_lr[test_idx] = _predict_indicator_matrix(lr_cv, X_test)
             y_pred_rf[test_idx] = _predict_indicator_matrix(rf_cv, X_test)
-
-            cc_fold_ok = np.all(y_train.sum(axis=0) > 0) and np.all(y_train.sum(axis=0) < y_train.shape[0])
-            if cc_fold_ok:
-                cc_cv = _make_cc()
-                cc_cv.fit(X_train, y_train)
-                y_pred_cc[test_idx] = _predict_indicator_matrix(cc_cv, X_test)
-            else:
-                logger.warning(f"  Fold {fold_i+1}: skipping CC (single-class label column in train)")
 
             fold_top3 = [top3_sets[i] for i in test_idx]
             fold_cliques = [clique_sets[i] for i in test_idx]
-            metrics_lr = _multilabel_metrics(
-                y_multi[test_idx], y_pred_lr[test_idx], fold_top3, fold_cliques, mlb.classes_
-            )
             metrics_rf = _multilabel_metrics(
                 y_multi[test_idx], y_pred_rf[test_idx], fold_top3, fold_cliques, mlb.classes_
             )
-            cc_str = ""
-            if cc_fold_ok:
-                metrics_cc = _multilabel_metrics(
-                    y_multi[test_idx], y_pred_cc[test_idx], fold_top3, fold_cliques, mlb.classes_
-                )
-                cc_str = (f", CC={metrics_cc['accuracy']:.3f} "
-                          f"(jaccard={metrics_cc['jaccard']:.3f}, top3={metrics_cc['top3_hit']:.3f}, "
-                          f"clique={metrics_cc['clique_hit']:.3f})")
             fold_classes = sorted({method for idx in test_idx for method in target_sets[idx]})
             logger.info(f"  Fold {fold_i+1}/{n_folds}: "
-                        f"LR={metrics_lr['accuracy']:.3f} "
-                        f"(jaccard={metrics_lr['jaccard']:.3f}, top3={metrics_lr['top3_hit']:.3f}, "
-                        f"clique={metrics_lr['clique_hit']:.3f}), "
-                        f"RF={metrics_rf['accuracy']:.3f} "
-                        f"(jaccard={metrics_rf['jaccard']:.3f}, top3={metrics_rf['top3_hit']:.3f}, "
-                        f"clique={metrics_rf['clique_hit']:.3f})"
-                        f"{cc_str} "
-                        f"({len(test_idx)} samples, "
-                        f"classes: {fold_classes})")
+                        f"RF acc={metrics_rf['accuracy']:.3f}, "
+                        f"jaccard={metrics_rf['jaccard']:.3f}, "
+                        f"top3={metrics_rf['top3_hit']:.3f}, "
+                        f"clique={metrics_rf['clique_hit']:.3f} "
+                        f"({len(test_idx)} samples, classes: {fold_classes})")
 
-        overall_lr = _multilabel_metrics(y_multi, y_pred_lr, top3_sets, clique_sets, mlb.classes_)
         overall_rf = _multilabel_metrics(y_multi, y_pred_rf, top3_sets, clique_sets, mlb.classes_)
         logger.info(
-            f"\n  Overall LR: acc={overall_lr['accuracy']:.3f}, "
-            f"jaccard={overall_lr['jaccard']:.3f}, f1={overall_lr['f1']:.3f}, "
-            f"top3={overall_lr['top3_hit']:.3f}, clique={overall_lr['clique_hit']:.3f}"
-        )
-        logger.info(
-            f"  Overall RF: acc={overall_rf['accuracy']:.3f}, "
+            f"\n  Overall RF: acc={overall_rf['accuracy']:.3f}, "
             f"jaccard={overall_rf['jaccard']:.3f}, f1={overall_rf['f1']:.3f}, "
             f"top3={overall_rf['top3_hit']:.3f}, clique={overall_rf['clique_hit']:.3f}"
         )
 
-        # CC may have zeros for skipped folds; only report if any fold succeeded
-        cc_any_predicted = y_pred_cc.sum() > 0
-        if cc_any_predicted:
-            overall_cc = _multilabel_metrics(y_multi, y_pred_cc, top3_sets, clique_sets, mlb.classes_)
-            logger.info(
-                f"  Overall CC: acc={overall_cc['accuracy']:.3f}, "
-                f"jaccard={overall_cc['jaccard']:.3f}, f1={overall_cc['f1']:.3f}, "
-                f"top3={overall_cc['top3_hit']:.3f}, clique={overall_cc['clique_hit']:.3f}"
-            )
-        else:
-            overall_cc = None
-            logger.warning("  CC: skipped in all folds (single-class label columns)")
-
-        all_kfold = [("lr", overall_lr), ("rf", overall_rf)]
-        if overall_cc is not None:
-            all_kfold.append(("cc", overall_cc))
-        for model_tag, metrics in all_kfold:
-            prefix = f"kfold_{model_tag}"
-            results[f"{prefix}_accuracy"] = metrics["accuracy"]
-            results[f"{prefix}_jaccard"] = metrics["jaccard"]
-            results[f"{prefix}_f1"] = metrics["f1"]
-            results[f"{prefix}_precision"] = metrics["precision"]
-            results[f"{prefix}_recall"] = metrics["recall"]
-            results[f"{prefix}_top3_hit"] = metrics["top3_hit"]
-            results[f"{prefix}_clique_hit"] = metrics["clique_hit"]
+        results["kfold_rf_accuracy"] = overall_rf["accuracy"]
+        results["kfold_rf_jaccard"] = overall_rf["jaccard"]
+        results["kfold_rf_f1"] = overall_rf["f1"]
+        results["kfold_rf_top3_hit"] = overall_rf["top3_hit"]
+        results["kfold_rf_clique_hit"] = overall_rf["clique_hit"]
         results["kfold_n_folds"] = n_folds
 
         baseline_set = Counter(_method_sets_to_strings(target_sets)).most_common(1)[0][0]
@@ -746,22 +622,11 @@ def run_classification(
         kfold_pred_df["true_methods"] = _method_sets_to_strings(target_sets)
         kfold_pred_df["top3_methods"] = df["top3_methods"].values
         kfold_pred_df["clique_methods"] = df["clique_methods"].values
-        pred_lr_sets = _indicator_to_method_sets(y_pred_lr, mlb.classes_)
         pred_rf_sets = _indicator_to_method_sets(y_pred_rf, mlb.classes_)
-        kfold_pred_df["pred_lr"] = _method_sets_to_strings(pred_lr_sets)
         kfold_pred_df["pred_rf"] = _method_sets_to_strings(pred_rf_sets)
-        kfold_pred_df["exact_match_lr"] = np.all(y_pred_lr == y_multi, axis=1)
         kfold_pred_df["exact_match_rf"] = np.all(y_pred_rf == y_multi, axis=1)
-        kfold_pred_df["top3_hit_lr"] = [bool(p & t) for p, t in zip(pred_lr_sets, top3_sets)]
         kfold_pred_df["top3_hit_rf"] = [bool(p & t) for p, t in zip(pred_rf_sets, top3_sets)]
-        kfold_pred_df["clique_hit_lr"] = [bool(p & t) for p, t in zip(pred_lr_sets, clique_sets)]
         kfold_pred_df["clique_hit_rf"] = [bool(p & t) for p, t in zip(pred_rf_sets, clique_sets)]
-        if cc_any_predicted:
-            pred_cc_sets = _indicator_to_method_sets(y_pred_cc, mlb.classes_)
-            kfold_pred_df["pred_cc"] = _method_sets_to_strings(pred_cc_sets)
-            kfold_pred_df["exact_match_cc"] = np.all(y_pred_cc == y_multi, axis=1)
-            kfold_pred_df["top3_hit_cc"] = [bool(p & t) for p, t in zip(pred_cc_sets, top3_sets)]
-            kfold_pred_df["clique_hit_cc"] = [bool(p & t) for p, t in zip(pred_cc_sets, clique_sets)]
 
     # ── 3. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
