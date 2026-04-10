@@ -18,6 +18,9 @@
       "pNML",
       "Residual",
       "ViM"
+    ],
+    "all": [
+      "pNML"
     ]
   },
   "supercifar100": {
@@ -41,6 +44,10 @@
     "far": [
       "pNML",
       "Residual"
+    ],
+    "all": [
+      "CTMmean",
+      "CTMmeanOC"
     ]
   },
   "cifar100": {
@@ -58,6 +65,12 @@
     "far": [
       "Residual",
       "ViM"
+    ],
+    "all": [
+      "KPCA RecError global",
+      "Maha",
+      "ViM",
+      "fDBD"
     ]
   },
   "tinyimagenet": {
@@ -76,6 +89,12 @@
     "far": [
       "GE",
       "GradNorm"
+    ],
+    "all": [
+      "Energy",
+      "GE",
+      "MLS",
+      "PE"
     ]
   }
 }

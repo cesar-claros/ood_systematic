@@ -20,6 +20,11 @@
       "MLS",
       "NeCo",
       "NNGuide"
+    ],
+    "all": [
+      "Energy",
+      "NNGuide",
+      "NeCo"
     ]
   },
   "supercifar100": {
@@ -42,6 +47,9 @@
       "CTMmeanOC",
       "fDBD",
       "KPCA RecError global"
+    ],
+    "all": [
+      "CTM"
     ]
   },
   "cifar100": {
@@ -62,6 +70,12 @@
     ],
     "far": [
       "fDBD"
+    ],
+    "all": [
+      "Energy",
+      "MLS",
+      "NeCo",
+      "fDBD"
     ]
   },
   "tinyimagenet": {
@@ -79,6 +93,9 @@
     "far": [
       "CTM",
       "CTMmean"
+    ],
+    "all": [
+      "CTM"
     ]
   }
 }

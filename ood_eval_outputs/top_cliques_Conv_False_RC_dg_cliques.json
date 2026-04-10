@@ -20,6 +20,10 @@
       "Energy",
       "MLS",
       "NNGuide"
+    ],
+    "all": [
+      "CTM",
+      "Energy"
     ]
   },
   "supercifar100": {
@@ -46,6 +50,12 @@
     "far": [
       "Maha",
       "Residual"
+    ],
+    "all": [
+      "Energy",
+      "GE",
+      "Maha",
+      "NeCo"
     ]
   },
   "cifar100": {
@@ -77,6 +87,11 @@
     ],
     "far": [
       "fDBD"
+    ],
+    "all": [
+      "CTMmeanOC",
+      "NNGuide",
+      "fDBD"
     ]
   },
   "tinyimagenet": {
@@ -97,6 +112,9 @@
       "CTMmean",
       "CTMmeanOC",
       "KPCA RecError global"
+    ],
+    "all": [
+      "CTM"
     ]
   }
 }
