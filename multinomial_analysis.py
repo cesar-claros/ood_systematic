@@ -494,7 +494,9 @@ def run_classification(
     if len(unique_datasets) >= 2:
         logger.info("\n--- Leave-One-Dataset-Out CV ---")
         y_pred_lodo_rf = np.zeros_like(y_multi)
+        y_pred_baseline = np.zeros_like(y_multi)
         valid_mask_rf = np.ones(len(df), dtype=bool)
+        all_target_strings = np.array(_method_sets_to_strings(target_sets))
 
         for held_out_ds in unique_datasets:
             test_mask = datasets == held_out_ds
@@ -503,10 +505,16 @@ def run_classification(
             y_train = y_multi[train_mask]
             n_active_classes = y_train.sum(axis=0).astype(bool).sum()
 
+            # Per-fold baseline: predict training-set majority label-set
+            train_set_counts = Counter(all_target_strings[train_mask])
+            majority_set_str = train_set_counts.most_common(1)[0][0]
+            majority_row = np.array([1 if m in majority_set_str.split("|") else 0
+                                     for m in mlb.classes_])
+            y_pred_baseline[test_mask] = np.tile(majority_row, (test_mask.sum(), 1))
+
             if n_active_classes < 2:
-                # Fallback: predict training-set majority label-set
-                majority_row = (y_train.sum(axis=0) > (y_train.shape[0] / 2)).astype(int)
-                y_pred_lodo_rf[test_mask] = np.tile(majority_row, (test_mask.sum(), 1))
+                # Fallback: use majority prediction for RF too
+                y_pred_lodo_rf[test_mask] = y_pred_baseline[test_mask]
                 logger.info(f"  LODO {held_out_ds}: only {n_active_classes} class in train, "
                             f"using majority fallback for {test_mask.sum()} test samples")
             else:
@@ -535,11 +543,13 @@ def run_classification(
         lodo_metrics = _multilabel_metrics(
             y_multi, y_pred_lodo_rf, top3_sets, clique_sets, mlb.classes_
         )
+        baseline_acc = _sample_exact_match(y_multi, y_pred_baseline)
         logger.info(
             f"\n  LODO RF overall: acc={lodo_metrics['accuracy']:.3f}, "
             f"jaccard={lodo_metrics['jaccard']:.3f}, f1={lodo_metrics['f1']:.3f}, "
             f"top3_hit={lodo_metrics['top3_hit']:.3f}, clique_hit={lodo_metrics['clique_hit']:.3f}"
         )
+        logger.info(f"  Baseline (per-fold majority): acc={baseline_acc:.3f}")
 
         results["lodo_accuracy"] = lodo_metrics["accuracy"]
         results["lodo_jaccard"] = lodo_metrics["jaccard"]
@@ -547,17 +557,10 @@ def run_classification(
         results["lodo_top3_hit"] = lodo_metrics["top3_hit"]
         results["lodo_clique_hit"] = lodo_metrics["clique_hit"]
         results["lodo_n_samples"] = len(df)
-        y_pred_lodo = y_pred_lodo_rf
-        valid_mask = valid_mask_rf
-
-        observed_sets = Counter(_method_sets_to_strings(target_sets))
-        baseline_set = observed_sets.most_common(1)[0][0]
-        baseline_acc = np.mean(
-            np.array(_method_sets_to_strings(target_sets)) == baseline_set
-        )
         results["lodo_baseline_accuracy"] = baseline_acc
         results["lodo_best_model"] = "RF"
-        logger.info(f"  Baseline (most frequent label-set): acc={baseline_acc:.3f}")
+        y_pred_lodo = y_pred_lodo_rf
+        valid_mask = valid_mask_rf
     else:
         logger.info("Only 1 dataset — skipping LODO CV")
         y_pred_lodo = None
