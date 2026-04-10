@@ -1,0 +1,88 @@
+Decision Tree Rules (group_all)
+Depth: 3, Train acc: 0.873, CV acc: 0.564, CV jaccard: 0.627
+Classes: ['CTM', 'CTMmeanOC', 'Energy', 'NNGuide', 'ViM', 'fDBD']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+=== CTM ===
+|--- self_duality <= 0.0451
+|   |--- class: CTM
+|--- self_duality >  0.0451
+|   |--- equinorm_wc <= 0.0217
+|   |   |--- equinorm_wc <= 0.0188
+|   |   |   |--- class: not_CTM
+|   |   |--- equinorm_wc >  0.0188
+|   |   |   |--- class: CTM
+|   |--- equinorm_wc >  0.0217
+|   |   |--- var_collapse <= 0.0150
+|   |   |   |--- class: not_CTM
+|   |   |--- var_collapse >  0.0150
+|   |   |   |--- class: CTM
+
+=== CTMmeanOC ===
+|--- equinorm_wc <= 0.0663
+|   |--- equiangular_uc <= 0.0843
+|   |   |--- class: not_CTMmeanOC
+|   |--- equiangular_uc >  0.0843
+|   |   |--- class: not_CTMmeanOC
+|--- equinorm_wc >  0.0663
+|   |--- equinorm_wc <= 0.0682
+|   |   |--- class: CTMmeanOC
+|   |--- equinorm_wc >  0.0682
+|   |   |--- class: not_CTMmeanOC
+
+=== Energy ===
+|--- equiangular_wc <= 0.0966
+|   |--- var_collapse <= 0.0126
+|   |   |--- class: not_Energy
+|   |--- var_collapse >  0.0126
+|   |   |--- equinorm_wc <= 0.0207
+|   |   |   |--- class: Energy
+|   |   |--- equinorm_wc >  0.0207
+|   |   |   |--- class: not_Energy
+|--- equiangular_wc >  0.0966
+|   |--- self_duality <= 0.1838
+|   |   |--- equinorm_uc <= 0.0743
+|   |   |   |--- class: Energy
+|   |   |--- equinorm_uc >  0.0743
+|   |   |   |--- class: Energy
+|   |--- self_duality >  0.1838
+|   |   |--- class: not_Energy
+
+=== NNGuide ===
+|--- equiangular_uc <= 0.1179
+|   |--- class: not_NNGuide
+|--- equiangular_uc >  0.1179
+|   |--- equinorm_uc <= 0.0834
+|   |   |--- equinorm_uc <= 0.0743
+|   |   |   |--- class: not_NNGuide
+|   |   |--- equinorm_uc >  0.0743
+|   |   |   |--- class: NNGuide
+|   |--- equinorm_uc >  0.0834
+|   |   |--- class: not_NNGuide
+
+=== ViM ===
+|--- var_collapse <= 0.0092
+|   |--- class: not_ViM
+|--- var_collapse >  0.0092
+|   |--- var_collapse <= 0.0119
+|   |   |--- equinorm_uc <= 0.0388
+|   |   |   |--- class: not_ViM
+|   |   |--- equinorm_uc >  0.0388
+|   |   |   |--- class: ViM
+|   |--- var_collapse >  0.0119
+|   |   |--- class: not_ViM
+
+=== fDBD ===
+|--- equinorm_wc <= 0.0465
+|   |--- class: not_fDBD
+|--- equinorm_wc >  0.0465
+|   |--- equinorm_wc <= 0.0663
+|   |   |--- var_collapse <= 0.0086
+|   |   |   |--- class: fDBD
+|   |   |--- var_collapse >  0.0086
+|   |   |   |--- class: not_fDBD
+|   |--- equinorm_wc >  0.0663
+|   |   |--- max_equiangular_uc <= 0.0873
+|   |   |   |--- class: not_fDBD
+|   |   |--- max_equiangular_uc >  0.0873
+|   |   |   |--- class: not_fDBD

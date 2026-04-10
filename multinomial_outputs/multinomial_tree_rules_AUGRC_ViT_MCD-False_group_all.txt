@@ -1,0 +1,43 @@
+Decision Tree Rules (group_all)
+Depth: 2, Train acc: 0.944, CV acc: 0.500, CV jaccard: 0.611
+Classes: ['CTMmeanOC', 'GE', 'KPCA RecError global', 'ViM', 'pNML']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+=== CTMmeanOC ===
+|--- equiangular_uc <= 0.2273
+|   |--- class: not_CTMmeanOC
+|--- equiangular_uc >  0.2273
+|   |--- equiangular_uc <= 0.2412
+|   |   |--- class: CTMmeanOC
+|   |--- equiangular_uc >  0.2412
+|   |   |--- class: not_CTMmeanOC
+
+=== GE ===
+|--- equinorm_wc <= 0.0196
+|   |--- class: GE
+|--- equinorm_wc >  0.0196
+|   |--- class: not_GE
+
+=== KPCA RecError global ===
+|--- equinorm_wc <= 0.0225
+|   |--- max_equiangular_wc <= 0.0311
+|   |   |--- class: not_KPCA RecError global
+|   |--- max_equiangular_wc >  0.0311
+|   |   |--- class: KPCA RecError global
+|--- equinorm_wc >  0.0225
+|   |--- class: not_KPCA RecError global
+
+=== ViM ===
+|--- var_collapse <= 0.0083
+|   |--- equinorm_wc <= 0.0206
+|   |   |--- class: not_ViM
+|   |--- equinorm_wc >  0.0206
+|   |   |--- class: ViM
+|--- var_collapse >  0.0083
+|   |--- class: not_ViM
+
+=== pNML ===
+|--- self_duality <= 0.7813
+|   |--- class: pNML
+|--- self_duality >  0.7813
+|   |--- class: not_pNML

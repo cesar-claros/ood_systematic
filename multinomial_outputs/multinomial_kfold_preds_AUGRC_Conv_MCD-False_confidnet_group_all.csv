@@ -1,0 +1,20 @@
+dataset,architecture,study,run,fold,true_methods,top3_methods,clique_methods,pred_rf,exact_match_rf,top3_hit_rf,clique_hit_rf,pred_dt,exact_match_dt,top3_hit_dt,clique_hit_dt
+cifar10,VGG13,confidnet,1,0,NNGuide,NNGuide|Energy|NeCo,,NNGuide,True,True,True,NNGuide,True,True,True
+cifar10,VGG13,confidnet,2,0,Energy,Energy|NeCo|MLS,,NNGuide,False,False,False,NNGuide,False,False,False
+cifar10,VGG13,confidnet,3,0,NNGuide,NNGuide|Energy|NeCo,,NNGuide,True,True,True,NNGuide,True,True,True
+cifar10,VGG13,confidnet,4,1,NNGuide,NNGuide|Energy|NeCo,,Energy,False,True,False,Energy|NNGuide,False,True,True
+cifar10,VGG13,confidnet,5,0,Energy,Energy|NNGuide|NeCo,,NNGuide,False,True,False,NNGuide,False,True,False
+cifar100,VGG13,confidnet,1,1,Energy,Energy|NNGuide|NeCo,,fDBD,False,False,False,fDBD,False,False,False
+cifar100,VGG13,confidnet,2,1,fDBD,fDBD|Energy|NeCo,,fDBD,True,True,True,fDBD,True,True,True
+cifar100,VGG13,confidnet,3,0,fDBD,fDBD|Energy|NeCo,,fDBD,True,True,True,fDBD,True,True,True
+cifar100,VGG13,confidnet,5,1,Energy,Energy|NeCo|MLS,,fDBD,False,False,False,fDBD,False,False,False
+supercifar100,VGG13,confidnet,1,1,Energy,Energy|GradNorm|CTM,,CTM,False,True,False,CTM,False,True,False
+supercifar100,VGG13,confidnet,2,0,CTM,CTM|KPCA RecError global|pNML,,CTM,True,True,True,CTM,True,True,True
+supercifar100,VGG13,confidnet,3,1,CTM,CTM|KPCA RecError global|fDBD,,CTM,True,True,True,CTM,True,True,True
+supercifar100,VGG13,confidnet,4,0,CTM,CTM|fDBD|NNGuide,,CTM,True,True,True,CTM,True,True,True
+supercifar100,VGG13,confidnet,5,1,CTM,CTM|Energy|REN,,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,1,1,CTM,CTM|CTMmeanOC|CTMmean,,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,2,0,CTM,CTM|CTMmeanOC|CTMmean,,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,3,0,CTM,CTM|CTMmean|CTMmeanOC,,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,4,1,CTM,CTM|CTMmeanOC|CTMmean,,CTM,True,True,True,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,5,0,CTM,CTM|CTMmean|CTMmeanOC,,CTM,True,True,True,CTM,True,True,True

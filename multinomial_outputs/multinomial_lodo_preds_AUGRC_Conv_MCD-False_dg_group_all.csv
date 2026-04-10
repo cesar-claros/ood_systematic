@@ -1,0 +1,13 @@
+dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
+cifar10,VGG13,dg,2,CTM class avg,CTM class avg,CTM class avg|PCA RecError class|PCA RecError class pred,,CTM class avg,True,True,True
+cifar10,VGG13,dg,3,CTM class avg,CTM class avg,CTM class avg|PCA RecError class|PCA RecError class pred,,CTM class avg,True,True,True
+cifar10,VGG13,dg,5,CTM class avg,CTM class avg,CTM class avg|PCA RecError class|PCA RecError class pred,,CTM class avg,True,True,True
+cifar100,VGG13,dg,1,pNML class pred,pNML class pred,pNML class pred|Maha class pred|fDBD global,,ViM,False,False,False
+supercifar100,VGG13,dg,1,pNML class pred,pNML class pred,pNML class pred|Maha class pred|PCA RecError class pred,,CTM class avg|ViM,False,False,False
+supercifar100,VGG13,dg,2,ViM,ViM,ViM|Maha|Residual,,CTM class avg|ViM,False,True,True
+supercifar100,VGG13,dg,4,ViM,ViM,ViM|Maha class pred|pNML,,CTM class avg|ViM,False,True,True
+tinyimagenet,VGG13,dg,1,CTM global,CTM global,CTM global|CTM|CTMmean global,,CTM class avg|CTM global,False,True,True
+tinyimagenet,VGG13,dg,2,CTM global,CTM global,CTM global|CTMmean class avg|CTMmean global,,CTM class avg|CTM global,False,True,True
+tinyimagenet,VGG13,dg,3,CTM global,CTM global,CTM global|CTMmean global|CTM,,CTM class avg|CTM global,False,True,True
+tinyimagenet,VGG13,dg,4,CTM global,CTM global,CTM global|CTM|CTM class,,CTM class avg|CTM global,False,True,True
+tinyimagenet,VGG13,dg,5,CTM global,CTM global,CTM global|CTM|CTMmean global,,CTM class avg|CTM global,False,True,True

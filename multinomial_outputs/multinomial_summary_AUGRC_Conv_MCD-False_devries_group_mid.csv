@@ -1,0 +1,2 @@
+lodo_accuracy,lodo_jaccard,lodo_f1,lodo_top3_hit,lodo_clique_hit,lodo_n_samples,lodo_baseline_accuracy,lodo_best_model,dt_depth,dt_cv_accuracy,dt_cv_jaccard,dt_cv_f1,dt_cv_top3_hit,dt_cv_clique_hit,label,n_samples,n_classes,n_features,classes,target_mode
+0.0,0.3000000000000001,0.4136904761904761,0.6,0.75,20,0.25,RF,2,,,,,,group_mid,20,7,8,"CTM,CTMmean,CTMmeanOC,Energy,GE,NNGuide,fDBD",clique

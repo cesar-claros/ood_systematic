@@ -1,0 +1,40 @@
+Decision Tree Rules (group_all)
+Depth: 2, Train acc: 0.842, CV acc: 0.684, CV jaccard: 0.711
+Classes: ['CTM', 'Energy', 'NNGuide', 'fDBD']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+=== CTM ===
+|--- equiangular_wc <= 0.0802
+|   |--- class: CTM
+|--- equiangular_wc >  0.0802
+|   |--- equiangular_uc <= 0.1094
+|   |   |--- class: not_CTM
+|   |--- equiangular_uc >  0.1094
+|   |   |--- class: not_CTM
+
+=== Energy ===
+|--- equiangular_wc <= 0.0802
+|   |--- class: not_Energy
+|--- equiangular_wc >  0.0802
+|   |--- equinorm_wc <= 0.0612
+|   |   |--- class: Energy
+|   |--- equinorm_wc >  0.0612
+|   |   |--- class: not_Energy
+
+=== NNGuide ===
+|--- var_collapse <= 0.0132
+|   |--- equiangular_uc <= 0.0947
+|   |   |--- class: not_NNGuide
+|   |--- equiangular_uc >  0.0947
+|   |   |--- class: not_NNGuide
+|--- var_collapse >  0.0132
+|   |--- equinorm_uc <= 0.0743
+|   |   |--- class: not_NNGuide
+|   |--- equinorm_uc >  0.0743
+|   |   |--- class: NNGuide
+
+=== fDBD ===
+|--- equinorm_wc <= 0.0612
+|   |--- class: not_fDBD
+|--- equinorm_wc >  0.0612
+|   |--- class: fDBD
