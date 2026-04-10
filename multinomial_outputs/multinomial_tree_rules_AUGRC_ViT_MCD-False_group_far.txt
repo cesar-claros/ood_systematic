@@ -37,7 +37,7 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- class: not_ViM
 
 === pNML ===
-|--- max_equiangular_wc <= 0.0416
+|--- max_equiangular_wc <= 0.0414
 |   |--- class: not_pNML
-|--- max_equiangular_wc >  0.0416
+|--- max_equiangular_wc >  0.0414
 |   |--- class: pNML

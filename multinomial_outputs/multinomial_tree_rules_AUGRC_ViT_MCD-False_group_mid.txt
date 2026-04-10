@@ -4,12 +4,12 @@ Classes: ['CTMmeanOC', 'KPCA RecError global', 'Residual', 'ViM', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTMmeanOC ===
-|--- max_equiangular_uc <= 0.1734
+|--- max_equiangular_uc <= 0.1731
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: not_CTMmeanOC
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_CTMmeanOC
-|--- max_equiangular_uc >  0.1734
+|--- max_equiangular_uc >  0.1731
 |   |--- class: CTMmeanOC
 
 === KPCA RecError global ===

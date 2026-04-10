@@ -1,78 +1,78 @@
 Decision Tree Rules (group_near)
-Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Depth: 2, Train acc: 1.000, CV acc: 0.850, CV jaccard: 0.883
 Classes: ['CTMmean', 'CTMmeanOC', 'GE', 'MLS', 'Maha', 'NNGuide', 'NeCo', 'PCA RecError global', 'PE', 'ViM', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTMmean ===
-|--- max_equiangular_uc <= 0.1734
+|--- max_equiangular_uc <= 0.1731
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: not_CTMmean
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_CTMmean
-|--- max_equiangular_uc >  0.1734
+|--- max_equiangular_uc >  0.1731
 |   |--- class: CTMmean
 
 === CTMmeanOC ===
-|--- max_equiangular_uc <= 0.1734
+|--- max_equiangular_uc <= 0.1731
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: not_CTMmeanOC
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_CTMmeanOC
-|--- max_equiangular_uc >  0.1734
+|--- max_equiangular_uc >  0.1731
 |   |--- class: CTMmeanOC
 
 === GE ===
-|--- max_equiangular_uc <= 0.1734
+|--- max_equiangular_uc <= 0.1731
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: not_GE
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_GE
-|--- max_equiangular_uc >  0.1734
+|--- max_equiangular_uc >  0.1731
 |   |--- class: GE
 
 === MLS ===
-|--- max_equiangular_uc <= 0.1734
+|--- max_equiangular_uc <= 0.1731
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: not_MLS
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_MLS
-|--- max_equiangular_uc >  0.1734
+|--- max_equiangular_uc >  0.1731
 |   |--- class: MLS
 
 === Maha ===
-|--- var_collapse <= 0.0084
+|--- var_collapse <= 0.0083
 |   |--- class: Maha
-|--- var_collapse >  0.0084
+|--- var_collapse >  0.0083
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: not_Maha
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_Maha
 
 === NNGuide ===
-|--- max_equiangular_uc <= 0.1734
+|--- max_equiangular_uc <= 0.1731
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: not_NNGuide
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_NNGuide
-|--- max_equiangular_uc >  0.1734
+|--- max_equiangular_uc >  0.1731
 |   |--- class: NNGuide
 
 === NeCo ===
-|--- var_collapse <= 0.0084
+|--- var_collapse <= 0.0083
 |   |--- class: NeCo
-|--- var_collapse >  0.0084
+|--- var_collapse >  0.0083
 |   |--- equiangular_uc <= 0.1246
 |   |   |--- class: not_NeCo
 |   |--- equiangular_uc >  0.1246
 |   |   |--- class: not_NeCo
 
 === PCA RecError global ===
-|--- self_duality <= 0.7782
+|--- self_duality <= 0.7813
 |   |--- class: PCA RecError global
-|--- self_duality >  0.7782
-|   |--- equiangular_uc <= 0.1518
+|--- self_duality >  0.7813
+|   |--- equiangular_uc <= 0.1521
 |   |   |--- class: not_PCA RecError global
-|   |--- equiangular_uc >  0.1518
+|   |--- equiangular_uc >  0.1521
 |   |   |--- class: not_PCA RecError global
 
 === PE ===
@@ -85,16 +85,16 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_PE
 
 === ViM ===
-|--- var_collapse <= 0.0084
+|--- var_collapse <= 0.0083
 |   |--- class: ViM
-|--- var_collapse >  0.0084
-|   |--- equiangular_uc <= 0.2165
+|--- var_collapse >  0.0083
+|   |--- equiangular_uc <= 0.2162
 |   |   |--- class: not_ViM
-|   |--- equiangular_uc >  0.2165
+|   |--- equiangular_uc >  0.2162
 |   |   |--- class: ViM
 
 === pNML ===
-|--- max_equiangular_wc <= 0.0416
+|--- max_equiangular_wc <= 0.0414
 |   |--- class: not_pNML
-|--- max_equiangular_wc >  0.0416
+|--- max_equiangular_wc >  0.0414
 |   |--- class: pNML

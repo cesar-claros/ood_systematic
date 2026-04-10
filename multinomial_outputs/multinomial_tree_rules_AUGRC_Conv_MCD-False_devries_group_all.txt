@@ -4,34 +4,34 @@ Classes: ['CTM', 'Energy', 'GE', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
-|--- var_collapse <= 0.0049
+|--- var_collapse <= 0.0051
 |   |--- class: CTM
-|--- var_collapse >  0.0049
-|   |--- var_collapse <= 0.0119
+|--- var_collapse >  0.0051
+|   |--- max_equiangular_uc <= 0.0862
 |   |   |--- class: not_CTM
-|   |--- var_collapse >  0.0119
+|   |--- max_equiangular_uc >  0.0862
 |   |   |--- class: CTM
 
 === Energy ===
-|--- var_collapse <= 0.0090
+|--- var_collapse <= 0.0094
 |   |--- class: not_Energy
-|--- var_collapse >  0.0090
+|--- var_collapse >  0.0094
 |   |--- class: Energy
 
 === GE ===
-|--- var_collapse <= 0.0119
-|   |--- equiangular_uc <= 0.0802
+|--- var_collapse <= 0.0130
+|   |--- equiangular_uc <= 0.0847
 |   |   |--- class: not_GE
-|   |--- equiangular_uc >  0.0802
+|   |--- equiangular_uc >  0.0847
 |   |   |--- class: not_GE
-|--- var_collapse >  0.0119
+|--- var_collapse >  0.0130
 |   |--- class: GE
 
 === fDBD ===
-|--- equinorm_wc <= 0.0442
-|   |--- equiangular_uc <= 0.0802
+|--- equinorm_wc <= 0.0452
+|   |--- equiangular_uc <= 0.0847
 |   |   |--- class: not_fDBD
-|   |--- equiangular_uc >  0.0802
+|   |--- equiangular_uc >  0.0847
 |   |   |--- class: not_fDBD
-|--- equinorm_wc >  0.0442
+|--- equinorm_wc >  0.0452
 |   |--- class: fDBD

@@ -4,46 +4,46 @@ Classes: ['CTM', 'Energy', 'MLS', 'NNGuide', 'NeCo', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
-|--- equiangular_wc <= 0.0944
+|--- equiangular_wc <= 0.1009
 |   |--- class: CTM
-|--- equiangular_wc >  0.0944
+|--- equiangular_wc >  0.1009
 |   |--- class: not_CTM
 
 === Energy ===
-|--- equiangular_wc <= 0.0944
+|--- equiangular_wc <= 0.1009
 |   |--- class: not_Energy
-|--- equiangular_wc >  0.0944
+|--- equiangular_wc >  0.1009
 |   |--- class: Energy
 
 === MLS ===
-|--- equinorm_wc <= 0.0486
-|   |--- equiangular_uc <= 0.0882
+|--- equinorm_wc <= 0.0466
+|   |--- equiangular_uc <= 0.0947
 |   |   |--- class: not_MLS
-|   |--- equiangular_uc >  0.0882
+|   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_MLS
-|--- equinorm_wc >  0.0486
+|--- equinorm_wc >  0.0466
 |   |--- class: MLS
 
 === NNGuide ===
-|--- var_collapse <= 0.0125
-|   |--- equiangular_uc <= 0.0882
+|--- var_collapse <= 0.0132
+|   |--- equiangular_uc <= 0.0947
 |   |   |--- class: not_NNGuide
-|   |--- equiangular_uc >  0.0882
+|   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_NNGuide
-|--- var_collapse >  0.0125
+|--- var_collapse >  0.0132
 |   |--- class: NNGuide
 
 === NeCo ===
-|--- equiangular_wc <= 0.0944
+|--- equiangular_wc <= 0.1009
 |   |--- class: not_NeCo
-|--- equiangular_wc >  0.0944
+|--- equiangular_wc >  0.1009
 |   |--- class: NeCo
 
 === fDBD ===
-|--- equinorm_wc <= 0.0486
-|   |--- equiangular_uc <= 0.0882
+|--- equinorm_wc <= 0.0466
+|   |--- equiangular_uc <= 0.0947
 |   |   |--- class: not_fDBD
-|   |--- equiangular_uc >  0.0882
+|   |--- equiangular_uc >  0.0947
 |   |   |--- class: not_fDBD
-|--- equinorm_wc >  0.0486
+|--- equinorm_wc >  0.0466
 |   |--- class: fDBD

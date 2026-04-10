@@ -1,21 +1,21 @@
 dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
-cifar10,VGG13,devries,1,Energy global,Energy,Energy global|Energy|NNGuide global,Energy,CTM|Energy|GE,False,True,True
-cifar10,VGG13,devries,2,Energy global,Energy,Energy global|Energy|MLS class,Energy,CTM|Energy|GE,False,True,True
-cifar10,VGG13,devries,3,Energy global,Energy,Energy global|Energy|NNGuide,Energy,CTM|Energy|GE,False,True,True
-cifar10,VGG13,devries,4,Energy global,Energy,Energy global|Energy|MLS class,Energy,CTM|Energy|GE,False,True,True
-cifar10,VGG13,devries,5,Confidence,Energy,Confidence|Energy global|Energy,Energy,CTM|Energy|GE,False,True,True
-cifar100,VGG13,devries,1,CTM class avg,fDBD,CTM class avg|CTMmean class avg|fDBD class pred,fDBD,CTM|Energy|GE|fDBD,False,False,True
-cifar100,VGG13,devries,2,CTM class avg,fDBD,CTM class avg|CTMmean class avg|CTMmean global,fDBD,CTM|Energy|GE|fDBD,False,False,True
-cifar100,VGG13,devries,3,CTM class avg,fDBD,CTM class avg|CTMmean global|CTMmean class avg,fDBD,CTM|Energy|GE|fDBD,False,False,True
-cifar100,VGG13,devries,4,CTM class avg,fDBD,CTM class avg|CTMmean class avg|CTMmean global,fDBD,CTM|Energy|GE|fDBD,False,False,True
-cifar100,VGG13,devries,5,CTM class avg,fDBD,CTM class avg|fDBD class pred|fDBD global,fDBD,CTM|Energy|GE|fDBD,False,False,True
-supercifar100,VGG13,devries,1,Energy,CTM|Energy|GE,Energy|Energy global|GE,CTM|Energy|GE,GE,False,True,True
-supercifar100,VGG13,devries,2,pNML,CTM|Energy|GE,pNML|pNML class pred|CTM class,CTM|Energy|GE,GE|fDBD,False,False,True
-supercifar100,VGG13,devries,3,CTM class avg,CTM|Energy|GE,CTM class avg|CTM|CTM class pred,CTM|Energy|GE,GE,False,False,True
-supercifar100,VGG13,devries,4,pNML class pred,CTM|Energy|GE,pNML class pred|KPCA RecError class|KPCA RecError class pred,CTM|Energy|GE,GE|fDBD,False,False,True
-supercifar100,VGG13,devries,5,pNML class pred,CTM|Energy|GE,pNML class pred|Maha class pred|Energy global,CTM|Energy|GE,GE,False,False,True
-tinyimagenet,VGG13,devries,1,CTM global,CTM,CTM global|CTM|CTM class,CTM,Energy,False,False,False
-tinyimagenet,VGG13,devries,2,CTM global,CTM,CTM global|CTM|CTM class,CTM,Energy,False,False,False
-tinyimagenet,VGG13,devries,3,CTM global,CTM,CTM global|CTM|CTMmean global,CTM,Energy,False,False,False
-tinyimagenet,VGG13,devries,4,CTM global,CTM,CTM global|CTM|CTM class,CTM,Energy,False,False,False
-tinyimagenet,VGG13,devries,5,CTM global,CTM,CTM global|CTM|CTMmean global,CTM,Energy,False,False,False
+cifar10,VGG13,devries,1,Energy,Energy,Energy|NNGuide|NeCo,Energy,CTM|Energy|GE,False,True,True
+cifar10,VGG13,devries,2,Energy,Energy,Energy|NeCo|MLS,Energy,CTM|Energy|GE,False,True,True
+cifar10,VGG13,devries,3,Energy,Energy,Energy|NNGuide|NeCo,Energy,CTM|Energy|GE,False,True,True
+cifar10,VGG13,devries,4,Energy,Energy,Energy|NeCo|MLS,Energy,CTM|Energy|GE,False,True,True
+cifar10,VGG13,devries,5,Confidence,Energy,Confidence|Energy|NeCo,Energy,CTM|Energy|GE,False,True,True
+cifar100,VGG13,devries,1,fDBD,fDBD,fDBD|CTMmean|CTMmeanOC,fDBD,CTM|Energy|GE|fDBD,False,True,True
+cifar100,VGG13,devries,2,fDBD,fDBD,fDBD|CTMmean|CTMmeanOC,fDBD,CTM|Energy|GE|fDBD,False,True,True
+cifar100,VGG13,devries,3,CTMmean,fDBD,CTMmean|CTMmeanOC|fDBD,fDBD,CTM|Energy|GE|fDBD,False,True,True
+cifar100,VGG13,devries,4,fDBD,fDBD,fDBD|CTMmean|CTMmeanOC,fDBD,CTM|Energy|GE|fDBD,False,True,True
+cifar100,VGG13,devries,5,fDBD,fDBD,fDBD|NNGuide|CTMmean,fDBD,CTM|Energy|GE|fDBD,False,True,True
+supercifar100,VGG13,devries,1,Energy,CTM|Energy|GE,Energy|GE|NeCo,CTM|Energy|GE,GE|fDBD,False,True,True
+supercifar100,VGG13,devries,2,pNML,CTM|Energy|GE,pNML|CTM|KPCA RecError global,CTM|Energy|GE,GE,False,False,True
+supercifar100,VGG13,devries,3,CTM,CTM|Energy|GE,CTM|KPCA RecError global|ViM,CTM|Energy|GE,GE|fDBD,False,False,True
+supercifar100,VGG13,devries,4,CTM,CTM|Energy|GE,CTM|ViM|CTMmean,CTM|Energy|GE,GE|fDBD,False,False,True
+supercifar100,VGG13,devries,5,Energy,CTM|Energy|GE,Energy|GE|KPCA RecError global,CTM|Energy|GE,GE,False,True,True
+tinyimagenet,VGG13,devries,1,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,Energy,False,False,False
+tinyimagenet,VGG13,devries,2,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,Energy,False,False,False
+tinyimagenet,VGG13,devries,3,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,Energy,False,False,False
+tinyimagenet,VGG13,devries,4,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,Energy,False,False,False
+tinyimagenet,VGG13,devries,5,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,Energy,False,False,False
