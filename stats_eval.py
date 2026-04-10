@@ -229,8 +229,6 @@ def main():
                     layered_ranks.append(avg_ranks_)
             except Exception as e:
                 logger.error(f"Error in Friedman/Posthoc for {source_} group {dataset_group}: {e}")
-        # logger.info(f"Layered cliques for {source_}: {layered_cliques}")
-        # logger.info(f"Layered ranks for {source_}: {layered_ranks}")
         clique_members = []
         clique_avg = []
 
@@ -344,6 +342,32 @@ def main():
         source, group_name = idx.split('->')
         methods = [col for col in members_all.columns if members_all.loc[idx, col]]
         cliques_export.setdefault(source, {})[group_name] = methods
+
+    # Add "all" cliques (pooled OOD groups) — not shown in plot but needed by multinomial_analysis.py
+    for source_ in sources:
+        df_src = df_combined[df_combined['source'] == source_].copy()
+        if BACKBONE == 'ViT':
+            df_src = df_src[df_src['methods'] != 'Confidence']
+        df_src_met = df_src[(df_src['metric'] == metric[0]) | (df_src['metric'] == metric[1])].copy()
+        ood_groups = [g for g in df_src_met['group'].unique() if g != '0']
+        if not ood_groups:
+            continue
+        sub_all = df_src_met[df_src_met['group'].isin(ood_groups)].copy()
+        sub_all["block"] = sub_all[blocks].astype(str).agg("|".join, axis=1)
+        try:
+            stat, p, pivot = friedman_blocked(sub_all, entity_col="methods", block_col="block", value_col="score_std")
+            if isinstance(stat, float) and not math.isnan(stat):
+                ph = conover_posthoc_from_pivot(pivot)
+                ranks_ = pivot.rank(axis=1, ascending=False)
+                avg_ranks_ = ranks_.mean(axis=0).sort_values()
+                all_cliques = maximal_cliques_from_pmatrix(ph, alpha)
+                scored = rank_cliques(all_cliques, list(avg_ranks_.index), avg_ranks_)
+                layers = greedy_exclusive_layers(scored)
+                if layers:
+                    cliques_export.setdefault(source_, {})["all"] = layers[0]["members"]
+        except Exception:
+            pass
+
     cliques_path = out_path + '_cliques.json'
     with open(cliques_path, 'w') as f:
         json.dump(cliques_export, f, indent=2)
