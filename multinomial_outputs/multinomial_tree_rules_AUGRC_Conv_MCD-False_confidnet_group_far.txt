@@ -1,0 +1,76 @@
+Decision Tree Rules (group_far)
+Depth: 2, Train acc: 1.000, CV acc: nan, CV jaccard: nan
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'KPCA RecError global', 'MLS', 'NNGuide', 'NeCo', 'fDBD']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+=== CTM ===
+|--- equiangular_wc <= 0.0944
+|   |--- class: CTM
+|--- equiangular_wc >  0.0944
+|   |--- class: not_CTM
+
+=== CTMmean ===
+|--- equiangular_wc <= 0.0944
+|   |--- class: CTMmean
+|--- equiangular_wc >  0.0944
+|   |--- class: not_CTMmean
+
+=== CTMmeanOC ===
+|--- equinorm_wc <= 0.0229
+|   |--- class: CTMmeanOC
+|--- equinorm_wc >  0.0229
+|   |--- equiangular_uc <= 0.0936
+|   |   |--- class: not_CTMmeanOC
+|   |--- equiangular_uc >  0.0936
+|   |   |--- class: not_CTMmeanOC
+
+=== Energy ===
+|--- var_collapse <= 0.0125
+|   |--- equiangular_uc <= 0.0882
+|   |   |--- class: not_Energy
+|   |--- equiangular_uc >  0.0882
+|   |   |--- class: not_Energy
+|--- var_collapse >  0.0125
+|   |--- class: Energy
+
+=== KPCA RecError global ===
+|--- equinorm_wc <= 0.0229
+|   |--- class: KPCA RecError global
+|--- equinorm_wc >  0.0229
+|   |--- equiangular_uc <= 0.0936
+|   |   |--- class: not_KPCA RecError global
+|   |--- equiangular_uc >  0.0936
+|   |   |--- class: not_KPCA RecError global
+
+=== MLS ===
+|--- var_collapse <= 0.0125
+|   |--- equiangular_uc <= 0.0882
+|   |   |--- class: not_MLS
+|   |--- equiangular_uc >  0.0882
+|   |   |--- class: not_MLS
+|--- var_collapse >  0.0125
+|   |--- class: MLS
+
+=== NNGuide ===
+|--- var_collapse <= 0.0125
+|   |--- equiangular_uc <= 0.0882
+|   |   |--- class: not_NNGuide
+|   |--- equiangular_uc >  0.0882
+|   |   |--- class: not_NNGuide
+|--- var_collapse >  0.0125
+|   |--- class: NNGuide
+
+=== NeCo ===
+|--- var_collapse <= 0.0125
+|   |--- equiangular_uc <= 0.0882
+|   |   |--- class: not_NeCo
+|   |--- equiangular_uc >  0.0882
+|   |   |--- class: not_NeCo
+|--- var_collapse >  0.0125
+|   |--- class: NeCo
+
+=== fDBD ===
+|--- self_duality <= 0.0759
+|   |--- class: not_fDBD
+|--- self_duality >  0.0759
+|   |--- class: fDBD

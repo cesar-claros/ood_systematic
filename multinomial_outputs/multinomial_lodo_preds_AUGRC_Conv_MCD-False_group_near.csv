@@ -1,0 +1,61 @@
+dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
+cifar10,VGG13,confidnet,1,NNGuide global,Energy|MLS|NNGuide,NNGuide global|NNGuide|NNGuide class pred,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,False,True
+cifar10,VGG13,confidnet,2,Energy,Energy|MLS|NNGuide,Energy|Energy global|NeCo,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,True,True
+cifar10,VGG13,confidnet,3,NNGuide global,Energy|MLS|NNGuide,NNGuide global|NNGuide|Energy,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,True,True
+cifar10,VGG13,confidnet,4,NNGuide global,Energy|MLS|NNGuide,NNGuide global|Energy global|Energy,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,True,True
+cifar10,VGG13,confidnet,5,Energy global,Energy|MLS|NNGuide,Energy global|NeCo|Energy,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,True,True
+cifar10,VGG13,devries,1,Energy class,Energy|MLS|NNGuide,Energy class|MLS class|MLS class pred,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,False,True
+cifar10,VGG13,devries,2,Energy,Energy|MLS|NNGuide,Energy|Energy global|MLS class,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,True,True
+cifar10,VGG13,devries,3,Energy global,Energy|MLS|NNGuide,Energy global|Energy|MLS global,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,True,True
+cifar10,VGG13,devries,4,Energy global,Energy|MLS|NNGuide,Energy global|Energy|Energy class,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,True,True
+cifar10,VGG13,devries,5,Confidence,Energy|MLS|NNGuide,Confidence|Energy global|Energy,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,True,True
+cifar10,VGG13,dg,1,GradNorm class avg,Energy|MLS|NNGuide,GradNorm class avg|PCA RecError class|PCA RecError class pred,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,False,True
+cifar10,VGG13,dg,2,CTM,Energy|MLS|NNGuide,CTM|CTM class|CTM class pred,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,False,True
+cifar10,VGG13,dg,3,NNGuide,Energy|MLS|NNGuide,NNGuide|NNGuide class pred|Energy class pred,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,False,True
+cifar10,VGG13,dg,4,CTM,Energy|MLS|NNGuide,CTM|GradNorm class avg|CTM class,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,False,True
+cifar10,VGG13,dg,5,NNGuide class pred,Energy|MLS|NNGuide,NNGuide class pred|NNGuide|CTM,Energy|MLS|NNGuide,Energy|MLS|NeCo,False,False,True
+cifar100,VGG13,confidnet,1,NNGuide class avg,MLS|NNGuide|NeCo|PCE|PE|fDBD,NNGuide class avg|NeCo|Energy,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NNGuide|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,confidnet,2,fDBD class pred,MLS|NNGuide|NeCo|PCE|PE|fDBD,fDBD class pred|fDBD|fDBD global,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NNGuide|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,confidnet,3,fDBD class pred,MLS|NNGuide|NeCo|PCE|PE|fDBD,fDBD class pred|CTM class avg|fDBD,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NNGuide|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,confidnet,4,PCA RecError class pred,MLS|NNGuide|NeCo|PCE|PE|fDBD,PCA RecError class pred|NeCo|PCA RecError class,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NNGuide|PCE|PE|fDBD,False,False,True
+cifar100,VGG13,confidnet,5,Energy class avg,MLS|NNGuide|NeCo|PCE|PE|fDBD,Energy class avg|Energy|Energy global,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NNGuide|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,devries,1,fDBD global,MLS|NNGuide|NeCo|PCE|PE|fDBD,fDBD global|fDBD|CTM class avg,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,devries,2,fDBD global,MLS|NNGuide|NeCo|PCE|PE|fDBD,fDBD global|fDBD|fDBD class pred,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,devries,3,fDBD,MLS|NNGuide|NeCo|PCE|PE|fDBD,fDBD|CTM class avg|fDBD global,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,devries,4,CTM class avg,MLS|NNGuide|NeCo|PCE|PE|fDBD,CTM class avg|fDBD|fDBD global,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,devries,5,NNGuide class pred,MLS|NNGuide|NeCo|PCE|PE|fDBD,NNGuide class pred|NNGuide global|NNGuide,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,False,True
+cifar100,VGG13,dg,1,fDBD,MLS|NNGuide|NeCo|PCE|PE|fDBD,fDBD|fDBD global|fDBD class pred,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,dg,2,NNGuide,MLS|NNGuide|NeCo|PCE|PE|fDBD,NNGuide|NNGuide global|NNGuide class pred,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,False,True
+cifar100,VGG13,dg,3,PE class pred,MLS|NNGuide|NeCo|PCE|PE|fDBD,PE class pred|PE class avg|GradNorm class pred,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,False,True
+cifar100,VGG13,dg,4,fDBD class pred,MLS|NNGuide|NeCo|PCE|PE|fDBD,fDBD class pred|fDBD|fDBD global,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,True,True
+cifar100,VGG13,dg,5,fDBD global,MLS|NNGuide|NeCo|PCE|PE|fDBD,fDBD global|fDBD|fDBD class pred,fDBD|MLS|NeCo|NNGuide|PCE|PE,Energy|MLS|NeCo|PCE|PE|fDBD,False,True,True
+supercifar100,VGG13,confidnet,1,Energy,Energy|MLS|NeCo,Energy|Energy class pred|GE class pred,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,True,True
+supercifar100,VGG13,confidnet,2,PCA RecError class,Energy|MLS|NeCo,PCA RecError class|PCA RecError class pred|Energy,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,True,True
+supercifar100,VGG13,confidnet,3,REN class,Energy|MLS|NeCo,REN class|PCA RecError class|PCA RecError class pred,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,False,True
+supercifar100,VGG13,confidnet,4,CTM class avg,Energy|MLS|NeCo,CTM class avg|CTM global|CTM,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,False,True
+supercifar100,VGG13,confidnet,5,Energy global,Energy|MLS|NeCo,Energy global|Energy|Energy class pred,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,True,True
+supercifar100,VGG13,devries,1,GE class,Energy|MLS|NeCo,GE class|Energy class pred|Energy,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,True,True
+supercifar100,VGG13,devries,2,Energy global,Energy|MLS|NeCo,Energy global|Energy|GE class,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,True,True
+supercifar100,VGG13,devries,3,REN class,Energy|MLS|NeCo,REN class|GEN class|fDBD class avg,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,False,True
+supercifar100,VGG13,devries,4,GE class,Energy|MLS|NeCo,GE class|GE|GE class pred,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,False,True
+supercifar100,VGG13,devries,5,GE class,Energy|MLS|NeCo,GE class|Energy global|Energy,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,True,True
+supercifar100,VGG13,dg,1,NNGuide global,Energy|MLS|NeCo,NNGuide global|GE class avg|NNGuide,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,True,True
+supercifar100,VGG13,dg,2,GE class,Energy|MLS|NeCo,GE class|PE class|GE global,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,False,True
+supercifar100,VGG13,dg,3,REN class,Energy|MLS|NeCo,REN class|REN|REN global,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,False,True
+supercifar100,VGG13,dg,4,GE class,Energy|MLS|NeCo,GE class|NNGuide global|Energy class avg,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,False,True
+supercifar100,VGG13,dg,5,NNGuide,Energy|MLS|NeCo,NNGuide|NNGuide global|CTM global,Energy|MLS|NeCo,Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,confidnet,1,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,confidnet,2,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,confidnet,3,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,confidnet,4,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,confidnet,5,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,devries,1,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,devries,2,CTM class,CTM,CTM class|CTM global|CTM class pred,CTM,CTM|Energy|MLS|NNGuide,False,False,True
+tinyimagenet,VGG13,devries,3,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,devries,4,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,devries,5,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,dg,1,CTM global,CTM,CTM global|CTM|CTMmean global,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,dg,2,CTM global,CTM,CTM global|CTM|CTMmean global,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,dg,3,CTM global,CTM,CTM global|CTM|CTMmean global,CTM,CTM|Energy|MLS|NNGuide,False,True,True
+tinyimagenet,VGG13,dg,4,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide|NeCo,False,True,True
+tinyimagenet,VGG13,dg,5,CTM global,CTM,CTM global|CTM|CTM class,CTM,CTM|Energy|MLS|NNGuide|NeCo,False,True,True

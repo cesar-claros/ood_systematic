@@ -1,0 +1,21 @@
+dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
+cifar10,VGG13,confidnet,1,NNGuide global,Energy|NNGuide|NeCo,NNGuide global|NNGuide|Energy,Energy|NNGuide|NeCo,CTM|NNGuide,False,True,True
+cifar10,VGG13,confidnet,2,Energy global,Energy|NNGuide|NeCo,Energy global|Energy|NeCo,Energy|NNGuide|NeCo,CTM|NNGuide,False,False,True
+cifar10,VGG13,confidnet,3,NNGuide global,Energy|NNGuide|NeCo,NNGuide global|NNGuide|Energy,Energy|NNGuide|NeCo,CTM|NNGuide,False,True,True
+cifar10,VGG13,confidnet,4,NNGuide global,Energy|NNGuide|NeCo,NNGuide global|NNGuide|NNGuide class pred,Energy|NNGuide|NeCo,CTM|NNGuide,False,True,True
+cifar10,VGG13,confidnet,5,NNGuide global,Energy|NNGuide|NeCo,NNGuide global|Energy global|Energy,Energy|NNGuide|NeCo,CTM|NNGuide,False,False,True
+cifar100,VGG13,confidnet,1,NNGuide global,Energy|MLS|NeCo|fDBD,NNGuide global|Energy|Energy global,Energy|MLS|NeCo|fDBD,Energy|MLS|NNGuide|NeCo|fDBD,False,True,True
+cifar100,VGG13,confidnet,2,fDBD class pred,Energy|MLS|NeCo|fDBD,fDBD class pred|fDBD global|fDBD,Energy|MLS|NeCo|fDBD,Energy|MLS|NNGuide|NeCo|fDBD,False,True,True
+cifar100,VGG13,confidnet,3,PCA RecError class pred,Energy|MLS|NeCo|fDBD,PCA RecError class pred|CTM class avg|PCA RecError class,Energy|MLS|NeCo|fDBD,Energy|MLS|NNGuide|NeCo|fDBD,False,False,True
+cifar100,VGG13,confidnet,4,PCA RecError class pred,Energy|MLS|NeCo|fDBD,PCA RecError class pred|PCA RecError class|pNML class pred,Energy|MLS|NeCo|fDBD,Energy|MLS|NNGuide|NeCo|fDBD,False,False,True
+cifar100,VGG13,confidnet,5,PCA RecError class pred,Energy|MLS|NeCo|fDBD,PCA RecError class pred|PCA RecError class|Energy,Energy|MLS|NeCo|fDBD,Energy|MLS|NNGuide|NeCo|fDBD,False,True,True
+supercifar100,VGG13,confidnet,1,Energy,CTM,Energy|Maha class pred|Energy global,CTM,CTM,True,False,True
+supercifar100,VGG13,confidnet,2,PCA RecError class,CTM,PCA RecError class|PCA RecError class pred|CTM global,CTM,CTM,True,False,True
+supercifar100,VGG13,confidnet,3,pNML class pred,CTM,pNML class pred|KPCA RecError class|KPCA RecError class pred,CTM,CTM,True,False,True
+supercifar100,VGG13,confidnet,4,CTM class avg,CTM,CTM class avg|CTM global|CTM,CTM,CTM,True,True,True
+supercifar100,VGG13,confidnet,5,CTM global,CTM,CTM global|CTM class avg|CTM,CTM,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,1,CTM global,CTM,CTM global|CTM|CTMmean class avg,CTM,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,2,CTM global,CTM,CTM global|CTM|CTMmean class avg,CTM,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,3,CTM global,CTM,CTM global|CTM|CTMmean global,CTM,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,4,CTM global,CTM,CTM global|CTM|CTMmean global,CTM,CTM,True,True,True
+tinyimagenet,VGG13,confidnet,5,CTM global,CTM,CTM global|CTM|CTMmean class avg,CTM,CTM,True,True,True
