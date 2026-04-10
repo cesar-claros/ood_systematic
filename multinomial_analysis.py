@@ -543,13 +543,19 @@ def run_classification(
         lodo_metrics = _multilabel_metrics(
             y_multi, y_pred_lodo_rf, top3_sets, clique_sets, mlb.classes_
         )
-        baseline_acc = _sample_exact_match(y_multi, y_pred_baseline)
+        baseline_metrics = _multilabel_metrics(
+            y_multi, y_pred_baseline, top3_sets, clique_sets, mlb.classes_
+        )
         logger.info(
             f"\n  LODO RF overall: acc={lodo_metrics['accuracy']:.3f}, "
             f"jaccard={lodo_metrics['jaccard']:.3f}, f1={lodo_metrics['f1']:.3f}, "
             f"top3_hit={lodo_metrics['top3_hit']:.3f}, clique_hit={lodo_metrics['clique_hit']:.3f}"
         )
-        logger.info(f"  Baseline (per-fold majority): acc={baseline_acc:.3f}")
+        logger.info(
+            f"  Baseline (per-fold majority): acc={baseline_metrics['accuracy']:.3f}, "
+            f"jaccard={baseline_metrics['jaccard']:.3f}, f1={baseline_metrics['f1']:.3f}, "
+            f"top3_hit={baseline_metrics['top3_hit']:.3f}, clique_hit={baseline_metrics['clique_hit']:.3f}"
+        )
 
         results["lodo_accuracy"] = lodo_metrics["accuracy"]
         results["lodo_jaccard"] = lodo_metrics["jaccard"]
@@ -557,7 +563,11 @@ def run_classification(
         results["lodo_top3_hit"] = lodo_metrics["top3_hit"]
         results["lodo_clique_hit"] = lodo_metrics["clique_hit"]
         results["lodo_n_samples"] = len(df)
-        results["lodo_baseline_accuracy"] = baseline_acc
+        results["lodo_baseline_accuracy"] = baseline_metrics["accuracy"]
+        results["lodo_baseline_jaccard"] = baseline_metrics["jaccard"]
+        results["lodo_baseline_f1"] = baseline_metrics["f1"]
+        results["lodo_baseline_top3_hit"] = baseline_metrics["top3_hit"]
+        results["lodo_baseline_clique_hit"] = baseline_metrics["clique_hit"]
         results["lodo_best_model"] = "RF"
         y_pred_lodo = y_pred_lodo_rf
         valid_mask = valid_mask_rf
