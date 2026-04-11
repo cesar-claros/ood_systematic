@@ -518,13 +518,9 @@ def run_classification(
                 logger.info(f"  LODO {held_out_ds}: only {n_active_classes} class in train, "
                             f"using majority fallback for {test_mask.sum()} test samples")
             else:
-                scaler_lodo = StandardScaler()
-                X_train = scaler_lodo.fit_transform(X[train_mask])
-                X_test = scaler_lodo.transform(X[test_mask])
-
                 rf = _make_rf()
-                rf.fit(X_train, y_train)
-                y_pred_lodo_rf[test_mask] = _predict_indicator_matrix(rf, X_test)
+                rf.fit(X[train_mask], y_train)
+                y_pred_lodo_rf[test_mask] = _predict_indicator_matrix(rf, X[test_mask])
 
             test_indices = np.where(test_mask)[0]
             test_top3 = [top3_sets[i] for i in test_indices]
@@ -589,14 +585,11 @@ def run_classification(
 
         for fold_i, (train_idx, test_idx) in enumerate(skf.split(X, primary_labels)):
             fold_ids[test_idx] = fold_i
-            scaler_fold = StandardScaler()
-            X_train = scaler_fold.fit_transform(X[train_idx])
-            X_test = scaler_fold.transform(X[test_idx])
             y_train = y_multi[train_idx]
 
             rf_cv = _make_rf()
-            rf_cv.fit(X_train, y_train)
-            y_pred_rf[test_idx] = _predict_indicator_matrix(rf_cv, X_test)
+            rf_cv.fit(X[train_idx], y_train)
+            y_pred_rf[test_idx] = _predict_indicator_matrix(rf_cv, X[test_idx])
 
             fold_top3 = [top3_sets[i] for i in test_idx]
             fold_cliques = [clique_sets[i] for i in test_idx]
@@ -649,7 +642,7 @@ def run_classification(
     lr_full = _make_lr()
     lr_full.fit(X_scaled, y_multi)
     rf_full = _make_rf()
-    rf_full.fit(X_scaled, y_multi)
+    rf_full.fit(X, y_multi)
 
     lr_coefs = np.vstack([est.coef_.ravel() for est in lr_full.estimators_])
     lr_importance = np.abs(lr_coefs).mean(axis=0)
@@ -682,31 +675,35 @@ def run_classification(
     # interpretable if/then rules with thresholds in original NC units.
     logger.info("\n--- Decision Tree Rules ---")
 
+    # Select DT depth via LODO (same fold structure as RF)
     best_dt_acc = -1
     best_dt_depth = 2
-    for depth in [2, 3, 4, 5]:
-        if n_folds >= 2:
+    if len(unique_datasets) >= 2:
+        for depth in [2, 3, 4, 5]:
             y_pred_dt = np.zeros_like(y_multi)
-            for tr_idx, te_idx in skf.split(X, primary_labels):
+            for held_out_ds in unique_datasets:
+                test_mask = datasets == held_out_ds
+                train_mask = ~test_mask
                 dt = _make_dt(depth)
-                dt.fit(X[tr_idx], y_multi[tr_idx])
-                y_pred_dt[te_idx] = _predict_indicator_matrix(dt, X[te_idx])
+                dt.fit(X[train_mask], y_multi[train_mask])
+                y_pred_dt[test_mask] = _predict_indicator_matrix(dt, X[test_mask])
             dt_acc = _sample_exact_match(y_multi, y_pred_dt)
-        else:
-            dt_acc = 0.0
-        if dt_acc > best_dt_acc:
-            best_dt_acc = dt_acc
-            best_dt_depth = depth
+            if dt_acc > best_dt_acc:
+                best_dt_acc = dt_acc
+                best_dt_depth = depth
 
     best_dt = _make_dt(best_dt_depth)
     best_dt.fit(X, y_multi)
 
-    if n_folds >= 2:
+    # Evaluate DT with LODO
+    if len(unique_datasets) >= 2:
         y_pred_dt_cv = np.zeros_like(y_multi)
-        for train_idx, test_idx in skf.split(X, primary_labels):
+        for held_out_ds in unique_datasets:
+            test_mask = datasets == held_out_ds
+            train_mask = ~test_mask
             dt_fold = _make_dt(best_dt_depth)
-            dt_fold.fit(X[train_idx], y_multi[train_idx])
-            y_pred_dt_cv[test_idx] = _predict_indicator_matrix(dt_fold, X[test_idx])
+            dt_fold.fit(X[train_mask], y_multi[train_mask])
+            y_pred_dt_cv[test_mask] = _predict_indicator_matrix(dt_fold, X[test_mask])
         dt_metrics = _multilabel_metrics(
             y_multi, y_pred_dt_cv, top3_sets, clique_sets, mlb.classes_
         )
@@ -715,12 +712,6 @@ def run_classification(
         dt_cv_f1 = dt_metrics["f1"]
         dt_cv_t3 = dt_metrics["top3_hit"]
         dt_cv_cq = dt_metrics["clique_hit"]
-
-        pred_dt_sets = _indicator_to_method_sets(y_pred_dt_cv, mlb.classes_)
-        kfold_pred_df["pred_dt"] = _method_sets_to_strings(pred_dt_sets)
-        kfold_pred_df["exact_match_dt"] = np.all(y_pred_dt_cv == y_multi, axis=1)
-        kfold_pred_df["top3_hit_dt"] = [bool(p & t) for p, t in zip(pred_dt_sets, top3_sets)]
-        kfold_pred_df["clique_hit_dt"] = [bool(p & t) for p, t in zip(pred_dt_sets, clique_sets)]
     else:
         dt_cv_acc = dt_cv_jaccard = dt_cv_f1 = np.nan
         dt_cv_t3 = dt_cv_cq = np.nan
@@ -737,11 +728,8 @@ def run_classification(
 
     logger.info(f"  Best depth: {best_dt_depth}")
     logger.info(f"  Train accuracy: {dt_train_acc:.3f}")
-    logger.info(f"  CV accuracy:    {dt_cv_acc:.3f} (jaccard: {dt_cv_jaccard:.3f}, "
+    logger.info(f"  LODO accuracy:  {dt_cv_acc:.3f} (jaccard: {dt_cv_jaccard:.3f}, "
                 f"top3: {dt_cv_t3:.3f}, clique: {dt_cv_cq:.3f})")
-    if n_folds >= 2:
-        logger.info(f"  RF CV accuracy: {overall_rf['accuracy']:.3f} "
-                    f"(top3_hit: {overall_rf['top3_hit']:.3f}) (for comparison)")
 
     tree_rule_blocks = []
     for class_name, estimator in zip(mlb.classes_, best_dt.estimators_):
@@ -786,7 +774,7 @@ def run_classification(
     with open(rules_path, "w") as f:
         f.write(f"Decision Tree Rules ({label})\n")
         f.write(f"Depth: {best_dt_depth}, Train acc: {dt_train_acc:.3f}, "
-                f"CV acc: {dt_cv_acc:.3f}, CV jaccard: {dt_cv_jaccard:.3f}\n")
+                f"LODO acc: {dt_cv_acc:.3f}, LODO jaccard: {dt_cv_jaccard:.3f}\n")
         f.write(f"Classes: {list(mlb.classes_)}\n")
         f.write(f"Features: {nc_features}\n\n")
         f.write(tree_rules)
