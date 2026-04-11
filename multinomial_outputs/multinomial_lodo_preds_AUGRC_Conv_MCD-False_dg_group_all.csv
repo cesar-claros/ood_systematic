@@ -1,0 +1,21 @@
+dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
+cifar10,VGG13,dg,1,ViM,CTM|Energy,ViM|Confidence|REN,CTM|Energy,CTM,False,False,True
+cifar10,VGG13,dg,2,CTM,CTM|Energy,CTM|Confidence|PE,CTM|Energy,CTM,False,True,True
+cifar10,VGG13,dg,3,CTM,CTM|Energy,CTM|NNGuide|Energy,CTM|Energy,CTM,False,True,True
+cifar10,VGG13,dg,4,CTM,CTM|Energy,CTM|Confidence|KPCA RecError global,CTM|Energy,CTM,False,True,True
+cifar10,VGG13,dg,5,CTM,CTM|Energy,CTM|Confidence|NNGuide,CTM|Energy,CTM,False,True,True
+cifar100,VGG13,dg,1,fDBD,CTMmeanOC|NNGuide|fDBD,fDBD|CTMmean|NNGuide,CTMmeanOC|NNGuide|fDBD,CTMmeanOC|Energy|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+cifar100,VGG13,dg,2,NNGuide,CTMmeanOC|NNGuide|fDBD,NNGuide|CTMmeanOC|CTMmean,CTMmeanOC|NNGuide|fDBD,CTMmeanOC|Energy|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+cifar100,VGG13,dg,3,CTMmeanOC,CTMmeanOC|NNGuide|fDBD,CTMmeanOC|CTMmean|fDBD,CTMmeanOC|NNGuide|fDBD,CTMmeanOC|Energy|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+cifar100,VGG13,dg,4,CTMmeanOC,CTMmeanOC|NNGuide|fDBD,CTMmeanOC|fDBD|CTMmean,CTMmeanOC|NNGuide|fDBD,CTMmeanOC|Energy|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+cifar100,VGG13,dg,5,CTMmeanOC,CTMmeanOC|NNGuide|fDBD,CTMmeanOC|Confidence|fDBD,CTMmeanOC|NNGuide|fDBD,CTMmeanOC|Energy|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+supercifar100,VGG13,dg,1,CTM,Energy|GE|Maha|NeCo,CTM|KPCA RecError global|ViM,Energy|GE|Maha|NeCo,CTMmeanOC|GE|Maha|NNGuide|NeCo|fDBD,False,False,True
+supercifar100,VGG13,dg,2,ViM,Energy|GE|Maha|NeCo,ViM|Maha|Residual,Energy|GE|Maha|NeCo,CTMmeanOC|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+supercifar100,VGG13,dg,3,Maha,Energy|GE|Maha|NeCo,Maha|ViM|Residual,Energy|GE|Maha|NeCo,CTMmeanOC|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+supercifar100,VGG13,dg,4,ViM,Energy|GE|Maha|NeCo,ViM|pNML|Maha,Energy|GE|Maha|NeCo,CTMmeanOC|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+supercifar100,VGG13,dg,5,ViM,Energy|GE|Maha|NeCo,ViM|Maha|CTM,Energy|GE|Maha|NeCo,CTMmeanOC|GE|Maha|NNGuide|NeCo|fDBD,False,True,True
+tinyimagenet,VGG13,dg,1,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,CTM|Energy,False,True,True
+tinyimagenet,VGG13,dg,2,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,CTM|Energy,False,True,True
+tinyimagenet,VGG13,dg,3,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,CTM|Energy,False,True,True
+tinyimagenet,VGG13,dg,4,CTM,CTM,CTM|CTMmeanOC|fDBD,CTM,CTM|Energy,False,True,True
+tinyimagenet,VGG13,dg,5,CTM,CTM,CTM|CTMmeanOC|CTMmean,CTM,CTM|Energy,False,True,True
