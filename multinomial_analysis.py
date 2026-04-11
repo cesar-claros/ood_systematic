@@ -675,8 +675,8 @@ def run_classification(
     # interpretable if/then rules with thresholds in original NC units.
     logger.info("\n--- Decision Tree Rules ---")
 
-    # Select DT depth via LODO (same fold structure as RF)
-    best_dt_acc = -1
+    # Select DT depth via LODO Jaccard (same fold structure as RF)
+    best_dt_jacc = -1.0
     best_dt_depth = 2
     if len(unique_datasets) >= 2:
         for depth in [2, 3, 4, 5]:
@@ -687,9 +687,9 @@ def run_classification(
                 dt = _make_dt(depth)
                 dt.fit(X[train_mask], y_multi[train_mask])
                 y_pred_dt[test_mask] = _predict_indicator_matrix(dt, X[test_mask])
-            dt_acc = _sample_exact_match(y_multi, y_pred_dt)
-            if dt_acc > best_dt_acc:
-                best_dt_acc = dt_acc
+            dt_jacc = _sample_jaccard(y_multi, y_pred_dt)
+            if dt_jacc > best_dt_jacc:
+                best_dt_jacc = dt_jacc
                 best_dt_depth = depth
 
     best_dt = _make_dt(best_dt_depth)
