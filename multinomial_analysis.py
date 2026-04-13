@@ -31,12 +31,10 @@ from collections import Counter
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.multiclass import OneVsRestClassifier
-
-from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
+from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -311,11 +309,6 @@ def run_classification(
 
     results = {}
 
-    def _make_lr():
-        return OneVsRestClassifier(
-            LogisticRegression(solver="lbfgs", max_iter=2000, C=1.0, random_state=42)
-        )
-
     def _make_rf():
         return RandomForestClassifier(
             n_estimators=200,
@@ -413,39 +406,16 @@ def run_classification(
 
     # ── 2. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
-    scaler_full = StandardScaler()
-    X_scaled = scaler_full.fit_transform(X)
-
-    lr_full = _make_lr()
-    lr_full.fit(X_scaled, y_multi)
     rf_full = _make_rf()
     rf_full.fit(X, y_multi)
 
-    lr_coefs = np.vstack([est.coef_.ravel() for est in lr_full.estimators_])
-    lr_importance = np.abs(lr_coefs).mean(axis=0)
-    lr_importance_df = pd.DataFrame({
-        "feature": nc_features,
-        "lr_mean_abs_coef": lr_importance,
-    }).sort_values("lr_mean_abs_coef", ascending=False)
-
-    rf_importance_df = pd.DataFrame({
+    importance_df = pd.DataFrame({
         "feature": nc_features,
         "rf_gini_importance": rf_full.feature_importances_,
     }).sort_values("rf_gini_importance", ascending=False)
-
-    importance_df = lr_importance_df.merge(rf_importance_df, on="feature")
-    importance_df["lr_rank"] = importance_df["lr_mean_abs_coef"].rank(ascending=False).astype(int)
     importance_df["rf_rank"] = importance_df["rf_gini_importance"].rank(ascending=False).astype(int)
-    importance_df = importance_df.sort_values("rf_gini_importance", ascending=False)
 
     logger.info(f"\n{importance_df.to_string(index=False)}")
-
-    coef_df = pd.DataFrame(
-        lr_coefs,
-        index=mlb.classes_,
-        columns=nc_features,
-    )
-    logger.info(f"\nLR coefficients per class:\n{coef_df.round(3).to_string()}")
 
     # ── 3. SHAP Interpretation ──────────────────────────────────────────
     # Fit per-method binary RFs and compute SHAP values.
@@ -500,6 +470,7 @@ def run_classification(
     # ── 4. Scorecard Analysis (optbinning) ──────────────────────────────
     if scorecard:
         logger.info("\n--- Scorecard Analysis (optbinning) ---")
+        from sklearn.linear_model import LogisticRegression
         from optbinning import BinningProcess, Scorecard as OBScorecard
 
         X_df = pd.DataFrame(X, columns=nc_features)
@@ -676,10 +647,6 @@ def run_classification(
     imp_path = os.path.join(output_dir, f"multinomial_importance_{file_prefix}_{label}.csv")
     importance_df.to_csv(imp_path, index=False)
     logger.info(f"Saved importance: {imp_path}")
-
-    coef_path = os.path.join(output_dir, f"multinomial_coefs_{file_prefix}_{label}.csv")
-    coef_df.to_csv(coef_path)
-    logger.info(f"Saved coefficients: {coef_path}")
 
     shap_path = os.path.join(output_dir, f"multinomial_shap_{file_prefix}_{label}.csv")
     shap_df.to_csv(shap_path, index=False)
