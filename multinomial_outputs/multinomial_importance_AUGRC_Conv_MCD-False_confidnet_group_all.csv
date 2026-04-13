@@ -1,9 +1,0 @@
-feature,rf_gini_importance,rf_rank
-equinorm_wc,0.23522542013224276,1
-self_duality,0.1885190874908661,2
-var_collapse,0.1378492595772568,3
-equiangular_uc,0.10743944186460577,4
-max_equiangular_uc,0.09630164849839341,5
-equiangular_wc,0.08843053574861803,6
-max_equiangular_wc,0.07402938805637556,7
-equinorm_uc,0.07220521863164163,8

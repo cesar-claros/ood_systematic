@@ -108,6 +108,9 @@ def build_block_dataset_from_nc(
         lambda ds: "|".join(cliques[ds]) if ds in cliques else ""
     )
 
+    # Encode dropout as numeric feature (0/1)
+    block_nc["dropout"] = block_nc["dropout"].astype(int)
+
     # Drop rows with missing NC metrics or no clique
     block_nc = block_nc.dropna(subset=available_features)
     block_nc = block_nc[block_nc["clique_methods"] != ""].reset_index(drop=True)
@@ -768,9 +771,9 @@ def main():
         logger.error("No NC metrics after filtering.")
         return
 
-    # Determine NC features
+    # Determine NC features (+ dropout as a binary feature)
     metric_pool = PAPYAN_NC_METRICS if args.papyan_only else NC_METRICS
-    nc_features = [m for m in metric_pool if m in nc.columns]
+    nc_features = [m for m in metric_pool if m in nc.columns] + ["dropout"]
     logger.info(f"NC features ({len(nc_features)}): {nc_features}")
 
     # ── Load cliques ────────────────────────────────────────────────────
