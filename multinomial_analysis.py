@@ -37,7 +37,6 @@ from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.multiclass import OneVsRestClassifier
 
 from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
-from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -277,11 +276,10 @@ def run_classification(
 
     Uses:
       1. Leave-one-dataset-out CV (LODO)
-      2. Stratified 5-fold CV (stratified by dataset)
-      3. Feature importance analysis
-      4. SHAP interpretation
-      5. Optional scorecard analysis
-      6. Decision tree rules
+      2. Feature importance analysis
+      3. SHAP interpretation
+      4. Optional scorecard analysis
+      5. Decision tree rules
     """
     df = block_df.copy()
 
@@ -301,8 +299,6 @@ def run_classification(
 
     X = df[nc_features].to_numpy()
     datasets = df["dataset"].to_numpy()
-    dataset_counts = Counter(datasets)
-    min_count = min(dataset_counts.values())
 
     logger.info(f"\n{'='*60}")
     logger.info(f"Classification: {label}")
@@ -415,65 +411,7 @@ def run_classification(
         logger.info("Only 1 dataset — skipping LODO CV")
         y_pred_lodo = None
 
-    # ── 2. Stratified K-Fold CV ───────────────────────────────────────────
-    logger.info("\n--- Stratified K-Fold CV ---")
-    n_folds = min(5, min_count)
-    if n_folds < 2:
-        logger.warning(f"Min dataset count={min_count}, skipping k-fold CV")
-        n_folds = 0
-
-    if n_folds >= 2:
-        skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
-        y_pred_rf = np.zeros_like(y_multi)
-        fold_ids = np.full(len(y_multi), -1, dtype=int)
-
-        for fold_i, (train_idx, test_idx) in enumerate(skf.split(X, datasets)):
-            fold_ids[test_idx] = fold_i
-            y_train = y_multi[train_idx]
-
-            rf_cv = _make_rf()
-            rf_cv.fit(X[train_idx], y_train)
-            y_pred_rf[test_idx] = _predict_indicator_matrix(rf_cv, X[test_idx])
-
-            fold_targets = [target_sets[i] for i in test_idx]
-            metrics_rf = _multilabel_metrics(
-                y_multi[test_idx], y_pred_rf[test_idx], fold_targets, mlb.classes_
-            )
-            fold_classes = sorted({method for idx in test_idx for method in target_sets[idx]})
-            logger.info(f"  Fold {fold_i+1}/{n_folds}: "
-                        f"RF acc={metrics_rf['accuracy']:.3f}, "
-                        f"jaccard={metrics_rf['jaccard']:.3f}, "
-                        f"clique_hit={metrics_rf['clique_hit']:.3f} "
-                        f"({len(test_idx)} samples, classes: {fold_classes})")
-
-        overall_rf = _multilabel_metrics(y_multi, y_pred_rf, target_sets, mlb.classes_)
-        logger.info(
-            f"\n  Overall RF: acc={overall_rf['accuracy']:.3f}, "
-            f"jaccard={overall_rf['jaccard']:.3f}, f1={overall_rf['f1']:.3f}, "
-            f"clique_hit={overall_rf['clique_hit']:.3f}"
-        )
-
-        results["kfold_rf_accuracy"] = overall_rf["accuracy"]
-        results["kfold_rf_jaccard"] = overall_rf["jaccard"]
-        results["kfold_rf_f1"] = overall_rf["f1"]
-        results["kfold_rf_clique_hit"] = overall_rf["clique_hit"]
-        results["kfold_n_folds"] = n_folds
-
-        baseline_set = Counter(_method_sets_to_strings(target_sets)).most_common(1)[0][0]
-        baseline_acc = np.mean(np.array(_method_sets_to_strings(target_sets)) == baseline_set)
-        results["kfold_baseline_accuracy"] = baseline_acc
-        logger.info(f"  Baseline (most frequent label-set): acc={baseline_acc:.3f}")
-
-        kfold_pred_df = df[BLOCK_KEYS].copy()
-        kfold_pred_df["fold"] = fold_ids
-        kfold_pred_df["true_methods"] = _method_sets_to_strings(target_sets)
-        kfold_pred_df["clique_methods"] = df["clique_methods"].values
-        pred_rf_sets = _indicator_to_method_sets(y_pred_rf, mlb.classes_)
-        kfold_pred_df["pred_rf"] = _method_sets_to_strings(pred_rf_sets)
-        kfold_pred_df["exact_match_rf"] = np.all(y_pred_rf == y_multi, axis=1)
-        kfold_pred_df["clique_hit_rf"] = [bool(p & t) for p, t in zip(pred_rf_sets, target_sets)]
-
-    # ── 3. Feature Importance ────────────────────────────────────────────
+    # ── 2. Feature Importance ────────────────────────────────────────────
     logger.info("\n--- Feature Importance ---")
     scaler_full = StandardScaler()
     X_scaled = scaler_full.fit_transform(X)
@@ -509,7 +447,7 @@ def run_classification(
     )
     logger.info(f"\nLR coefficients per class:\n{coef_df.round(3).to_string()}")
 
-    # ── 4. SHAP Interpretation ──────────────────────────────────────────
+    # ── 3. SHAP Interpretation ──────────────────────────────────────────
     # Fit per-method binary RFs and compute SHAP values.
     # Per-method RFs are used instead of the multi-output RF because
     # SHAP's TreeExplainer produces correct values for single-output models.
@@ -559,7 +497,7 @@ def run_classification(
 
     logger.info(f"\nMean |SHAP| per method:\n{shap_abs_pivot.round(4).to_string()}")
 
-    # ── 5. Scorecard Analysis (optbinning) ──────────────────────────────
+    # ── 4. Scorecard Analysis (optbinning) ──────────────────────────────
     if scorecard:
         logger.info("\n--- Scorecard Analysis (optbinning) ---")
         from optbinning import BinningProcess, Scorecard as OBScorecard
@@ -649,7 +587,7 @@ def run_classification(
             iv_pivot = iv_pivot.reindex(columns=nc_features)
             logger.info(f"\nIV per method:\n{iv_pivot.round(4).to_string()}")
 
-    # ── 6. Decision Tree Rules ──────────────────────────────────────────
+    # ── 5. Decision Tree Rules ──────────────────────────────────────────
     # Fit a shallow decision tree on unscaled features to produce
     # interpretable if/then rules with thresholds in original NC units.
     logger.info("\n--- Decision Tree Rules ---")
@@ -742,11 +680,6 @@ def run_classification(
     coef_path = os.path.join(output_dir, f"multinomial_coefs_{file_prefix}_{label}.csv")
     coef_df.to_csv(coef_path)
     logger.info(f"Saved coefficients: {coef_path}")
-
-    if n_folds >= 2:
-        kfold_path = os.path.join(output_dir, f"multinomial_kfold_preds_{file_prefix}_{label}.csv")
-        kfold_pred_df.to_csv(kfold_path, index=False)
-        logger.info(f"Saved k-fold predictions: {kfold_path}")
 
     shap_path = os.path.join(output_dir, f"multinomial_shap_{file_prefix}_{label}.csv")
     shap_df.to_csv(shap_path, index=False)
