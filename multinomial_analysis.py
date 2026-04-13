@@ -97,8 +97,10 @@ def build_block_dataset_from_nc(
         logger.warning(f"NC features not found in data: {missing}")
 
     # Aggregate NC metrics by block (mean across reward variants)
+    # Exclude features already in BLOCK_KEYS to avoid duplicate columns
+    extra_features = [f for f in available_features if f not in BLOCK_KEYS]
     block_nc = (
-        nc[BLOCK_KEYS + available_features]
+        nc[BLOCK_KEYS + extra_features]
         .groupby(BLOCK_KEYS, as_index=False)
         .mean(numeric_only=True)
     )
