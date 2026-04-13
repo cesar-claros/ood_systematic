@@ -111,7 +111,9 @@ def build_block_dataset_from_nc(
     )
 
     # Encode dropout as numeric feature (0/1)
-    block_nc["dropout"] = block_nc["dropout"].astype(int)
+    block_nc["dropout"] = block_nc["dropout"].map(
+        {True: 1, False: 0, "True": 1, "False": 0}
+    ).astype(int)
 
     # Drop rows with missing NC metrics or no clique
     block_nc = block_nc.dropna(subset=available_features)
