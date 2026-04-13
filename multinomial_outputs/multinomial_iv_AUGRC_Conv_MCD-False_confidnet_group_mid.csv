@@ -1,0 +1,49 @@
+method,feature,iv,n_bins,quality_score
+CTM,var_collapse,0.0,1,0.0
+CTM,equiangular_uc,0.0,1,0.0
+CTM,equiangular_wc,1.0975073134817155,2,0.04869259671196398
+CTM,equinorm_uc,1.0259797429846147,3,0.10799064504015672
+CTM,equinorm_wc,0.16479184330021643,2,0.19101441368953398
+CTM,max_equiangular_uc,0.0,1,0.0
+CTM,max_equiangular_wc,0.0,1,0.0
+CTM,self_duality,0.0,1,0.0
+CTMmean,var_collapse,0.0,1,0.0
+CTMmean,equiangular_uc,0.0,1,0.0
+CTMmean,equiangular_wc,0.0,1,0.0
+CTMmean,equinorm_uc,0.8375631625781162,2,0.24279181539173306
+CTMmean,equinorm_wc,0.0,1,0.0
+CTMmean,max_equiangular_uc,0.0,1,0.0
+CTMmean,max_equiangular_wc,0.0,1,0.0
+CTMmean,self_duality,0.0,1,0.0
+CTMmeanOC,var_collapse,0.0,1,0.0
+CTMmeanOC,equiangular_uc,0.0,1,0.0
+CTMmeanOC,equiangular_wc,0.0,1,0.0
+CTMmeanOC,equinorm_uc,0.8375631625781162,2,0.24279181539173306
+CTMmeanOC,equinorm_wc,0.0,1,0.0
+CTMmeanOC,max_equiangular_uc,0.0,1,0.0
+CTMmeanOC,max_equiangular_wc,0.0,1,0.0
+CTMmeanOC,self_duality,0.0,1,0.0
+Energy,var_collapse,0.0,1,0.0
+Energy,equiangular_uc,0.0,1,0.0
+Energy,equiangular_wc,1.097507313481716,2,0.048692596711963805
+Energy,equinorm_uc,1.0259797429846147,3,0.10799064504015672
+Energy,equinorm_wc,0.16479184330021648,2,0.19101441368953406
+Energy,max_equiangular_uc,0.0,1,0.0
+Energy,max_equiangular_wc,0.0,1,0.0
+Energy,self_duality,0.0,1,0.0
+KPCA RecError global,var_collapse,0.0,1,0.0
+KPCA RecError global,equiangular_uc,0.0,1,0.0
+KPCA RecError global,equiangular_wc,0.2699853433898031,2,0.3538778290978752
+KPCA RecError global,equinorm_uc,0.6863274648639169,2,0.290740633182414
+KPCA RecError global,equinorm_wc,0.0,1,0.0
+KPCA RecError global,max_equiangular_uc,0.0,1,0.0
+KPCA RecError global,max_equiangular_wc,0.0,1,0.0
+KPCA RecError global,self_duality,0.0,1,0.0
+NeCo,var_collapse,1.663553233343869,2,0.0006113824134457999
+NeCo,equiangular_uc,0.0,1,0.0
+NeCo,equiangular_wc,0.0,1,0.0
+NeCo,equinorm_uc,1.826713462634054,2,0.00011851346200613197
+NeCo,equinorm_wc,0.0,1,0.0
+NeCo,max_equiangular_uc,0.0,1,0.0
+NeCo,max_equiangular_wc,0.0,1,0.0
+NeCo,self_duality,0.0,1,0.0
