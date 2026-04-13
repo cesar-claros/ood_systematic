@@ -421,6 +421,7 @@ def run_classification(
     file_prefix: str,
     min_class_count: int = 2,
     use_cliques: bool = False,
+    scorecard: bool = False,
 ):
     """
     Run multilabel classification: NC features -> set of strong methods.
@@ -670,7 +671,147 @@ def run_classification(
     )
     logger.info(f"\nLR coefficients per class:\n{coef_df.round(3).to_string()}")
 
-    # ── 4. Decision Tree Rules ──────────────────────────────────────────
+    # ── 4. SHAP Interpretation ──────────────────────────────────────────
+    # Fit per-method binary RFs and compute SHAP values.
+    # Per-method RFs are used instead of the multi-output RF because
+    # SHAP's TreeExplainer produces correct values for single-output models.
+    logger.info("\n--- SHAP Interpretation ---")
+    import shap
+
+    shap_rows = []
+    shap_values_all = {}  # method_name -> (n_samples, n_features) SHAP array
+    for k, method_name in enumerate(mlb.classes_):
+        rf_k = RandomForestClassifier(
+            n_estimators=200, random_state=42, class_weight="balanced_subsample"
+        )
+        rf_k.fit(X, y_multi[:, k])
+
+        explainer_k = shap.TreeExplainer(rf_k)
+        sv = explainer_k.shap_values(X)
+
+        # sv shape: (n_samples, n_features, 2) — last dim is [class0, class1]
+        sv_pos = sv[:, :, 1]
+        shap_values_all[method_name] = sv_pos
+
+        mean_abs = np.abs(sv_pos).mean(axis=0)
+        mean_signed = sv_pos.mean(axis=0)
+        for j, feat in enumerate(nc_features):
+            shap_rows.append({
+                "method": method_name,
+                "feature": feat,
+                "mean_abs_shap": mean_abs[j],
+                "mean_shap": mean_signed[j],
+            })
+
+        # Log top 3 features for this method
+        order = np.argsort(-np.abs(mean_signed))
+        top3 = ", ".join(
+            f"{nc_features[j]}({'+'if mean_signed[j]>0 else '-'}{mean_abs[j]:.3f})"
+            for j in order[:3]
+        )
+        logger.info(f"  {method_name}: {top3}")
+
+    shap_df = pd.DataFrame(shap_rows)
+
+    # Build heatmap matrix: methods × features (mean signed SHAP)
+    shap_pivot = shap_df.pivot(index="method", columns="feature", values="mean_shap")
+    shap_pivot = shap_pivot[nc_features]  # consistent column order
+    shap_abs_pivot = shap_df.pivot(index="method", columns="feature", values="mean_abs_shap")
+    shap_abs_pivot = shap_abs_pivot[nc_features]
+
+    logger.info(f"\nMean |SHAP| per method:\n{shap_abs_pivot.round(4).to_string()}")
+
+    # ── 5. Scorecard Analysis (optbinning) ──────────────────────────────
+    if scorecard:
+        logger.info("\n--- Scorecard Analysis (optbinning) ---")
+        from optbinning import BinningProcess, Scorecard as OBScorecard
+
+        X_df = pd.DataFrame(X, columns=nc_features)
+        sc_tables = []
+        iv_rows = []
+
+        for k, method_name in enumerate(mlb.classes_):
+            y_binary = y_multi[:, k]
+
+            # Skip constant targets
+            if y_binary.sum() == 0 or y_binary.sum() == len(y_binary):
+                logger.info(f"  {method_name}: skipped (constant target)")
+                continue
+
+            # Optimal binning per feature
+            binning_process = BinningProcess(
+                variable_names=list(nc_features),
+                max_n_bins=3,
+                min_bin_size=0.15,
+            )
+            binning_process.fit(X_df, y_binary)
+
+            # IV summary per feature
+            bp_summary = binning_process.summary()
+            for _, row in bp_summary.iterrows():
+                iv_rows.append({
+                    "method": method_name,
+                    "feature": row["name"],
+                    "iv": row["iv"],
+                    "n_bins": int(row.get("n_bins", 0)),
+                    "quality_score": row.get("quality_score", np.nan),
+                })
+
+            # Per-feature binning tables (WoE per bin)
+            for feat in nc_features:
+                try:
+                    optb = binning_process.get_binned_variable(feat)
+                    bt_df = optb.binning_table.build()
+                    bt_df = bt_df[bt_df["Bin"] != "Totals"].copy()
+                    bt_df["method"] = method_name
+                    bt_df["feature"] = feat
+                    sc_tables.append(bt_df)
+                except Exception as e:
+                    logger.warning(f"  {method_name}/{feat}: binning table failed: {e}")
+
+            # Build scorecard (LR on WoE-transformed features)
+            try:
+                lr_sc = LogisticRegression(
+                    solver="lbfgs", max_iter=1000, random_state=42,
+                    class_weight="balanced",
+                )
+                ob_scorecard = OBScorecard(
+                    binning_process=binning_process,
+                    estimator=lr_sc,
+                    scaling_method="min_max",
+                    scaling_method_params={"min": 0, "max": 100},
+                )
+                ob_scorecard.fit(X_df, y_binary)
+                sc_detail = ob_scorecard.table(style="detailed")
+                sc_detail["method"] = method_name
+                sc_tables.append(sc_detail)
+                logger.info(f"  {method_name}: scorecard fitted, "
+                            f"top IV feature={bp_summary.sort_values('iv', ascending=False).iloc[0]['name']}")
+            except Exception as e:
+                logger.warning(f"  {method_name}: scorecard fitting failed: {e}")
+                logger.info(f"  {method_name}: using binning tables only, "
+                            f"top IV feature={bp_summary.sort_values('iv', ascending=False).iloc[0]['name']}")
+
+        # Save IV summary
+        iv_df = pd.DataFrame(iv_rows)
+        iv_path = os.path.join(output_dir, f"multinomial_iv_{file_prefix}_{label}.csv")
+        iv_df.to_csv(iv_path, index=False)
+        logger.info(f"Saved IV: {iv_path}")
+
+        # Save binning/scorecard tables
+        if sc_tables:
+            sc_df = pd.concat(sc_tables, ignore_index=True)
+            sc_path = os.path.join(output_dir, f"multinomial_scorecard_{file_prefix}_{label}.csv")
+            sc_df.to_csv(sc_path, index=False)
+            logger.info(f"Saved scorecard: {sc_path}")
+
+        # Log IV heatmap
+        if iv_rows:
+            iv_pivot = iv_df.pivot(index="method", columns="feature", values="iv")
+            iv_pivot = iv_pivot.reindex(columns=nc_features)
+            logger.info(f"\nIV per method:\n{iv_pivot.round(4).to_string()}")
+
+    # ── 6. Decision Tree Rules ──────────────────────────────────────────
     # Fit a shallow decision tree on unscaled features to produce
     # interpretable if/then rules with thresholds in original NC units.
     logger.info("\n--- Decision Tree Rules ---")
@@ -769,6 +910,14 @@ def run_classification(
         kfold_path = os.path.join(output_dir, f"multinomial_kfold_preds_{file_prefix}_{label}.csv")
         kfold_pred_df.to_csv(kfold_path, index=False)
         logger.info(f"Saved k-fold predictions: {kfold_path}")
+
+    shap_path = os.path.join(output_dir, f"multinomial_shap_{file_prefix}_{label}.csv")
+    shap_df.to_csv(shap_path, index=False)
+    logger.info(f"Saved SHAP values: {shap_path}")
+
+    shap_heatmap_path = os.path.join(output_dir, f"multinomial_shap_heatmap_{file_prefix}_{label}.csv")
+    shap_pivot.to_csv(shap_heatmap_path)
+    logger.info(f"Saved SHAP heatmap: {shap_heatmap_path}")
 
     rules_path = os.path.join(output_dir, f"multinomial_tree_rules_{file_prefix}_{label}.txt")
     with open(rules_path, "w") as f:
@@ -907,6 +1056,8 @@ def main():
                              "being recomputed, ensuring targets match the clique plots exactly. "
                              "Implies --use-cliques.")
     parser.add_argument("--output-dir", type=str, default="multinomial_outputs")
+    parser.add_argument("--scorecard", action="store_true",
+                        help="Run optbinning scorecard analysis (requires optbinning)")
     args = parser.parse_args()
 
     # --clique-file implies --use-cliques
@@ -1062,6 +1213,7 @@ def main():
                 file_prefix=file_prefix,
                 min_class_count=args.min_class_count,
                 use_cliques=args.use_cliques,
+                scorecard=args.scorecard,
             )
     else:
         # Default: mean across all OOD sets
