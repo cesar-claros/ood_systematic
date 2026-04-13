@@ -1,0 +1,94 @@
+Decision Tree Rules (group_near)
+Depth: 2, Train acc: 0.567, LODO acc: 0.000, LODO jaccard: 0.230
+Classes: ['CTM', 'Energy', 'MLS', 'NNGuide', 'NeCo', 'PCE', 'PE', 'fDBD']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
+
+=== CTM ===
+|--- self_duality <= 0.0879
+|   |--- equiangular_uc <= 0.0843
+|   |   |--- class: not_CTM
+|   |--- equiangular_uc >  0.0843
+|   |   |--- class: CTM
+|--- self_duality >  0.0879
+|   |--- equinorm_wc <= 0.0273
+|   |   |--- class: not_CTM
+|   |--- equinorm_wc >  0.0273
+|   |   |--- class: not_CTM
+
+=== Energy ===
+|--- equinorm_wc <= 0.0406
+|   |--- var_collapse <= 0.0051
+|   |   |--- class: not_Energy
+|   |--- var_collapse >  0.0051
+|   |   |--- class: Energy
+|--- equinorm_wc >  0.0406
+|   |--- var_collapse <= 0.0908
+|   |   |--- class: not_Energy
+|   |--- var_collapse >  0.0908
+|   |   |--- class: Energy
+
+=== MLS ===
+|--- self_duality <= 0.0879
+|   |--- equiangular_uc <= 0.0843
+|   |   |--- class: MLS
+|   |--- equiangular_uc >  0.0843
+|   |   |--- class: not_MLS
+|--- self_duality >  0.0879
+|   |--- equinorm_wc <= 0.0273
+|   |   |--- class: MLS
+|   |--- equinorm_wc >  0.0273
+|   |   |--- class: MLS
+
+=== NNGuide ===
+|--- var_collapse <= 0.0044
+|   |--- class: not_NNGuide
+|--- var_collapse >  0.0044
+|   |--- var_collapse <= 0.0082
+|   |   |--- class: NNGuide
+|   |--- var_collapse >  0.0082
+|   |   |--- class: not_NNGuide
+
+=== NeCo ===
+|--- self_duality <= 0.1020
+|   |--- equiangular_wc <= 0.0647
+|   |   |--- class: NeCo
+|   |--- equiangular_wc >  0.0647
+|   |   |--- class: not_NeCo
+|--- self_duality >  0.1020
+|   |--- class: NeCo
+
+=== PCE ===
+|--- equinorm_wc <= 0.0406
+|   |--- equiangular_uc <= 0.0616
+|   |   |--- class: not_PCE
+|   |--- equiangular_uc >  0.0616
+|   |   |--- class: not_PCE
+|--- equinorm_wc >  0.0406
+|   |--- self_duality <= 0.0919
+|   |   |--- class: not_PCE
+|   |--- self_duality >  0.0919
+|   |   |--- class: PCE
+
+=== PE ===
+|--- equinorm_wc <= 0.0406
+|   |--- equiangular_uc <= 0.0616
+|   |   |--- class: not_PE
+|   |--- equiangular_uc >  0.0616
+|   |   |--- class: not_PE
+|--- equinorm_wc >  0.0406
+|   |--- self_duality <= 0.0919
+|   |   |--- class: not_PE
+|   |--- self_duality >  0.0919
+|   |   |--- class: PE
+
+=== fDBD ===
+|--- equinorm_wc <= 0.0406
+|   |--- equiangular_uc <= 0.0616
+|   |   |--- class: not_fDBD
+|   |--- equiangular_uc >  0.0616
+|   |   |--- class: not_fDBD
+|--- equinorm_wc >  0.0406
+|   |--- self_duality <= 0.0919
+|   |   |--- class: not_fDBD
+|   |--- self_duality >  0.0919
+|   |   |--- class: fDBD
