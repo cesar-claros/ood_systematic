@@ -83,7 +83,7 @@ PAPYAN_NC_METRICS = [
 ]
 
 
-BLOCK_KEYS = ["dataset", "architecture", "study", "run"]
+BLOCK_KEYS = ["dataset", "architecture", "study", "dropout", "run"]
 
 
 # ── Clique computation ──────────────────────────────────────────────────────
