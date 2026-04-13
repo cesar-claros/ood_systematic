@@ -620,7 +620,7 @@ def run_classification(
                     scaling_method_params={"min": 0, "max": 100},
                 )
                 ob_scorecard.fit(X_df, y_binary)
-                sc_detail = ob_scorecard.table(style="detailed")
+                sc_detail = ob_scorecard.table(style="detailed").copy()
                 sc_detail["method"] = method_name
                 sc_tables.append(sc_detail)
                 logger.info(f"  {method_name}: scorecard fitted, "
