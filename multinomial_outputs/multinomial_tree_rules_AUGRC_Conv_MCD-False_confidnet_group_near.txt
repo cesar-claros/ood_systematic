@@ -1,0 +1,64 @@
+Decision Tree Rules (group_near)
+Depth: 2, Train acc: 0.925, LODO acc: 0.000, LODO jaccard: 0.139
+Classes: ['CTM', 'Energy', 'GE', 'GradNorm', 'MLS', 'NNGuide', 'NeCo']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
+
+=== CTM ===
+|--- self_duality <= 0.0879
+|   |--- equiangular_uc <= 0.0844
+|   |   |--- class: not_CTM
+|   |--- equiangular_uc >  0.0844
+|   |   |--- class: CTM
+|--- self_duality >  0.0879
+|   |--- class: not_CTM
+
+=== Energy ===
+|--- self_duality <= 0.0879
+|   |--- equiangular_uc <= 0.0844
+|   |   |--- class: Energy
+|   |--- equiangular_uc >  0.0844
+|   |   |--- class: not_Energy
+|--- self_duality >  0.0879
+|   |--- class: Energy
+
+=== GE ===
+|--- equinorm_wc <= 0.0385
+|   |--- class: not_GE
+|--- equinorm_wc >  0.0385
+|   |--- class: GE
+
+=== GradNorm ===
+|--- var_collapse <= 0.0108
+|   |--- class: not_GradNorm
+|--- var_collapse >  0.0108
+|   |--- equinorm_wc <= 0.0325
+|   |   |--- class: GradNorm
+|   |--- equinorm_wc >  0.0325
+|   |   |--- class: not_GradNorm
+
+=== MLS ===
+|--- equinorm_wc <= 0.0348
+|   |--- equiangular_uc <= 0.0702
+|   |   |--- class: MLS
+|   |--- equiangular_uc >  0.0702
+|   |   |--- class: not_MLS
+|--- equinorm_wc >  0.0348
+|   |--- class: MLS
+
+=== NNGuide ===
+|--- equinorm_wc <= 0.0348
+|   |--- equiangular_uc <= 0.0702
+|   |   |--- class: NNGuide
+|   |--- equiangular_uc >  0.0702
+|   |   |--- class: not_NNGuide
+|--- equinorm_wc >  0.0348
+|   |--- class: NNGuide
+
+=== NeCo ===
+|--- equinorm_wc <= 0.0348
+|   |--- equiangular_uc <= 0.0702
+|   |   |--- class: NeCo
+|   |--- equiangular_uc >  0.0702
+|   |   |--- class: not_NeCo
+|--- equinorm_wc >  0.0348
+|   |--- class: NeCo

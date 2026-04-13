@@ -1,0 +1,73 @@
+Decision Tree Rules (group_mid)
+Depth: 2, Train acc: 0.567, LODO acc: 0.008, LODO jaccard: 0.178
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'NNGuide', 'fDBD']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
+
+=== CTM ===
+|--- var_collapse <= 0.0044
+|   |--- class: CTM
+|--- var_collapse >  0.0044
+|   |--- var_collapse <= 0.0082
+|   |   |--- class: not_CTM
+|   |--- var_collapse >  0.0082
+|   |   |--- class: CTM
+
+=== CTMmean ===
+|--- equinorm_wc <= 0.0406
+|   |--- equiangular_uc <= 0.0616
+|   |   |--- class: not_CTMmean
+|   |--- equiangular_uc >  0.0616
+|   |   |--- class: not_CTMmean
+|--- equinorm_wc >  0.0406
+|   |--- self_duality <= 0.0919
+|   |   |--- class: not_CTMmean
+|   |--- self_duality >  0.0919
+|   |   |--- class: CTMmean
+
+=== CTMmeanOC ===
+|--- equinorm_wc <= 0.0406
+|   |--- equiangular_uc <= 0.0616
+|   |   |--- class: not_CTMmeanOC
+|   |--- equiangular_uc >  0.0616
+|   |   |--- class: not_CTMmeanOC
+|--- equinorm_wc >  0.0406
+|   |--- self_duality <= 0.0919
+|   |   |--- class: not_CTMmeanOC
+|   |--- self_duality >  0.0919
+|   |   |--- class: CTMmeanOC
+
+=== Energy ===
+|--- equinorm_wc <= 0.0406
+|   |--- var_collapse <= 0.0051
+|   |   |--- class: not_Energy
+|   |--- var_collapse >  0.0051
+|   |   |--- class: Energy
+|--- equinorm_wc >  0.0406
+|   |--- self_duality <= 0.2521
+|   |   |--- class: not_Energy
+|   |--- self_duality >  0.2521
+|   |   |--- class: Energy
+
+=== NNGuide ===
+|--- equinorm_wc <= 0.0406
+|   |--- equiangular_uc <= 0.0616
+|   |   |--- class: not_NNGuide
+|   |--- equiangular_uc >  0.0616
+|   |   |--- class: not_NNGuide
+|--- equinorm_wc >  0.0406
+|   |--- self_duality <= 0.0919
+|   |   |--- class: not_NNGuide
+|   |--- self_duality >  0.0919
+|   |   |--- class: NNGuide
+
+=== fDBD ===
+|--- equinorm_wc <= 0.0406
+|   |--- equiangular_uc <= 0.0616
+|   |   |--- class: not_fDBD
+|   |--- equiangular_uc >  0.0616
+|   |   |--- class: not_fDBD
+|--- equinorm_wc >  0.0406
+|   |--- self_duality <= 0.0919
+|   |   |--- class: not_fDBD
+|   |--- self_duality >  0.0919
+|   |   |--- class: fDBD

@@ -1,0 +1,82 @@
+Decision Tree Rules (group_near)
+Depth: 2, Train acc: 1.000, LODO acc: 0.000, LODO jaccard: 0.218
+Classes: ['CTM', 'Energy', 'GE', 'MLS', 'MSR', 'NNGuide', 'NeCo', 'PCE', 'PE', 'fDBD']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
+
+=== CTM ===
+|--- equinorm_wc <= 0.0186
+|   |--- class: not_CTM
+|--- equinorm_wc >  0.0186
+|   |--- var_collapse <= 0.0136
+|   |   |--- class: CTM
+|   |--- var_collapse >  0.0136
+|   |   |--- class: not_CTM
+
+=== Energy ===
+|--- equinorm_wc <= 0.0186
+|   |--- class: Energy
+|--- equinorm_wc >  0.0186
+|   |--- var_collapse <= 0.0136
+|   |   |--- class: not_Energy
+|   |--- var_collapse >  0.0136
+|   |   |--- class: Energy
+
+=== GE ===
+|--- var_collapse <= 0.0186
+|   |--- max_equiangular_wc <= 0.0507
+|   |   |--- class: GE
+|   |--- max_equiangular_wc >  0.0507
+|   |   |--- class: not_GE
+|--- var_collapse >  0.0186
+|   |--- class: GE
+
+=== MLS ===
+|--- var_collapse <= 0.0186
+|   |--- max_equiangular_wc <= 0.0507
+|   |   |--- class: MLS
+|   |--- max_equiangular_wc >  0.0507
+|   |   |--- class: not_MLS
+|--- var_collapse >  0.0186
+|   |--- class: MLS
+
+=== MSR ===
+|--- equinorm_wc <= 0.0440
+|   |--- class: not_MSR
+|--- equinorm_wc >  0.0440
+|   |--- class: MSR
+
+=== NNGuide ===
+|--- equinorm_wc <= 0.0440
+|   |--- class: not_NNGuide
+|--- equinorm_wc >  0.0440
+|   |--- class: NNGuide
+
+=== NeCo ===
+|--- equinorm_wc <= 0.0186
+|   |--- class: NeCo
+|--- equinorm_wc >  0.0186
+|   |--- var_collapse <= 0.0136
+|   |   |--- class: not_NeCo
+|   |--- var_collapse >  0.0136
+|   |   |--- class: NeCo
+
+=== PCE ===
+|--- equinorm_wc <= 0.0440
+|   |--- class: not_PCE
+|--- equinorm_wc >  0.0440
+|   |--- class: PCE
+
+=== PE ===
+|--- equinorm_wc <= 0.0349
+|   |--- max_equiangular_wc <= 0.0537
+|   |   |--- class: PE
+|   |--- max_equiangular_wc >  0.0537
+|   |   |--- class: not_PE
+|--- equinorm_wc >  0.0349
+|   |--- class: PE
+
+=== fDBD ===
+|--- equinorm_wc <= 0.0440
+|   |--- class: not_fDBD
+|--- equinorm_wc >  0.0440
+|   |--- class: fDBD

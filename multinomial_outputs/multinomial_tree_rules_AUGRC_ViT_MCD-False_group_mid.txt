@@ -1,0 +1,37 @@
+Decision Tree Rules (group_mid)
+Depth: 2, Train acc: 1.000, LODO acc: 0.150, LODO jaccard: 0.275
+Classes: ['CTMmeanOC', 'KPCA RecError global', 'Residual', 'ViM', 'pNML']
+Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
+
+=== CTMmeanOC ===
+|--- equiangular_uc <= 0.2162
+|   |--- class: not_CTMmeanOC
+|--- equiangular_uc >  0.2162
+|   |--- self_duality <= 1.1261
+|   |   |--- class: CTMmeanOC
+|   |--- self_duality >  1.1261
+|   |   |--- class: not_CTMmeanOC
+
+=== KPCA RecError global ===
+|--- equinorm_uc <= 0.1748
+|   |--- class: KPCA RecError global
+|--- equinorm_uc >  0.1748
+|   |--- class: not_KPCA RecError global
+
+=== Residual ===
+|--- equinorm_uc <= 0.1748
+|   |--- class: not_Residual
+|--- equinorm_uc >  0.1748
+|   |--- class: Residual
+
+=== ViM ===
+|--- equinorm_uc <= 0.1748
+|   |--- class: not_ViM
+|--- equinorm_uc >  0.1748
+|   |--- class: ViM
+
+=== pNML ===
+|--- equinorm_uc <= 0.1748
+|   |--- class: not_pNML
+|--- equinorm_uc >  0.1748
+|   |--- class: pNML
