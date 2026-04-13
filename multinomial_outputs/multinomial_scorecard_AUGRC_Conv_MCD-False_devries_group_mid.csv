@@ -1,393 +1,415 @@
 Bin,Count,Count (%),Non-event,Event,Event rate,WoE,IV,JS,method,feature,Variable,Bin id,Coefficient,Points
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,var_collapse,,,,
+"(-inf, 0.01)",25,0.625,18,7,0.28,-0.1541506798272585,0.015415067982725832,0.0019249779517418047,CTM,var_collapse,,,,
+"[0.01, inf)",15,0.375,12,3,0.2,0.2876820724517808,0.028768207245178118,0.003583676550815821,CTM,var_collapse,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,var_collapse,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,var_collapse,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTM,var_collapse,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.044183275227903954,0.005508654502557626,CTM,var_collapse,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTM,equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTM,equiangular_uc,,,,
+"(-inf, 0.10)",21,0.525,15,6,0.2857142857142857,-0.1823215567939548,0.018232155679395456,0.0022758681458076857,CTM,equiangular_wc,,,,
+"[0.10, inf)",19,0.475,15,4,0.21052631578947367,0.2231435513142097,0.022314355131420965,0.0027835217831799104,CTM,equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTM,equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,equinorm_uc,,,,
+,40,1.0,30,10,0.25,,0.04054651081081642,0.005059389928987596,CTM,equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,equinorm_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,equinorm_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,equinorm_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTM,equinorm_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,equinorm_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTM,equinorm_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,equinorm_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,equinorm_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,equinorm_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTM,equinorm_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,max_equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTM,equinorm_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,max_equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,max_equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,max_equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTM,max_equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,max_equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTM,max_equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,max_equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,max_equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,max_equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTM,max_equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,self_duality,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTM,max_equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,self_duality,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,self_duality,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,self_duality,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTM,self_duality,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,var_collapse,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,var_collapse,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,var_collapse,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,equinorm_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equinorm_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equinorm_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,equinorm_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equinorm_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equinorm_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,max_equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,max_equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,max_equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,max_equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,max_equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,max_equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,self_duality,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,self_duality,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,self_duality,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,var_collapse,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTM,self_duality,,,,
+"(-inf, 0.01)",25,0.625,18,7,0.28,-0.1541506798272585,0.015415067982725832,0.0019249779517418047,CTM,,var_collapse,0.0,-0.2495359086557289,-14.002238246941346
+"[0.01, inf)",15,0.375,12,3,0.2,0.2876820724517808,0.028768207245178118,0.003583676550815821,CTM,,var_collapse,1.0,-0.2495359086557289,40.28206002734047
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,var_collapse,2.0,-0.2495359086557289,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,var_collapse,3.0,-0.2495359086557289,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,equiangular_uc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equiangular_uc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equiangular_uc,2.0,0.0,4.936967685083888
+"(-inf, 0.10)",21,0.525,15,6,0.2857142857142857,-0.1823215567939548,0.018232155679395456,0.0022758681458076857,CTM,,equiangular_wc,0.0,-0.22899638756536803,-15.61956786356198
+"[0.10, inf)",19,0.475,15,4,0.21052631578947367,0.2231435513142097,0.022314355131420965,0.0027835217831799104,CTM,,equiangular_wc,1.0,-0.22899638756536803,30.096133862156197
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equiangular_wc,2.0,-0.22899638756536803,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equiangular_wc,3.0,-0.22899638756536803,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,equinorm_uc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equinorm_uc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equinorm_uc,2.0,0.0,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,equinorm_wc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equinorm_wc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,equinorm_wc,2.0,0.0,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,max_equiangular_uc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,max_equiangular_uc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,max_equiangular_uc,2.0,0.0,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,max_equiangular_wc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,max_equiangular_wc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,max_equiangular_wc,2.0,0.0,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTM,,self_duality,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,self_duality,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTM,,self_duality,2.0,0.0,4.936967685083888
+"(-inf, 0.01)",25,0.625,17,8,0.32,-0.3448404862917297,0.08046278013473693,0.010008307423125064,CTMmean,var_collapse,,,,
+"[0.01, inf)",15,0.375,13,2,0.13333333333333333,0.7731898882334816,0.18041097392114572,0.02200590481408167,CTMmean,var_collapse,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,var_collapse,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,var_collapse,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmean,var_collapse,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.26087375405588265,0.032014212237206734,CTMmean,var_collapse,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmean,equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmean,equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmean,equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,equinorm_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmean,equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,equinorm_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,equinorm_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,equinorm_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmean,equinorm_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,equinorm_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmean,equinorm_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,equinorm_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,equinorm_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,equinorm_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmean,equinorm_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,max_equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmean,equinorm_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,max_equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,max_equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,max_equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmean,max_equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,max_equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmean,max_equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,max_equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,max_equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,max_equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmean,max_equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,self_duality,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmean,max_equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,self_duality,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,self_duality,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,self_duality,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmean,self_duality,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,var_collapse,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,var_collapse,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,var_collapse,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,equinorm_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equinorm_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equinorm_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,equinorm_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equinorm_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equinorm_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,max_equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,max_equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,max_equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,max_equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,max_equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,max_equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,self_duality,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,self_duality,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,self_duality,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,var_collapse,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmean,self_duality,,,,
+"(-inf, 0.01)",25,0.625,17,8,0.32,-0.3448404862917297,0.08046278013473693,0.010008307423125064,CTMmean,,var_collapse,0.0,-0.7134305370643748,-26.98812414943557
+"[0.01, inf)",15,0.375,13,2,0.13333333333333333,0.7731898882334816,0.18041097392114572,0.02200590481408167,CTMmean,,var_collapse,1.0,-0.7134305370643748,73.01187585056442
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,var_collapse,2.0,-0.7134305370643748,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,var_collapse,3.0,-0.7134305370643748,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,equiangular_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equiangular_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equiangular_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,equiangular_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equiangular_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equiangular_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,equinorm_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equinorm_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equinorm_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,equinorm_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equinorm_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,equinorm_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,max_equiangular_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,max_equiangular_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,max_equiangular_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,max_equiangular_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,max_equiangular_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,max_equiangular_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmean,,self_duality,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,self_duality,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmean,,self_duality,2.0,0.0,3.8554463070622242
+"(-inf, 0.01)",25,0.625,17,8,0.32,-0.3448404862917297,0.08046278013473693,0.010008307423125064,CTMmeanOC,var_collapse,,,,
+"[0.01, inf)",15,0.375,13,2,0.13333333333333333,0.7731898882334816,0.18041097392114572,0.02200590481408167,CTMmeanOC,var_collapse,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,var_collapse,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,var_collapse,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmeanOC,var_collapse,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.26087375405588265,0.032014212237206734,CTMmeanOC,var_collapse,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmeanOC,equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmeanOC,equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmeanOC,equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,equinorm_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmeanOC,equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,equinorm_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,equinorm_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,equinorm_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmeanOC,equinorm_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,equinorm_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmeanOC,equinorm_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,equinorm_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,equinorm_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,equinorm_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmeanOC,equinorm_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,max_equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmeanOC,equinorm_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,max_equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,max_equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,max_equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmeanOC,max_equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,max_equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmeanOC,max_equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,max_equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,max_equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,max_equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmeanOC,max_equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,self_duality,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmeanOC,max_equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,self_duality,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,self_duality,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,self_duality,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,CTMmeanOC,self_duality,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,var_collapse,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,var_collapse,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,var_collapse,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,equinorm_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equinorm_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equinorm_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,equinorm_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equinorm_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equinorm_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,max_equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,max_equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,max_equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,max_equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,max_equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,max_equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,self_duality,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,self_duality,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,self_duality,2.0,0.0,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,var_collapse,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,CTMmeanOC,self_duality,,,,
+"(-inf, 0.01)",25,0.625,17,8,0.32,-0.3448404862917297,0.08046278013473693,0.010008307423125064,CTMmeanOC,,var_collapse,0.0,-0.7134305370643748,-26.98812414943557
+"[0.01, inf)",15,0.375,13,2,0.13333333333333333,0.7731898882334816,0.18041097392114572,0.02200590481408167,CTMmeanOC,,var_collapse,1.0,-0.7134305370643748,73.01187585056442
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,var_collapse,2.0,-0.7134305370643748,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,var_collapse,3.0,-0.7134305370643748,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,equiangular_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equiangular_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equiangular_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,equiangular_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equiangular_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equiangular_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,equinorm_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equinorm_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equinorm_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,equinorm_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equinorm_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,equinorm_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,max_equiangular_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,max_equiangular_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,max_equiangular_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,max_equiangular_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,max_equiangular_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,max_equiangular_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,CTMmeanOC,,self_duality,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,self_duality,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,CTMmeanOC,,self_duality,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,var_collapse,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,var_collapse,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,var_collapse,,,,
-,20,1.0,10,10,0.5,,0.0,0.0,Energy,var_collapse,,,,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,equiangular_uc,,,,
+,40,1.0,20,20,0.5,,0.0,0.0,Energy,var_collapse,,,,
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,equiangular_uc,,,,
-,20,1.0,10,10,0.5,,0.0,0.0,Energy,equiangular_uc,,,,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,equiangular_wc,,,,
+,40,1.0,20,20,0.5,,0.0,0.0,Energy,equiangular_uc,,,,
+"(-inf, 0.10)",21,0.525,11,10,0.47619047619047616,0.09531017980432495,0.004765508990216249,0.000595463257237536,Energy,equiangular_wc,,,,
+"[0.10, inf)",19,0.475,9,10,0.5263157894736842,-0.10536051565782616,0.005268025782891316,0.0006581988110755874,Energy,equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,equiangular_wc,,,,
-,20,1.0,10,10,0.5,,0.0,0.0,Energy,equiangular_wc,,,,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,equinorm_uc,,,,
+,40,1.0,20,20,0.5,,0.010033534773107564,0.0012536620683131234,Energy,equiangular_wc,,,,
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,equinorm_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,equinorm_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,equinorm_uc,,,,
-,20,1.0,10,10,0.5,,0.0,0.0,Energy,equinorm_uc,,,,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,equinorm_wc,,,,
+,40,1.0,20,20,0.5,,0.0,0.0,Energy,equinorm_uc,,,,
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,equinorm_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,equinorm_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,equinorm_wc,,,,
-,20,1.0,10,10,0.5,,0.0,0.0,Energy,equinorm_wc,,,,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,max_equiangular_uc,,,,
+,40,1.0,20,20,0.5,,0.0,0.0,Energy,equinorm_wc,,,,
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,max_equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,max_equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,max_equiangular_uc,,,,
-,20,1.0,10,10,0.5,,0.0,0.0,Energy,max_equiangular_uc,,,,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,max_equiangular_wc,,,,
+,40,1.0,20,20,0.5,,0.0,0.0,Energy,max_equiangular_uc,,,,
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,max_equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,max_equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,max_equiangular_wc,,,,
-,20,1.0,10,10,0.5,,0.0,0.0,Energy,max_equiangular_wc,,,,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,self_duality,,,,
+,40,1.0,20,20,0.5,,0.0,0.0,Energy,max_equiangular_wc,,,,
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,self_duality,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,self_duality,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,self_duality,,,,
-,20,1.0,10,10,0.5,,0.0,0.0,Energy,self_duality,,,,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,,var_collapse,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,var_collapse,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,var_collapse,2.0,0.0,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,,equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,,equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,,equinorm_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equinorm_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equinorm_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,,equinorm_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equinorm_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equinorm_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,,max_equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,max_equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,max_equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,,max_equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,max_equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,max_equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,10,10,0.5,0.0,0.0,0.0,Energy,,self_duality,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,self_duality,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,self_duality,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,var_collapse,,,,
+,40,1.0,20,20,0.5,,0.0,0.0,Energy,self_duality,,,,
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,,var_collapse,0.0,0.0,6.563023278958188
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,var_collapse,1.0,0.0,6.563023278958188
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,var_collapse,2.0,0.0,6.563023278958188
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,,equiangular_uc,0.0,0.0,6.563023278958188
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equiangular_uc,1.0,0.0,6.563023278958188
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equiangular_uc,2.0,0.0,6.563023278958188
+"(-inf, 0.10)",21,0.525,11,10,0.47619047619047616,0.09531017980432495,0.004765508990216249,0.000595463257237536,Energy,,equiangular_wc,0.0,-0.09117657823200323,54.058837047292684
+"[0.10, inf)",19,0.475,9,10,0.5263157894736842,-0.10536051565782616,0.005268025782891316,0.0006581988110755874,Energy,,equiangular_wc,1.0,-0.09117657823200323,-45.94116295270732
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equiangular_wc,2.0,-0.09117657823200323,6.563023278958188
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equiangular_wc,3.0,-0.09117657823200323,6.563023278958188
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,,equinorm_uc,0.0,0.0,6.563023278958188
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equinorm_uc,1.0,0.0,6.563023278958188
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equinorm_uc,2.0,0.0,6.563023278958188
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,,equinorm_wc,0.0,0.0,6.563023278958188
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equinorm_wc,1.0,0.0,6.563023278958188
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,equinorm_wc,2.0,0.0,6.563023278958188
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,,max_equiangular_uc,0.0,0.0,6.563023278958188
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,max_equiangular_uc,1.0,0.0,6.563023278958188
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,max_equiangular_uc,2.0,0.0,6.563023278958188
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,,max_equiangular_wc,0.0,0.0,6.563023278958188
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,max_equiangular_wc,1.0,0.0,6.563023278958188
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,max_equiangular_wc,2.0,0.0,6.563023278958188
+"(-inf, inf)",40,1.0,20,20,0.5,0.0,0.0,0.0,Energy,,self_duality,0.0,0.0,6.563023278958188
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,self_duality,1.0,0.0,6.563023278958188
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,Energy,,self_duality,2.0,0.0,6.563023278958188
+"(-inf, 0.01)",15,0.375,14,1,0.06666666666666667,1.5404450409471486,0.564829848347288,0.06435857835302247,GE,var_collapse,,,,
+"[0.01, inf)",25,0.625,16,9,0.36,-0.523248143764548,0.19185765271366756,0.02371231212013082,GE,var_collapse,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,var_collapse,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,var_collapse,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,GE,var_collapse,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.7566875010609555,0.0880708904731533,GE,var_collapse,,,,
+"(-inf, 0.08)",10,0.25,5,5,0.5,-1.0986122886681098,0.3662040962227033,0.04360401198037899,GE,equiangular_uc,,,,
+"[0.08, inf)",30,0.75,25,5,0.16666666666666666,0.5108256237659905,0.17027520792199694,0.021055961601308806,GE,equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,GE,equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.5364793041447002,0.06465997358168779,GE,equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,GE,equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,equinorm_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,GE,equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,equinorm_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,equinorm_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,equinorm_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,GE,equinorm_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,equinorm_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,GE,equinorm_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,equinorm_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,equinorm_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,equinorm_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,GE,equinorm_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,max_equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,GE,equinorm_wc,,,,
+"(-inf, 0.05)",6,0.15,4,2,0.3333333333333333,-0.4054651081081645,0.027031007207210963,0.0033559189251148036,GE,max_equiangular_uc,,,,
+"[0.05, inf)",34,0.85,26,8,0.23529411764705882,0.08004270767353616,0.00533618051156909,0.0006668445583198415,GE,max_equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,max_equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,max_equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,GE,max_equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,max_equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.032367187718780055,0.004022763483434645,GE,max_equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,max_equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,max_equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,max_equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,GE,max_equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,self_duality,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,GE,max_equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,self_duality,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,self_duality,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,self_duality,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,GE,self_duality,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,,var_collapse,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,var_collapse,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,var_collapse,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,,equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,,equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,,equinorm_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equinorm_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equinorm_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,,equinorm_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equinorm_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equinorm_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,,max_equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,max_equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,max_equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,,max_equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,max_equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,max_equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,GE,,self_duality,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,self_duality,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,self_duality,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,var_collapse,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,GE,self_duality,,,,
+"(-inf, 0.01)",15,0.375,14,1,0.06666666666666667,1.5404450409471486,0.564829848347288,0.06435857835302247,GE,,var_collapse,0.0,-1.0772423953904708,46.69409798413274
+"[0.01, inf)",25,0.625,16,9,0.36,-0.523248143764548,0.19185765271366756,0.02371231212013082,GE,,var_collapse,1.0,-1.0772423953904708,-8.371162682434477
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,var_collapse,2.0,-1.0772423953904708,5.590600453260277
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,var_collapse,3.0,-1.0772423953904708,5.590600453260277
+"(-inf, 0.08)",10,0.25,5,5,0.5,-1.0986122886681098,0.3662040962227033,0.04360401198037899,GE,,equiangular_uc,0.0,-1.1123166266074518,-24.677977237730612
+"[0.08, inf)",30,0.75,25,5,0.16666666666666666,0.5108256237659905,0.17027520792199694,0.021055961601308806,GE,,equiangular_uc,1.0,-1.1123166266074518,19.66468758936441
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equiangular_uc,2.0,-1.1123166266074518,5.590600453260277
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equiangular_uc,3.0,-1.1123166266074518,5.590600453260277
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,,equiangular_wc,0.0,0.0,5.590600453260277
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equiangular_wc,1.0,0.0,5.590600453260277
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equiangular_wc,2.0,0.0,5.590600453260277
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,,equinorm_uc,0.0,0.0,5.590600453260277
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equinorm_uc,1.0,0.0,5.590600453260277
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equinorm_uc,2.0,0.0,5.590600453260277
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,,equinorm_wc,0.0,0.0,5.590600453260277
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equinorm_wc,1.0,0.0,5.590600453260277
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,equinorm_wc,2.0,0.0,5.590600453260277
+"(-inf, 0.05)",6,0.15,4,2,0.3333333333333333,-0.4054651081081645,0.027031007207210963,0.0033559189251148036,GE,,max_equiangular_uc,0.0,-0.04923353316769866,5.096137653863709
+"[0.05, inf)",34,0.85,26,8,0.23529411764705882,0.08004270767353616,0.00533618051156909,0.0006668445583198415,GE,,max_equiangular_uc,1.0,-0.04923353316769866,5.688212160201481
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,max_equiangular_uc,2.0,-0.04923353316769866,5.590600453260277
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,max_equiangular_uc,3.0,-0.04923353316769866,5.590600453260277
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,,max_equiangular_wc,0.0,0.0,5.590600453260277
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,max_equiangular_wc,1.0,0.0,5.590600453260277
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,max_equiangular_wc,2.0,0.0,5.590600453260277
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,GE,,self_duality,0.0,0.0,5.590600453260277
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,self_duality,1.0,0.0,5.590600453260277
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,GE,,self_duality,2.0,0.0,5.590600453260277
+"(-inf, 0.01)",25,0.625,18,7,0.28,-0.1541506798272585,0.015415067982725832,0.0019249779517418047,NNGuide,var_collapse,,,,
+"[0.01, inf)",15,0.375,12,3,0.2,0.2876820724517808,0.028768207245178118,0.003583676550815821,NNGuide,var_collapse,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,var_collapse,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,var_collapse,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,NNGuide,var_collapse,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.044183275227903954,0.005508654502557626,NNGuide,var_collapse,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,NNGuide,equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,NNGuide,equiangular_uc,,,,
+"(-inf, 0.10)",21,0.525,15,6,0.2857142857142857,-0.1823215567939548,0.018232155679395456,0.0022758681458076857,NNGuide,equiangular_wc,,,,
+"[0.10, inf)",19,0.475,15,4,0.21052631578947367,0.2231435513142097,0.022314355131420965,0.0027835217831799104,NNGuide,equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,NNGuide,equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,equinorm_uc,,,,
+,40,1.0,30,10,0.25,,0.04054651081081642,0.005059389928987596,NNGuide,equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,equinorm_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,equinorm_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,equinorm_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,NNGuide,equinorm_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,equinorm_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,NNGuide,equinorm_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,equinorm_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,equinorm_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,equinorm_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,NNGuide,equinorm_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,max_equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,NNGuide,equinorm_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,max_equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,max_equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,max_equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,NNGuide,max_equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,max_equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,NNGuide,max_equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,max_equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,max_equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,max_equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,NNGuide,max_equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,self_duality,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,NNGuide,max_equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,self_duality,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,self_duality,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,self_duality,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,NNGuide,self_duality,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,var_collapse,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,var_collapse,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,var_collapse,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,equinorm_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equinorm_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equinorm_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,equinorm_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equinorm_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equinorm_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,max_equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,max_equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,max_equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,max_equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,max_equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,max_equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,self_duality,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,self_duality,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,self_duality,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,var_collapse,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,NNGuide,self_duality,,,,
+"(-inf, 0.01)",25,0.625,18,7,0.28,-0.1541506798272585,0.015415067982725832,0.0019249779517418047,NNGuide,,var_collapse,0.0,-0.2495359086557289,-14.002238246941346
+"[0.01, inf)",15,0.375,12,3,0.2,0.2876820724517808,0.028768207245178118,0.003583676550815821,NNGuide,,var_collapse,1.0,-0.2495359086557289,40.28206002734047
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,var_collapse,2.0,-0.2495359086557289,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,var_collapse,3.0,-0.2495359086557289,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,equiangular_uc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equiangular_uc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equiangular_uc,2.0,0.0,4.936967685083888
+"(-inf, 0.10)",21,0.525,15,6,0.2857142857142857,-0.1823215567939548,0.018232155679395456,0.0022758681458076857,NNGuide,,equiangular_wc,0.0,-0.22899638756536803,-15.61956786356198
+"[0.10, inf)",19,0.475,15,4,0.21052631578947367,0.2231435513142097,0.022314355131420965,0.0027835217831799104,NNGuide,,equiangular_wc,1.0,-0.22899638756536803,30.096133862156197
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equiangular_wc,2.0,-0.22899638756536803,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equiangular_wc,3.0,-0.22899638756536803,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,equinorm_uc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equinorm_uc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equinorm_uc,2.0,0.0,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,equinorm_wc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equinorm_wc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,equinorm_wc,2.0,0.0,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,max_equiangular_uc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,max_equiangular_uc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,max_equiangular_uc,2.0,0.0,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,max_equiangular_wc,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,max_equiangular_wc,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,max_equiangular_wc,2.0,0.0,4.936967685083888
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,NNGuide,,self_duality,0.0,0.0,4.936967685083888
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,self_duality,1.0,0.0,4.936967685083888
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,NNGuide,,self_duality,2.0,0.0,4.936967685083888
+"(-inf, 0.01)",25,0.625,17,8,0.32,-0.3448404862917297,0.08046278013473693,0.010008307423125064,fDBD,var_collapse,,,,
+"[0.01, inf)",15,0.375,13,2,0.13333333333333333,0.7731898882334816,0.18041097392114572,0.02200590481408167,fDBD,var_collapse,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,var_collapse,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,var_collapse,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,fDBD,var_collapse,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.26087375405588265,0.032014212237206734,fDBD,var_collapse,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,fDBD,equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,fDBD,equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,fDBD,equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,equinorm_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,fDBD,equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,equinorm_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,equinorm_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,equinorm_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,fDBD,equinorm_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,equinorm_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,fDBD,equinorm_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,equinorm_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,equinorm_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,equinorm_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,fDBD,equinorm_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,max_equiangular_uc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,fDBD,equinorm_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,max_equiangular_uc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,max_equiangular_uc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,max_equiangular_uc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,fDBD,max_equiangular_uc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,max_equiangular_wc,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,fDBD,max_equiangular_uc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,max_equiangular_wc,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,max_equiangular_wc,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,max_equiangular_wc,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,fDBD,max_equiangular_wc,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,self_duality,,,,
+,40,1.0,30,10,0.25,,0.0,0.0,fDBD,max_equiangular_wc,,,,
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,self_duality,,,,
 Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,self_duality,,,,
 Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,self_duality,,,,
-,20,1.0,15,5,0.25,,0.0,0.0,fDBD,self_duality,,,,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,var_collapse,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,var_collapse,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,var_collapse,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,equinorm_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equinorm_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equinorm_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,equinorm_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equinorm_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equinorm_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,max_equiangular_uc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,max_equiangular_uc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,max_equiangular_uc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,max_equiangular_wc,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,max_equiangular_wc,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,max_equiangular_wc,2.0,0.0,
-"(-inf, inf)",20,1.0,15,5,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,self_duality,0.0,0.0,
-Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,self_duality,1.0,0.0,
-Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,self_duality,2.0,0.0,
+,40,1.0,30,10,0.25,,0.0,0.0,fDBD,self_duality,,,,
+"(-inf, 0.01)",25,0.625,17,8,0.32,-0.3448404862917297,0.08046278013473693,0.010008307423125064,fDBD,,var_collapse,0.0,-0.7134305370643748,-26.98812414943557
+"[0.01, inf)",15,0.375,13,2,0.13333333333333333,0.7731898882334816,0.18041097392114572,0.02200590481408167,fDBD,,var_collapse,1.0,-0.7134305370643748,73.01187585056442
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,var_collapse,2.0,-0.7134305370643748,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,var_collapse,3.0,-0.7134305370643748,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,equiangular_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equiangular_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equiangular_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,equiangular_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equiangular_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equiangular_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,equinorm_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equinorm_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equinorm_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,equinorm_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equinorm_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,equinorm_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,max_equiangular_uc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,max_equiangular_uc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,max_equiangular_uc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,max_equiangular_wc,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,max_equiangular_wc,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,max_equiangular_wc,2.0,0.0,3.8554463070622242
+"(-inf, inf)",40,1.0,30,10,0.25,-2.220446049250313e-16,0.0,0.0,fDBD,,self_duality,0.0,0.0,3.8554463070622242
+Special,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,self_duality,1.0,0.0,3.8554463070622242
+Missing,0,0.0,0,0,0.0,0.0,0.0,0.0,fDBD,,self_duality,2.0,0.0,3.8554463070622242

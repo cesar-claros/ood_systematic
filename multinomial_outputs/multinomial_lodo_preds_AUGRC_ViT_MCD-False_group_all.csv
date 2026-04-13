@@ -1,21 +1,21 @@
-dataset,architecture,study,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
-cifar10,ViT,vit,0,pNML,pNML,pNML|PCA RecError global|ViM,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
-cifar10,ViT,vit,1,PCA RecError global,pNML,PCA RecError global|pNML|ViM,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
-cifar10,ViT,vit,2,pNML,pNML,pNML|ViM|PCA RecError global,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
-cifar10,ViT,vit,3,pNML,pNML,pNML|ViM|KPCA RecError global,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
-cifar10,ViT,vit,4,pNML,pNML,pNML|PCA RecError global|ViM,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
-cifar100,ViT,vit,0,KPCA RecError global,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,True,True,True
-cifar100,ViT,vit,1,ViM,KPCA RecError global|Maha|ViM|fDBD,ViM|KPCA RecError global|fDBD,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,True,True,True
-cifar100,ViT,vit,2,KPCA RecError global,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|fDBD|ViM,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,True,True,True
-cifar100,ViT,vit,3,ViM,KPCA RecError global|Maha|ViM|fDBD,ViM|fDBD|CTM,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
-cifar100,ViT,vit,4,KPCA RecError global,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,True,True,True
-supercifar100,ViT,vit,0,KPCA RecError global,CTMmean|CTMmeanOC,KPCA RecError global|pNML|PCA RecError global,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,False,True
-supercifar100,ViT,vit,1,CTMmeanOC,CTMmean|CTMmeanOC,CTMmeanOC|CTMmean|GradNorm,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
-supercifar100,ViT,vit,2,KPCA RecError global,CTMmean|CTMmeanOC,KPCA RecError global|PCA RecError global|pNML,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,False,True
-supercifar100,ViT,vit,3,CTMmeanOC,CTMmean|CTMmeanOC,CTMmeanOC|CTMmean|KPCA RecError global,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
-supercifar100,ViT,vit,4,KPCA RecError global,CTMmean|CTMmeanOC,KPCA RecError global|CTMmeanOC|CTMmean,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
-tinyimagenet,ViT,vit,0,GE,Energy|GE|MLS|PE,GE|PE|MLS,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
-tinyimagenet,ViT,vit,1,PE,Energy|GE|MLS|PE,PE|GE|MLS,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
-tinyimagenet,ViT,vit,2,GE,Energy|GE|MLS|PE,GE|MLS|Energy,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
-tinyimagenet,ViT,vit,3,GE,Energy|GE|MLS|PE,GE|PE|MLS,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
-tinyimagenet,ViT,vit,4,GE,Energy|GE|MLS|PE,GE|PE|MLS,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
+dataset,architecture,study,dropout,run,best_method,true_methods,top3_methods,clique_methods,predicted_methods,exact_match,top3_hit,clique_hit
+cifar10,ViT,vit,True,0,pNML,pNML,pNML|PCA RecError global|ViM,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
+cifar10,ViT,vit,True,1,PCA RecError global,pNML,PCA RecError global|pNML|ViM,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
+cifar10,ViT,vit,True,2,pNML,pNML,pNML|ViM|PCA RecError global,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
+cifar10,ViT,vit,True,3,pNML,pNML,pNML|ViM|KPCA RecError global,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
+cifar10,ViT,vit,True,4,pNML,pNML,pNML|PCA RecError global|ViM,pNML,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
+cifar100,ViT,vit,True,0,KPCA RecError global,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,True,True,True
+cifar100,ViT,vit,True,1,ViM,KPCA RecError global|Maha|ViM|fDBD,ViM|KPCA RecError global|fDBD,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,True,True,True
+cifar100,ViT,vit,True,2,KPCA RecError global,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|fDBD|ViM,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,True,True,True
+cifar100,ViT,vit,True,3,ViM,KPCA RecError global|Maha|ViM|fDBD,ViM|fDBD|CTM,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD|pNML,False,True,True
+cifar100,ViT,vit,True,4,KPCA RecError global,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,KPCA RecError global|Maha|ViM|fDBD,True,True,True
+supercifar100,ViT,vit,False,0,KPCA RecError global,CTMmean|CTMmeanOC,KPCA RecError global|pNML|PCA RecError global,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,False,True
+supercifar100,ViT,vit,False,1,CTMmeanOC,CTMmean|CTMmeanOC,CTMmeanOC|CTMmean|GradNorm,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
+supercifar100,ViT,vit,False,2,KPCA RecError global,CTMmean|CTMmeanOC,KPCA RecError global|PCA RecError global|pNML,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,False,True
+supercifar100,ViT,vit,False,3,CTMmeanOC,CTMmean|CTMmeanOC,CTMmeanOC|CTMmean|KPCA RecError global,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
+supercifar100,ViT,vit,False,4,KPCA RecError global,CTMmean|CTMmeanOC,KPCA RecError global|CTMmeanOC|CTMmean,CTMmean|CTMmeanOC,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
+tinyimagenet,ViT,vit,False,0,GE,Energy|GE|MLS|PE,GE|PE|MLS,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
+tinyimagenet,ViT,vit,False,1,PE,Energy|GE|MLS|PE,PE|GE|MLS,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
+tinyimagenet,ViT,vit,False,2,GE,Energy|GE|MLS|PE,GE|MLS|Energy,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
+tinyimagenet,ViT,vit,False,3,GE,Energy|GE|MLS|PE,GE|PE|MLS,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True
+tinyimagenet,ViT,vit,False,4,GE,Energy|GE|MLS|PE,GE|PE|MLS,Energy|GE|MLS|PE,CTMmean|CTMmeanOC|Energy|GE|MLS|PE,False,True,True

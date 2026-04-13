@@ -1,37 +1,37 @@
 Decision Tree Rules (group_all)
-Depth: 2, Train acc: 1.000, LODO acc: 0.000, LODO jaccard: 0.167
+Depth: 2, Train acc: 0.750, LODO acc: 0.000, LODO jaccard: 0.167
 Classes: ['CTM', 'Energy', 'GE', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
-|--- var_collapse <= 0.0051
-|   |--- class: CTM
-|--- var_collapse >  0.0051
-|   |--- max_equiangular_uc <= 0.0862
+|--- equinorm_wc <= 0.0440
+|   |--- self_duality <= 0.0336
 |   |   |--- class: not_CTM
-|   |--- max_equiangular_uc >  0.0862
+|   |--- self_duality >  0.0336
 |   |   |--- class: CTM
+|--- equinorm_wc >  0.0440
+|   |--- class: not_CTM
 
 === Energy ===
-|--- var_collapse <= 0.0094
+|--- var_collapse <= 0.0074
 |   |--- class: not_Energy
-|--- var_collapse >  0.0094
-|   |--- class: Energy
+|--- var_collapse >  0.0074
+|   |--- equiangular_uc <= 0.1324
+|   |   |--- class: Energy
+|   |--- equiangular_uc >  0.1324
+|   |   |--- class: not_Energy
 
 === GE ===
-|--- var_collapse <= 0.0130
-|   |--- equiangular_uc <= 0.0847
+|--- var_collapse <= 0.0186
+|   |--- equiangular_wc <= 0.0654
+|   |   |--- class: GE
+|   |--- equiangular_wc >  0.0654
 |   |   |--- class: not_GE
-|   |--- equiangular_uc >  0.0847
-|   |   |--- class: not_GE
-|--- var_collapse >  0.0130
+|--- var_collapse >  0.0186
 |   |--- class: GE
 
 === fDBD ===
-|--- equinorm_wc <= 0.0452
-|   |--- equiangular_uc <= 0.0847
-|   |   |--- class: not_fDBD
-|   |--- equiangular_uc >  0.0847
-|   |   |--- class: not_fDBD
-|--- equinorm_wc >  0.0452
+|--- equinorm_wc <= 0.0440
+|   |--- class: not_fDBD
+|--- equinorm_wc >  0.0440
 |   |--- class: fDBD

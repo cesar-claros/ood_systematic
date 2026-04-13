@@ -1,52 +1,55 @@
 Decision Tree Rules (group_mid)
-Depth: 2, Train acc: 1.000, LODO acc: 0.000, LODO jaccard: 0.000
+Depth: 2, Train acc: 0.925, LODO acc: 0.000, LODO jaccard: 0.019
 Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'KPCA RecError global', 'NeCo']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality']
 
 === CTM ===
-|--- equiangular_wc <= 0.1009
-|   |--- class: CTM
-|--- equiangular_wc >  0.1009
+|--- equinorm_wc <= 0.0348
+|   |--- equiangular_uc <= 0.0702
+|   |   |--- class: not_CTM
+|   |--- equiangular_uc >  0.0702
+|   |   |--- class: CTM
+|--- equinorm_wc >  0.0348
 |   |--- class: not_CTM
 
 === CTMmean ===
-|--- var_collapse <= 0.0056
-|   |--- class: CTMmean
-|--- var_collapse >  0.0056
-|   |--- equiangular_uc <= 0.0974
+|--- self_duality <= 0.0879
+|   |--- equiangular_uc <= 0.0844
 |   |   |--- class: not_CTMmean
-|   |--- equiangular_uc >  0.0974
-|   |   |--- class: not_CTMmean
+|   |--- equiangular_uc >  0.0844
+|   |   |--- class: CTMmean
+|--- self_duality >  0.0879
+|   |--- class: not_CTMmean
 
 === CTMmeanOC ===
-|--- var_collapse <= 0.0056
-|   |--- class: CTMmeanOC
-|--- var_collapse >  0.0056
-|   |--- equiangular_uc <= 0.0974
+|--- self_duality <= 0.0879
+|   |--- equiangular_uc <= 0.0844
 |   |   |--- class: not_CTMmeanOC
-|   |--- equiangular_uc >  0.0974
-|   |   |--- class: not_CTMmeanOC
+|   |--- equiangular_uc >  0.0844
+|   |   |--- class: CTMmeanOC
+|--- self_duality >  0.0879
+|   |--- class: not_CTMmeanOC
 
 === Energy ===
-|--- equiangular_wc <= 0.1009
-|   |--- class: not_Energy
-|--- equiangular_wc >  0.1009
+|--- equinorm_wc <= 0.0348
+|   |--- equiangular_uc <= 0.0702
+|   |   |--- class: Energy
+|   |--- equiangular_uc >  0.0702
+|   |   |--- class: not_Energy
+|--- equinorm_wc >  0.0348
 |   |--- class: Energy
 
 === KPCA RecError global ===
-|--- equinorm_wc <= 0.0253
-|   |--- class: KPCA RecError global
-|--- equinorm_wc >  0.0253
-|   |--- equiangular_uc <= 0.0947
-|   |   |--- class: not_KPCA RecError global
-|   |--- equiangular_uc >  0.0947
+|--- var_collapse <= 0.0108
+|   |--- class: not_KPCA RecError global
+|--- var_collapse >  0.0108
+|   |--- equinorm_wc <= 0.0325
+|   |   |--- class: KPCA RecError global
+|   |--- equinorm_wc >  0.0325
 |   |   |--- class: not_KPCA RecError global
 
 === NeCo ===
-|--- equinorm_wc <= 0.0466
-|   |--- equiangular_uc <= 0.0947
-|   |   |--- class: not_NeCo
-|   |--- equiangular_uc >  0.0947
-|   |   |--- class: not_NeCo
-|--- equinorm_wc >  0.0466
+|--- equinorm_wc <= 0.0385
+|   |--- class: not_NeCo
+|--- equinorm_wc >  0.0385
 |   |--- class: NeCo
