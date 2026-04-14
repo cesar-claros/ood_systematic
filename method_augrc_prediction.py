@@ -24,7 +24,12 @@ import argparse
 
 import numpy as np
 import pandas as pd
+import shap
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.inspection import partial_dependence
 from scipy.stats import spearmanr, kendalltau
 from loguru import logger
 
@@ -506,6 +511,216 @@ def compute_feature_importance(
     return avg_imp
 
 
+def compute_shap_analysis(
+    df: pd.DataFrame,
+    nc_features: list[str],
+    group_label: str,
+    target_col: str = "avg_ood_rank",
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Train per-method RFs on full data and compute SHAP values.
+
+    Returns
+    -------
+    shap_long : DataFrame
+        One row per (method, sample, feature) with columns:
+        method, feature, shap_value, feature_value
+    shap_summary : DataFrame
+        One row per (method, feature) with columns:
+        method, feature, mean_abs_shap, mean_shap
+    """
+    gdf = df[df["group"] == group_label]
+    avail = [f for f in nc_features if f in gdf.columns]
+    methods = sorted(gdf["method"].unique())
+
+    long_rows = []
+    summary_rows = []
+
+    for method in methods:
+        sub = gdf[gdf["method"] == method]
+        X = sub[avail].values
+        y = sub[target_col].values
+        if len(X) < 5:
+            continue
+
+        rf = _make_rf()
+        rf.fit(X, y)
+
+        explainer = shap.TreeExplainer(rf)
+        shap_values = explainer.shap_values(X)
+
+        for i in range(len(X)):
+            for j, feat in enumerate(avail):
+                long_rows.append({
+                    "method": method,
+                    "feature": feat,
+                    "shap_value": shap_values[i, j],
+                    "feature_value": X[i, j],
+                })
+
+        for j, feat in enumerate(avail):
+            vals = shap_values[:, j]
+            summary_rows.append({
+                "method": method,
+                "feature": feat,
+                "mean_abs_shap": np.mean(np.abs(vals)),
+                "mean_shap": np.mean(vals),
+            })
+
+    shap_long = pd.DataFrame(long_rows)
+    shap_summary = pd.DataFrame(summary_rows)
+
+    # Log top features per method
+    for method in methods:
+        msub = shap_summary[shap_summary["method"] == method].sort_values(
+            "mean_abs_shap", ascending=False,
+        )
+        top = msub.head(3)
+        feats = ", ".join(
+            f"{r['feature']}({r['mean_shap']:+.4f})"
+            for _, r in top.iterrows()
+        )
+        logger.info(f"  SHAP {method}: {feats}")
+
+    # Global summary (averaged across methods)
+    global_imp = (
+        shap_summary.groupby("feature")["mean_abs_shap"]
+        .mean()
+        .sort_values(ascending=False)
+    )
+    logger.info(
+        f"  SHAP global top features: "
+        + ", ".join(f"{f}={v:.4f}" for f, v in global_imp.head(5).items())
+    )
+
+    return shap_long, shap_summary
+
+
+def compute_partial_dependence(
+    df: pd.DataFrame,
+    nc_features: list[str],
+    group_label: str,
+    target_col: str = "avg_ood_rank",
+    output_dir: str = "regression_outputs",
+    tag: str = "",
+    grid_resolution: int = 50,
+) -> pd.DataFrame:
+    """Train per-method RFs on full data and compute partial dependence.
+
+    Produces:
+    - One CSV with PDP values for all (method, feature) pairs
+    - One PDF per method with subplots for each feature
+    - One PDF grid with methods as rows and features as columns
+
+    Returns
+    -------
+    pdp_df : DataFrame
+        Columns: method, feature, grid_value, pdp_value
+    """
+    gdf = df[df["group"] == group_label]
+    avail = [f for f in nc_features if f in gdf.columns]
+    methods = sorted(gdf["method"].unique())
+
+    trained_models = {}
+    method_X = {}
+
+    for method in methods:
+        sub = gdf[gdf["method"] == method]
+        X = sub[avail].values
+        y = sub[target_col].values
+        if len(X) < 5:
+            continue
+        rf = _make_rf()
+        rf.fit(X, y)
+        trained_models[method] = rf
+        method_X[method] = X
+
+    # Compute PDP for each (method, feature) pair
+    pdp_rows = []
+    pdp_data = {}  # {method: {feature: (grid, values)}}
+
+    for method, rf in trained_models.items():
+        X = method_X[method]
+        pdp_data[method] = {}
+        for j, feat in enumerate(avail):
+            result = partial_dependence(
+                rf, X, features=[j], grid_resolution=grid_resolution,
+                kind="average",
+            )
+            grid = result["grid_values"][0]
+            values = result["average"][0]
+            pdp_data[method][feat] = (grid, values)
+            for g, v in zip(grid, values):
+                pdp_rows.append({
+                    "method": method,
+                    "feature": feat,
+                    "grid_value": g,
+                    "pdp_value": v,
+                })
+
+    pdp_df = pd.DataFrame(pdp_rows)
+
+    # ── Per-method figure: one subplot per feature ──
+    n_features = len(avail)
+    ncols = min(4, n_features)
+    nrows = (n_features + ncols - 1) // ncols
+
+    for method in trained_models:
+        fig, axes = plt.subplots(
+            nrows, ncols, figsize=(4 * ncols, 3 * nrows),
+            squeeze=False,
+        )
+        for j, feat in enumerate(avail):
+            ax = axes[j // ncols][j % ncols]
+            grid, values = pdp_data[method][feat]
+            ax.plot(grid, values, linewidth=2)
+            ax.set_xlabel(feat, fontsize=9)
+            ax.set_ylabel(f"Partial dep. ({target_col})", fontsize=8)
+            ax.tick_params(labelsize=8)
+        # Hide unused axes
+        for j in range(n_features, nrows * ncols):
+            axes[j // ncols][j % ncols].set_visible(False)
+        fig.suptitle(f"PDP — {method} ({group_label})", fontsize=12)
+        fig.tight_layout(rect=[0, 0, 1, 0.96])
+        fig.savefig(
+            os.path.join(output_dir, f"pdp_{tag}_{method}.pdf"),
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+
+    # ── Grid figure: methods (rows) × features (cols) ──
+    valid_methods = sorted(trained_models.keys())
+    fig, axes = plt.subplots(
+        len(valid_methods), n_features,
+        figsize=(3 * n_features, 2.5 * len(valid_methods)),
+        squeeze=False,
+    )
+    for i, method in enumerate(valid_methods):
+        for j, feat in enumerate(avail):
+            ax = axes[i][j]
+            grid, values = pdp_data[method][feat]
+            ax.plot(grid, values, linewidth=1.5)
+            if i == 0:
+                ax.set_title(feat, fontsize=9)
+            if j == 0:
+                ax.set_ylabel(method, fontsize=9)
+            ax.tick_params(labelsize=7)
+    fig.suptitle(
+        f"Partial Dependence — {group_label} ({target_col})", fontsize=13,
+    )
+    fig.tight_layout(rect=[0, 0, 1, 0.97])
+    fig.savefig(
+        os.path.join(output_dir, f"pdp_grid_{tag}.pdf"),
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+
+    logger.info(
+        f"  PDP: saved {len(trained_models)} per-method PDFs "
+        f"+ 1 grid PDF ({len(avail)} features)"
+    )
+    return pdp_df
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(
@@ -676,6 +891,40 @@ def main():
             imp_df.to_csv(
                 os.path.join(
                     args.output_dir, f"regression_importance_{tag}.csv"
+                ),
+                index=False,
+            )
+
+            # SHAP analysis
+            logger.info(f"  Computing SHAP values ...")
+            shap_long, shap_summary = compute_shap_analysis(
+                reg_df, nc_features, group_label,
+                target_col=target_col,
+            )
+            shap_long.to_csv(
+                os.path.join(
+                    args.output_dir, f"regression_shap_long_{tag}.csv"
+                ),
+                index=False,
+            )
+            shap_summary.to_csv(
+                os.path.join(
+                    args.output_dir, f"regression_shap_summary_{tag}.csv"
+                ),
+                index=False,
+            )
+
+            # Partial dependence analysis
+            logger.info(f"  Computing partial dependence ...")
+            pdp_df = compute_partial_dependence(
+                reg_df, nc_features, group_label,
+                target_col=target_col,
+                output_dir=args.output_dir,
+                tag=tag,
+            )
+            pdp_df.to_csv(
+                os.path.join(
+                    args.output_dir, f"regression_pdp_{tag}.csv"
                 ),
                 index=False,
             )
