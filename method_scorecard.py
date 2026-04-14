@@ -1,0 +1,565 @@
+"""Per-method scorecard & WoE analysis from Neural Collapse metrics.
+
+For each OOD detection method, build an interpretable scorecard that maps
+NC metric bins to the probability of the method being "top-ranked"
+(i.e., belonging to the top-k by average OOD rank).
+
+Pipeline
+--------
+1. Load NC metrics (features) and AUGRC scores (to derive avg_ood_rank)
+2. For each method, binarize the target:  avg_ood_rank <= k  →  1 (good)
+3. Optimal binning of each NC metric against the binary target
+4. Extract WoE / IV per (method, feature) for interpretability
+5. Build logistic-regression scorecard on WoE-transformed features
+6. Summary visualisations: WoE heatmap and scorecard tables
+"""
+
+import os
+import json
+import argparse
+
+import numpy as np
+import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import seaborn as sns
+from optbinning import OptimalBinning, BinningProcess, Scorecard
+from sklearn.linear_model import LogisticRegression
+from loguru import logger
+
+# Reuse data-loading utilities from the regression script
+from method_augrc_prediction import (
+    PAPYAN_NC_METRICS,
+    ARCH_MAP,
+    STUDY_MAP,
+    SOURCES,
+    load_scores,
+    build_regression_dataset,
+)
+from nc_regime_analysis import NC_METRICS, load_nc_metrics
+
+
+# ── Binarise target ──────────────────────────────────────────────────────────
+def add_binary_target(
+    df: pd.DataFrame,
+    top_k: int = 3,
+    cliques: dict[str, list[str]] | None = None,
+    mode: str = "rank",
+) -> pd.DataFrame:
+    """Add a binary ``is_top`` column to the regression dataset.
+
+    Parameters
+    ----------
+    mode : str
+        "rank"   – 1 if the method's avg_ood_rank is <= top_k within its
+                    (dataset, group, study, dropout, reward, run) setting.
+        "clique" – 1 if the method appears in the clique for its
+                    (dataset, group) combination.
+    """
+    df = df.copy()
+    if mode == "rank":
+        rank_keys = [
+            "dataset", "group", "study", "dropout", "reward", "run",
+        ]
+        df["setting_rank"] = df.groupby(rank_keys)["avg_ood_rank"].rank(
+            method="average", ascending=True,
+        )
+        df["is_top"] = (df["setting_rank"] <= top_k).astype(int)
+        logger.info(
+            f"Binary target (rank <= {top_k}): "
+            f"{df['is_top'].sum()} positives / {len(df)} total "
+            f"({df['is_top'].mean():.1%})"
+        )
+    elif mode == "clique":
+        if cliques is None:
+            raise ValueError("clique mode requires --clique-file")
+        def _in_clique(row):
+            members = cliques.get(row["dataset"], {}).get(row["group"], [])
+            return int(row["method"] in members)
+        df["is_top"] = df.apply(_in_clique, axis=1)
+        logger.info(
+            f"Binary target (clique membership): "
+            f"{df['is_top'].sum()} positives / {len(df)} total "
+            f"({df['is_top'].mean():.1%})"
+        )
+    else:
+        raise ValueError(f"Unknown mode: {mode}")
+    return df
+
+
+# ── WoE / IV analysis ────────────────────────────────────────────────────────
+def compute_woe_iv(
+    df: pd.DataFrame,
+    nc_features: list[str],
+    group_label: str,
+) -> pd.DataFrame:
+    """Per-method optimal binning → WoE and IV for each NC feature.
+
+    Returns
+    -------
+    woe_df : DataFrame
+        Columns: method, feature, bin, count, event_rate, woe, iv
+    """
+    gdf = df[df["group"] == group_label]
+    avail = [f for f in nc_features if f in gdf.columns]
+    methods = sorted(gdf["method"].unique())
+
+    rows = []
+    for method in methods:
+        msub = gdf[gdf["method"] == method]
+        y = msub["is_top"].values
+        # Skip if constant target (all 0 or all 1)
+        if y.sum() == 0 or y.sum() == len(y):
+            logger.warning(
+                f"  WoE {method}/{group_label}: constant target, skipping"
+            )
+            continue
+
+        for feat in avail:
+            x = msub[feat].values
+            try:
+                ob = OptimalBinning(
+                    name=feat,
+                    dtype="numerical",
+                    solver="cp",
+                    min_bin_size=0.05,
+                    max_n_bins=6,
+                )
+                ob.fit(x, y)
+                table = ob.binning_table.build()
+                # Drop the Totals/Special/Missing summary rows
+                table = table[
+                    ~table["Bin"].isin(["Special", "Missing", "Totals"])
+                ].copy()
+                for _, r in table.iterrows():
+                    rows.append({
+                        "method": method,
+                        "feature": feat,
+                        "bin": r["Bin"],
+                        "count": r["Count"],
+                        "event_rate": r["Event rate"],
+                        "woe": r["WoE"],
+                        "iv": r["IV"],
+                    })
+            except Exception as e:
+                logger.debug(f"  Binning failed {method}/{feat}: {e}")
+
+    return pd.DataFrame(rows)
+
+
+def compute_iv_summary(woe_df: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate IV per (method, feature) — total IV across bins."""
+    if woe_df.empty:
+        return pd.DataFrame(columns=["method", "feature", "total_iv"])
+    iv_sum = (
+        woe_df.groupby(["method", "feature"])["iv"]
+        .sum()
+        .reset_index()
+        .rename(columns={"iv": "total_iv"})
+    )
+    return iv_sum
+
+
+# ── Scorecard ─────────────────────────────────────────────────────────────────
+def build_scorecard(
+    df: pd.DataFrame,
+    nc_features: list[str],
+    group_label: str,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Per-method logistic scorecard on WoE-transformed features.
+
+    Returns
+    -------
+    card_df : DataFrame
+        Scorecard table: method, feature, bin, points
+    coef_df : DataFrame
+        Logistic regression coefficients per (method, feature)
+    """
+    gdf = df[df["group"] == group_label]
+    avail = [f for f in nc_features if f in gdf.columns]
+    methods = sorted(gdf["method"].unique())
+
+    card_rows = []
+    coef_rows = []
+
+    for method in methods:
+        msub = gdf[gdf["method"] == method].copy()
+        y = msub["is_top"].values
+        if y.sum() == 0 or y.sum() == len(y):
+            continue
+
+        X = msub[avail].copy()
+
+        # BinningProcess for all features at once
+        try:
+            bp = BinningProcess(
+                variable_names=avail,
+                min_bin_size=0.05,
+                max_n_bins=6,
+            )
+            bp.fit(X, y)
+            X_woe = bp.transform(X, metric="woe")
+        except Exception as e:
+            logger.warning(f"  BinningProcess failed for {method}: {e}")
+            continue
+
+        # Logistic regression on WoE features
+        lr = LogisticRegression(
+            penalty="l2", C=1.0, solver="lbfgs", max_iter=1000,
+        )
+        try:
+            lr.fit(X_woe, y)
+        except Exception as e:
+            logger.warning(f"  LogReg failed for {method}: {e}")
+            continue
+
+        # Store coefficients
+        for feat, coef in zip(avail, lr.coef_[0]):
+            coef_rows.append({
+                "method": method,
+                "feature": feat,
+                "coefficient": coef,
+            })
+
+        # Build scorecard points
+        # Scorecard scaling: base_points=600, pdo=20 (standard)
+        try:
+            sc = Scorecard(
+                binning_process=bp,
+                estimator=lr,
+                scaling_method="min_max",
+                scaling_method_params={"min": 300, "max": 850},
+            )
+            sc.fit(X, y)
+            sc_table = sc.table(style="detailed")
+            for _, r in sc_table.iterrows():
+                card_rows.append({
+                    "method": method,
+                    "feature": r["Variable"],
+                    "bin": r["Bin"],
+                    "points": r["Points"],
+                })
+        except Exception as e:
+            logger.debug(f"  Scorecard table failed for {method}: {e}")
+
+    card_df = pd.DataFrame(card_rows)
+    coef_df = pd.DataFrame(coef_rows)
+    return card_df, coef_df
+
+
+# ── Visualisations ────────────────────────────────────────────────────────────
+def plot_woe_heatmap(
+    woe_df: pd.DataFrame,
+    group_label: str,
+    output_dir: str,
+    tag: str,
+) -> None:
+    """Heatmap of mean WoE per (method, feature).
+
+    Positive WoE → NC bin favours method being top-ranked.
+    Negative WoE → NC bin hurts method.
+    """
+    if woe_df.empty:
+        logger.warning("  Empty WoE data, skipping heatmap")
+        return
+
+    # Mean WoE across bins (weighted by count would be better,
+    # but mean is simpler and sufficient for a summary)
+    mean_woe = (
+        woe_df.groupby(["method", "feature"])["woe"]
+        .mean()
+        .reset_index()
+        .pivot(index="feature", columns="method", values="woe")
+    )
+
+    fig, ax = plt.subplots(
+        figsize=(0.8 * len(mean_woe.columns) + 2, 0.5 * len(mean_woe) + 2)
+    )
+    sns.heatmap(
+        mean_woe,
+        ax=ax,
+        cmap="RdBu_r",
+        center=0,
+        annot=True,
+        fmt=".2f",
+        linewidths=0.5,
+        cbar_kws={"label": "mean WoE"},
+    )
+    ax.set_title(f"Mean WoE per method — {group_label}", fontsize=12)
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.tick_params(axis="x", rotation=45, labelsize=9)
+    ax.tick_params(axis="y", rotation=0, labelsize=9)
+    fig.tight_layout()
+    fig.savefig(
+        os.path.join(output_dir, f"woe_heatmap_{tag}.pdf"),
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+    logger.info(f"  Saved WoE heatmap: woe_heatmap_{tag}.pdf")
+
+
+def plot_iv_summary(
+    iv_df: pd.DataFrame,
+    group_label: str,
+    output_dir: str,
+    tag: str,
+) -> None:
+    """Bar chart of mean IV per feature (averaged across methods)."""
+    if iv_df.empty:
+        return
+
+    mean_iv = (
+        iv_df.groupby("feature")["total_iv"]
+        .mean()
+        .sort_values(ascending=True)
+    )
+
+    fig, ax = plt.subplots(figsize=(6, 0.4 * len(mean_iv) + 1.5))
+    mean_iv.plot.barh(ax=ax, color="steelblue", edgecolor="gray")
+    ax.set_xlabel("Mean IV (across methods)", fontsize=10)
+    ax.set_ylabel("")
+    ax.set_title(
+        f"Feature predictive power (IV) — {group_label}", fontsize=12,
+    )
+    # IV interpretation thresholds
+    for thresh, label in [(0.02, "weak"), (0.1, "medium"), (0.3, "strong")]:
+        if mean_iv.max() > thresh:
+            ax.axvline(thresh, color="gray", linestyle="--", linewidth=0.8)
+            ax.text(
+                thresh, len(mean_iv) - 0.5, f" {label}",
+                fontsize=7, color="gray",
+            )
+    ax.tick_params(labelsize=9)
+    fig.tight_layout()
+    fig.savefig(
+        os.path.join(output_dir, f"iv_summary_{tag}.pdf"),
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+    logger.info(f"  Saved IV summary: iv_summary_{tag}.pdf")
+
+
+def plot_scorecard_heatmap(
+    card_df: pd.DataFrame,
+    group_label: str,
+    output_dir: str,
+    tag: str,
+) -> None:
+    """Heatmap of mean scorecard points per (method, feature)."""
+    if card_df.empty:
+        return
+
+    mean_pts = (
+        card_df.groupby(["method", "feature"])["points"]
+        .mean()
+        .reset_index()
+        .pivot(index="feature", columns="method", values="points")
+    )
+
+    fig, ax = plt.subplots(
+        figsize=(0.8 * len(mean_pts.columns) + 2, 0.5 * len(mean_pts) + 2)
+    )
+    sns.heatmap(
+        mean_pts,
+        ax=ax,
+        cmap="YlGnBu",
+        annot=True,
+        fmt=".0f",
+        linewidths=0.5,
+        cbar_kws={"label": "mean points"},
+    )
+    ax.set_title(f"Scorecard points — {group_label}", fontsize=12)
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.tick_params(axis="x", rotation=45, labelsize=9)
+    ax.tick_params(axis="y", rotation=0, labelsize=9)
+    fig.tight_layout()
+    fig.savefig(
+        os.path.join(output_dir, f"scorecard_heatmap_{tag}.pdf"),
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+    logger.info(f"  Saved scorecard heatmap: scorecard_heatmap_{tag}.pdf")
+
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+def main():
+    parser = argparse.ArgumentParser(
+        description="Per-method scorecard & WoE from NC metrics",
+    )
+    parser.add_argument(
+        "--nc-file", type=str,
+        default="neural_collapse_metrics/nc_metrics.csv",
+    )
+    parser.add_argument(
+        "--scores-dir", type=str, default="scores_risk",
+    )
+    parser.add_argument(
+        "--clip-dir", type=str, default="clip_scores",
+    )
+    parser.add_argument(
+        "--backbone", type=str, required=True, choices=["Conv", "ViT"],
+    )
+    parser.add_argument(
+        "--study", type=str, default=None,
+        help="Filter to a single study (e.g. confidnet, devries, dg)",
+    )
+    parser.add_argument(
+        "--clique-file", type=str, default=None,
+        help="JSON clique file (from stats_eval.py) for clique-based target",
+    )
+    parser.add_argument(
+        "--filter-methods", action="store_true",
+        help="Exclude methods containing 'global'/'class' (except PCA/KPCA)",
+    )
+    parser.add_argument(
+        "--papyan-only", action="store_true",
+        help="Use only Papyan NC metrics (8 features)",
+    )
+    parser.add_argument(
+        "--groups", type=str, nargs="*", default=None,
+        help="OOD groups to analyse (default: near mid far all)",
+    )
+    parser.add_argument(
+        "--target-mode", type=str, default="rank",
+        choices=["rank", "clique"],
+        help="How to binarize: 'rank' (top-k by avg_ood_rank) "
+             "or 'clique' (membership in clique file)",
+    )
+    parser.add_argument(
+        "--top-k", type=int, default=3,
+        help="Rank threshold for 'rank' target mode (default: 3)",
+    )
+    parser.add_argument(
+        "--output-dir", type=str, default="scorecard_outputs",
+    )
+    parser.add_argument(
+        "--mcd", type=str, default="False",
+    )
+    parser.add_argument(
+        "--score-metric", type=str, default="AUGRC",
+    )
+
+    args = parser.parse_args()
+
+    os.makedirs(args.output_dir, exist_ok=True)
+
+    # ── NC metrics ──
+    arch = ARCH_MAP[args.backbone]
+    nc = load_nc_metrics(args.nc_file)
+    nc = nc[nc["architecture"] == arch]
+    if args.study:
+        nc_study = STUDY_MAP.get(args.study, args.study)
+        nc = nc[nc["study"] == nc_study]
+    logger.info(f"NC metrics: {len(nc)} rows (arch={arch})")
+
+    metric_pool = PAPYAN_NC_METRICS if args.papyan_only else NC_METRICS
+    nc_features = [m for m in metric_pool if m in nc.columns]
+    logger.info(f"NC features ({len(nc_features)}): {nc_features}")
+
+    # ── Scores ──
+    scores = load_scores(
+        args.scores_dir, args.backbone, args.mcd,
+        args.clip_dir, SOURCES,
+        filter_methods=args.filter_methods,
+        study_filter=args.study,
+    )
+
+    # ── Build dataset ──
+    reg_df = build_regression_dataset(nc, scores, nc_features)
+
+    # ── Cliques ──
+    clique_data = None
+    if args.clique_file and os.path.exists(args.clique_file):
+        with open(args.clique_file) as f:
+            raw = json.load(f)
+        raw.pop("_ranks", None)
+        clique_data = raw
+
+    # ── Binarise ──
+    groups_to_run = args.groups or ["near", "mid", "far", "all"]
+
+    study_tag = f"_{args.study}" if args.study else ""
+    file_prefix = (
+        f"{args.score_metric}_{args.backbone}_MCD-{args.mcd}{study_tag}"
+    )
+
+    for group_label in groups_to_run:
+        logger.info(f"\n{'=' * 60}")
+        logger.info(f"OOD group: {group_label}")
+
+        # Cliques for this group
+        cliques_for_group = None
+        if clique_data:
+            cliques_for_group = {}
+            for src, gmap in clique_data.items():
+                if group_label in gmap:
+                    cliques_for_group[src] = gmap[group_label]
+
+        gdf = reg_df[reg_df["group"] == group_label].copy()
+        if gdf.empty:
+            logger.warning(f"  No data for group {group_label}")
+            continue
+
+        gdf = add_binary_target(
+            gdf,
+            top_k=args.top_k,
+            cliques=cliques_for_group,
+            mode=args.target_mode,
+        )
+
+        tag = f"{file_prefix}_group_{group_label}"
+
+        # ── WoE / IV ──
+        logger.info("  Computing WoE / IV ...")
+        woe_df = compute_woe_iv(gdf, nc_features, group_label)
+        iv_df = compute_iv_summary(woe_df)
+
+        woe_df.to_csv(
+            os.path.join(args.output_dir, f"woe_{tag}.csv"),
+            index=False,
+        )
+        iv_df.to_csv(
+            os.path.join(args.output_dir, f"iv_{tag}.csv"),
+            index=False,
+        )
+
+        plot_woe_heatmap(woe_df, group_label, args.output_dir, tag)
+        plot_iv_summary(iv_df, group_label, args.output_dir, tag)
+
+        # ── Scorecard ──
+        logger.info("  Building scorecards ...")
+        card_df, coef_df = build_scorecard(gdf, nc_features, group_label)
+
+        if not card_df.empty:
+            card_df.to_csv(
+                os.path.join(args.output_dir, f"scorecard_{tag}.csv"),
+                index=False,
+            )
+            coef_df.to_csv(
+                os.path.join(args.output_dir, f"scorecard_coefs_{tag}.csv"),
+                index=False,
+            )
+            plot_scorecard_heatmap(card_df, group_label, args.output_dir, tag)
+
+        # ── Log top features by IV ──
+        if not iv_df.empty:
+            global_iv = (
+                iv_df.groupby("feature")["total_iv"]
+                .mean()
+                .sort_values(ascending=False)
+            )
+            logger.info(
+                f"  Top features by IV: "
+                + ", ".join(
+                    f"{f}={v:.4f}" for f, v in global_iv.head(5).items()
+                )
+            )
+
+    logger.info("\nDone.")
+
+
+if __name__ == "__main__":
+    main()
