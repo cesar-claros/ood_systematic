@@ -336,6 +336,7 @@ def run_lodo_regression(
 
         # Clique-based evaluation
         clique_hit = False
+        clique_top3_hit = False
         clique_regret = np.nan
         clique_norm_regret = np.nan
         within_clique_range = False
@@ -343,6 +344,7 @@ def run_lodo_regression(
         if cliques and held_out in cliques:
             clique_methods = set(cliques[held_out])
             clique_hit = predicted_sorted[0] in clique_methods
+            clique_top3_hit = bool(top3_predicted & clique_methods)
             clique_augrc_vals = [
                 actual_augrc[m] for m in clique_methods
                 if m in actual_augrc
@@ -375,6 +377,7 @@ def run_lodo_regression(
             "regret": regret,
             "norm_regret": regret / best_augrc if best_augrc else 0,
             "clique_hit": clique_hit,
+            "clique_top3_hit": clique_top3_hit,
             "clique_regret": clique_regret,
             "clique_norm_regret": clique_norm_regret,
             "within_clique_range": within_clique_range,
@@ -398,6 +401,7 @@ def run_lodo_regression(
             f"top1={'Y' if top1_hit else 'N'}, "
             f"regret={regret:.2f} ({fold_result['norm_regret']:.1%}), "
             f"clique={'Y' if clique_hit else 'N'}, "
+            f"cq_top3={'Y' if clique_top3_hit else 'N'}, "
             f"{clique_str}"
         )
 
@@ -419,6 +423,9 @@ def run_lodo_regression(
         "mean_regret": fold_df["regret"].mean(),
         "mean_norm_regret": fold_df["norm_regret"].mean(),
         "clique_hit_rate": fold_df["clique_hit"].mean(),
+        "clique_top3_hit_rate": (
+            fold_df["clique_top3_hit"].mean() if has_cliques else np.nan
+        ),
         "mean_clique_regret": (
             fold_df["clique_regret"].mean() if has_cliques else np.nan
         ),
@@ -449,7 +456,8 @@ def run_lodo_regression(
         f"top3_J={summary['mean_top3_jaccard']:.3f}, "
         f"regret={summary['mean_regret']:.2f} "
         f"({summary['mean_norm_regret']:.1%}), "
-        f"clique={summary['clique_hit_rate']:.1%}"
+        f"clique={summary['clique_hit_rate']:.1%}, "
+        f"cq_top3={summary['clique_top3_hit_rate']:.1%}"
         f"{clique_log}"
     )
 
