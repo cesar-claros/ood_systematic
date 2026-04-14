@@ -600,18 +600,9 @@ def compute_partial_dependence(
     nc_features: list[str],
     group_label: str,
     target_col: str = "avg_ood_rank",
-    output_dir: str = "regression_outputs",
-    tag: str = "",
     grid_resolution: int = 50,
-    cliques: dict[str, list[str]] | None = None,
 ) -> pd.DataFrame:
     """Train per-method RFs on full data and compute partial dependence.
-
-    Produces:
-    - One CSV with PDP values for all (method, feature) pairs
-    - One PDF per method with subplots for each feature
-    - One PDF grid with methods as rows and features as columns
-    - One PDF per feature with only clique methods overlaid
 
     Returns
     -------
@@ -622,9 +613,7 @@ def compute_partial_dependence(
     avail = [f for f in nc_features if f in gdf.columns]
     methods = sorted(gdf["method"].unique())
 
-    trained_models = {}
-    method_X = {}
-
+    pdp_rows = []
     for method in methods:
         sub = gdf[gdf["method"] == method]
         X = sub[avail].values
@@ -633,16 +622,6 @@ def compute_partial_dependence(
             continue
         rf = _make_rf()
         rf.fit(X, y)
-        trained_models[method] = rf
-        method_X[method] = X
-
-    # Compute PDP for each (method, feature) pair
-    pdp_rows = []
-    pdp_data = {}  # {method: {feature: (grid, values)}}
-
-    for method, rf in trained_models.items():
-        X = method_X[method]
-        pdp_data[method] = {}
         for j, feat in enumerate(avail):
             result = partial_dependence(
                 rf, X, features=[j], grid_resolution=grid_resolution,
@@ -650,7 +629,6 @@ def compute_partial_dependence(
             )
             grid = result["grid_values"][0]
             values = result["average"][0]
-            pdp_data[method][feat] = (grid, values)
             for g, v in zip(grid, values):
                 pdp_rows.append({
                     "method": method,
@@ -659,104 +637,152 @@ def compute_partial_dependence(
                     "pdp_value": v,
                 })
 
-    pdp_df = pd.DataFrame(pdp_rows)
+    return pd.DataFrame(pdp_rows)
 
-    # ── Per-method figure: one subplot per feature ──
-    n_features = len(avail)
-    ncols = min(4, n_features)
-    nrows = (n_features + ncols - 1) // ncols
 
-    for method in trained_models:
-        fig, axes = plt.subplots(
-            nrows, ncols, figsize=(4 * ncols, 3 * nrows),
-            squeeze=False,
-        )
-        for j, feat in enumerate(avail):
-            ax = axes[j // ncols][j % ncols]
-            grid, values = pdp_data[method][feat]
-            ax.plot(grid, values, linewidth=2)
-            ax.set_xlabel(feat, fontsize=9)
-            ax.set_ylabel(f"Partial dep. ({target_col})", fontsize=8)
-            ax.tick_params(labelsize=8)
-        # Hide unused axes
-        for j in range(n_features, nrows * ncols):
-            axes[j // ncols][j % ncols].set_visible(False)
-        fig.suptitle(f"PDP — {method} ({group_label})", fontsize=12)
-        fig.tight_layout(rect=[0, 0, 1, 0.96])
-        fig.savefig(
-            os.path.join(output_dir, f"pdp_{tag}_{method}.pdf"),
-            bbox_inches="tight",
-        )
-        plt.close(fig)
+def plot_nc_clique_summary(
+    df: pd.DataFrame,
+    nc_features: list[str],
+    group_label: str,
+    shap_summary: pd.DataFrame,
+    cliques: dict[str, list[str]] | None,
+    target_col: str = "avg_ood_rank",
+    output_dir: str = "regression_outputs",
+    tag: str = "",
+) -> None:
+    """Summary figure linking NC metric profiles to top-clique methods.
 
-    # ── Grid figure: methods (rows) × features (cols) ──
-    valid_methods = sorted(trained_models.keys())
-    fig, axes = plt.subplots(
-        len(valid_methods), n_features,
-        figsize=(3 * n_features, 2.5 * len(valid_methods)),
-        squeeze=False,
+    Layout (two panels):
+      Left  — Heatmap: NC metrics (rows) × source datasets (cols),
+              z-scored mean values.  Clique members annotated below.
+      Right — Horizontal bars: mean |SHAP| of clique methods per NC metric,
+              coloured by sign (negative = helps method, positive = hurts).
+    """
+    import seaborn as sns
+
+    gdf = df[df["group"] == group_label]
+    avail = [f for f in nc_features if f in gdf.columns]
+    datasets = sorted(gdf["dataset"].unique())
+
+    # ── NC metric means per source dataset ──
+    nc_means = (
+        gdf.groupby("dataset")[avail]
+        .mean()
+        .reindex(datasets)
     )
-    for i, method in enumerate(valid_methods):
-        for j, feat in enumerate(avail):
-            ax = axes[i][j]
-            grid, values = pdp_data[method][feat]
-            ax.plot(grid, values, linewidth=1.5)
-            if i == 0:
-                ax.set_title(feat, fontsize=9)
-            if j == 0:
-                ax.set_ylabel(method, fontsize=9)
-            ax.tick_params(labelsize=7)
+    # z-score across datasets for visual comparability
+    nc_z = (nc_means - nc_means.mean()) / nc_means.std().replace(0, 1)
+    nc_z = nc_z.T  # rows = features, cols = datasets
+
+    # ── Clique members per source dataset ──
+    clique_labels = {}
+    clique_methods_all = set()
+    for ds in datasets:
+        if cliques and ds in cliques:
+            members = cliques[ds]
+            clique_labels[ds] = "\n".join(members)
+            clique_methods_all.update(members)
+        else:
+            clique_labels[ds] = "—"
+
+    # ── SHAP summary for clique methods only ──
+    if not shap_summary.empty and clique_methods_all:
+        clique_shap = shap_summary[
+            shap_summary["method"].isin(clique_methods_all)
+        ]
+        # Mean signed SHAP and mean |SHAP| per feature across clique methods
+        shap_agg = (
+            clique_shap.groupby("feature")
+            .agg(
+                mean_abs_shap=("mean_abs_shap", "mean"),
+                mean_shap=("mean_shap", "mean"),
+            )
+            .reindex(avail)
+            .fillna(0)
+        )
+    else:
+        shap_agg = pd.DataFrame(
+            {"mean_abs_shap": 0, "mean_shap": 0}, index=avail,
+        )
+
+    # ── Figure ──
+    fig, (ax_heat, ax_shap) = plt.subplots(
+        1, 2, figsize=(4 + 2.2 * len(datasets), 0.6 * len(avail) + 2.5),
+        gridspec_kw={"width_ratios": [len(datasets), 2], "wspace": 0.05},
+    )
+
+    # Left: NC metric heatmap
+    sns.heatmap(
+        nc_z,
+        ax=ax_heat,
+        cmap="RdBu_r",
+        center=0,
+        annot=nc_means.T.round(2).values,
+        fmt="",
+        linewidths=0.5,
+        cbar_kws={"label": "z-score", "shrink": 0.7},
+        xticklabels=datasets,
+        yticklabels=avail,
+    )
+    ax_heat.set_xlabel("")
+    ax_heat.set_ylabel("")
+    ax_heat.tick_params(axis="x", rotation=0, labelsize=10)
+    ax_heat.tick_params(axis="y", rotation=0, labelsize=10)
+
+    # Annotate clique members below each column
+    for i, ds in enumerate(datasets):
+        ax_heat.text(
+            i + 0.5, len(avail) + 0.4,
+            clique_labels[ds],
+            ha="center", va="top", fontsize=8,
+            fontstyle="italic",
+        )
+    # Add a label for the clique row
+    ax_heat.text(
+        -0.3, len(avail) + 0.4,
+        "clique",
+        ha="right", va="top", fontsize=9, fontweight="bold",
+    )
+    ax_heat.set_title("NC metric profiles", fontsize=12)
+
+    # Right: SHAP importance bars (clique methods only)
+    colors = [
+        "#2166ac" if v < 0 else "#b2182b"
+        for v in shap_agg["mean_shap"]
+    ]
+    y_pos = np.arange(len(avail))
+    ax_shap.barh(
+        y_pos, shap_agg["mean_abs_shap"].values,
+        color=colors, edgecolor="gray", linewidth=0.5,
+    )
+    ax_shap.set_yticks(y_pos)
+    ax_shap.set_yticklabels([])
+    ax_shap.invert_yaxis()
+    ax_shap.set_xlabel("mean |SHAP|", fontsize=10)
+    ax_shap.set_title("Clique method\nfeature importance", fontsize=11)
+    ax_shap.tick_params(labelsize=9)
+
+    # Legend for SHAP sign
+    from matplotlib.patches import Patch
+    legend_elements = [
+        Patch(facecolor="#2166ac", label="lower rank (better)"),
+        Patch(facecolor="#b2182b", label="higher rank (worse)"),
+    ]
+    ax_shap.legend(
+        handles=legend_elements, fontsize=8, loc="lower right",
+    )
+
     fig.suptitle(
-        f"Partial Dependence — {group_label} ({target_col})", fontsize=13,
+        f"NC profile → clique association — {group_label}",
+        fontsize=13, fontweight="bold",
     )
-    fig.tight_layout(rect=[0, 0, 1, 0.97])
+    fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(
-        os.path.join(output_dir, f"pdp_grid_{tag}.pdf"),
+        os.path.join(output_dir, f"nc_clique_summary_{tag}.pdf"),
         bbox_inches="tight",
     )
     plt.close(fig)
-
-    # ── Clique-only: one figure per feature, all clique methods overlaid ──
-    n_clique_plots = 0
-    if cliques:
-        # Collect unique clique methods across all source datasets
-        clique_methods_set = set()
-        for methods_list in cliques.values():
-            clique_methods_set.update(methods_list)
-        clique_methods_in_model = sorted(
-            clique_methods_set & set(trained_models.keys())
-        )
-
-        if clique_methods_in_model:
-            for feat in avail:
-                fig, ax = plt.subplots(figsize=(6, 4))
-                for method in clique_methods_in_model:
-                    grid, values = pdp_data[method][feat]
-                    ax.plot(grid, values, linewidth=2, label=method)
-                ax.set_xlabel(feat, fontsize=11)
-                ax.set_ylabel(f"Partial dep. ({target_col})", fontsize=11)
-                ax.legend(fontsize=9)
-                ax.set_title(
-                    f"PDP clique methods — {feat} ({group_label})",
-                    fontsize=12,
-                )
-                fig.tight_layout()
-                fig.savefig(
-                    os.path.join(
-                        output_dir,
-                        f"pdp_clique_{tag}_{feat}.pdf",
-                    ),
-                    bbox_inches="tight",
-                )
-                plt.close(fig)
-                n_clique_plots += 1
-
-    logger.info(
-        f"  PDP: saved {len(trained_models)} per-method PDFs, "
-        f"1 grid PDF, {n_clique_plots} clique-feature PDFs "
-        f"({len(avail)} features)"
-    )
-    return pdp_df
+    logger.info(f"  Saved NC-clique summary: nc_clique_summary_{tag}.pdf")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -952,20 +978,27 @@ def main():
                 index=False,
             )
 
-            # Partial dependence analysis
+            # Partial dependence data
             logger.info(f"  Computing partial dependence ...")
             pdp_df = compute_partial_dependence(
                 reg_df, nc_features, group_label,
                 target_col=target_col,
-                output_dir=args.output_dir,
-                tag=tag,
-                cliques=cliques_for_group,
             )
             pdp_df.to_csv(
                 os.path.join(
                     args.output_dir, f"regression_pdp_{tag}.csv"
                 ),
                 index=False,
+            )
+
+            # NC-clique summary figure
+            plot_nc_clique_summary(
+                reg_df, nc_features, group_label,
+                shap_summary=shap_summary,
+                cliques=cliques_for_group,
+                target_col=target_col,
+                output_dir=args.output_dir,
+                tag=tag,
             )
 
     if all_summaries:
