@@ -322,6 +322,7 @@ def run_lodo_regression(
         clique_regret = np.nan
         clique_norm_regret = np.nan
         within_clique_range = False
+        clique_top3_jaccard = np.nan
         if cliques and held_out in cliques:
             clique_methods = set(cliques[held_out])
             clique_hit = predicted_sorted[0] in clique_methods
@@ -337,6 +338,11 @@ def run_lodo_regression(
                     clique_regret / mean_clique if mean_clique else 0
                 )
                 within_clique_range = recommended_augrc <= worst_clique
+            clique_top3_jaccard = (
+                len(top3_predicted & clique_methods)
+                / len(top3_predicted | clique_methods)
+                if (top3_predicted | clique_methods) else 0
+            )
 
         fold_result = {
             "dataset": held_out,
@@ -355,6 +361,7 @@ def run_lodo_regression(
             "clique_regret": clique_regret,
             "clique_norm_regret": clique_norm_regret,
             "within_clique_range": within_clique_range,
+            "clique_top3_jaccard": clique_top3_jaccard,
             "actual_top3": "|".join(actual_sorted[:3]),
             "predicted_top3": "|".join(predicted_sorted[:3]),
         }
@@ -363,7 +370,8 @@ def run_lodo_regression(
         clique_str = (
             f"cq_regret={clique_regret:.2f} "
             f"({clique_norm_regret:.1%}), "
-            f"in_range={'Y' if within_clique_range else 'N'}"
+            f"in_range={'Y' if within_clique_range else 'N'}, "
+            f"cq_J={clique_top3_jaccard:.3f}"
             if not np.isnan(clique_regret)
             else "no clique"
         )
@@ -403,6 +411,9 @@ def run_lodo_regression(
         "within_clique_range_rate": (
             fold_df["within_clique_range"].mean() if has_cliques else np.nan
         ),
+        "mean_clique_top3_jaccard": (
+            fold_df["clique_top3_jaccard"].mean() if has_cliques else np.nan
+        ),
     }
 
     clique_log = ""
@@ -410,7 +421,8 @@ def run_lodo_regression(
         clique_log = (
             f", cq_regret={summary['mean_clique_regret']:.2f} "
             f"({summary['mean_clique_norm_regret']:.1%}), "
-            f"in_range={summary['within_clique_range_rate']:.1%}"
+            f"in_range={summary['within_clique_range_rate']:.1%}, "
+            f"cq_J={summary['mean_clique_top3_jaccard']:.3f}"
         )
     logger.info(
         f"  Overall ({target_col}): "
