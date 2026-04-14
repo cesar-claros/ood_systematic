@@ -855,7 +855,7 @@ def main():
     logger.info(f"NC metrics: {len(nc)} rows (arch={arch})")
 
     metric_pool = PAPYAN_NC_METRICS if args.papyan_only else NC_METRICS
-    nc_features = [m for m in metric_pool if m in nc.columns] + ["dropout"]
+    nc_features = [m for m in metric_pool if m in nc.columns]
     logger.info(f"NC features ({len(nc_features)}): {nc_features}")
 
     # ── Scores ──
