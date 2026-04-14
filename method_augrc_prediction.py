@@ -603,6 +603,7 @@ def compute_partial_dependence(
     output_dir: str = "regression_outputs",
     tag: str = "",
     grid_resolution: int = 50,
+    cliques: dict[str, list[str]] | None = None,
 ) -> pd.DataFrame:
     """Train per-method RFs on full data and compute partial dependence.
 
@@ -610,6 +611,7 @@ def compute_partial_dependence(
     - One CSV with PDP values for all (method, feature) pairs
     - One PDF per method with subplots for each feature
     - One PDF grid with methods as rows and features as columns
+    - One PDF per feature with only clique methods overlaid
 
     Returns
     -------
@@ -714,9 +716,45 @@ def compute_partial_dependence(
     )
     plt.close(fig)
 
+    # ── Clique-only: one figure per feature, all clique methods overlaid ──
+    n_clique_plots = 0
+    if cliques:
+        # Collect unique clique methods across all source datasets
+        clique_methods_set = set()
+        for methods_list in cliques.values():
+            clique_methods_set.update(methods_list)
+        clique_methods_in_model = sorted(
+            clique_methods_set & set(trained_models.keys())
+        )
+
+        if clique_methods_in_model:
+            for feat in avail:
+                fig, ax = plt.subplots(figsize=(6, 4))
+                for method in clique_methods_in_model:
+                    grid, values = pdp_data[method][feat]
+                    ax.plot(grid, values, linewidth=2, label=method)
+                ax.set_xlabel(feat, fontsize=11)
+                ax.set_ylabel(f"Partial dep. ({target_col})", fontsize=11)
+                ax.legend(fontsize=9)
+                ax.set_title(
+                    f"PDP clique methods — {feat} ({group_label})",
+                    fontsize=12,
+                )
+                fig.tight_layout()
+                fig.savefig(
+                    os.path.join(
+                        output_dir,
+                        f"pdp_clique_{tag}_{feat}.pdf",
+                    ),
+                    bbox_inches="tight",
+                )
+                plt.close(fig)
+                n_clique_plots += 1
+
     logger.info(
-        f"  PDP: saved {len(trained_models)} per-method PDFs "
-        f"+ 1 grid PDF ({len(avail)} features)"
+        f"  PDP: saved {len(trained_models)} per-method PDFs, "
+        f"1 grid PDF, {n_clique_plots} clique-feature PDFs "
+        f"({len(avail)} features)"
     )
     return pdp_df
 
@@ -921,6 +959,7 @@ def main():
                 target_col=target_col,
                 output_dir=args.output_dir,
                 tag=tag,
+                cliques=cliques_for_group,
             )
             pdp_df.to_csv(
                 os.path.join(
