@@ -101,10 +101,12 @@ def load_scores(
     filter_methods: bool = False,
     study_filter: str | None = None,
 ) -> pd.DataFrame:
-    """Load AUGRC scores and compute group-averaged AUGRC.
+    """Load AUGRC scores, rank methods per OOD dataset, then average ranks.
 
     Returns long-format DataFrame with columns:
-        source_dataset, study, dropout, reward, run, method, group, augrc
+        source_dataset, study, dropout, reward, run, method, group,
+        augrc (mean over OOD datasets), avg_ood_rank (mean rank over OOD datasets),
+        rank (rank of avg_ood_rank), pct_rank (normalized rank)
     """
     frames = []
     for source in sources:
@@ -140,12 +142,32 @@ def load_scores(
             and c not in ["study_raw", "dropout_raw", "test"]
         ]
 
+        rank_cols_keys = ["study", "dropout", "reward", "run"]
         for group_name, group_datasets in ood_groups.items():
             valid = [d for d in group_datasets if d in ood_cols]
             if not valid:
                 continue
+            # Rank methods per OOD dataset, then average ranks
+            per_ood_ranks = []
+            for ood_ds in valid:
+                tmp = df[rank_cols_keys + ["methods", ood_ds]].copy()
+                tmp = tmp.rename(columns={ood_ds: "augrc_ood", "methods": "method"})
+                tmp["ood_rank"] = tmp.groupby(rank_cols_keys)["augrc_ood"].rank(
+                    method="average", ascending=True,
+                )
+                per_ood_ranks.append(
+                    tmp[rank_cols_keys + ["method", "ood_rank"]]
+                )
+            merged = per_ood_ranks[0]
+            for r in per_ood_ranks[1:]:
+                merged = merged.merge(
+                    r, on=rank_cols_keys + ["method"], suffixes=("", "_dup"),
+                )
+            rank_columns = [c for c in merged.columns if c.startswith("ood_rank")]
             sub = df[meta_cols].copy()
+            sub = sub.rename(columns={"methods": "method"})
             sub["augrc"] = df[valid].mean(axis=1)
+            sub["avg_ood_rank"] = merged[rank_columns].mean(axis=1).values
             sub["group"] = group_name
             sub["source_dataset"] = source
             frames.append(sub)
@@ -157,7 +179,7 @@ def load_scores(
     result = result.rename(columns={"methods": "method"})
 
     rank_keys = ["source_dataset", "group", "study", "dropout", "reward", "run"]
-    result["rank"] = result.groupby(rank_keys)["augrc"].rank(
+    result["rank"] = result.groupby(rank_keys)["avg_ood_rank"].rank(
         method="average", ascending=True,
     )
     n_methods = result.groupby(rank_keys)["method"].transform("count")
