@@ -317,9 +317,26 @@ def run_lodo_regression(
         recommended_augrc = actual_augrc[predicted_best]
         regret = recommended_augrc - best_augrc
 
+        # Clique-based evaluation
         clique_hit = False
+        clique_regret = np.nan
+        clique_norm_regret = np.nan
+        within_clique_range = False
         if cliques and held_out in cliques:
-            clique_hit = predicted_sorted[0] in set(cliques[held_out])
+            clique_methods = set(cliques[held_out])
+            clique_hit = predicted_sorted[0] in clique_methods
+            clique_augrc_vals = [
+                actual_augrc[m] for m in clique_methods
+                if m in actual_augrc
+            ]
+            if clique_augrc_vals:
+                mean_clique = np.mean(clique_augrc_vals)
+                worst_clique = max(clique_augrc_vals)
+                clique_regret = recommended_augrc - mean_clique
+                clique_norm_regret = (
+                    clique_regret / mean_clique if mean_clique else 0
+                )
+                within_clique_range = recommended_augrc <= worst_clique
 
         fold_result = {
             "dataset": held_out,
@@ -335,17 +352,28 @@ def run_lodo_regression(
             "regret": regret,
             "norm_regret": regret / best_augrc if best_augrc else 0,
             "clique_hit": clique_hit,
+            "clique_regret": clique_regret,
+            "clique_norm_regret": clique_norm_regret,
+            "within_clique_range": within_clique_range,
             "actual_top3": "|".join(actual_sorted[:3]),
             "predicted_top3": "|".join(predicted_sorted[:3]),
         }
         fold_results.append(fold_result)
 
+        clique_str = (
+            f"cq_regret={clique_regret:.2f} "
+            f"({clique_norm_regret:.1%}), "
+            f"in_range={'Y' if within_clique_range else 'N'}"
+            if not np.isnan(clique_regret)
+            else "no clique"
+        )
         logger.info(
             f"  LODO {held_out}: "
             f"rho={spearman_r:.3f}, tau={kendall_t:.3f}, "
             f"top1={'Y' if top1_hit else 'N'}, "
             f"regret={regret:.2f} ({fold_result['norm_regret']:.1%}), "
-            f"clique={'Y' if clique_hit else 'N'}"
+            f"clique={'Y' if clique_hit else 'N'}, "
+            f"{clique_str}"
         )
 
     if not fold_results:
@@ -354,6 +382,7 @@ def run_lodo_regression(
     fold_df = pd.DataFrame(fold_results)
     preds_df = pd.DataFrame(per_method_preds)
 
+    has_cliques = fold_df["clique_regret"].notna().any()
     summary = {
         "group": group_label,
         "target": target_col,
@@ -365,8 +394,24 @@ def run_lodo_regression(
         "mean_regret": fold_df["regret"].mean(),
         "mean_norm_regret": fold_df["norm_regret"].mean(),
         "clique_hit_rate": fold_df["clique_hit"].mean(),
+        "mean_clique_regret": (
+            fold_df["clique_regret"].mean() if has_cliques else np.nan
+        ),
+        "mean_clique_norm_regret": (
+            fold_df["clique_norm_regret"].mean() if has_cliques else np.nan
+        ),
+        "within_clique_range_rate": (
+            fold_df["within_clique_range"].mean() if has_cliques else np.nan
+        ),
     }
 
+    clique_log = ""
+    if has_cliques:
+        clique_log = (
+            f", cq_regret={summary['mean_clique_regret']:.2f} "
+            f"({summary['mean_clique_norm_regret']:.1%}), "
+            f"in_range={summary['within_clique_range_rate']:.1%}"
+        )
     logger.info(
         f"  Overall ({target_col}): "
         f"rho={summary['mean_spearman']:.3f}, "
@@ -376,6 +421,7 @@ def run_lodo_regression(
         f"regret={summary['mean_regret']:.2f} "
         f"({summary['mean_norm_regret']:.1%}), "
         f"clique={summary['clique_hit_rate']:.1%}"
+        f"{clique_log}"
     )
 
     return {
