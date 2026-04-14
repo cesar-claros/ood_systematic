@@ -1,5 +1,0 @@
-dataset,n_methods,spearman_r,spearman_p,kendall_tau,kendall_p,actual_best,predicted_best,top1_hit,top3_jaccard,regret,norm_regret,clique_hit,actual_top3,predicted_top3
-cifar10,22,0.10220214568040656,0.6508533489140007,0.0303030303030303,0.8672669832921104,KPCA RecError global,KPCA RecError global,True,0.2,0.0,0.0,False,KPCA RecError global|pNML|PCA RecError global,KPCA RecError global|GradNorm|CTMmean
-cifar100,22,-0.17673630717108982,0.4313978321487533,-0.14285714285714285,0.3711989339777388,KPCA RecError global,pNML,False,0.0,21.655808123934094,0.11196844411727691,False,KPCA RecError global|fDBD|GradNorm,pNML|PCA RecError global|CTMmeanOC
-supercifar100,22,-0.3980801806888764,0.06652699004176235,-0.3246753246753246,0.035775933011400106,KPCA RecError global,ViM,False,0.0,46.80994622575261,0.20719276539155745,False,KPCA RecError global|GradNorm|CTMmeanOC,ViM|fDBD|Residual
-tinyimagenet,22,-0.4771315640880858,0.024743738899328075,-0.4285714285714286,0.004759574331351777,Residual,KPCA RecError global,False,0.0,10.596354904911124,0.08565941837903271,False,Residual|pNML|Maha,KPCA RecError global|GradNorm|CTMmeanOC

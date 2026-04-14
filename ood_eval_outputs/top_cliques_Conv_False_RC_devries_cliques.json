@@ -5,14 +5,17 @@
       "REN"
     ],
     "near": [
-      "Energy"
+      "Energy",
+      "NeCo"
     ],
     "mid": [
       "Energy"
     ],
     "far": [
       "Energy",
-      "NeCo"
+      "NeCo",
+      "MLS",
+      "NNGuide"
     ],
     "all": [
       "Energy"
@@ -21,7 +24,8 @@
   "supercifar100": {
     "test": [
       "CTMmeanOC",
-      "CTMmean"
+      "CTMmean",
+      "CTM"
     ],
     "near": [
       "MLS",
@@ -42,7 +46,8 @@
     ],
     "all": [
       "Energy",
-      "GE"
+      "GE",
+      "CTM"
     ]
   },
   "cifar100": {
@@ -54,7 +59,8 @@
       "PCE",
       "NNGuide",
       "PE",
-      "MSR"
+      "MSR",
+      "CTM"
     ],
     "mid": [
       "fDBD",
@@ -77,11 +83,14 @@
       "CTM"
     ],
     "mid": [
-      "CTM"
+      "CTM",
+      "NNGuide"
     ],
     "far": [
       "CTM",
-      "KPCA RecError global"
+      "KPCA RecError global",
+      "CTMmean",
+      "CTMmeanOC"
     ],
     "all": [
       "CTM"
@@ -94,14 +103,17 @@
         "REN": 2.2
       },
       "near": {
-        "Energy": 1.5
+        "Energy": 1.5,
+        "NeCo": 3.0
       },
       "mid": {
         "Energy": 1.975
       },
       "far": {
         "Energy": 2.2,
-        "NeCo": 2.6
+        "NeCo": 2.6,
+        "MLS": 3.6,
+        "NNGuide": 3.65
       },
       "all": {
         "Energy": 1.9125
@@ -110,7 +122,8 @@
     "supercifar100": {
       "test": {
         "CTMmeanOC": 1.1,
-        "CTMmean": 2.1
+        "CTMmean": 2.1,
+        "CTM": 3.0
       },
       "near": {
         "MLS": 4.1,
@@ -131,7 +144,8 @@
       },
       "all": {
         "Energy": 6.325,
-        "GE": 7.125
+        "GE": 7.125,
+        "CTM": 8.1375
       }
     },
     "cifar100": {
@@ -143,7 +157,8 @@
         "PCE": 6.8,
         "NNGuide": 7.05,
         "PE": 7.7,
-        "MSR": 7.8
+        "MSR": 7.8,
+        "CTM": 8.05
       },
       "mid": {
         "fDBD": 4.225,
@@ -166,11 +181,14 @@
         "CTM": 1.02
       },
       "mid": {
-        "CTM": 2.15
+        "CTM": 2.15,
+        "NNGuide": 3.3
       },
       "far": {
         "CTM": 1.8,
-        "KPCA RecError global": 2.6
+        "KPCA RecError global": 2.6,
+        "CTMmean": 3.1,
+        "CTMmeanOC": 3.3
       },
       "all": {
         "CTM": 1.4
