@@ -6,112 +6,70 @@
     ],
     "near": [
       "Energy",
-      "NNGuide",
-      "CTM",
-      "MLS"
+      "NNGuide"
     ],
     "mid": [
-      "Confidence",
-      "CTM",
-      "PE"
+      "Confidence"
     ],
     "far": [
-      "CTM",
-      "Energy",
-      "NNGuide",
-      "MLS"
+      "CTM"
     ],
     "all": [
-      "CTM",
-      "Energy"
+      "CTM"
     ]
   },
   "supercifar100": {
     "test": [
-      "CTM",
-      "CTMmeanOC",
-      "CTMmean"
+      "CTM"
     ],
     "near": [
-      "NNGuide",
-      "Energy",
-      "NeCo",
-      "MLS",
-      "GE"
+      "NNGuide"
     ],
     "mid": [
-      "Energy",
-      "Maha",
-      "GE",
-      "pNML",
-      "Residual",
-      "NeCo"
+      "Energy"
     ],
     "far": [
-      "Maha",
-      "Residual"
+      "Maha"
     ],
     "all": [
-      "Energy",
-      "Maha",
-      "GE",
-      "NeCo"
+      "Energy"
     ]
   },
   "cifar100": {
     "test": [
-      "GEN",
-      "MSR",
-      "PCE"
+      "GEN"
     ],
     "near": [
       "PE",
       "fDBD",
       "PCE",
-      "NeCo",
-      "GradNorm",
-      "MSR",
-      "NNGuide",
-      "REN",
-      "GEN",
-      "CTMmeanOC",
-      "CTM",
-      "GE"
+      "NeCo"
     ],
     "mid": [
       "NNGuide",
       "CTMmean",
       "fDBD",
-      "CTMmeanOC",
-      "Confidence"
+      "CTMmeanOC"
     ],
     "far": [
       "fDBD"
     ],
     "all": [
-      "fDBD",
-      "CTMmeanOC",
-      "NNGuide"
+      "fDBD"
     ]
   },
   "tinyimagenet": {
     "test": [
-      "CTM",
-      "MSR"
+      "CTM"
     ],
     "near": [
       "CTM"
     ],
     "mid": [
-      "CTM",
-      "CTMmeanOC",
-      "CTMmean"
+      "CTM"
     ],
     "far": [
-      "CTM",
-      "CTMmean",
-      "CTMmeanOC",
-      "KPCA RecError global"
+      "CTM"
     ],
     "all": [
       "CTM"
@@ -125,112 +83,70 @@
       },
       "near": {
         "Energy": 3.25,
-        "NNGuide": 3.85,
-        "CTM": 4.7,
-        "MLS": 4.75
+        "NNGuide": 3.85
       },
       "mid": {
-        "Confidence": 2.975,
-        "CTM": 4.55,
-        "PE": 4.825
+        "Confidence": 2.975
       },
       "far": {
-        "CTM": 3.45,
-        "Energy": 4.45,
-        "NNGuide": 5.65,
-        "MLS": 6.15
+        "CTM": 3.45
       },
       "all": {
-        "CTM": 4.3125,
-        "Energy": 5.275
+        "CTM": 4.3125
       }
     },
     "supercifar100": {
       "test": {
-        "CTM": 1.6,
-        "CTMmeanOC": 2.4,
-        "CTMmean": 3.4
+        "CTM": 1.6
       },
       "near": {
-        "NNGuide": 4.25,
-        "Energy": 5.2,
-        "NeCo": 5.4,
-        "MLS": 5.5,
-        "GE": 5.75
+        "NNGuide": 4.25
       },
       "mid": {
-        "Energy": 5.875,
-        "Maha": 6.925,
-        "GE": 7.075,
-        "pNML": 7.55,
-        "Residual": 8.2,
-        "NeCo": 8.225
+        "Energy": 5.875
       },
       "far": {
-        "Maha": 1.5,
-        "Residual": 3.6
+        "Maha": 1.5
       },
       "all": {
-        "Energy": 7.1,
-        "Maha": 8.075,
-        "GE": 8.2125,
-        "NeCo": 8.675
+        "Energy": 7.1
       }
     },
     "cifar100": {
       "test": {
-        "GEN": 1.6,
-        "MSR": 2.7,
-        "PCE": 3.7
+        "GEN": 1.6
       },
       "near": {
         "PE": 7.05,
         "fDBD": 7.1,
         "PCE": 7.35,
-        "NeCo": 8.05,
-        "GradNorm": 8.25,
-        "MSR": 9.05,
-        "NNGuide": 9.05,
-        "REN": 9.15,
-        "GEN": 9.4,
-        "CTMmeanOC": 9.45,
-        "CTM": 9.5,
-        "GE": 10.05
+        "NeCo": 8.05
       },
       "mid": {
         "NNGuide": 5.85,
         "CTMmean": 6.0,
         "fDBD": 6.175,
-        "CTMmeanOC": 6.425,
-        "Confidence": 8.05
+        "CTMmeanOC": 6.425
       },
       "far": {
         "fDBD": 2.3
       },
       "all": {
-        "fDBD": 5.4375,
-        "CTMmeanOC": 6.875,
-        "NNGuide": 6.975
+        "fDBD": 5.4375
       }
     },
     "tinyimagenet": {
       "test": {
-        "CTM": 1.7,
-        "MSR": 2.0
+        "CTM": 1.7
       },
       "near": {
         "CTM": 1.26
       },
       "mid": {
-        "CTM": 2.1,
-        "CTMmeanOC": 2.8,
-        "CTMmean": 2.9
+        "CTM": 2.1
       },
       "far": {
-        "CTM": 2.4,
-        "CTMmean": 3.6,
-        "CTMmeanOC": 3.6,
-        "KPCA RecError global": 3.6
+        "CTM": 2.4
       },
       "all": {
         "CTM": 1.6125
