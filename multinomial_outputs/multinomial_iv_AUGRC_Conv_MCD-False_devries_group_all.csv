@@ -1,10 +1,10 @@
 method,feature,iv,n_bins,quality_score
-CTM,var_collapse,0.10804284665826724,3,0.06174467586204093
-CTM,equiangular_uc,0.014384103622589043,2,0.008216308537344058
-CTM,equiangular_wc,0.010033534773107564,2,0.006904785187152593
+CTM,var_collapse,0.044183275227903954,2,0.048979172203939964
+CTM,equiangular_uc,0.0,1,0.0
+CTM,equiangular_wc,0.04054651081081642,2,0.046552341517605116
 CTM,equinorm_uc,0.0,1,0.0
 CTM,equinorm_wc,0.0,1,0.0
-CTM,max_equiangular_uc,0.017415334713410797,2,0.009005022654810206
+CTM,max_equiangular_uc,0.0,1,0.0
 CTM,max_equiangular_wc,0.0,1,0.0
 CTM,self_duality,0.0,1,0.0
 CTM,dropout,0.0,1,0.0

@@ -1,2 +1,2 @@
 lodo_accuracy,lodo_jaccard,lodo_f1,lodo_clique_hit,lodo_n_samples,lodo_baseline_accuracy,lodo_baseline_jaccard,lodo_baseline_f1,lodo_baseline_clique_hit,lodo_best_model,dt_depth,dt_cv_accuracy,dt_cv_jaccard,dt_cv_f1,dt_cv_clique_hit,label,n_samples,n_classes,n_features,classes,target_mode
-0.0,0.2979166666666667,0.41428571428571426,0.75,40,0.0,0.25,0.3333333333333333,0.5,RF,2,0.0,0.06875,0.11000000000000001,0.275,group_mid,40,6,9,"CTM,CTMmean,CTMmeanOC,Energy,KPCA RecError global,NeCo",clique
+0.075,0.2375,0.3083333333333333,0.525,40,0.0,0.25,0.3333333333333333,0.5,RF,2,0.0,0.08124999999999999,0.125,0.275,group_mid,40,5,9,"CTM,CTMmean,CTMmeanOC,Energy,NeCo",clique

@@ -1,124 +1,88 @@
 Decision Tree Rules (group_near)
-Depth: 2, Train acc: 0.975, LODO acc: 0.000, LODO jaccard: 0.169
-Classes: ['CTM', 'CTMmeanOC', 'Energy', 'GE', 'GEN', 'GradNorm', 'MLS', 'MSR', 'NNGuide', 'NeCo', 'PCE', 'PE', 'REN', 'fDBD']
+Depth: 2, Train acc: 0.730, LODO acc: 0.000, LODO jaccard: 0.236
+Classes: ['CTM', 'Energy', 'NNGuide', 'NeCo', 'PCE', 'PE', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
 
 === CTM ===
-|--- var_collapse <= 0.0276
-|   |--- class: CTM
-|--- var_collapse >  0.0276
-|   |--- equinorm_wc <= 0.2542
+|--- self_duality <= 0.0906
+|   |--- equiangular_wc <= 0.0586
 |   |   |--- class: not_CTM
-|   |--- equinorm_wc >  0.2542
+|   |--- equiangular_wc >  0.0586
 |   |   |--- class: CTM
-
-=== CTMmeanOC ===
-|--- self_duality <= 0.0944
-|   |--- class: not_CTMmeanOC
-|--- self_duality >  0.0944
-|   |--- var_collapse <= 0.0276
-|   |   |--- class: CTMmeanOC
-|   |--- var_collapse >  0.0276
-|   |   |--- class: not_CTMmeanOC
+|--- self_duality >  0.0906
+|   |--- self_duality <= 0.1096
+|   |   |--- class: not_CTM
+|   |--- self_duality >  0.1096
+|   |   |--- class: not_CTM
 
 === Energy ===
-|--- equinorm_wc <= 0.0501
-|   |--- class: Energy
-|--- equinorm_wc >  0.0501
-|   |--- var_collapse <= 0.0908
-|   |   |--- class: not_Energy
-|   |--- var_collapse >  0.0908
+|--- var_collapse <= 0.0089
+|   |--- equiangular_uc <= 0.0851
 |   |   |--- class: Energy
-
-=== GE ===
-|--- self_duality <= 0.0944
-|   |--- class: not_GE
-|--- self_duality >  0.0944
-|   |--- class: GE
-
-=== GEN ===
-|--- self_duality <= 0.0944
-|   |--- class: not_GEN
-|--- self_duality >  0.0944
-|   |--- var_collapse <= 0.0276
-|   |   |--- class: GEN
-|   |--- var_collapse >  0.0276
-|   |   |--- class: not_GEN
-
-=== GradNorm ===
-|--- self_duality <= 0.0944
-|   |--- class: not_GradNorm
-|--- self_duality >  0.0944
-|   |--- var_collapse <= 0.0276
-|   |   |--- class: GradNorm
-|   |--- var_collapse >  0.0276
-|   |   |--- class: not_GradNorm
-
-=== MLS ===
-|--- equinorm_wc <= 0.0501
-|   |--- class: MLS
-|--- equinorm_wc >  0.0501
-|   |--- var_collapse <= 0.0908
-|   |   |--- class: not_MLS
-|   |--- var_collapse >  0.0908
-|   |   |--- class: MLS
-
-=== MSR ===
-|--- self_duality <= 0.0944
-|   |--- class: not_MSR
-|--- self_duality >  0.0944
-|   |--- var_collapse <= 0.0276
-|   |   |--- class: MSR
-|   |--- var_collapse >  0.0276
-|   |   |--- class: not_MSR
+|   |--- equiangular_uc >  0.0851
+|   |   |--- class: not_Energy
+|--- var_collapse >  0.0089
+|   |--- equinorm_wc <= 0.2113
+|   |   |--- class: Energy
+|   |--- equinorm_wc >  0.2113
+|   |   |--- class: not_Energy
 
 === NNGuide ===
-|--- self_duality <= 0.0747
-|   |--- equinorm_wc <= 0.0439
+|--- var_collapse <= 0.0089
+|   |--- equiangular_uc <= 0.0851
 |   |   |--- class: NNGuide
-|   |--- equinorm_wc >  0.0439
+|   |--- equiangular_uc >  0.0851
 |   |   |--- class: not_NNGuide
-|--- self_duality >  0.0747
-|   |--- class: NNGuide
+|--- var_collapse >  0.0089
+|   |--- equinorm_wc <= 0.2113
+|   |   |--- class: NNGuide
+|   |--- equinorm_wc >  0.2113
+|   |   |--- class: not_NNGuide
 
 === NeCo ===
-|--- self_duality <= 0.0944
-|   |--- class: not_NeCo
-|--- self_duality >  0.0944
-|   |--- class: NeCo
+|--- var_collapse <= 0.0097
+|   |--- equiangular_wc <= 0.0540
+|   |   |--- class: NeCo
+|   |--- equiangular_wc >  0.0540
+|   |   |--- class: not_NeCo
+|--- var_collapse >  0.0097
+|   |--- equinorm_wc <= 0.2113
+|   |   |--- class: NeCo
+|   |--- equinorm_wc >  0.2113
+|   |   |--- class: not_NeCo
 
 === PCE ===
-|--- self_duality <= 0.0944
-|   |--- class: not_PCE
-|--- self_duality >  0.0944
-|   |--- var_collapse <= 0.0276
+|--- self_duality <= 0.0906
+|   |--- var_collapse <= 0.0016
 |   |   |--- class: PCE
-|   |--- var_collapse >  0.0276
+|   |--- var_collapse >  0.0016
+|   |   |--- class: not_PCE
+|--- self_duality >  0.0906
+|   |--- var_collapse <= 0.0700
+|   |   |--- class: PCE
+|   |--- var_collapse >  0.0700
 |   |   |--- class: not_PCE
 
 === PE ===
-|--- self_duality <= 0.0944
-|   |--- class: not_PE
-|--- self_duality >  0.0944
-|   |--- var_collapse <= 0.0276
+|--- self_duality <= 0.0906
+|   |--- var_collapse <= 0.0016
 |   |   |--- class: PE
-|   |--- var_collapse >  0.0276
+|   |--- var_collapse >  0.0016
+|   |   |--- class: not_PE
+|--- self_duality >  0.0906
+|   |--- var_collapse <= 0.0700
+|   |   |--- class: PE
+|   |--- var_collapse >  0.0700
 |   |   |--- class: not_PE
 
-=== REN ===
-|--- self_duality <= 0.0944
-|   |--- class: not_REN
-|--- self_duality >  0.0944
-|   |--- var_collapse <= 0.0276
-|   |   |--- class: REN
-|   |--- var_collapse >  0.0276
-|   |   |--- class: not_REN
-
 === fDBD ===
-|--- self_duality <= 0.0944
-|   |--- class: not_fDBD
-|--- self_duality >  0.0944
-|   |--- var_collapse <= 0.0276
+|--- self_duality <= 0.0906
+|   |--- var_collapse <= 0.0016
 |   |   |--- class: fDBD
-|   |--- var_collapse >  0.0276
+|   |--- var_collapse >  0.0016
+|   |   |--- class: not_fDBD
+|--- self_duality >  0.0906
+|   |--- var_collapse <= 0.0700
+|   |   |--- class: fDBD
+|   |--- var_collapse >  0.0700
 |   |   |--- class: not_fDBD

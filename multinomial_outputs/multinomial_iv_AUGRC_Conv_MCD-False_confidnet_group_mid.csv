@@ -35,15 +35,6 @@ Energy,max_equiangular_uc,0.0,1,0.0
 Energy,max_equiangular_wc,0.0,1,0.0
 Energy,self_duality,0.0,1,0.0
 Energy,dropout,0.0,1,0.0
-KPCA RecError global,var_collapse,0.0,1,0.0
-KPCA RecError global,equiangular_uc,0.0,1,0.0
-KPCA RecError global,equiangular_wc,0.2699853433898031,2,0.3538778290978752
-KPCA RecError global,equinorm_uc,0.6863274648639169,2,0.290740633182414
-KPCA RecError global,equinorm_wc,0.0,1,0.0
-KPCA RecError global,max_equiangular_uc,0.0,1,0.0
-KPCA RecError global,max_equiangular_wc,0.0,1,0.0
-KPCA RecError global,self_duality,0.0,1,0.0
-KPCA RecError global,dropout,0.0,1,0.0
 NeCo,var_collapse,1.663553233343869,2,0.0006113824134457999
 NeCo,equiangular_uc,0.0,1,0.0
 NeCo,equiangular_wc,0.0,1,0.0

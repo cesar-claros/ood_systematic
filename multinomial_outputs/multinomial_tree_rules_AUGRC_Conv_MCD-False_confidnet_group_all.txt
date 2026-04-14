@@ -1,6 +1,6 @@
 Decision Tree Rules (group_all)
-Depth: 3, Train acc: 1.000, LODO acc: 0.025, LODO jaccard: 0.138
-Classes: ['CTM', 'Energy', 'MLS', 'NNGuide', 'NeCo', 'fDBD']
+Depth: 3, Train acc: 1.000, LODO acc: 0.025, LODO jaccard: 0.119
+Classes: ['CTM', 'Energy', 'NNGuide', 'NeCo', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
 
 === CTM ===
@@ -27,12 +27,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |--- equinorm_wc >  0.0348
 |   |--- class: Energy
 
-=== MLS ===
-|--- equinorm_wc <= 0.0385
-|   |--- class: not_MLS
-|--- equinorm_wc >  0.0385
-|   |--- class: MLS
-
 === NNGuide ===
 |--- self_duality <= 0.1269
 |   |--- max_equiangular_wc <= 0.0597
@@ -46,15 +40,9 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- class: not_NNGuide
 
 === NeCo ===
-|--- equinorm_wc <= 0.0348
-|   |--- equiangular_uc <= 0.0702
-|   |   |--- class: NeCo
-|   |--- equiangular_uc >  0.0702
-|   |   |--- max_equiangular_wc <= 0.1059
-|   |   |   |--- class: not_NeCo
-|   |   |--- max_equiangular_wc >  0.1059
-|   |   |   |--- class: NeCo
-|--- equinorm_wc >  0.0348
+|--- equinorm_wc <= 0.0385
+|   |--- class: not_NeCo
+|--- equinorm_wc >  0.0385
 |   |--- class: NeCo
 
 === fDBD ===

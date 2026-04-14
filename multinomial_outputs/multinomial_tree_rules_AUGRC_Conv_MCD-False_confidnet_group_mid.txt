@@ -1,6 +1,6 @@
 Decision Tree Rules (group_mid)
-Depth: 2, Train acc: 0.925, LODO acc: 0.000, LODO jaccard: 0.069
-Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'KPCA RecError global', 'NeCo']
+Depth: 2, Train acc: 0.925, LODO acc: 0.000, LODO jaccard: 0.081
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'NeCo']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
 
 === CTM ===
@@ -38,15 +38,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_Energy
 |--- equinorm_wc >  0.0348
 |   |--- class: Energy
-
-=== KPCA RecError global ===
-|--- var_collapse <= 0.0108
-|   |--- class: not_KPCA RecError global
-|--- var_collapse >  0.0108
-|   |--- equinorm_wc <= 0.0325
-|   |   |--- class: KPCA RecError global
-|   |--- equinorm_wc >  0.0325
-|   |   |--- class: not_KPCA RecError global
 
 === NeCo ===
 |--- equinorm_wc <= 0.0385

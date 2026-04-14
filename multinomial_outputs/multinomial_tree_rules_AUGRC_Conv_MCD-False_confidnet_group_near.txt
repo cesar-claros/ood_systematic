@@ -1,6 +1,6 @@
 Decision Tree Rules (group_near)
-Depth: 2, Train acc: 0.925, LODO acc: 0.000, LODO jaccard: 0.139
-Classes: ['CTM', 'Energy', 'GE', 'GradNorm', 'MLS', 'NNGuide', 'NeCo']
+Depth: 3, Train acc: 1.000, LODO acc: 0.000, LODO jaccard: 0.142
+Classes: ['CTM', 'Energy', 'GradNorm', 'MLS', 'NNGuide', 'NeCo']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
 
 === CTM ===
@@ -21,12 +21,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |--- self_duality >  0.0879
 |   |--- class: Energy
 
-=== GE ===
-|--- equinorm_wc <= 0.0385
-|   |--- class: not_GE
-|--- equinorm_wc >  0.0385
-|   |--- class: GE
-
 === GradNorm ===
 |--- var_collapse <= 0.0108
 |   |--- class: not_GradNorm
@@ -34,31 +28,37 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |--- equinorm_wc <= 0.0325
 |   |   |--- class: GradNorm
 |   |--- equinorm_wc >  0.0325
-|   |   |--- class: not_GradNorm
+|   |   |--- max_equiangular_wc <= 0.1093
+|   |   |   |--- class: not_GradNorm
+|   |   |--- max_equiangular_wc >  0.1093
+|   |   |   |--- class: not_GradNorm
 
 === MLS ===
-|--- equinorm_wc <= 0.0348
-|   |--- equiangular_uc <= 0.0702
-|   |   |--- class: MLS
-|   |--- equiangular_uc >  0.0702
-|   |   |--- class: not_MLS
-|--- equinorm_wc >  0.0348
+|--- equinorm_wc <= 0.0385
+|   |--- class: not_MLS
+|--- equinorm_wc >  0.0385
 |   |--- class: MLS
 
 === NNGuide ===
-|--- equinorm_wc <= 0.0348
-|   |--- equiangular_uc <= 0.0702
-|   |   |--- class: NNGuide
-|   |--- equiangular_uc >  0.0702
+|--- self_duality <= 0.1269
+|   |--- max_equiangular_wc <= 0.0597
 |   |   |--- class: not_NNGuide
-|--- equinorm_wc >  0.0348
-|   |--- class: NNGuide
+|   |--- max_equiangular_wc >  0.0597
+|   |   |--- equiangular_uc <= 0.1467
+|   |   |   |--- class: NNGuide
+|   |   |--- equiangular_uc >  0.1467
+|   |   |   |--- class: not_NNGuide
+|--- self_duality >  0.1269
+|   |--- class: not_NNGuide
 
 === NeCo ===
 |--- equinorm_wc <= 0.0348
 |   |--- equiangular_uc <= 0.0702
 |   |   |--- class: NeCo
 |   |--- equiangular_uc >  0.0702
-|   |   |--- class: not_NeCo
+|   |   |--- max_equiangular_wc <= 0.1059
+|   |   |   |--- class: not_NeCo
+|   |   |--- max_equiangular_wc >  0.1059
+|   |   |   |--- class: NeCo
 |--- equinorm_wc >  0.0348
 |   |--- class: NeCo

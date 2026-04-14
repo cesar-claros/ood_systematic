@@ -1,13 +1,4 @@
 method,feature,iv,n_bins,quality_score
-CTMmeanOC,var_collapse,0.0,1,0.0
-CTMmeanOC,equiangular_uc,0.032367187718780055,2,0.017860670125247457
-CTMmeanOC,equiangular_wc,1.1435915094999454,2,0.028141962695496264
-CTMmeanOC,equinorm_uc,0.0,1,0.0
-CTMmeanOC,equinorm_wc,0.044385648714354825,3,0.019669616294843185
-CTMmeanOC,max_equiangular_uc,0.17075071941906467,2,0.19223011232837467
-CTMmeanOC,max_equiangular_wc,0.0,1,0.0
-CTMmeanOC,self_duality,0.0,1,0.0
-CTMmeanOC,dropout,0.0,1,0.0
 KPCA RecError global,var_collapse,0.0,1,0.0
 KPCA RecError global,equiangular_uc,0.2699853433898031,2,0.26513899825334897
 KPCA RecError global,equiangular_wc,0.6240307722527672,3,0.45455162776743857
@@ -26,15 +17,6 @@ Residual,max_equiangular_uc,0.0,2,0.0
 Residual,max_equiangular_wc,0.6863274648639169,2,0.290740633182414
 Residual,self_duality,0.0,1,0.0
 Residual,dropout,0.0,1,0.0
-ViM,var_collapse,0.0,1,0.0
-ViM,equiangular_uc,0.2699853433898032,2,0.26513899825334886
-ViM,equiangular_wc,0.6240307722527672,3,0.45455162776743857
-ViM,equinorm_uc,0.0,1,0.0
-ViM,equinorm_wc,2.2514699724623357,3,6.06129279859338e-07
-ViM,max_equiangular_uc,0.0,2,0.0
-ViM,max_equiangular_wc,0.6863274648639169,2,0.290740633182414
-ViM,self_duality,0.0,1,0.0
-ViM,dropout,0.0,1,0.0
 pNML,var_collapse,0.0,1,0.0
 pNML,equiangular_uc,0.2699853433898032,2,0.26513899825334886
 pNML,equiangular_wc,0.6240307722527672,3,0.45455162776743857

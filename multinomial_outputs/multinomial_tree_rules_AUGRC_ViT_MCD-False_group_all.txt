@@ -1,6 +1,6 @@
 Decision Tree Rules (group_all)
 Depth: 2, Train acc: 1.000, LODO acc: 0.000, LODO jaccard: 0.125
-Classes: ['CTMmean', 'CTMmeanOC', 'Energy', 'GE', 'KPCA RecError global', 'MLS', 'Maha', 'PE', 'ViM', 'fDBD', 'pNML']
+Classes: ['CTMmean', 'CTMmeanOC', 'GE', 'KPCA RecError global', 'MLS', 'PE', 'ViM', 'pNML']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
 
 === CTMmean ===
@@ -20,12 +20,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: CTMmeanOC
 |   |--- self_duality >  1.1261
 |   |   |--- class: not_CTMmeanOC
-
-=== Energy ===
-|--- equinorm_uc <= 0.1748
-|   |--- class: not_Energy
-|--- equinorm_uc >  0.1748
-|   |--- class: Energy
 
 === GE ===
 |--- equinorm_uc <= 0.1748
@@ -48,15 +42,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |--- equinorm_uc >  0.1748
 |   |--- class: MLS
 
-=== Maha ===
-|--- var_collapse <= 0.0080
-|   |--- class: Maha
-|--- var_collapse >  0.0080
-|   |--- equinorm_wc <= 0.0423
-|   |   |--- class: not_Maha
-|   |--- equinorm_wc >  0.0423
-|   |   |--- class: Maha
-
 === PE ===
 |--- equinorm_uc <= 0.1748
 |   |--- class: not_PE
@@ -71,15 +56,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_ViM
 |   |--- equinorm_wc >  0.0423
 |   |   |--- class: ViM
-
-=== fDBD ===
-|--- var_collapse <= 0.0080
-|   |--- class: fDBD
-|--- var_collapse >  0.0080
-|   |--- equinorm_wc <= 0.0423
-|   |   |--- class: not_fDBD
-|   |--- equinorm_wc >  0.0423
-|   |   |--- class: fDBD
 
 === pNML ===
 |--- max_equiangular_wc <= 0.0737

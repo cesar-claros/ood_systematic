@@ -1,6 +1,6 @@
 Decision Tree Rules (group_mid)
-Depth: 2, Train acc: 1.000, LODO acc: 0.000, LODO jaccard: 0.175
-Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'GE', 'NNGuide', 'fDBD']
+Depth: 2, Train acc: 1.000, LODO acc: 0.000, LODO jaccard: 0.179
+Classes: ['CTM', 'CTMmean', 'CTMmeanOC', 'Energy', 'GE', 'fDBD']
 Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'equinorm_wc', 'max_equiangular_uc', 'max_equiangular_wc', 'self_duality', 'dropout']
 
 === CTM ===
@@ -44,18 +44,6 @@ Features: ['var_collapse', 'equiangular_uc', 'equiangular_wc', 'equinorm_uc', 'e
 |   |   |--- class: not_GE
 |--- var_collapse >  0.0186
 |   |--- class: GE
-
-=== NNGuide ===
-|--- equinorm_wc <= 0.0288
-|   |--- equiangular_uc <= 0.0816
-|   |   |--- class: not_NNGuide
-|   |--- equiangular_uc >  0.0816
-|   |   |--- class: NNGuide
-|--- equinorm_wc >  0.0288
-|   |--- max_equiangular_wc <= 0.0533
-|   |   |--- class: not_NNGuide
-|   |--- max_equiangular_wc >  0.0533
-|   |   |--- class: not_NNGuide
 
 === fDBD ===
 |--- equinorm_wc <= 0.0440

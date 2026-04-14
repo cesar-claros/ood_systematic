@@ -5,21 +5,17 @@
       "REN"
     ],
     "near": [
-      "CTM",
       "Energy",
-      "MLS",
-      "NNGuide"
+      "NNGuide",
+      "CTM",
+      "MLS"
     ],
     "mid": [
-      "Confidence",
-      "CTM",
-      "PE"
+      "Confidence"
     ],
     "far": [
       "CTM",
-      "Energy",
-      "MLS",
-      "NNGuide"
+      "Energy"
     ],
     "all": [
       "CTM",
@@ -29,23 +25,20 @@
   "supercifar100": {
     "test": [
       "CTM",
-      "CTMmean",
       "CTMmeanOC"
     ],
     "near": [
+      "NNGuide",
       "Energy",
-      "GE",
-      "MLS",
       "NeCo",
-      "NNGuide"
+      "MLS",
+      "GE"
     ],
     "mid": [
       "Energy",
-      "GE",
       "Maha",
-      "NeCo",
-      "pNML",
-      "Residual"
+      "GE",
+      "pNML"
     ],
     "far": [
       "Maha",
@@ -53,44 +46,35 @@
     ],
     "all": [
       "Energy",
-      "GE",
       "Maha",
-      "NeCo"
+      "GE"
     ]
   },
   "cifar100": {
     "test": [
       "GEN",
-      "MSR",
-      "PCE"
+      "MSR"
     ],
     "near": [
-      "CTM",
-      "CTMmeanOC",
+      "PE",
       "fDBD",
-      "GE",
-      "GEN",
+      "PCE",
+      "NeCo",
       "GradNorm",
       "MSR",
-      "NeCo",
       "NNGuide",
-      "PCE",
-      "PE",
       "REN"
     ],
     "mid": [
-      "Confidence",
+      "NNGuide",
       "CTMmean",
-      "CTMmeanOC",
       "fDBD",
-      "NNGuide"
+      "CTMmeanOC"
     ],
     "far": [
       "fDBD"
     ],
     "all": [
-      "CTMmeanOC",
-      "NNGuide",
       "fDBD"
     ]
   },
@@ -104,8 +88,8 @@
     ],
     "mid": [
       "CTM",
-      "CTMmean",
-      "CTMmeanOC"
+      "CTMmeanOC",
+      "CTMmean"
     ],
     "far": [
       "CTM",
@@ -116,5 +100,109 @@
     "all": [
       "CTM"
     ]
+  },
+  "_ranks": {
+    "cifar10": {
+      "test": {
+        "GEN": 2.5,
+        "REN": 2.9
+      },
+      "near": {
+        "Energy": 3.25,
+        "NNGuide": 3.85,
+        "CTM": 4.7,
+        "MLS": 4.75
+      },
+      "mid": {
+        "Confidence": 2.975
+      },
+      "far": {
+        "CTM": 3.45,
+        "Energy": 4.45
+      },
+      "all": {
+        "CTM": 4.3125,
+        "Energy": 5.275
+      }
+    },
+    "supercifar100": {
+      "test": {
+        "CTM": 1.6,
+        "CTMmeanOC": 2.4
+      },
+      "near": {
+        "NNGuide": 4.25,
+        "Energy": 5.2,
+        "NeCo": 5.4,
+        "MLS": 5.5,
+        "GE": 5.75
+      },
+      "mid": {
+        "Energy": 5.875,
+        "Maha": 6.925,
+        "GE": 7.075,
+        "pNML": 7.55
+      },
+      "far": {
+        "Maha": 1.5,
+        "Residual": 3.6
+      },
+      "all": {
+        "Energy": 7.1,
+        "Maha": 8.075,
+        "GE": 8.2125
+      }
+    },
+    "cifar100": {
+      "test": {
+        "GEN": 1.6,
+        "MSR": 2.7
+      },
+      "near": {
+        "PE": 7.05,
+        "fDBD": 7.1,
+        "PCE": 7.35,
+        "NeCo": 8.05,
+        "GradNorm": 8.25,
+        "MSR": 9.05,
+        "NNGuide": 9.05,
+        "REN": 9.15
+      },
+      "mid": {
+        "NNGuide": 5.85,
+        "CTMmean": 6.0,
+        "fDBD": 6.175,
+        "CTMmeanOC": 6.425
+      },
+      "far": {
+        "fDBD": 2.3
+      },
+      "all": {
+        "fDBD": 5.4375
+      }
+    },
+    "tinyimagenet": {
+      "test": {
+        "CTM": 1.7,
+        "MSR": 2.0
+      },
+      "near": {
+        "CTM": 1.26
+      },
+      "mid": {
+        "CTM": 2.1,
+        "CTMmeanOC": 2.8,
+        "CTMmean": 2.9
+      },
+      "far": {
+        "CTM": 2.4,
+        "CTMmean": 3.6,
+        "CTMmeanOC": 3.6,
+        "KPCA RecError global": 3.6
+      },
+      "all": {
+        "CTM": 1.6125
+      }
+    }
   }
 }
