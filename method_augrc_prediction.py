@@ -105,8 +105,8 @@ def load_scores(
 
     Returns long-format DataFrame with columns:
         source_dataset, study, dropout, reward, run, method, group,
-        augrc (mean over OOD datasets), avg_ood_rank (mean rank over OOD datasets),
-        rank (rank of avg_ood_rank), pct_rank (normalized rank)
+        augrc (mean AUGRC over OOD datasets in group),
+        avg_ood_rank (mean rank across OOD datasets, scale [1, n_methods])
     """
     frames = []
     for source in sources:
@@ -178,12 +178,7 @@ def load_scores(
     result = pd.concat(frames, ignore_index=True)
     result = result.rename(columns={"methods": "method"})
 
-    rank_keys = ["source_dataset", "group", "study", "dropout", "reward", "run"]
-    result["rank"] = result.groupby(rank_keys)["avg_ood_rank"].rank(
-        method="average", ascending=True,
-    )
-    n_methods = result.groupby(rank_keys)["method"].transform("count")
-    result["pct_rank"] = result["rank"] / n_methods
+    # avg_ood_rank is already computed per group in the loop above
 
     logger.info(
         f"Loaded scores: {len(result)} rows, "
@@ -544,8 +539,8 @@ def main():
     )
     parser.add_argument(
         "--target", type=str, default="both",
-        choices=["augrc", "pct_rank", "both"],
-        help="Regression target: raw AUGRC, percentile rank, or both",
+        choices=["augrc", "avg_ood_rank", "both"],
+        help="Regression target: raw AUGRC, average OOD rank, or both",
     )
     parser.add_argument(
         "--output-dir", type=str, default="regression_outputs",
@@ -628,7 +623,7 @@ def main():
 
     # ── Target columns ──
     if args.target == "both":
-        target_cols = ["augrc", "pct_rank"]
+        target_cols = ["augrc", "avg_ood_rank"]
     else:
         target_cols = [args.target]
 
