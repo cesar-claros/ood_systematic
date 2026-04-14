@@ -145,7 +145,11 @@ def compute_woe_iv(
             except Exception as e:
                 logger.debug(f"  Binning failed {method}/{feat}: {e}")
 
-    return pd.DataFrame(rows)
+    df_out = pd.DataFrame(rows)
+    if not df_out.empty:
+        for col in ("count", "event_rate", "woe", "iv"):
+            df_out[col] = pd.to_numeric(df_out[col], errors="coerce")
+    return df_out
 
 
 def compute_iv_summary(woe_df: pd.DataFrame) -> pd.DataFrame:
