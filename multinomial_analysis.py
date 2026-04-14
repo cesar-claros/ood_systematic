@@ -64,6 +64,7 @@ PAPYAN_NC_METRICS = [
 ARCH_MAP = {"Conv": "VGG13", "ViT": "ViT"}
 
 BLOCK_KEYS = ["dataset", "architecture", "study", "dropout", "run"]
+BLOCK_KEYS_REWARD = BLOCK_KEYS + ["reward"]
 
 # Groups to analyse from the clique JSON (skip "test")
 TARGET_GROUPS = ["near", "mid", "far", "all"]
@@ -77,9 +78,10 @@ def build_block_dataset_from_nc(
 ) -> pd.DataFrame:
     """Build block dataset directly from NC metrics and pre-computed cliques.
 
-    Each row is one model block (dataset × architecture × study × dropout × run)
-    with NC features averaged across reward variants and clique targets looked
-    up by source dataset.
+    Each row is one model block.  For studies with a single reward (e.g.
+    ConfidNet, DeVries) the block key is (dataset, arch, study, dropout, run).
+    For studies with multiple rewards (e.g. DG) each reward is kept as a
+    separate sample, giving more training data.
 
     Parameters
     ----------
@@ -89,19 +91,23 @@ def build_block_dataset_from_nc(
 
     Returns
     -------
-    DataFrame with BLOCK_KEYS + nc_features + ["clique_methods"]
+    DataFrame with block keys + nc_features + ["clique_methods"]
     """
     available_features = [f for f in nc_features if f in nc.columns]
     if len(available_features) < len(nc_features):
         missing = set(nc_features) - set(available_features)
         logger.warning(f"NC features not found in data: {missing}")
 
-    # Aggregate NC metrics by block (mean across reward variants)
-    # Exclude features already in BLOCK_KEYS to avoid duplicate columns
-    extra_features = [f for f in available_features if f not in BLOCK_KEYS]
+    # Use reward as a block key when multiple rewards exist (e.g. DG),
+    # otherwise collapse across rewards.
+    has_reward = "reward" in nc.columns and nc["reward"].nunique() > 1
+    block_keys = BLOCK_KEYS_REWARD if has_reward else BLOCK_KEYS
+
+    # Exclude features already in block keys to avoid duplicate columns
+    extra_features = [f for f in available_features if f not in block_keys]
     block_nc = (
-        nc[BLOCK_KEYS + extra_features]
-        .groupby(BLOCK_KEYS, as_index=False)
+        nc[block_keys + extra_features]
+        .groupby(block_keys, as_index=False)
         .mean(numeric_only=True)
     )
 
@@ -119,9 +125,11 @@ def build_block_dataset_from_nc(
     block_nc = block_nc.dropna(subset=available_features)
     block_nc = block_nc[block_nc["clique_methods"] != ""].reset_index(drop=True)
 
-    logger.info(f"Block dataset: {len(block_nc)} blocks, "
+    reward_info = (f", {block_nc['reward'].nunique()} rewards"
+                   if "reward" in block_nc.columns else "")
+    logger.info(f"Block dataset: {len(block_nc)} samples, "
                 f"{block_nc['dataset'].nunique()} datasets, "
-                f"{block_nc['study'].nunique()} studies")
+                f"{block_nc['study'].nunique()} studies{reward_info}")
     return block_nc
 
 
@@ -686,8 +694,9 @@ def run_classification(
             )
             pred_df["clique_hit"] = [bool(p & t) for p, t in zip(pred_sets, valid_targets)]
             pred_path = os.path.join(output_dir, f"multinomial_lodo_preds_{file_prefix}_{label}.csv")
+            out_keys = [k for k in BLOCK_KEYS_REWARD if k in pred_df.columns]
             pred_df[
-                BLOCK_KEYS + [
+                out_keys + [
                     "true_methods",
                     "clique_methods",
                     "predicted_methods",
@@ -704,16 +713,32 @@ def run_classification(
 # ── Clique file loading ─────────────────────────────────────────────────────
 def _load_clique_file(
     clique_file: str,
+    max_clique_size: int | None = None,
 ) -> dict[str, dict[str, list[str]]]:
     """Load pre-computed cliques from a JSON file exported by stats_eval.py.
 
     Expected format:
-        {source_dataset: {group_name: [method1, method2, ...]}}
+        {source_dataset: {group_name: [method1, method2, ...]},
+         "_ranks": {source_dataset: {group_name: {method: rank}}}}
     where group_name is one of "test", "near", "mid", "far", "all".
+    Methods are sorted by mean rank (best first) when ranks are available.
+
+    If *max_clique_size* is given, each clique is truncated to the top-k
+    best-ranked methods (relies on the rank-sorted order in the JSON).
     """
     with open(clique_file) as f:
         data = json.load(f)
-    logger.info(f"Loaded cliques from {clique_file}")
+
+    # Pop the reserved _ranks key (if present) — not a dataset
+    ranks = data.pop("_ranks", {})
+
+    if max_clique_size is not None:
+        for src in data:
+            for grp in data[src]:
+                data[src][grp] = data[src][grp][:max_clique_size]
+
+    logger.info(f"Loaded cliques from {clique_file}"
+                + (f" (capped at {max_clique_size})" if max_clique_size else ""))
     for src in sorted(data):
         for grp in sorted(data[src]):
             logger.info(f"  {src} {grp}: {data[src][grp]}")
@@ -741,6 +766,9 @@ def main():
                         help="Minimum samples per class to include in classification")
     parser.add_argument("--papyan-only", action="store_true",
                         help="Restrict NC metrics to the 8 Papyan et al. (2020) metrics")
+    parser.add_argument("--max-clique-size", type=int, default=None,
+                        help="Cap clique targets to the top-k best-ranked methods "
+                             "(requires rank-sorted JSON from stats_eval.py)")
     parser.add_argument("--groups", type=str, nargs="*", default=None,
                         help="OOD groups to analyse (default: near mid far all). "
                              "Must be keys present in the clique JSON.")
@@ -781,7 +809,7 @@ def main():
     logger.info(f"NC features ({len(nc_features)}): {nc_features}")
 
     # ── Load cliques ────────────────────────────────────────────────────
-    file_cliques = _load_clique_file(args.clique_file)
+    file_cliques = _load_clique_file(args.clique_file, args.max_clique_size)
 
     # Optional method filtering on clique contents
     if args.filter_methods:

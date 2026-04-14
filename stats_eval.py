@@ -37,6 +37,8 @@ def main():
                         help="Filter by model(s). Conv options: confidnet, devries, dg. ViT options: modelvit. Default: all models.")
     parser.add_argument("--clip-dir", type=str, default="clip_scores",
                         help="Directory containing clip_distances_{source}.csv files (default: clip_scores)")
+    parser.add_argument("--alpha", type=float, default=0.05,
+                        help="Significance level for Conover post-hoc tests (default: 0.05)")
 
     args = parser.parse_args()
 
@@ -64,7 +66,7 @@ def main():
     else:
         raise ValueError(f"Unknown metric group: {args.metric_group}")
 
-    logger.info(f"Starting stats eval with: MCD={MCD_flag}, Backbone={BACKBONE}, MetricGroup={args.metric_group} ({metric}), CLIP dir={args.clip_dir}")
+    logger.info(f"Starting stats eval with: MCD={MCD_flag}, Backbone={BACKBONE}, MetricGroup={args.metric_group} ({metric}), alpha={args.alpha}, CLIP dir={args.clip_dir}")
     logger.info(f"Output directory: {OUTDIR}")
 
     os.makedirs(OUTDIR, exist_ok=True)
@@ -103,7 +105,7 @@ def main():
             # Output dir
             "OUTDIR": OUTDIR,
             # Alpha for significance
-            "ALPHA": 0.05,
+            "ALPHA": args.alpha,
             # Bootstraps for CIs
             "N_BOOT": 2000
         }
@@ -166,7 +168,9 @@ def main():
     blocks = ['dataset', 'model', 'metric', 'group', 'run']
 
     members_list = []
-    
+    # Collect mean ranks per (source, group) for JSON export
+    all_avg_ranks: dict[str, dict[str, pd.Series]] = {}
+
     # Combined Dataframe
     df_combined = pd.concat(df_all,axis=0)
 
@@ -227,6 +231,7 @@ def main():
                     layers = greedy_exclusive_layers(scored)   # disjoint “Top-1, Top-2, …” layers
                     layered_cliques.update({f'{dataset_group}':layers})
                     layered_ranks.append(avg_ranks_)
+                    all_avg_ranks.setdefault(source_, {})[dataset_group] = avg_ranks_
             except Exception as e:
                 logger.error(f"Error in Friedman/Posthoc for {source_} group {dataset_group}: {e}")
         clique_members = []
@@ -337,10 +342,21 @@ def main():
 
     # Export top cliques as JSON for use by multinomial_analysis.py
     # Format: {source: {group_name: [method1, method2, ...]}}
-    cliques_export: dict[str, dict[str, list[str]]] = {}
+    # Methods are sorted by mean rank (best first).
+    # Ranks stored under "_ranks": {source: {group: {method: rank}}}
+    cliques_export: dict[str, dict] = {}
+    ranks_export: dict[str, dict[str, dict[str, float]]] = {}
     for idx in members_all.index:
         source, group_name = idx.split('->')
         methods = [col for col in members_all.columns if members_all.loc[idx, col]]
+        # Sort methods by mean rank (best first) using the numeric group key
+        group_key = {v: k for k, v in distance_dict.items()}.get(group_name, group_name)
+        if source in all_avg_ranks and group_key in all_avg_ranks[source]:
+            avg_r = all_avg_ranks[source][group_key]
+            methods = sorted(methods, key=lambda m: avg_r.get(m, float("inf")))
+            ranks_export.setdefault(source, {})[group_name] = {
+                m: round(float(avg_r.get(m, float("nan"))), 4) for m in methods
+            }
         cliques_export.setdefault(source, {})[group_name] = methods
 
     # Add "all" cliques (pooled OOD groups) — not shown in plot but needed by multinomial_analysis.py
@@ -364,9 +380,19 @@ def main():
                 scored = rank_cliques(all_cliques, list(avg_ranks_.index), avg_ranks_)
                 layers = greedy_exclusive_layers(scored)
                 if layers:
-                    cliques_export.setdefault(source_, {})["all"] = layers[0]["members"]
+                    # Sort members by mean rank (best first)
+                    members = sorted(layers[0]["members"],
+                                     key=lambda m: avg_ranks_.get(m, float("inf")))
+                    cliques_export.setdefault(source_, {})["all"] = members
+                    ranks_export.setdefault(source_, {})["all"] = {
+                        m: round(float(avg_ranks_.get(m, float("nan"))), 4) for m in members
+                    }
+                    all_avg_ranks.setdefault(source_, {})["all_pooled"] = avg_ranks_
         except Exception:
             pass
+
+    # Attach ranks under a reserved key
+    cliques_export["_ranks"] = ranks_export
 
     cliques_path = out_path + '_cliques.json'
     with open(cliques_path, 'w') as f:
