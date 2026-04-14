@@ -75,7 +75,7 @@ def add_binary_target(
         if cliques is None:
             raise ValueError("clique mode requires --clique-file")
         def _in_clique(row):
-            members = cliques.get(row["dataset"], {}).get(row["group"], [])
+            members = cliques.get(row["dataset"], [])
             return int(row["method"] in members)
         df["is_top"] = df.apply(_in_clique, axis=1)
         logger.info(
