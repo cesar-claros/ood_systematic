@@ -7,13 +7,14 @@ into segments and assigning the best-performing method to each segment.
 Pipeline
 --------
 1. Load NC metrics + AUGRC scores  →  regression dataset
-2. For each OOD group, identify the most predictive NC metric (by IV)
-3. Optimally bin that metric; within each bin pick the method with the
-   lowest mean avg_ood_rank
-4. Evaluate: for every model instance, the meta-CSF recommends a method
-   based on the bin → compare actual AUGRC against oracle, best single
-   method, and clique mean
-5. Visualise: NC metric on x-axis, method ranks as lines, bin boundaries
+2. Z-score NC features within each source dataset (removes dataset-scale
+   confound so bins reflect geometry, not dataset identity)
+3. LODO evaluation — for each held-out dataset:
+   a. Select the top NC feature by IV on the training datasets
+   b. Optimally bin that feature; assign best method per bin
+   c. Apply the bins to the held-out dataset; compare meta-CSF
+      recommendation against oracle, best-single method, and clique
+4. Visualise: NC metric on x-axis, method ranks as lines, bin boundaries
    as vertical separators, coloured bands showing the meta-CSF selection
 """
 
@@ -39,6 +40,25 @@ from method_augrc_prediction import (
     build_regression_dataset,
 )
 from nc_regime_analysis import NC_METRICS, load_nc_metrics
+
+
+# ── Normalisation ────────────────────────────────────────────────────────────
+def zscore_nc_features(
+    df: pd.DataFrame,
+    nc_features: list[str],
+) -> pd.DataFrame:
+    """Z-score each NC feature within each source dataset.
+
+    This removes the dataset-scale confound so that bins reflect
+    geometry differences rather than dataset identity.
+    """
+    df = df.copy()
+    avail = [f for f in nc_features if f in df.columns]
+    for feat in avail:
+        df[feat] = df.groupby("dataset")[feat].transform(
+            lambda s: (s - s.mean()) / s.std() if s.std() > 0 else 0.0
+        )
+    return df
 
 
 # ── Feature selection ────────────────────────────────────────────────────────
@@ -94,6 +114,10 @@ def select_top_feature(
                 pass
 
     iv_df = pd.DataFrame(iv_rows)
+    if iv_df.empty:
+        logger.warning("  No IV computed; falling back to first feature")
+        return avail[0], pd.DataFrame({"feature": avail, "mean_iv": 0})
+
     mean_iv = (
         iv_df.groupby("feature")["total_iv"]
         .mean()
@@ -133,7 +157,7 @@ def build_meta_csf(
 
     # Pool all methods to find global optimal bins on the feature
     x_all = gdf[feature].values
-    # Create a dummy binary target: top-3 overall
+    # Create a dummy binary target: top-k overall
     rank_keys = ["dataset", "group", "study", "dropout", "reward", "run"]
     gdf["setting_rank"] = gdf.groupby(rank_keys)["avg_ood_rank"].rank(
         method="average", ascending=True,
@@ -192,127 +216,166 @@ def build_meta_csf(
     return splits, bin_methods, pd.DataFrame(summary_rows)
 
 
-# ── Evaluation ───────────────────────────────────────────────────────────────
-def evaluate_meta_csf(
+# ── LODO evaluation ──────────────────────────────────────────────────────────
+def run_lodo_meta_csf(
     df: pd.DataFrame,
-    feature: str,
+    nc_features: list[str],
     group_label: str,
-    splits: list[float],
-    bin_methods: list[str],
+    top_k: int = 3,
+    max_n_bins: int = 4,
+    forced_feature: str | None = None,
     cliques: dict[str, list[str]] | None = None,
-) -> pd.DataFrame:
-    """Evaluate the meta-CSF against oracle and best single method.
+) -> tuple[pd.DataFrame, list[dict]]:
+    """Leave-One-Dataset-Out evaluation of the meta-CSF.
 
-    For each model instance (dataset, study, dropout, reward, run):
-      - meta-CSF picks a method based on the NC metric bin
-      - oracle picks the actual best method
-      - best_single picks the method with the lowest overall mean rank
+    For each held-out dataset:
+      1. Select top feature (IV) on training datasets
+      2. Build meta-CSF (bin + assign methods) on training datasets
+      3. Apply bins to held-out dataset, evaluate recommendation
 
-    Returns a DataFrame with one row per model instance.
+    Returns
+    -------
+    eval_df : DataFrame   — one row per (held-out instance)
+    fold_summaries : list  — per-fold summary dicts
     """
     gdf = df[df["group"] == group_label].copy()
+    datasets = sorted(gdf["dataset"].unique())
+    avail = [f for f in nc_features if f in gdf.columns]
 
-    # Assign bins
-    bin_edges = [-np.inf] + splits + [np.inf]
-    gdf["nc_bin"] = pd.cut(
-        gdf[feature], bins=bin_edges, labels=False, include_lowest=True,
-    )
+    all_results = []
+    fold_summaries = []
 
-    # Best single method (lowest overall mean rank in this group)
-    overall_ranks = gdf.groupby("method")["avg_ood_rank"].mean().sort_values()
-    best_single_method = overall_ranks.index[0]
-    logger.info(
-        f"  Best single method: {best_single_method} "
-        f"(mean rank={overall_ranks.iloc[0]:.2f})"
-    )
+    for held_out in datasets:
+        logger.info(f"  LODO fold: held-out = {held_out}")
+        train_df = gdf[gdf["dataset"] != held_out]
+        test_df = gdf[gdf["dataset"] == held_out]
 
-    # Evaluate per model instance
-    instance_keys = ["dataset", "study", "dropout", "reward", "run"]
-    results = []
+        if train_df.empty or test_df.empty:
+            continue
 
-    for keys, inst in gdf.groupby(instance_keys):
-        key_dict = dict(zip(instance_keys, keys))
-        dataset = key_dict["dataset"]
-
-        # NC metric value (should be same for all methods in this instance)
-        nc_val = inst[feature].iloc[0]
-        bin_id = inst["nc_bin"].iloc[0]
-
-        # Actual AUGRC per method
-        augrc_map = dict(zip(inst["method"], inst["augrc"]))
-        rank_map = dict(zip(inst["method"], inst["avg_ood_rank"]))
-
-        # Oracle: actual best
-        oracle_method = min(augrc_map, key=augrc_map.get)
-        oracle_augrc = augrc_map[oracle_method]
-
-        # Best single method
-        single_augrc = augrc_map.get(best_single_method, np.nan)
-
-        # Meta-CSF recommendation
-        if pd.notna(bin_id) and int(bin_id) < len(bin_methods):
-            meta_method = bin_methods[int(bin_id)]
-            meta_augrc = augrc_map.get(meta_method, np.nan)
+        # 1. Feature selection on training data
+        if forced_feature:
+            best_feature = forced_feature
         else:
-            meta_method = best_single_method
-            meta_augrc = single_augrc
+            best_feature, _ = select_top_feature(
+                train_df.assign(group=group_label),
+                avail, group_label, top_k=top_k,
+            )
+            # select_top_feature filters by group internally,
+            # but train_df is already filtered — pass group_label through
+        logger.info(f"    Feature: {best_feature}")
 
-        # Regret computations
-        meta_regret = meta_augrc - oracle_augrc if not np.isnan(meta_augrc) else np.nan
-        single_regret = single_augrc - oracle_augrc if not np.isnan(single_augrc) else np.nan
-        meta_norm_regret = meta_regret / oracle_augrc if oracle_augrc else 0
-        single_norm_regret = single_regret / oracle_augrc if oracle_augrc else 0
-
-        # Clique evaluation
-        clique_hit = False
-        clique_augrc = np.nan
-        if cliques and dataset in cliques:
-            clique_members = set(cliques[dataset])
-            clique_hit = meta_method in clique_members
-            clique_vals = [augrc_map[m] for m in clique_members if m in augrc_map]
-            if clique_vals:
-                clique_augrc = np.mean(clique_vals)
-
-        row = {
-            **key_dict,
-            f"{feature}": nc_val,
-            "nc_bin": int(bin_id) if pd.notna(bin_id) else -1,
-            "oracle_method": oracle_method,
-            "oracle_augrc": oracle_augrc,
-            "best_single_method": best_single_method,
-            "best_single_augrc": single_augrc,
-            "best_single_regret": single_regret,
-            "best_single_norm_regret": single_norm_regret,
-            "meta_method": meta_method,
-            "meta_augrc": meta_augrc,
-            "meta_regret": meta_regret,
-            "meta_norm_regret": meta_norm_regret,
-            "clique_hit": clique_hit,
-            "clique_mean_augrc": clique_augrc,
-        }
-        results.append(row)
-
-    eval_df = pd.DataFrame(results)
-
-    # Summary
-    logger.info(f"  --- Meta-CSF evaluation ({group_label}) ---")
-    logger.info(
-        f"  Meta-CSF mean regret:    {eval_df['meta_regret'].mean():.4f} "
-        f"({eval_df['meta_norm_regret'].mean():.1%})"
-    )
-    logger.info(
-        f"  Best-single mean regret: {eval_df['best_single_regret'].mean():.4f} "
-        f"({eval_df['best_single_norm_regret'].mean():.1%})"
-    )
-    if cliques:
-        logger.info(
-            f"  Meta-CSF clique hit rate: {eval_df['clique_hit'].mean():.1%}"
+        # 2. Build meta-CSF on training data
+        splits, bin_methods, bin_summary = build_meta_csf(
+            train_df.assign(group=group_label),
+            best_feature, group_label,
+            max_n_bins=max_n_bins,
         )
-    # How often meta-CSF beats or ties best single
-    meta_wins = (eval_df["meta_augrc"] <= eval_df["best_single_augrc"]).mean()
-    logger.info(f"  Meta-CSF <= best single: {meta_wins:.1%}")
+        logger.info(f"    Splits: {splits}, Methods: {bin_methods}")
 
-    return eval_df
+        # 3. Apply to held-out
+        bin_edges = [-np.inf] + splits + [np.inf]
+        test_copy = test_df.copy()
+        test_copy["nc_bin"] = pd.cut(
+            test_copy[best_feature], bins=bin_edges,
+            labels=False, include_lowest=True,
+        )
+
+        # Best single method from training data
+        train_overall = (
+            train_df.groupby("method")["avg_ood_rank"]
+            .mean()
+            .sort_values()
+        )
+        best_single_method = train_overall.index[0]
+
+        # Evaluate per instance in held-out
+        instance_keys = ["dataset", "study", "dropout", "reward", "run"]
+        for keys, inst in test_copy.groupby(instance_keys):
+            key_dict = dict(zip(instance_keys, keys))
+
+            nc_val = inst[best_feature].iloc[0]
+            bin_id = inst["nc_bin"].iloc[0]
+
+            augrc_map = dict(zip(inst["method"], inst["augrc"]))
+
+            # Oracle
+            oracle_method = min(augrc_map, key=augrc_map.get)
+            oracle_augrc = augrc_map[oracle_method]
+
+            # Best single
+            single_augrc = augrc_map.get(best_single_method, np.nan)
+
+            # Meta-CSF
+            if pd.notna(bin_id) and int(bin_id) < len(bin_methods):
+                meta_method = bin_methods[int(bin_id)]
+                meta_augrc = augrc_map.get(meta_method, np.nan)
+            else:
+                meta_method = best_single_method
+                meta_augrc = single_augrc
+
+            # If the meta method doesn't exist in this instance, fall back
+            if np.isnan(meta_augrc):
+                meta_method = best_single_method
+                meta_augrc = single_augrc
+
+            meta_regret = meta_augrc - oracle_augrc
+            single_regret = single_augrc - oracle_augrc if not np.isnan(single_augrc) else np.nan
+            meta_norm = meta_regret / oracle_augrc if oracle_augrc else 0
+            single_norm = single_regret / oracle_augrc if oracle_augrc else 0
+
+            # Clique
+            clique_hit = False
+            if cliques and held_out in cliques:
+                clique_hit = meta_method in set(cliques[held_out])
+
+            all_results.append({
+                **key_dict,
+                "held_out": held_out,
+                "feature_used": best_feature,
+                best_feature: nc_val,
+                "nc_bin": int(bin_id) if pd.notna(bin_id) else -1,
+                "oracle_method": oracle_method,
+                "oracle_augrc": oracle_augrc,
+                "best_single_method": best_single_method,
+                "best_single_augrc": single_augrc,
+                "best_single_regret": single_regret,
+                "best_single_norm_regret": single_norm,
+                "meta_method": meta_method,
+                "meta_augrc": meta_augrc,
+                "meta_regret": meta_regret,
+                "meta_norm_regret": meta_norm,
+                "clique_hit": clique_hit,
+            })
+
+        # Fold summary
+        fold_results = [r for r in all_results if r["held_out"] == held_out]
+        fold_df_tmp = pd.DataFrame(fold_results)
+        meta_wins = (fold_df_tmp["meta_augrc"] <= fold_df_tmp["best_single_augrc"]).mean()
+        fold_summaries.append({
+            "held_out": held_out,
+            "feature": best_feature,
+            "n_bins": len(bin_methods),
+            "splits": str(splits),
+            "bin_methods": "|".join(bin_methods),
+            "meta_mean_regret": fold_df_tmp["meta_regret"].mean(),
+            "meta_mean_norm_regret": fold_df_tmp["meta_norm_regret"].mean(),
+            "single_mean_regret": fold_df_tmp["best_single_regret"].mean(),
+            "single_mean_norm_regret": fold_df_tmp["best_single_norm_regret"].mean(),
+            "meta_wins_rate": meta_wins,
+            "clique_hit_rate": fold_df_tmp["clique_hit"].mean() if cliques else np.nan,
+        })
+
+        logger.info(
+            f"    {held_out}: meta regret={fold_df_tmp['meta_regret'].mean():.4f} "
+            f"({fold_df_tmp['meta_norm_regret'].mean():.1%}), "
+            f"single regret={fold_df_tmp['best_single_regret'].mean():.4f} "
+            f"({fold_df_tmp['best_single_norm_regret'].mean():.1%}), "
+            f"meta_wins={meta_wins:.1%}"
+        )
+
+    eval_df = pd.DataFrame(all_results)
+    return eval_df, fold_summaries
 
 
 # ── Visualisation ────────────────────────────────────────────────────────────
@@ -352,8 +415,7 @@ def plot_meta_csf(
     plot_methods = sorted(plot_methods)
 
     # Aggregate: mean rank per method per NC metric value
-    # (group by rounded NC metric for cleaner lines)
-    gdf["nc_rounded"] = gdf[feature].round(3)
+    gdf["nc_rounded"] = gdf[feature].round(2)
     agg = (
         gdf[gdf["method"].isin(plot_methods)]
         .groupby(["method", "nc_rounded"])["avg_ood_rank"]
@@ -370,8 +432,8 @@ def plot_meta_csf(
     band_colors = plt.cm.Set3(np.linspace(0, 1, len(bin_methods)))
 
     for idx, method in enumerate(bin_methods):
-        lo = max(bin_edges[idx], x_min - 0.02)
-        hi = min(bin_edges[idx + 1], x_max + 0.02)
+        lo = max(bin_edges[idx], x_min - 0.1)
+        hi = min(bin_edges[idx + 1], x_max + 0.1)
         ax.axvspan(lo, hi, alpha=0.15, color=band_colors[idx],
                    label=f"meta→{method}")
 
@@ -389,11 +451,11 @@ def plot_meta_csf(
             color=cmap(i % 10), label=method, alpha=0.8,
         )
 
-    ax.set_xlabel(feature, fontsize=12)
+    ax.set_xlabel(f"{feature} (z-scored within dataset)", fontsize=12)
     ax.set_ylabel("avg OOD rank (lower = better)", fontsize=12)
     ax.set_title(
         f"Meta-CSF — {group_label}\n"
-        f"Bands show the method selected by the meta-CSF in each {feature} segment",
+        f"Bands = meta-CSF selection per {feature} segment",
         fontsize=12,
     )
     ax.legend(
@@ -435,7 +497,7 @@ def plot_regret_comparison(
     ax.set_xticks(x)
     ax.set_xticklabels(datasets, fontsize=10)
     ax.set_ylabel("Normalized regret", fontsize=11)
-    ax.set_title(f"Regret comparison — {group_label}", fontsize=12)
+    ax.set_title(f"Regret comparison (LODO) — {group_label}", fontsize=12)
     ax.legend(fontsize=10)
     ax.axhline(0, color="black", linewidth=0.5)
     fig.tight_layout()
@@ -526,6 +588,10 @@ def main():
     )
     reg_df = build_regression_dataset(nc, scores, nc_features)
 
+    # ── Z-score NC features within each dataset ──
+    logger.info("Z-scoring NC features within each dataset ...")
+    reg_df = zscore_nc_features(reg_df, nc_features)
+
     # ── Cliques ──
     clique_data = None
     if args.clique_file and os.path.exists(args.clique_file):
@@ -541,7 +607,7 @@ def main():
         f"{args.score_metric}_{args.backbone}_MCD-{args.mcd}{study_tag}"
     )
 
-    all_evals = []
+    all_fold_summaries = []
     for group_label in groups_to_run:
         logger.info(f"\n{'=' * 60}")
         logger.info(f"OOD group: {group_label}")
@@ -554,50 +620,66 @@ def main():
                 if group_label in gmap:
                     cliques_for_group[src] = gmap[group_label]
 
-        # Feature selection
-        if args.feature:
-            best_feature = args.feature
-            iv_table = None
-            logger.info(f"  Using forced feature: {best_feature}")
-        else:
-            best_feature, iv_table = select_top_feature(
-                reg_df, nc_features, group_label, top_k=args.top_k,
-            )
-
         tag = f"{file_prefix}_group_{group_label}"
 
-        if iv_table is not None:
-            iv_table.to_csv(
-                os.path.join(args.output_dir, f"meta_csf_iv_{tag}.csv"),
-                index=False,
-            )
-
-        # Build meta-CSF
-        splits, bin_methods, bin_summary = build_meta_csf(
-            reg_df, best_feature, group_label,
+        # LODO evaluation
+        eval_df, fold_summaries = run_lodo_meta_csf(
+            reg_df, nc_features, group_label,
+            top_k=args.top_k,
             max_n_bins=args.max_bins,
-        )
-        bin_summary.to_csv(
-            os.path.join(args.output_dir, f"meta_csf_bins_{tag}.csv"),
-            index=False,
-        )
-
-        # Evaluate
-        eval_df = evaluate_meta_csf(
-            reg_df, best_feature, group_label,
-            splits, bin_methods,
+            forced_feature=args.feature,
             cliques=cliques_for_group,
         )
+
+        if eval_df.empty:
+            continue
+
         eval_df.to_csv(
             os.path.join(args.output_dir, f"meta_csf_eval_{tag}.csv"),
             index=False,
         )
-        all_evals.append(eval_df.assign(group=group_label))
 
-        # Plots
+        folds_df = pd.DataFrame(fold_summaries)
+        folds_df["group"] = group_label
+        folds_df.to_csv(
+            os.path.join(args.output_dir, f"meta_csf_folds_{tag}.csv"),
+            index=False,
+        )
+        all_fold_summaries.append(folds_df)
+
+        # Overall summary for this group
+        meta_wins = (eval_df["meta_augrc"] <= eval_df["best_single_augrc"]).mean()
+        logger.info(
+            f"  Overall {group_label}: "
+            f"meta regret={eval_df['meta_regret'].mean():.4f} "
+            f"({eval_df['meta_norm_regret'].mean():.1%}), "
+            f"single regret={eval_df['best_single_regret'].mean():.4f} "
+            f"({eval_df['best_single_norm_regret'].mean():.1%}), "
+            f"meta_wins={meta_wins:.1%}"
+        )
+
+        # Plot: build meta-CSF on ALL data for the visualisation
+        # (the LODO eval above is the honest evaluation;
+        #  this full-data fit is just for the illustrative plot)
+        if args.feature:
+            plot_feature = args.feature
+        else:
+            plot_feature, _ = select_top_feature(
+                reg_df, nc_features, group_label, top_k=args.top_k,
+            )
+
+        splits_full, bin_methods_full, bin_summary_full = build_meta_csf(
+            reg_df, plot_feature, group_label,
+            max_n_bins=args.max_bins,
+        )
+        bin_summary_full.to_csv(
+            os.path.join(args.output_dir, f"meta_csf_bins_{tag}.csv"),
+            index=False,
+        )
+
         plot_meta_csf(
-            reg_df, best_feature, group_label,
-            splits, bin_methods,
+            reg_df, plot_feature, group_label,
+            splits_full, bin_methods_full,
             cliques=cliques_for_group,
             output_dir=args.output_dir,
             tag=tag,
@@ -607,17 +689,13 @@ def main():
         )
 
     # Global summary
-    if all_evals:
-        combined = pd.concat(all_evals, ignore_index=True)
-        summary = combined.groupby("group").agg(
-            meta_mean_regret=("meta_regret", "mean"),
-            meta_mean_norm_regret=("meta_norm_regret", "mean"),
-            single_mean_regret=("best_single_regret", "mean"),
-            single_mean_norm_regret=("best_single_norm_regret", "mean"),
-            meta_wins=("meta_augrc", lambda x: (
-                x <= combined.loc[x.index, "best_single_augrc"]
-            ).mean()),
-            clique_hit_rate=("clique_hit", "mean"),
+    if all_fold_summaries:
+        all_folds = pd.concat(all_fold_summaries, ignore_index=True)
+        summary = all_folds.groupby("group").agg(
+            meta_mean_norm_regret=("meta_mean_norm_regret", "mean"),
+            single_mean_norm_regret=("single_mean_norm_regret", "mean"),
+            meta_wins_rate=("meta_wins_rate", "mean"),
+            clique_hit_rate=("clique_hit_rate", "mean"),
         ).reset_index()
 
         summary_path = os.path.join(
