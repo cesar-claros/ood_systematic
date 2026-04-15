@@ -1,0 +1,5 @@
+bin_id,bin_range,best_method,mean_rank,n_samples,methods_detail
+0,"(-inf, -0.704]",Residual,2.5357142857142856,314,"Residual(2.54), KPCA RecError global(2.94), ViM(3.76)"
+1,"(-0.704, 1.169]",fDBD,3.085714285714286,733,"fDBD(3.09), CTMmeanOC(3.98), CTMmean(3.98)"
+2,"(1.169, 1.606]",Energy,3.142857142857143,203,"Energy(3.14), NeCo(4.06), pNML(4.43)"
+3,"(1.606, inf]",Confidence,1.0,70,"Confidence(1.00), Maha(1.00), Energy(1.50)"
