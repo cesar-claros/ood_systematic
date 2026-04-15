@@ -29,6 +29,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from optbinning import OptimalBinning
+from scipy.stats import gaussian_kde
 from loguru import logger
 
 from method_augrc_prediction import (
@@ -378,6 +379,39 @@ def run_lodo_meta_csf(
     return eval_df, fold_summaries
 
 
+# ── Smoothing ────────────────────────────────────────────────────────────────
+def _nadaraya_watson(
+    x: np.ndarray,
+    y: np.ndarray,
+    x_grid: np.ndarray,
+    bandwidth: float | None = None,
+) -> np.ndarray:
+    """Nadaraya-Watson kernel regression with Gaussian kernel.
+
+    Parameters
+    ----------
+    x, y : array-like  — observed points
+    x_grid : array-like — points at which to evaluate the smoother
+    bandwidth : float or None
+        Kernel bandwidth.  If None, uses Silverman's rule of thumb.
+    """
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+    x_grid = np.asarray(x_grid, dtype=float)
+
+    if bandwidth is None:
+        bandwidth = 1.06 * x.std() * len(x) ** (-1 / 5)
+        bandwidth = max(bandwidth, 1e-6)
+
+    # Gaussian kernel weights: K((x_grid - x_i) / h)
+    diff = x_grid[:, None] - x[None, :]          # (G, N)
+    weights = np.exp(-0.5 * (diff / bandwidth) ** 2)  # (G, N)
+    w_sum = weights.sum(axis=1, keepdims=True)
+    w_sum = np.where(w_sum == 0, 1, w_sum)
+    y_hat = (weights * y[None, :]).sum(axis=1) / w_sum.squeeze()
+    return y_hat
+
+
 # ── Visualisation ────────────────────────────────────────────────────────────
 def plot_meta_csf(
     df: pd.DataFrame,
@@ -388,13 +422,15 @@ def plot_meta_csf(
     cliques: dict[str, list[str]] | None = None,
     output_dir: str = "meta_csf_outputs",
     tag: str = "",
+    bandwidth: float | None = None,
 ) -> None:
-    """Visualise the meta-CSF: method rank lines + bin selection bands.
+    """Visualise the meta-CSF with Nadaraya-Watson smoothed rank curves.
 
-    X-axis: the NC metric (continuous).
-    Lines: avg_ood_rank per method (scatter + loess-like smoothing).
+    X-axis: the NC metric (z-scored).
+    Smoothed lines: avg_ood_rank per method via kernel regression.
+    Light scatter: raw data points.
     Vertical dashed: bin boundaries.
-    Coloured bands: which method the meta-CSF selects.
+    Coloured bands: meta-CSF selection per segment.
     """
     gdf = df[df["group"] == group_label].copy()
 
@@ -414,15 +450,6 @@ def plot_meta_csf(
     plot_methods.update(overall_top)
     plot_methods = sorted(plot_methods)
 
-    # Aggregate: mean rank per method per NC metric value
-    gdf["nc_rounded"] = gdf[feature].round(2)
-    agg = (
-        gdf[gdf["method"].isin(plot_methods)]
-        .groupby(["method", "nc_rounded"])["avg_ood_rank"]
-        .mean()
-        .reset_index()
-    )
-
     fig, ax = plt.subplots(figsize=(10, 6))
 
     # Coloured background bands for meta-CSF bins
@@ -441,14 +468,32 @@ def plot_meta_csf(
     for s in splits:
         ax.axvline(s, color="gray", linestyle="--", linewidth=1, alpha=0.7)
 
-    # Method lines
+    # Smoothing grid
+    x_grid = np.linspace(x_min, x_max, 200)
+
+    # Method curves
     cmap = plt.cm.tab10
     for i, method in enumerate(plot_methods):
-        msub = agg[agg["method"] == method].sort_values("nc_rounded")
+        msub = gdf[gdf["method"] == method]
+        x_raw = msub[feature].values
+        y_raw = msub["avg_ood_rank"].values
+
+        if len(x_raw) < 5:
+            continue
+
+        color = cmap(i % 10)
+
+        # Raw scatter (faint)
+        ax.scatter(
+            x_raw, y_raw,
+            s=8, alpha=0.15, color=color, edgecolors="none",
+        )
+
+        # Nadaraya-Watson smoothed curve
+        y_smooth = _nadaraya_watson(x_raw, y_raw, x_grid, bandwidth=bandwidth)
         ax.plot(
-            msub["nc_rounded"], msub["avg_ood_rank"],
-            marker=".", markersize=4, linewidth=1.5,
-            color=cmap(i % 10), label=method, alpha=0.8,
+            x_grid, y_smooth,
+            linewidth=2.2, color=color, label=method, alpha=0.9,
         )
 
     ax.set_xlabel(f"{feature} (z-scored within dataset)", fontsize=12)
@@ -509,6 +554,59 @@ def plot_regret_comparison(
     logger.info(f"  Saved regret comparison: meta_csf_regret_{tag}.pdf")
 
 
+# ── Feature / bin sweep ──────────────────────────────────────────────────────
+def sweep_features_and_bins(
+    df: pd.DataFrame,
+    nc_features: list[str],
+    group_label: str,
+    top_k: int = 3,
+    max_bins_range: list[int] | None = None,
+    cliques: dict[str, list[str]] | None = None,
+) -> pd.DataFrame:
+    """Try every (feature, max_bins) combination with LODO and report results.
+
+    Returns a DataFrame with one row per (feature, max_bins) ranked by
+    meta_mean_norm_regret.
+    """
+    if max_bins_range is None:
+        max_bins_range = [2, 3, 4]
+
+    avail = [f for f in nc_features if f in df.columns]
+    rows = []
+
+    for feat in avail:
+        for mb in max_bins_range:
+            logger.info(f"  Sweep: feature={feat}, max_bins={mb}")
+            eval_df, fold_summaries = run_lodo_meta_csf(
+                df, nc_features, group_label,
+                top_k=top_k,
+                max_n_bins=mb,
+                forced_feature=feat,
+                cliques=cliques,
+            )
+            if eval_df.empty:
+                continue
+
+            meta_wins = (eval_df["meta_augrc"] <= eval_df["best_single_augrc"]).mean()
+            rows.append({
+                "feature": feat,
+                "max_bins": mb,
+                "meta_mean_regret": eval_df["meta_regret"].mean(),
+                "meta_mean_norm_regret": eval_df["meta_norm_regret"].mean(),
+                "single_mean_regret": eval_df["best_single_regret"].mean(),
+                "single_mean_norm_regret": eval_df["best_single_norm_regret"].mean(),
+                "meta_wins_rate": meta_wins,
+                "clique_hit_rate": eval_df["clique_hit"].mean() if cliques else np.nan,
+                "meta_beats_single": (
+                    eval_df["meta_norm_regret"].mean()
+                    < eval_df["best_single_norm_regret"].mean()
+                ),
+            })
+
+    sweep_df = pd.DataFrame(rows).sort_values("meta_mean_norm_regret")
+    return sweep_df
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(
@@ -562,6 +660,14 @@ def main():
     )
     parser.add_argument(
         "--score-metric", type=str, default="AUGRC",
+    )
+    parser.add_argument(
+        "--sweep", action="store_true",
+        help="Sweep all features × bin counts (2,3,4) with LODO",
+    )
+    parser.add_argument(
+        "--bandwidth", type=float, default=None,
+        help="Nadaraya-Watson bandwidth for plot smoothing (default: Silverman)",
     )
 
     args = parser.parse_args()
@@ -621,6 +727,30 @@ def main():
                     cliques_for_group[src] = gmap[group_label]
 
         tag = f"{file_prefix}_group_{group_label}"
+
+        # ── Sweep mode: try all features × bin counts ──
+        if args.sweep:
+            logger.info("  Running feature × bin sweep ...")
+            sweep_df = sweep_features_and_bins(
+                reg_df, nc_features, group_label,
+                top_k=args.top_k,
+                cliques=cliques_for_group,
+            )
+            sweep_path = os.path.join(
+                args.output_dir, f"meta_csf_sweep_{tag}.csv",
+            )
+            sweep_df.to_csv(sweep_path, index=False)
+            logger.info(f"  Sweep results ({group_label}):")
+            logger.info(f"\n{sweep_df.head(10).to_string(index=False)}")
+            # Use the best (feature, max_bins) for the main evaluation
+            best_row = sweep_df.iloc[0]
+            best_sweep_feature = best_row["feature"]
+            best_sweep_bins = int(best_row["max_bins"])
+            logger.info(
+                f"  Best sweep: feature={best_sweep_feature}, "
+                f"max_bins={best_sweep_bins}, "
+                f"meta_norm_regret={best_row['meta_mean_norm_regret']:.1%}"
+            )
 
         # LODO evaluation
         eval_df, fold_summaries = run_lodo_meta_csf(
