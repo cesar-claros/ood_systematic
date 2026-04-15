@@ -294,14 +294,25 @@ def plot_woe_grid(
                 ax.set_visible(False)
                 continue
 
-            # optbinning plots into the current axes
-            ob.binning_table.plot(metric="woe", ax=ax)
+            # Extract WoE data from the binning table
+            table = ob.binning_table.build()
+            table = table[
+                ~table["Bin"].isin(["Special", "Missing", "Totals"])
+            ].copy()
+            table["WoE"] = pd.to_numeric(table["WoE"], errors="coerce")
+            bin_labels = table["Bin"].astype(str).values
+            woe_vals = table["WoE"].values
 
-            # Clean up: remove individual titles/labels, use grid headers
-            ax.set_title("")
-            ax.set_xlabel("")
-            ax.set_ylabel("")
-            ax.tick_params(labelsize=7)
+            colors = ["#2166ac" if v >= 0 else "#b2182b" for v in woe_vals]
+            x_pos = np.arange(len(bin_labels))
+            ax.bar(x_pos, woe_vals, color=colors, edgecolor="gray",
+                   linewidth=0.5)
+            ax.axhline(0, color="black", linewidth=0.5)
+            ax.set_xticks(x_pos)
+            ax.set_xticklabels(
+                bin_labels, fontsize=6, rotation=45, ha="right",
+            )
+            ax.tick_params(axis="y", labelsize=7)
 
             if j == 0:
                 ax.set_ylabel(method, fontsize=9, fontweight="bold")
