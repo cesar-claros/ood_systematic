@@ -93,19 +93,23 @@ def compute_woe_iv(
     df: pd.DataFrame,
     nc_features: list[str],
     group_label: str,
-) -> pd.DataFrame:
+) -> tuple[pd.DataFrame, dict[str, dict[str, OptimalBinning]]]:
     """Per-method optimal binning → WoE and IV for each NC feature.
 
     Returns
     -------
     woe_df : DataFrame
         Columns: method, feature, bin, count, event_rate, woe, iv
+    fitted_bins : dict
+        {method: {feature: fitted OptimalBinning object}}
     """
     gdf = df[df["group"] == group_label]
     avail = [f for f in nc_features if f in gdf.columns]
     methods = sorted(gdf["method"].unique())
 
     rows = []
+    fitted_bins: dict[str, dict[str, OptimalBinning]] = {}
+
     for method in methods:
         msub = gdf[gdf["method"] == method]
         y = msub["is_top"].values
@@ -142,6 +146,7 @@ def compute_woe_iv(
                         "woe": r["WoE"],
                         "iv": r["IV"],
                     })
+                fitted_bins.setdefault(method, {})[feat] = ob
             except Exception as e:
                 logger.debug(f"  Binning failed {method}/{feat}: {e}")
 
@@ -149,7 +154,7 @@ def compute_woe_iv(
     if not df_out.empty:
         for col in ("count", "event_rate", "woe", "iv"):
             df_out[col] = pd.to_numeric(df_out[col], errors="coerce")
-    return df_out
+    return df_out, fitted_bins
 
 
 def compute_iv_summary(woe_df: pd.DataFrame) -> pd.DataFrame:
@@ -253,55 +258,67 @@ def build_scorecard(
 
 
 # ── Visualisations ────────────────────────────────────────────────────────────
-def plot_woe_heatmap(
-    woe_df: pd.DataFrame,
+def plot_woe_grid(
+    fitted_bins: dict[str, dict[str, OptimalBinning]],
     group_label: str,
     output_dir: str,
     tag: str,
 ) -> None:
-    """Heatmap of mean WoE per (method, feature).
+    """Grid of WoE-per-bin plots using optbinning's native rendering.
 
-    Positive WoE → NC bin favours method being top-ranked.
-    Negative WoE → NC bin hurts method.
+    Rows = OOD methods, Columns = NC features.
+    Each cell shows binning_table.plot(metric="woe").
     """
-    if woe_df.empty:
-        logger.warning("  Empty WoE data, skipping heatmap")
+    if not fitted_bins:
+        logger.warning("  No fitted binnings, skipping WoE grid")
         return
 
-    # Mean WoE across bins (weighted by count would be better,
-    # but mean is simpler and sufficient for a summary)
-    mean_woe = (
-        woe_df.groupby(["method", "feature"])["woe"]
-        .mean()
-        .reset_index()
-        .pivot(index="feature", columns="method", values="woe")
+    methods = sorted(fitted_bins.keys())
+    features = sorted(
+        {f for feats in fitted_bins.values() for f in feats}
+    )
+    n_methods = len(methods)
+    n_features = len(features)
+
+    fig, axes = plt.subplots(
+        n_methods, n_features,
+        figsize=(3.5 * n_features, 2.5 * n_methods),
+        squeeze=False,
     )
 
-    fig, ax = plt.subplots(
-        figsize=(0.8 * len(mean_woe.columns) + 2, 0.5 * len(mean_woe) + 2)
+    for i, method in enumerate(methods):
+        for j, feat in enumerate(features):
+            ax = axes[i][j]
+            ob = fitted_bins.get(method, {}).get(feat)
+            if ob is None:
+                ax.set_visible(False)
+                continue
+
+            # optbinning plots into the current axes
+            ob.binning_table.plot(metric="woe", ax=ax)
+
+            # Clean up: remove individual titles/labels, use grid headers
+            ax.set_title("")
+            ax.set_xlabel("")
+            ax.set_ylabel("")
+            ax.tick_params(labelsize=7)
+
+            if j == 0:
+                ax.set_ylabel(method, fontsize=9, fontweight="bold")
+            if i == 0:
+                ax.set_title(feat, fontsize=9, fontweight="bold")
+
+    fig.suptitle(
+        f"WoE across bins — {group_label}",
+        fontsize=13, fontweight="bold",
     )
-    sns.heatmap(
-        mean_woe,
-        ax=ax,
-        cmap="RdBu_r",
-        center=0,
-        annot=True,
-        fmt=".2f",
-        linewidths=0.5,
-        cbar_kws={"label": "mean WoE"},
-    )
-    ax.set_title(f"Mean WoE per method — {group_label}", fontsize=12)
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-    ax.tick_params(axis="x", rotation=45, labelsize=9)
-    ax.tick_params(axis="y", rotation=0, labelsize=9)
-    fig.tight_layout()
+    fig.tight_layout(rect=[0, 0, 1, 0.97])
     fig.savefig(
-        os.path.join(output_dir, f"woe_heatmap_{tag}.pdf"),
+        os.path.join(output_dir, f"woe_grid_{tag}.pdf"),
         bbox_inches="tight",
     )
     plt.close(fig)
-    logger.info(f"  Saved WoE heatmap: woe_heatmap_{tag}.pdf")
+    logger.info(f"  Saved WoE grid: woe_grid_{tag}.pdf")
 
 
 def plot_iv_summary(
@@ -518,7 +535,7 @@ def main():
 
         # ── WoE / IV ──
         logger.info("  Computing WoE / IV ...")
-        woe_df = compute_woe_iv(gdf, nc_features, group_label)
+        woe_df, fitted_bins = compute_woe_iv(gdf, nc_features, group_label)
         iv_df = compute_iv_summary(woe_df)
 
         woe_df.to_csv(
@@ -530,7 +547,7 @@ def main():
             index=False,
         )
 
-        plot_woe_heatmap(woe_df, group_label, args.output_dir, tag)
+        plot_woe_grid(fitted_bins, group_label, args.output_dir, tag)
         plot_iv_summary(iv_df, group_label, args.output_dir, tag)
 
         # ── Scorecard ──
