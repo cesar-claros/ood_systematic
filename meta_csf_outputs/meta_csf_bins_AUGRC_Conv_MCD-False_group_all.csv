@@ -1,0 +1,5 @@
+bin_id,bin_range,best_method,mean_rank,n_samples,methods_detail
+0,"(-inf, -0.905]",Confidence,1.9033333333333333,74,"Confidence(1.90), PE(2.02), CTM(2.07)"
+1,"(-0.905, -0.704]",PE,3.6340000000000003,240,"PE(3.63), KPCA RecError global(3.69), CTM(3.88)"
+2,"(-0.704, 1.606]",CTM,3.4554285714285715,936,"CTM(3.46), fDBD(3.76), NNGuide(4.49)"
+3,"(1.606, inf]",Maha,1.0,70,"Maha(1.00), Confidence(1.28), ViM(1.36)"
