@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from optbinning import OptimalBinning
 from scipy.stats import gaussian_kde
+from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree
 from loguru import logger
 
 from method_augrc_prediction import (
@@ -607,6 +608,387 @@ def sweep_features_and_bins(
     return sweep_df
 
 
+# ── Multi-feature meta-CSF (decision tree) ──────────────────────────────────
+def _compute_oracle(df: pd.DataFrame) -> pd.DataFrame:
+    """For each (dataset, study, dropout, reward, run), find the oracle method.
+
+    Returns a per-instance DataFrame with NC features + oracle_method column.
+    """
+    instance_keys = ["dataset", "study", "dropout", "reward", "run"]
+    idx = df.groupby(instance_keys)["avg_ood_rank"].idxmin()
+    oracle = df.loc[idx].copy()
+    oracle = oracle.rename(columns={"method": "oracle_method"})
+    return oracle.reset_index(drop=True)
+
+
+def build_multi_feature_meta_csf(
+    df: pd.DataFrame,
+    nc_features: list[str],
+    group_label: str,
+    max_depth: int = 3,
+    min_samples_leaf: float = 0.05,
+    top_methods_to_keep: int = 8,
+) -> tuple[DecisionTreeClassifier, dict[int, str], pd.DataFrame, list[str]]:
+    """Train a shallow decision tree that partitions NC feature space.
+
+    Strategy
+    --------
+    1. For each instance, find the oracle method (argmin avg_ood_rank).
+    2. Keep only the top-K most frequently winning methods as candidate
+       classes; for instances where oracle is not in top-K, relabel to the
+       best method within the top-K for that instance.
+    3. Fit DecisionTreeClassifier on NC features → relabeled oracle.
+    4. For each leaf, re-assign the best method empirically as
+       argmin of mean avg_ood_rank among instances in the leaf (using the
+       full, long-format df so the assignment matches the actual objective
+       and decouples splitting from assignment).
+
+    Returns
+    -------
+    tree : fitted DecisionTreeClassifier
+    leaf_methods : dict[leaf_id → method name]
+    leaf_summary : DataFrame with per-leaf stats
+    feature_names : list[str] of features used
+    """
+    gdf = df[df["group"] == group_label].copy()
+    avail = [f for f in nc_features if f in gdf.columns]
+
+    # ── 1. Oracle per instance ──
+    oracle = _compute_oracle(gdf)
+
+    # ── 2. Top-K most frequent winners ──
+    top_methods = (
+        oracle["oracle_method"].value_counts().head(top_methods_to_keep).index.tolist()
+    )
+    logger.info(f"  Top-{top_methods_to_keep} oracle methods: {top_methods}")
+
+    # Relabel: for rows whose oracle is not in top-K, pick the best method
+    # within the top-K for that specific instance
+    instance_keys = ["dataset", "study", "dropout", "reward", "run"]
+    top_set = set(top_methods)
+    relabel_map = {}
+    for keys, inst in gdf[gdf["method"].isin(top_set)].groupby(instance_keys):
+        best = inst.loc[inst["avg_ood_rank"].idxmin(), "method"]
+        relabel_map[keys] = best
+
+    def _relabel(row):
+        key = tuple(row[k] for k in instance_keys)
+        return relabel_map.get(key, row["oracle_method"])
+
+    oracle["oracle_method_topk"] = oracle.apply(_relabel, axis=1)
+
+    # Drop rows that couldn't be relabeled (rare)
+    oracle = oracle.dropna(subset=["oracle_method_topk"])
+
+    # ── 3. Train decision tree ──
+    X = oracle[avail].values
+    y = oracle["oracle_method_topk"].values
+
+    tree = DecisionTreeClassifier(
+        max_depth=max_depth,
+        min_samples_leaf=min_samples_leaf,
+        class_weight="balanced",
+        random_state=0,
+    )
+    tree.fit(X, y)
+
+    # ── 4. Empirical re-assignment per leaf ──
+    leaf_ids = tree.apply(X)
+    oracle["leaf"] = leaf_ids
+
+    # Join leaf ids back to the long-format df so we can compute per-method
+    # mean rank within each leaf using the full data
+    key_cols = instance_keys
+    leaf_map = oracle.set_index(key_cols)["leaf"].to_dict()
+
+    def _lookup_leaf(row):
+        return leaf_map.get(tuple(row[k] for k in key_cols), -1)
+
+    gdf["leaf"] = gdf.apply(_lookup_leaf, axis=1)
+
+    leaf_methods = {}
+    leaf_rows = []
+    for leaf_id in sorted(gdf["leaf"].unique()):
+        if leaf_id < 0:
+            continue
+        lsub = gdf[gdf["leaf"] == leaf_id]
+        method_ranks = (
+            lsub.groupby("method")["avg_ood_rank"]
+            .mean()
+            .sort_values()
+        )
+        # Restrict the assignment to the top-K candidate methods
+        candidates = [m for m in method_ranks.index if m in top_set]
+        if not candidates:
+            best = method_ranks.index[0]
+        else:
+            best = candidates[0]  # already sorted
+        leaf_methods[int(leaf_id)] = best
+
+        top3 = method_ranks.head(3)
+        detail = ", ".join(f"{m}({r:.2f})" for m, r in top3.items())
+        leaf_rows.append({
+            "leaf_id": int(leaf_id),
+            "best_method": best,
+            "mean_rank": method_ranks[best],
+            "n_instances": lsub[instance_keys].drop_duplicates().shape[0],
+            "n_rows": len(lsub),
+            "methods_detail": detail,
+        })
+        logger.info(
+            f"  Leaf {int(leaf_id)}: best={best} "
+            f"(rank={method_ranks[best]:.2f}), n={len(lsub)}"
+        )
+
+    leaf_summary = pd.DataFrame(leaf_rows)
+    return tree, leaf_methods, leaf_summary, avail
+
+
+def run_lodo_multi_feature_meta_csf(
+    df: pd.DataFrame,
+    nc_features: list[str],
+    group_label: str,
+    max_depth: int = 3,
+    min_samples_leaf: float = 0.05,
+    top_methods_to_keep: int = 8,
+    cliques: dict[str, list[str]] | None = None,
+) -> tuple[pd.DataFrame, list[dict]]:
+    """LODO evaluation of the multi-feature (decision tree) meta-CSF."""
+    gdf = df[df["group"] == group_label].copy()
+    datasets = sorted(gdf["dataset"].unique())
+
+    all_results = []
+    fold_summaries = []
+
+    for held_out in datasets:
+        logger.info(f"  [multi] LODO fold: held-out = {held_out}")
+        train_df = gdf[gdf["dataset"] != held_out]
+        test_df = gdf[gdf["dataset"] == held_out]
+
+        if train_df.empty or test_df.empty:
+            continue
+
+        tree, leaf_methods, leaf_summary, feat_names = build_multi_feature_meta_csf(
+            train_df.assign(group=group_label),
+            nc_features, group_label,
+            max_depth=max_depth,
+            min_samples_leaf=min_samples_leaf,
+            top_methods_to_keep=top_methods_to_keep,
+        )
+
+        # Best single method from training data
+        train_overall = (
+            train_df.groupby("method")["avg_ood_rank"]
+            .mean()
+            .sort_values()
+        )
+        best_single_method = train_overall.index[0]
+
+        # Evaluate: for each test instance (unique key set), get the
+        # NC feature vector once, predict the leaf, look up the method
+        instance_keys = ["dataset", "study", "dropout", "reward", "run"]
+        test_instances = test_df[instance_keys + feat_names].drop_duplicates(
+            subset=instance_keys
+        )
+        X_test = test_instances[feat_names].values
+        test_leaves = tree.apply(X_test)
+        inst_to_leaf = dict(
+            zip(
+                [tuple(r) for r in test_instances[instance_keys].values],
+                test_leaves,
+            )
+        )
+
+        for keys, inst in test_df.groupby(instance_keys):
+            key_dict = dict(zip(instance_keys, keys))
+            leaf_id = int(inst_to_leaf.get(keys, -1))
+
+            augrc_map = dict(zip(inst["method"], inst["augrc"]))
+            oracle_method = min(augrc_map, key=augrc_map.get)
+            oracle_augrc = augrc_map[oracle_method]
+
+            single_augrc = augrc_map.get(best_single_method, np.nan)
+
+            meta_method = leaf_methods.get(leaf_id, best_single_method)
+            meta_augrc = augrc_map.get(meta_method, np.nan)
+            if np.isnan(meta_augrc):
+                meta_method = best_single_method
+                meta_augrc = single_augrc
+
+            meta_regret = meta_augrc - oracle_augrc
+            single_regret = single_augrc - oracle_augrc if not np.isnan(single_augrc) else np.nan
+            meta_norm = meta_regret / oracle_augrc if oracle_augrc else 0
+            single_norm = single_regret / oracle_augrc if oracle_augrc else 0
+
+            clique_hit = False
+            if cliques and held_out in cliques:
+                clique_hit = meta_method in set(cliques[held_out])
+
+            all_results.append({
+                **key_dict,
+                "held_out": held_out,
+                "leaf": leaf_id,
+                "oracle_method": oracle_method,
+                "oracle_augrc": oracle_augrc,
+                "best_single_method": best_single_method,
+                "best_single_augrc": single_augrc,
+                "best_single_regret": single_regret,
+                "best_single_norm_regret": single_norm,
+                "meta_method": meta_method,
+                "meta_augrc": meta_augrc,
+                "meta_regret": meta_regret,
+                "meta_norm_regret": meta_norm,
+                "clique_hit": clique_hit,
+            })
+
+        fold_results = [r for r in all_results if r["held_out"] == held_out]
+        fdf = pd.DataFrame(fold_results)
+        meta_wins = (fdf["meta_augrc"] <= fdf["best_single_augrc"]).mean()
+        # Feature importances (top 3)
+        fi = dict(zip(feat_names, tree.feature_importances_))
+        top_fi = sorted(fi.items(), key=lambda x: -x[1])[:3]
+        fi_str = ", ".join(f"{k}={v:.2f}" for k, v in top_fi if v > 0)
+        fold_summaries.append({
+            "held_out": held_out,
+            "n_leaves": tree.get_n_leaves(),
+            "tree_depth": tree.get_depth(),
+            "top_features": fi_str,
+            "meta_mean_regret": fdf["meta_regret"].mean(),
+            "meta_mean_norm_regret": fdf["meta_norm_regret"].mean(),
+            "single_mean_regret": fdf["best_single_regret"].mean(),
+            "single_mean_norm_regret": fdf["best_single_norm_regret"].mean(),
+            "meta_wins_rate": meta_wins,
+            "clique_hit_rate": fdf["clique_hit"].mean() if cliques else np.nan,
+        })
+        logger.info(
+            f"    {held_out}: meta regret="
+            f"{fdf['meta_regret'].mean():.4f} "
+            f"({fdf['meta_norm_regret'].mean():.1%}), "
+            f"single regret={fdf['best_single_regret'].mean():.4f} "
+            f"({fdf['best_single_norm_regret'].mean():.1%}), "
+            f"meta_wins={meta_wins:.1%}, top_feats=[{fi_str}]"
+        )
+
+    return pd.DataFrame(all_results), fold_summaries
+
+
+def plot_tree_meta_csf(
+    tree: DecisionTreeClassifier,
+    feat_names: list[str],
+    leaf_methods: dict[int, str],
+    output_dir: str,
+    tag: str,
+) -> None:
+    """Visualise the decision tree with leaf method assignments."""
+    fig, ax = plt.subplots(figsize=(14, 8))
+    class_names = [str(c) for c in tree.classes_]
+    plot_tree(
+        tree,
+        feature_names=feat_names,
+        class_names=class_names,
+        filled=True, rounded=True, proportion=True,
+        fontsize=8, ax=ax,
+    )
+    # Title includes leaf → empirical method mapping
+    leaf_str = " | ".join(
+        f"L{k}→{v}" for k, v in sorted(leaf_methods.items())
+    )
+    ax.set_title(
+        f"Multi-feature meta-CSF tree ({tag})\n"
+        f"Empirical leaf assignments: {leaf_str}",
+        fontsize=10,
+    )
+    fig.savefig(
+        os.path.join(output_dir, f"meta_csf_tree_{tag}.pdf"),
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+    logger.info(f"  Saved tree plot: meta_csf_tree_{tag}.pdf")
+
+
+def plot_decision_surface_2d(
+    df: pd.DataFrame,
+    tree: DecisionTreeClassifier,
+    feat_names: list[str],
+    leaf_methods: dict[int, str],
+    group_label: str,
+    output_dir: str,
+    tag: str,
+) -> None:
+    """2D decision surface using the two most important tree features.
+
+    Coloured by the method assigned to each leaf; held-out scatter overlayed.
+    """
+    importances = tree.feature_importances_
+    if (importances > 0).sum() < 2:
+        logger.info("  Skipping 2D surface: tree uses fewer than 2 features")
+        return
+    top2 = np.argsort(importances)[::-1][:2]
+    f1, f2 = feat_names[top2[0]], feat_names[top2[1]]
+
+    gdf = df[df["group"] == group_label].copy()
+
+    # Build a dense grid — only f1, f2 vary; all other features are fixed
+    # at the training median so the tree can process a full feature vector
+    medians = gdf[feat_names].median().values
+    n = 200
+    x1 = np.linspace(gdf[f1].min(), gdf[f1].max(), n)
+    x2 = np.linspace(gdf[f2].min(), gdf[f2].max(), n)
+    X1, X2 = np.meshgrid(x1, x2)
+    grid = np.tile(medians, (n * n, 1))
+    grid[:, top2[0]] = X1.ravel()
+    grid[:, top2[1]] = X2.ravel()
+
+    leaves_grid = tree.apply(grid).reshape(n, n)
+    # Map leaf → method → int for colouring
+    unique_methods = sorted(set(leaf_methods.values()))
+    method_to_int = {m: i for i, m in enumerate(unique_methods)}
+    method_grid = np.vectorize(
+        lambda lid: method_to_int.get(leaf_methods.get(int(lid), ""), -1)
+    )(leaves_grid)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    cmap = plt.cm.Set3
+    im = ax.imshow(
+        method_grid,
+        extent=(x1.min(), x1.max(), x2.min(), x2.max()),
+        origin="lower", aspect="auto", alpha=0.45, cmap=cmap,
+        vmin=0, vmax=max(len(unique_methods) - 1, 1),
+    )
+    # Scatter oracle points coloured by oracle method (only top methods)
+    oracle = _compute_oracle(gdf)
+    keep = oracle["oracle_method"].isin(unique_methods)
+    for m in unique_methods:
+        sub = oracle[keep & (oracle["oracle_method"] == m)]
+        if sub.empty:
+            continue
+        ax.scatter(
+            sub[f1], sub[f2], s=14,
+            color=cmap(method_to_int[m] / max(len(unique_methods) - 1, 1)),
+            edgecolors="black", linewidths=0.4,
+            label=m,
+        )
+
+    ax.set_xlabel(f"{f1} (z-scored)", fontsize=11)
+    ax.set_ylabel(f"{f2} (z-scored)", fontsize=11)
+    ax.set_title(
+        f"Multi-feature meta-CSF decision surface — {group_label}\n"
+        f"(other NC features fixed at their median)",
+        fontsize=11,
+    )
+    ax.legend(
+        fontsize=8, loc="upper left", bbox_to_anchor=(1.01, 1),
+        title="oracle / leaf method",
+    )
+    fig.tight_layout()
+    fig.savefig(
+        os.path.join(output_dir, f"meta_csf_surface_{tag}.pdf"),
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+    logger.info(f"  Saved 2D decision surface: meta_csf_surface_{tag}.pdf")
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(
@@ -669,6 +1051,24 @@ def main():
         "--bandwidth", type=float, default=None,
         help="Nadaraya-Watson bandwidth for plot smoothing (default: Silverman)",
     )
+    parser.add_argument(
+        "--multi-feature", action="store_true",
+        help="Use decision-tree-based multi-feature meta-CSF instead of "
+             "single-feature binning",
+    )
+    parser.add_argument(
+        "--max-depth", type=int, default=3,
+        help="Max depth of the decision tree (multi-feature mode)",
+    )
+    parser.add_argument(
+        "--min-samples-leaf", type=float, default=0.05,
+        help="Min fraction of samples per leaf (multi-feature mode)",
+    )
+    parser.add_argument(
+        "--top-methods", type=int, default=8,
+        help="Number of top-winning methods to keep as tree classes "
+             "(multi-feature mode)",
+    )
 
     args = parser.parse_args()
     os.makedirs(args.output_dir, exist_ok=True)
@@ -727,6 +1127,86 @@ def main():
                     cliques_for_group[src] = gmap[group_label]
 
         tag = f"{file_prefix}_group_{group_label}"
+        if args.multi_feature:
+            tag = f"multi_{tag}"
+
+        # ── Multi-feature mode (decision tree) ──
+        if args.multi_feature:
+            logger.info(f"  [multi-feature] max_depth={args.max_depth}, "
+                        f"min_samples_leaf={args.min_samples_leaf}, "
+                        f"top_methods={args.top_methods}")
+
+            eval_df_m, fold_summaries_m = run_lodo_multi_feature_meta_csf(
+                reg_df, nc_features, group_label,
+                max_depth=args.max_depth,
+                min_samples_leaf=args.min_samples_leaf,
+                top_methods_to_keep=args.top_methods,
+                cliques=cliques_for_group,
+            )
+
+            if eval_df_m.empty:
+                continue
+
+            eval_df_m.to_csv(
+                os.path.join(args.output_dir, f"meta_csf_eval_{tag}.csv"),
+                index=False,
+            )
+            folds_df = pd.DataFrame(fold_summaries_m)
+            folds_df["group"] = group_label
+            folds_df.to_csv(
+                os.path.join(args.output_dir, f"meta_csf_folds_{tag}.csv"),
+                index=False,
+            )
+            all_fold_summaries.append(folds_df)
+
+            meta_wins = (eval_df_m["meta_augrc"] <= eval_df_m["best_single_augrc"]).mean()
+            logger.info(
+                f"  Overall {group_label} (multi): "
+                f"meta regret={eval_df_m['meta_regret'].mean():.4f} "
+                f"({eval_df_m['meta_norm_regret'].mean():.1%}), "
+                f"single regret={eval_df_m['best_single_regret'].mean():.4f} "
+                f"({eval_df_m['best_single_norm_regret'].mean():.1%}), "
+                f"meta_wins={meta_wins:.1%}"
+            )
+
+            # Fit a single tree on ALL data for the illustrative plot
+            tree_full, leaf_methods_full, leaf_summary_full, feat_names = (
+                build_multi_feature_meta_csf(
+                    reg_df, nc_features, group_label,
+                    max_depth=args.max_depth,
+                    min_samples_leaf=args.min_samples_leaf,
+                    top_methods_to_keep=args.top_methods,
+                )
+            )
+            leaf_summary_full.to_csv(
+                os.path.join(args.output_dir, f"meta_csf_leaves_{tag}.csv"),
+                index=False,
+            )
+            # Dump human-readable tree rules
+            rules_txt = export_text(
+                tree_full, feature_names=feat_names, decimals=3,
+            )
+            rules_path = os.path.join(
+                args.output_dir, f"meta_csf_rules_{tag}.txt",
+            )
+            with open(rules_path, "w") as f:
+                f.write(f"Tree rules for {group_label}\n")
+                f.write(f"Leaf → method assignments: {leaf_methods_full}\n\n")
+                f.write(rules_txt)
+            logger.info(f"  Saved rules: {rules_path}")
+
+            plot_tree_meta_csf(
+                tree_full, feat_names, leaf_methods_full,
+                args.output_dir, tag,
+            )
+            plot_decision_surface_2d(
+                reg_df, tree_full, feat_names, leaf_methods_full,
+                group_label, args.output_dir, tag,
+            )
+            plot_regret_comparison(
+                eval_df_m, group_label, args.output_dir, tag,
+            )
+            continue
 
         # ── Sweep mode: try all features × bin counts ──
         if args.sweep:
