@@ -1,0 +1,6 @@
+leaf_id,best_method,mean_rank,n_instances,n_rows,methods_detail
+1,Confidence,1.0999999999999999,8,23,"Residual(1.00), Confidence(1.10), CTM(2.20)"
+4,CTM,2.838888888888889,52,546,"CTM(2.84), Residual(3.33), fDBD(5.05)"
+5,CTMmean,2.43125,25,281,"CTMmean(2.43), CTMmeanOC(3.23), fDBD(3.54)"
+7,Energy,2.1142857142857143,60,445,"fDBD(1.94), Energy(2.11), REN(2.88)"
+8,ViM,1.0,10,25,"ViM(1.00), Confidence(2.00), Residual(2.50)"

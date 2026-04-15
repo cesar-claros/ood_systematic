@@ -3,16 +3,22 @@
     "test": [
       "GEN",
       "REN",
-      "Confidence"
+      "Confidence",
+      "MSR"
     ],
     "near": [
-      "Energy"
+      "Energy",
+      "NNGuide",
+      "MLS"
     ],
     "mid": [
       "Energy"
     ],
     "far": [
-      "Energy"
+      "Energy",
+      "NNGuide",
+      "MLS",
+      "NeCo"
     ],
     "all": [
       "Energy"
@@ -21,37 +27,48 @@
   "supercifar100": {
     "test": [
       "CTMmeanOC",
-      "CTM"
+      "CTM",
+      "CTMmean"
     ],
     "near": [
-      "Energy"
+      "Energy",
+      "NeCo",
+      "MLS"
     ],
     "mid": [
-      "Energy"
+      "Energy",
+      "CTM"
     ],
     "far": [
       "CTMmean",
       "KPCA RecError global",
-      "fDBD"
+      "fDBD",
+      "CTMmeanOC",
+      "ViM"
     ],
     "all": [
-      "Energy"
+      "Energy",
+      "CTM"
     ]
   },
   "cifar100": {
     "test": [
-      "GEN"
+      "GEN",
+      "MSR"
     ],
     "near": [
       "fDBD",
       "NeCo",
       "PE",
       "NNGuide",
-      "PCE"
+      "PCE",
+      "MLS"
     ],
     "mid": [
       "fDBD",
-      "NNGuide"
+      "NNGuide",
+      "CTMmean",
+      "CTMmeanOC"
     ],
     "far": [
       "fDBD"
@@ -82,16 +99,22 @@
       "test": {
         "GEN": 3.2,
         "REN": 3.2333,
-        "Confidence": 3.7667
+        "Confidence": 3.7667,
+        "MSR": 4.6
       },
       "near": {
-        "Energy": 2.3667
+        "Energy": 2.3667,
+        "NNGuide": 3.5333,
+        "MLS": 3.65
       },
       "mid": {
         "Energy": 3.4667
       },
       "far": {
-        "Energy": 3.2
+        "Energy": 3.2,
+        "NNGuide": 3.8667,
+        "MLS": 4.3667,
+        "NeCo": 4.5
       },
       "all": {
         "Energy": 3.125
@@ -100,37 +123,48 @@
     "supercifar100": {
       "test": {
         "CTMmeanOC": 1.8333,
-        "CTM": 1.9333
+        "CTM": 1.9333,
+        "CTMmean": 2.8333
       },
       "near": {
-        "Energy": 4.7167
+        "Energy": 4.7167,
+        "NeCo": 5.8,
+        "MLS": 5.8667
       },
       "mid": {
-        "Energy": 6.125
+        "Energy": 6.125,
+        "CTM": 7.3333
       },
       "far": {
         "CTMmean": 5.5333,
         "KPCA RecError global": 5.7167,
-        "fDBD": 6.0333
+        "fDBD": 6.0333,
+        "CTMmeanOC": 6.45,
+        "ViM": 6.9667
       },
       "all": {
-        "Energy": 7.125
+        "Energy": 7.125,
+        "CTM": 7.6417
       }
     },
     "cifar100": {
       "test": {
-        "GEN": 1.3
+        "GEN": 1.3,
+        "MSR": 2.2333
       },
       "near": {
         "fDBD": 7.6,
         "NeCo": 8.05,
         "PE": 8.1167,
         "NNGuide": 8.2333,
-        "PCE": 8.2333
+        "PCE": 8.2333,
+        "MLS": 9.25
       },
       "mid": {
         "fDBD": 6.3667,
-        "NNGuide": 6.7583
+        "NNGuide": 6.7583,
+        "CTMmean": 6.8333,
+        "CTMmeanOC": 7.1917
       },
       "far": {
         "fDBD": 2.0

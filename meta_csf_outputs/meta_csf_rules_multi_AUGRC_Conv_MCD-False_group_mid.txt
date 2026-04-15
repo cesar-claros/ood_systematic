@@ -1,0 +1,16 @@
+Tree rules for mid
+Leaf → method assignments: {1: 'Confidence', 4: 'CTM', 5: 'CTMmean', 7: 'Energy', 8: 'ViM'}
+
+|--- max_equiangular_uc <= -1.311
+|   |--- class: Residual
+|--- max_equiangular_uc >  -1.311
+|   |--- self_duality <= 0.018
+|   |   |--- equinorm_wc <= -0.018
+|   |   |   |--- class: PE
+|   |   |--- equinorm_wc >  -0.018
+|   |   |   |--- class: CTMmean
+|   |--- self_duality >  0.018
+|   |   |--- max_equiangular_wc <= 2.662
+|   |   |   |--- class: Energy
+|   |   |--- max_equiangular_wc >  2.662
+|   |   |   |--- class: ViM

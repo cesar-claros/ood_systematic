@@ -1,0 +1,5 @@
+held_out,n_leaves,tree_depth,top_features,meta_mean_regret,meta_mean_norm_regret,single_mean_regret,single_mean_norm_regret,meta_wins_rate,clique_hit_rate,group
+cifar10,6,3,"max_equiangular_wc=0.44, max_equiangular_uc=0.20, self_duality=0.19",1.5843436036797327,0.009749702107526419,2.095311357344942,0.012884599555054253,0.2222222222222222,0.24444444444444444,all
+cifar100,5,3,"equinorm_wc=0.46, equiangular_uc=0.27, equinorm_uc=0.26",10.79508967710229,0.051637366200594795,3.1660018524193885,0.015098418467210988,0.25,0.0,all
+supercifar100,8,3,"max_equiangular_uc=0.34, max_equiangular_wc=0.24, equinorm_uc=0.18",2.052486481341928,0.008053929043881662,0.2520389106609135,0.0009867955151463019,0.075,0.7,all
+tinyimagenet,4,3,"max_equiangular_uc=0.34, max_equiangular_wc=0.34, equiangular_uc=0.32",0.0,0.0,0.0,0.0,0.5,1.0,all

@@ -1,0 +1,5 @@
+leaf_id,best_method,mean_rank,n_instances,n_rows,methods_detail
+1,CTM,2.0,8,23,"Residual(1.00), CTM(2.00), Confidence(2.17)"
+4,ViM,1.9166666666666667,11,46,"CTMmeanOC(1.10), ViM(1.92), KPCA RecError global(2.00)"
+5,CTM,3.9952731092436977,128,1232,"CTM(4.00), REN(4.61), NNGuide(4.79)"
+6,Confidence,1.0,8,19,"Confidence(1.00), Maha(1.00), ViM(2.00)"

@@ -1,0 +1,13 @@
+Tree rules for far
+Leaf → method assignments: {1: 'Maha', 4: 'fDBD', 5: 'Energy', 6: 'Confidence'}
+
+|--- max_equiangular_uc <= -1.311
+|   |--- class: Residual
+|--- max_equiangular_uc >  -1.311
+|   |--- max_equiangular_wc <= 2.662
+|   |   |--- max_equiangular_uc <= -0.055
+|   |   |   |--- class: REN
+|   |   |--- max_equiangular_uc >  -0.055
+|   |   |   |--- class: Energy
+|   |--- max_equiangular_wc >  2.662
+|   |   |--- class: ViM
