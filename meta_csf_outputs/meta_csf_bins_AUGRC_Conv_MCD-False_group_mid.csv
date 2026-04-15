@@ -1,0 +1,5 @@
+bin_id,bin_range,best_method,mean_rank,n_samples,methods_detail
+0,"(-inf, 0.047]",Residual,2.4125,366,"Residual(2.41), CTM(2.95), KPCA RecError global(4.26)"
+1,"(0.047, 0.060]",Residual,2.0,261,"Residual(2.00), CTM(2.38), NNGuide(3.38)"
+2,"(0.060, 0.091]",fDBD,3.105882352941176,447,"fDBD(3.11), NNGuide(3.18), REN(4.39)"
+3,"(0.091, inf]",ViM,1.0,246,"ViM(1.00), Energy(2.51), Residual(3.69)"

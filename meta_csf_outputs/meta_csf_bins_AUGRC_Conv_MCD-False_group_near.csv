@@ -1,0 +1,5 @@
+bin_id,bin_range,best_method,mean_rank,n_samples,methods_detail
+0,"(-inf, 0.073]",Residual,2.35,278,"Residual(2.35), Confidence(2.55), PE(2.65)"
+1,"(0.073, 0.100]",CTM,2.292838874680307,424,"CTM(2.29), CTMmeanOC(4.75), NNGuide(5.47)"
+2,"(0.100, 0.146]",REN,4.0,344,"REN(4.00), fDBD(4.42), NeCo(4.56)"
+3,"(0.146, inf]",ViM,2.0,274,"ViM(2.00), Energy(3.14), NNGuide(3.27)"
