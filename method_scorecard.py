@@ -258,16 +258,104 @@ def build_scorecard(
 
 
 # ── Visualisations ────────────────────────────────────────────────────────────
+def _plot_binning_table(
+    ob: OptimalBinning,
+    ax: plt.Axes,
+    metric: str = "woe",
+    show_bin_labels: bool = True,
+    compact: bool = True,
+) -> None:
+    """Replicate optbinning's BinningTable.plot() into a given axes.
+
+    Draws a stacked bar chart (non-event / event counts) on ``ax`` and
+    overlays the WoE (or event-rate) line on a twin y-axis.
+
+    Parameters
+    ----------
+    ob : OptimalBinning
+        A fitted OptimalBinning object.
+    ax : matplotlib Axes
+        Target axes for the bar chart (count).
+    metric : str
+        ``"woe"`` or ``"event_rate"``.
+    show_bin_labels : bool
+        Show bin interval labels on the x-axis instead of bin IDs.
+    compact : bool
+        If True, use smaller fonts and hide axis labels (for grids).
+    """
+    bt = ob.binning_table
+
+    # Number of regular bins (excluding special + missing)
+    n_records = len(bt._n_records)
+    n_specials = bt._n_specials
+    n_regular = n_records - 1 - n_specials  # exclude missing row
+
+    n_event = list(bt.n_event)
+    n_nonevent = list(bt.n_nonevent)
+
+    # Remove special bins
+    for _ in range(n_specials):
+        n_event.pop(-2)
+        n_nonevent.pop(-2)
+    # Remove missing bin
+    n_event.pop(-1)
+    n_nonevent.pop(-1)
+
+    n_bins = len(n_event)
+
+    if metric == "woe":
+        metric_values = bt._woe
+        metric_label = "WoE"
+    else:
+        metric_values = bt._event_rate
+        metric_label = "Event rate"
+
+    # Stacked bars: non-event + event
+    x = np.arange(n_bins)
+    p2 = ax.bar(x, n_event, color="tab:red", alpha=0.7)
+    p1 = ax.bar(x, n_nonevent, color="tab:blue", bottom=n_event, alpha=0.7)
+
+    # Twin axis for metric line
+    ax2 = ax.twinx()
+    ax2.plot(
+        np.arange(n_regular), metric_values[:n_regular],
+        linestyle="solid", marker="o", color="black",
+        markersize=3, linewidth=1.2,
+    )
+
+    # Tick / label formatting
+    fs = 7 if compact else 10
+    ax.set_xticks(x)
+
+    if show_bin_labels and hasattr(bt, "_bin_str"):
+        bin_str = bt._bin_str
+        # Strip special + missing
+        bin_str = bin_str[:n_regular]
+        # Truncate long labels
+        bin_str = [s[:20] for s in bin_str]
+        ax.set_xticklabels(bin_str, fontsize=fs - 1, rotation=45, ha="right")
+    else:
+        ax.set_xticklabels(x, fontsize=fs)
+
+    ax.tick_params(axis="y", labelsize=fs)
+    ax2.tick_params(axis="y", labelsize=fs)
+
+    if not compact:
+        ax.set_xlabel("Bin", fontsize=fs + 1)
+        ax.set_ylabel("Count", fontsize=fs + 1)
+        ax2.set_ylabel(metric_label, fontsize=fs + 1)
+
+
 def plot_woe_grid(
     fitted_bins: dict[str, dict[str, OptimalBinning]],
     group_label: str,
     output_dir: str,
     tag: str,
 ) -> None:
-    """Grid of WoE-per-bin plots using optbinning's native rendering.
+    """Grid of WoE-per-bin plots (optbinning style).
 
     Rows = OOD methods, Columns = NC features.
-    Each cell shows binning_table.plot(metric="woe").
+    Each cell: stacked event/non-event bars + WoE line on twin axis.
     """
     if not fitted_bins:
         logger.warning("  No fitted binnings, skipping WoE grid")
@@ -294,25 +382,7 @@ def plot_woe_grid(
                 ax.set_visible(False)
                 continue
 
-            # Extract WoE data from the binning table
-            table = ob.binning_table.build()
-            table = table[
-                ~table["Bin"].isin(["Special", "Missing", "Totals"])
-            ].copy()
-            table["WoE"] = pd.to_numeric(table["WoE"], errors="coerce")
-            bin_labels = table["Bin"].astype(str).values
-            woe_vals = table["WoE"].values
-
-            colors = ["#2166ac" if v >= 0 else "#b2182b" for v in woe_vals]
-            x_pos = np.arange(len(bin_labels))
-            ax.bar(x_pos, woe_vals, color=colors, edgecolor="gray",
-                   linewidth=0.5)
-            ax.axhline(0, color="black", linewidth=0.5)
-            ax.set_xticks(x_pos)
-            ax.set_xticklabels(
-                bin_labels, fontsize=6, rotation=45, ha="right",
-            )
-            ax.tick_params(axis="y", labelsize=7)
+            _plot_binning_table(ob, ax, metric="woe", compact=True)
 
             if j == 0:
                 ax.set_ylabel(method, fontsize=9, fontweight="bold")
