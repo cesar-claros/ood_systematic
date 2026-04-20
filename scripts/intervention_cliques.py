@@ -12,6 +12,7 @@ Outputs (under ood_eval_outputs/intervention_cliques/):
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -45,6 +46,15 @@ N_BOOT = 200
 STABILITY_THRESHOLD = 0.60
 SEED = 0
 
+# Mirrors stats_eval.py --filter-methods: drop 'global'/'class' variants except the
+# PCA/KPCA RecError baselines (whose canonical form is the 'global' variant).
+FILTER_KEEP_EXCEPTIONS = {
+    "KPCA RecError global",
+    "PCA RecError global",
+    "MCD-KPCA RecError global",
+    "MCD-PCA RecError global",
+}
+
 
 def load_fix_config_long(source: str, mcd: bool) -> pd.DataFrame:
     """Load the two RC metric _fix-config CSVs for a source and return a long-format frame."""
@@ -71,6 +81,13 @@ def load_fix_config_long(source: str, mcd: bool) -> pd.DataFrame:
     out = pd.concat(frames, ignore_index=True)
     out["score_std"] = out.apply(lambda r: standardize_metric(r["metric"], r["score"]), axis=1)
     return out
+
+
+def filter_base_methods(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep only base CSFs — drop 'global'/'class' variants (except PCA/KPCA RecError global)."""
+    mask = df["methods"].str.contains("global|class", case=False, na=False)
+    mask &= ~df["methods"].isin(FILTER_KEEP_EXCEPTIONS)
+    return df[~mask].copy()
 
 
 def attach_regime(df: pd.DataFrame, source: str) -> pd.DataFrame:
@@ -224,9 +241,13 @@ def enumerate_slices(df: pd.DataFrame) -> list[tuple]:
     )
 
 
-def process_source(source: str, rng: np.random.Generator) -> tuple[list[dict], dict]:
+def process_source(source: str, rng: np.random.Generator, filter_methods: bool) -> tuple[list[dict], dict]:
     print(f"\n=== source={source} ===")
     df = load_fix_config_long(source, mcd=False)
+    if filter_methods:
+        before = len(df)
+        df = filter_base_methods(df)
+        print(f"  filter-methods: dropped {before - len(df)} rows ({df['methods'].nunique()} CSFs remain)")
     df = attach_regime(df, source)
     df = df.dropna(subset=["group"])
     slices = enumerate_slices(df)
@@ -253,22 +274,42 @@ def process_source(source: str, rng: np.random.Generator) -> tuple[list[dict], d
     return records, summary
 
 
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument(
+        "--filter-methods",
+        action="store_true",
+        help="Keep only base CSFs — drop 'global'/'class' variants except PCA/KPCA RecError global "
+        "(mirrors stats_eval.py --filter-methods).",
+    )
+    p.add_argument(
+        "--tag",
+        default=None,
+        help="Optional filename suffix for JSON/CSV outputs (e.g., 'base' when --filter-methods is on).",
+    )
+    return p.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
+    tag = args.tag or ("base" if args.filter_methods else None)
+    suffix = f"_{tag}" if tag else ""
+
     rng = np.random.default_rng(SEED)
     all_records: list[dict] = []
     summaries: list[dict] = []
     for source in SOURCES:
-        records, summary = process_source(source, rng)
+        records, summary = process_source(source, rng, args.filter_methods)
         all_records.extend(records)
         summaries.append(summary)
 
-        out_json = OUT_DIR / f"cliques_{source}.json"
+        out_json = OUT_DIR / f"cliques_{source}{suffix}.json"
         with out_json.open("w") as fh:
             json.dump(records, fh, indent=2, default=str)
         print(f"  wrote {out_json}")
 
     summary_df = pd.DataFrame(all_records)
-    summary_csv = OUT_DIR / "slice_summary.csv"
+    summary_csv = OUT_DIR / f"slice_summary{suffix}.csv"
     summary_df.to_csv(summary_csv, index=False)
     print(f"\nWrote {summary_csv} ({len(summary_df)} slices)")
 
@@ -284,7 +325,7 @@ def main() -> None:
         )
         print(f"  20%% threshold {'EXCEEDED — abort trigger' if unstable_frac > 0.20 else 'within bounds'}")
 
-    meta_path = OUT_DIR / "run_metadata.json"
+    meta_path = OUT_DIR / f"run_metadata{suffix}.json"
     meta = {
         "sources": SOURCES,
         "metrics": METRICS,
@@ -292,6 +333,8 @@ def main() -> None:
         "n_boot": N_BOOT,
         "stability_threshold": STABILITY_THRESHOLD,
         "seed": SEED,
+        "filter_methods": args.filter_methods,
+        "filter_keep_exceptions": sorted(FILTER_KEEP_EXCEPTIONS) if args.filter_methods else [],
         "per_source_summary": summaries,
     }
     with meta_path.open("w") as fh:
