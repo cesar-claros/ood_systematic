@@ -1,0 +1,23 @@
+{
+  "sources": [
+    "cifar10",
+    "cifar100",
+    "supercifar100",
+    "tinyimagenet"
+  ],
+  "n_permutations": 9999,
+  "seed": 0,
+  "h1_threshold_rho": 0.4,
+  "h2_threshold_rho": 0.3,
+  "h3_threshold_frac": 0.6,
+  "h4_threshold_rho": 0.4,
+  "pool_delta_rho_cap": 0.1,
+  "pool_delta_rho_observed": 0.10014573892173151,
+  "pooling_allowed": false,
+  "h2_result": {
+    "rho_obs": 0.47534275119107905,
+    "p": 0.7372,
+    "n": 28,
+    "passes_threshold": false
+  }
+}

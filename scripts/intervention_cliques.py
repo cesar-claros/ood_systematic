@@ -57,6 +57,16 @@ FILTER_KEEP_EXCEPTIONS = {
     "MCD-PCA RecError global",
 }
 
+# Always drop these CSFs even when --filter-methods is on: CTMmean and CTMmeanOC are
+# run-averaging variants of CTM that inflate the base-method count without representing
+# distinct scoring functions for the intervention analysis.
+EXCLUDE_METHODS = {
+    "CTMmean",
+    "CTMmeanOC",
+    "MCD-CTMmean",
+    "MCD-CTMmeanOC",
+}
+
 
 def load_fix_config_long(source: str, mcd: bool) -> pd.DataFrame:
     """Load the two RC metric _fix-config CSVs for a source and return a long-format frame."""
@@ -86,9 +96,11 @@ def load_fix_config_long(source: str, mcd: bool) -> pd.DataFrame:
 
 
 def filter_base_methods(df: pd.DataFrame) -> pd.DataFrame:
-    """Keep only base CSFs — drop 'global'/'class' variants (except PCA/KPCA RecError global)."""
+    """Keep only base CSFs — drop 'global'/'class' variants (except PCA/KPCA RecError global)
+    and drop the CTMmean / CTMmeanOC run-averaging variants."""
     mask = df["methods"].str.contains("global|class", case=False, na=False)
     mask &= ~df["methods"].isin(FILTER_KEEP_EXCEPTIONS)
+    mask |= df["methods"].isin(EXCLUDE_METHODS)
     return df[~mask].copy()
 
 

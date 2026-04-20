@@ -1,0 +1,33 @@
+{
+  "sources": [
+    "cifar10",
+    "cifar100",
+    "supercifar100",
+    "tinyimagenet"
+  ],
+  "nc_metrics": [
+    "var_collapse",
+    "equinorm_uc",
+    "equinorm_wc",
+    "equiangular_uc",
+    "equiangular_wc",
+    "max_equiangular_uc",
+    "max_equiangular_wc",
+    "self_duality"
+  ],
+  "stability_threshold": 0.6,
+  "h1_summary": {
+    "name": "H1 paradigm-pair table",
+    "n_total": 174,
+    "n_complete": 174,
+    "n_missing_nc": 0,
+    "n_missing_clique": 0
+  },
+  "h2_summary": {
+    "name": "H2 dropout-pair table",
+    "n_total": 28,
+    "n_complete": 28,
+    "n_missing_nc": 0,
+    "n_missing_clique": 0
+  }
+}
