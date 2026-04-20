@@ -114,6 +114,11 @@ def main():
         try:
             df = load_all_scores(CONFIG)
 
+            exclude_methods = {"CTMmean", "CTMmeanOC", "MCD-CTMmean", "MCD-CTMmeanOC"}
+            n_excluded = df['methods'].isin(exclude_methods).sum()
+            df = df[~df['methods'].isin(exclude_methods)]
+            logger.info(f"Excluded {n_excluded} rows with CTMmean/CTMmeanOC methods for {SOURCE}")
+
             if args.filter_methods:
                 keep_exceptions = {
                     "KPCA RecError global",
