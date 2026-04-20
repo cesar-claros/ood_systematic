@@ -15,3 +15,5 @@ neural_collapse_vis.py
 calibration_example.py
 calibration_hyperparameters.py
 calibration_plots.py
+hpc_scripts/
+experiments/
