@@ -1,0 +1,68 @@
+{
+  "sources": [
+    "cifar10",
+    "cifar100",
+    "supercifar100",
+    "tinyimagenet"
+  ],
+  "metrics": [
+    "AUGRC",
+    "AURC"
+  ],
+  "alpha": 0.05,
+  "n_boot": 200,
+  "stability_threshold": 0.6,
+  "seed": 0,
+  "filter_methods": true,
+  "filter_keep_exceptions": [
+    "KPCA RecError global",
+    "MCD-KPCA RecError global",
+    "MCD-PCA RecError global",
+    "PCA RecError global"
+  ],
+  "per_source_summary": [
+    {
+      "source": "cifar10",
+      "n_slices": 48,
+      "status_counts": {
+        "ok": 48
+      },
+      "stable_counts": {
+        "True": 48
+      }
+    },
+    {
+      "source": "cifar100",
+      "n_slices": 56,
+      "status_counts": {
+        "ok": 56
+      },
+      "stable_counts": {
+        "True": 55,
+        "False": 1
+      }
+    },
+    {
+      "source": "supercifar100",
+      "n_slices": 72,
+      "status_counts": {
+        "ok": 72
+      },
+      "stable_counts": {
+        "True": 69,
+        "False": 3
+      }
+    },
+    {
+      "source": "tinyimagenet",
+      "n_slices": 48,
+      "status_counts": {
+        "ok": 48
+      },
+      "stable_counts": {
+        "True": 47,
+        "False": 1
+      }
+    }
+  ]
+}
