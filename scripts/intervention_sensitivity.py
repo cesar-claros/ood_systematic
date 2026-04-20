@@ -36,6 +36,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 from scipy.stats import norm, spearmanr
 
 REPO = Path(__file__).resolve().parents[1]
@@ -44,6 +45,18 @@ DELTA_DIR = REPO / "ood_eval_outputs" / "intervention_deltas"
 NC_CSV = REPO / "neural_collapse_metrics" / "nc_metrics.csv"
 OUT_DIR = REPO / "ood_eval_outputs" / "intervention_sensitivity"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
+CONFIG_PATH = REPO / "configs" / "intervention_config.yaml"
+
+
+def _load_exclusions() -> dict[str, set[str]]:
+    if not CONFIG_PATH.exists():
+        return {}
+    cfg = yaml.safe_load(CONFIG_PATH.read_text())
+    raw = cfg.get("paradigm_entries_excluded", {}) or {}
+    return {src: set(entries) for src, entries in raw.items()}
+
+
+EXCLUSIONS = _load_exclusions()
 
 SOURCES = ["cifar10", "cifar100", "supercifar100", "tinyimagenet"]
 NC_SOURCE_ALIAS = {"supercifar100": "supercifar"}
@@ -83,6 +96,11 @@ def load_clique_slices() -> pd.DataFrame:
         f"dg@{r:g}" if m == "dg" else m
         for m, r in zip(df["model"], df["reward"])
     ]
+    if EXCLUSIONS:
+        mask = pd.Series(False, index=df.index)
+        for src, entries in EXCLUSIONS.items():
+            mask |= (df["source"] == src) & (df["paradigm_entry"].isin(entries))
+        df = df[~mask].copy()
     return df
 
 

@@ -12,12 +12,12 @@
   "h3_threshold_frac": 0.6,
   "h4_threshold_rho": 0.4,
   "pool_delta_rho_cap": 0.1,
-  "pool_delta_rho_observed": 0.08074961371884815,
-  "pooling_allowed": true,
+  "pool_delta_rho_observed": 0.11796723992468511,
+  "pooling_allowed": false,
   "h2_result": {
-    "rho_obs": 0.4496046235695842,
-    "p": 0.79,
-    "n": 28,
+    "rho_obs": 0.40343335024760446,
+    "p": 0.9426,
+    "n": 27,
     "passes_threshold": false
   }
 }

@@ -16,17 +16,18 @@
     "self_duality"
   ],
   "stability_threshold": 0.6,
+  "config_hash": "8334c40d5aef",
   "h1_summary": {
     "name": "H1 paradigm-pair table",
-    "n_total": 174,
-    "n_complete": 174,
+    "n_total": 158,
+    "n_complete": 158,
     "n_missing_nc": 0,
     "n_missing_clique": 0
   },
   "h2_summary": {
     "name": "H2 dropout-pair table",
-    "n_total": 28,
-    "n_complete": 28,
+    "n_total": 27,
+    "n_complete": 27,
     "n_missing_nc": 0,
     "n_missing_clique": 0
   }

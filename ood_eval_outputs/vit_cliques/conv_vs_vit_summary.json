@@ -1,0 +1,110 @@
+{
+  "grid_shape": [
+    20,
+    20
+  ],
+  "membership_counts": {
+    "shared": 8,
+    "conv_only": 33,
+    "vit_only": 40
+  },
+  "csfs_shared_anywhere": [
+    "GEN",
+    "MLS",
+    "MSR",
+    "NeCo",
+    "PCE",
+    "fDBD"
+  ],
+  "csfs_conv_only_anywhere": [
+    "CTM",
+    "Confidence",
+    "Energy",
+    "KPCA RecError global",
+    "MLS",
+    "MSR",
+    "NNGuide",
+    "NeCo",
+    "PCE",
+    "PE",
+    "REN",
+    "ViM",
+    "fDBD"
+  ],
+  "csfs_vit_only_anywhere": [
+    "Energy",
+    "GE",
+    "GEN",
+    "GradNorm",
+    "KPCA RecError global",
+    "MLS",
+    "MSR",
+    "Maha",
+    "NNGuide",
+    "PCA RecError global",
+    "PE",
+    "Residual",
+    "ViM",
+    "pNML"
+  ],
+  "cells_with_conv": {
+    "cifar10": [
+      "test",
+      "near",
+      "mid",
+      "far",
+      "all"
+    ],
+    "cifar100": [
+      "test",
+      "near",
+      "mid",
+      "far",
+      "all"
+    ],
+    "supercifar100": [
+      "test",
+      "near",
+      "mid",
+      "far",
+      "all"
+    ],
+    "tinyimagenet": [
+      "test",
+      "near",
+      "mid",
+      "far",
+      "all"
+    ]
+  },
+  "cells_with_vit": {
+    "cifar10": [
+      "test",
+      "near",
+      "mid",
+      "far",
+      "all"
+    ],
+    "cifar100": [
+      "test",
+      "near",
+      "mid",
+      "far",
+      "all"
+    ],
+    "supercifar100": [
+      "test",
+      "near",
+      "mid",
+      "far",
+      "all"
+    ],
+    "tinyimagenet": [
+      "test",
+      "near",
+      "mid",
+      "far",
+      "all"
+    ]
+  }
+}

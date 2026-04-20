@@ -24,18 +24,29 @@ Outputs (ood_eval_outputs/intervention_deltas/):
 from __future__ import annotations
 
 import ast
+import hashlib
 import json
 from itertools import combinations
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 
 REPO = Path(__file__).resolve().parents[1]
 CLIQ_DIR = REPO / "ood_eval_outputs" / "intervention_cliques"
 NC_CSV = REPO / "neural_collapse_metrics" / "nc_metrics.csv"
 OUT_DIR = REPO / "ood_eval_outputs" / "intervention_deltas"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
+CONFIG_PATH = REPO / "configs" / "intervention_config.yaml"
+
+
+def load_exclusions() -> dict[str, set[str]]:
+    if not CONFIG_PATH.exists():
+        return {}
+    cfg = yaml.safe_load(CONFIG_PATH.read_text())
+    raw = cfg.get("paradigm_entries_excluded", {}) or {}
+    return {src: set(entries) for src, entries in raw.items()}
 
 SOURCES = ["cifar10", "cifar100", "supercifar100", "tinyimagenet"]
 NC_METRICS = [
@@ -55,7 +66,10 @@ NC_SOURCE_ALIAS = {"supercifar100": "supercifar"}
 
 
 def load_clique_slices() -> pd.DataFrame:
-    """Concatenate per-source JSONs; attach normalized paradigm-entry labels."""
+    """Concatenate per-source JSONs; attach normalized paradigm-entry labels.
+
+    Applies paradigm_entries_excluded from the config (e.g., supercifar100/dg@2.2).
+    """
     frames = []
     for source in SOURCES:
         path = CLIQ_DIR / f"cliques_{source}_base.json"
@@ -71,6 +85,19 @@ def load_clique_slices() -> pd.DataFrame:
         for m, r in zip(df["model"], df["reward"])
     ]
     df["stable"] = df["mean_jaccard"] >= STABILITY_THRESHOLD
+
+    exclusions = load_exclusions()
+    if exclusions:
+        mask = pd.Series(False, index=df.index)
+        for src, entries in exclusions.items():
+            mask |= (df["source"] == src) & (df["paradigm_entry"].isin(entries))
+        n_excl = int(mask.sum())
+        if n_excl:
+            df = df[~mask].copy()
+            print(
+                f"Applied paradigm_entries_excluded: dropped {n_excl} slices "
+                f"(sources: {sorted(exclusions.keys())})"
+            )
     return df
 
 
@@ -185,9 +212,12 @@ def build_h1(cliques: pd.DataFrame, z: pd.DataFrame) -> pd.DataFrame:
                 vec_a = nc_vec(z, source, a, drop_out)
                 vec_b = nc_vec(z, source, b, drop_out)
                 if vec_a is None or vec_b is None:
-                    dnc = float("nan")
+                    dnc_l2 = float("nan")
+                    dnc_l1 = float("nan")
                 else:
-                    dnc = float(np.linalg.norm(vec_a - vec_b))
+                    diff = vec_a - vec_b
+                    dnc_l2 = float(np.linalg.norm(diff, ord=2))
+                    dnc_l1 = float(np.linalg.norm(diff, ord=1))
                 d_cliq, n_reg, regimes = delta_clique_across_regimes(
                     cliques, source, drop_out, a, b
                 )
@@ -197,7 +227,8 @@ def build_h1(cliques: pd.DataFrame, z: pd.DataFrame) -> pd.DataFrame:
                         "source": source,
                         "entry_a": a,
                         "entry_b": b,
-                        "delta_nc_l2": dnc,
+                        "delta_nc_l2": dnc_l2,
+                        "delta_nc_l1": dnc_l1,
                         "delta_clique": d_cliq,
                         "n_regimes_used": n_reg,
                         "regimes_used": regimes,
@@ -217,15 +248,19 @@ def build_h2(cliques: pd.DataFrame, z: pd.DataFrame) -> pd.DataFrame:
             vec_0 = nc_vec(z, source, entry, "do0")
             vec_1 = nc_vec(z, source, entry, "do1")
             if vec_0 is None or vec_1 is None:
-                dnc = float("nan")
+                dnc_l2 = float("nan")
+                dnc_l1 = float("nan")
             else:
-                dnc = float(np.linalg.norm(vec_0 - vec_1))
+                diff = vec_0 - vec_1
+                dnc_l2 = float(np.linalg.norm(diff, ord=2))
+                dnc_l1 = float(np.linalg.norm(diff, ord=1))
             d_cliq, n_reg, regimes = delta_clique_dropout(cliques, source, entry)
             rows.append(
                 {
                     "source": source,
                     "paradigm_entry": entry,
-                    "delta_nc_l2": dnc,
+                    "delta_nc_l2": dnc_l2,
+                    "delta_nc_l1": dnc_l1,
                     "delta_clique": d_cliq,
                     "n_regimes_used": n_reg,
                     "regimes_used": regimes,
@@ -268,10 +303,16 @@ def main() -> None:
     h1.to_csv(h1_out, index=False)
     h2.to_csv(h2_out, index=False)
 
+    cfg_hash = (
+        hashlib.sha256(CONFIG_PATH.read_bytes()).hexdigest()[:12]
+        if CONFIG_PATH.exists()
+        else None
+    )
     meta = {
         "sources": SOURCES,
         "nc_metrics": NC_METRICS,
         "stability_threshold": STABILITY_THRESHOLD,
+        "config_hash": cfg_hash,
         "h1_summary": h1_info,
         "h2_summary": h2_info,
     }
