@@ -14,7 +14,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -125,6 +127,10 @@ def top_clique_from_pivot(pivot: pd.DataFrame) -> tuple[list[str], dict] | None:
     return sorted(top["members"]), meta
 
 
+def _slice_key(meta: dict) -> str:
+    return f"{meta['source']}|{meta['model']}|{meta['drop_out']}|{meta['reward']}|{meta['regime']}"
+
+
 def bootstrap_stability(sub: pd.DataFrame, baseline_members: list[str], rng: np.random.Generator) -> dict:
     """Resample the 5 runs B times per (dataset, metric); recompute top clique; mean Jaccard vs baseline."""
     runs = sorted(sub["run"].unique().tolist())
@@ -177,24 +183,14 @@ def bootstrap_stability(sub: pd.DataFrame, baseline_members: list[str], rng: np.
     }
 
 
-def run_slice(df: pd.DataFrame, source: str, model: str, dropout: str, reward: float, regime: str,
-              rng: np.random.Generator) -> dict:
-    sub = df[
-        (df["model"] == model)
-        & (df["drop out"] == dropout)
-        & (df["reward"] == reward)
-        & (df["group"] == regime)
-    ].copy()
-    base = {
-        "source": source,
-        "model": model,
-        "drop_out": dropout,
-        "reward": float(reward),
-        "regime": regime,
-    }
+def run_slice(sub: pd.DataFrame, meta: dict, seed: int) -> dict:
+    """Process one slice: Friedman -> top clique -> bootstrap stability. Picklable for workers."""
+    rng = np.random.default_rng(seed)
+    base = dict(meta)
     if sub.empty:
         return {**base, "status": "empty"}
 
+    sub = sub.copy()
     sub["block"] = sub[["dataset", "metric", "run"]].astype(str).agg("|".join, axis=1)
     stat, p, pivot = friedman_blocked(
         sub, entity_col="methods", block_col="block", value_col="score_std"
@@ -215,48 +211,52 @@ def run_slice(df: pd.DataFrame, source: str, model: str, dropout: str, reward: f
         info["status"] = "no_clique"
         return info
 
-    members, meta = result
+    members, meta_out = result
     info["status"] = "ok"
     info["top_clique"] = members
-    info.update(meta)
+    info.update(meta_out)
     info.update(bootstrap_stability(sub, members, rng))
     return info
 
 
-def enumerate_slices(df: pd.DataFrame) -> list[tuple]:
-    """Every (model, drop_out, reward, regime) combination that has data."""
-    keys = (
-        df.dropna(subset=["group"])
-        .groupby(["model", "drop out", "reward", "group"])
-        .size()
-        .reset_index()
-    )
-    return list(
-        zip(
-            keys["model"].tolist(),
-            keys["drop out"].tolist(),
-            keys["reward"].tolist(),
-            keys["group"].tolist(),
-        )
-    )
+def _worker(payload: tuple[pd.DataFrame, dict, int]) -> dict:
+    sub, meta, seed = payload
+    return run_slice(sub, meta, seed)
 
 
-def process_source(source: str, rng: np.random.Generator, filter_methods: bool) -> tuple[list[dict], dict]:
-    print(f"\n=== source={source} ===")
+def build_payloads(df: pd.DataFrame, source: str) -> list[tuple[pd.DataFrame, dict, int]]:
+    """One payload per (model, drop_out, reward, regime) slice; deterministic per-slice seeds."""
+    payloads: list[tuple[pd.DataFrame, dict, int]] = []
+    grouped = df.groupby(["model", "drop out", "reward", "group"], sort=True)
+    for idx, ((model, dropout, reward, regime), sub) in enumerate(grouped):
+        meta = {
+            "source": source,
+            "model": model,
+            "drop_out": dropout,
+            "reward": float(reward),
+            "regime": regime,
+        }
+        slice_seed = SEED + (hash(_slice_key(meta)) & 0x7FFFFFFF)
+        payloads.append((sub.reset_index(drop=True), meta, slice_seed))
+    return payloads
+
+
+def process_source(source: str, filter_methods: bool, executor: ProcessPoolExecutor | None) -> tuple[list[dict], dict]:
+    print(f"\n=== source={source} ===", flush=True)
     df = load_fix_config_long(source, mcd=False)
     if filter_methods:
         before = len(df)
         df = filter_base_methods(df)
-        print(f"  filter-methods: dropped {before - len(df)} rows ({df['methods'].nunique()} CSFs remain)")
+        print(f"  filter-methods: dropped {before - len(df)} rows ({df['methods'].nunique()} CSFs remain)", flush=True)
     df = attach_regime(df, source)
     df = df.dropna(subset=["group"])
-    slices = enumerate_slices(df)
-    print(f"  loaded {len(df)} rows; {len(slices)} slices to evaluate")
+    payloads = build_payloads(df, source)
+    print(f"  loaded {len(df)} rows; {len(payloads)} slices to evaluate", flush=True)
 
-    records: list[dict] = []
-    for model, dropout, reward, regime in slices:
-        rec = run_slice(df, source, model, dropout, reward, regime, rng)
-        records.append(rec)
+    if executor is None:
+        records = [_worker(p) for p in payloads]
+    else:
+        records = list(executor.map(_worker, payloads))
 
     status_counts = pd.Series([r["status"] for r in records]).value_counts().to_dict()
     stable_counts = pd.Series(
@@ -287,6 +287,12 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional filename suffix for JSON/CSV outputs (e.g., 'base' when --filter-methods is on).",
     )
+    p.add_argument(
+        "--workers",
+        type=int,
+        default=max(1, (os.cpu_count() or 2) - 1),
+        help="Process-pool workers for slice-level parallelism. Set to 1 to run serially.",
+    )
     return p.parse_args()
 
 
@@ -295,18 +301,27 @@ def main() -> None:
     tag = args.tag or ("base" if args.filter_methods else None)
     suffix = f"_{tag}" if tag else ""
 
-    rng = np.random.default_rng(SEED)
     all_records: list[dict] = []
     summaries: list[dict] = []
-    for source in SOURCES:
-        records, summary = process_source(source, rng, args.filter_methods)
-        all_records.extend(records)
-        summaries.append(summary)
 
-        out_json = OUT_DIR / f"cliques_{source}{suffix}.json"
-        with out_json.open("w") as fh:
-            json.dump(records, fh, indent=2, default=str)
-        print(f"  wrote {out_json}")
+    executor_cm = (
+        ProcessPoolExecutor(max_workers=args.workers) if args.workers > 1 else None
+    )
+    executor = executor_cm if executor_cm is not None else None
+    try:
+        print(f"workers: {args.workers}", flush=True)
+        for source in SOURCES:
+            records, summary = process_source(source, args.filter_methods, executor)
+            all_records.extend(records)
+            summaries.append(summary)
+
+            out_json = OUT_DIR / f"cliques_{source}{suffix}.json"
+            with out_json.open("w") as fh:
+                json.dump(records, fh, indent=2, default=str)
+            print(f"  wrote {out_json}", flush=True)
+    finally:
+        if executor is not None:
+            executor.shutdown(wait=True)
 
     summary_df = pd.DataFrame(all_records)
     summary_csv = OUT_DIR / f"slice_summary{suffix}.csv"
