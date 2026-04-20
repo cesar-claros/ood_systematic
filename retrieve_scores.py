@@ -39,7 +39,18 @@ def main():
             "Intended for the intervention dose-response protocol."
         ),
     )
-    
+    parser.add_argument(
+        "--network",
+        type=str,
+        default=None,
+        help=(
+            "If set, filter val/test/ood rows to the given network label (e.g., 'bbvgg13'). "
+            "Use this to exclude partially trained backbones (e.g., ResNet-18 runs still in "
+            "progress) that would otherwise surface as missing (drop_out, reward, metric) "
+            "cells in the --fix-config path."
+        ),
+    )
+
     args = parser.parse_args()
     
     logger.info(f"Starting score retrieval with arguments: {args}")
@@ -84,6 +95,24 @@ def main():
         results_ood_6 = read_results(dataset,'ood_nsncs_isun')
         results_ood_7 = read_results(dataset,'ood_nsncs_textures')
         results_ood_8 = read_results(dataset,'ood_nsncs_places365')
+
+    if args.network is not None:
+        all_results = [results_val, results_test_iid, results_ood_1, results_ood_2,
+                       results_ood_3, results_ood_4, results_ood_5, results_ood_6,
+                       results_ood_7, results_ood_8]
+        for name, df in zip(
+            ['val','test_iid','ood_1','ood_2','ood_3','ood_4','ood_5','ood_6','ood_7','ood_8'],
+            all_results,
+        ):
+            if df.empty or 'network' not in df.columns:
+                continue
+            before = len(df)
+            mask = df['network'] == args.network
+            df.drop(df.index[~mask], inplace=True)
+            logger.info(f"--network={args.network}: filtered {name} from {before} -> {len(df)} rows")
+        results_val, results_test_iid, results_ood_1, results_ood_2, \
+            results_ood_3, results_ood_4, results_ood_5, results_ood_6, \
+            results_ood_7, results_ood_8 = all_results
 
     model_opts=['RW0','RF0','ASHNone']
     best_hyperparameters_list = []
