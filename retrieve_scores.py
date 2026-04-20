@@ -10,6 +10,7 @@ from src.scores_retrieval_utils import (
     read_results_vit,
     read_results,
     select_best_hyperparameters,
+    select_scores_by_config,
     select_best_scores,
     set_name_dict,
     methods_dict
@@ -28,6 +29,16 @@ def main():
                         choices=['cifar10','supercifar100','cifar100','tinyimagenet'])
     parser.add_argument("--vit", action="store_true", help="Set this flag if using ViT model results")
     parser.add_argument("--scores-dir", type=str, default="scores_final", help="Directory to save final scores")
+    parser.add_argument(
+        "--fix-config",
+        action="store_true",
+        help=(
+            "Skip the cross-(dropout, reward) selection inside select_best_hyperparameters "
+            "and retain every (drop_out, reward, metric) slice. Output files get a "
+            "'_fix-config' suffix to avoid overwriting the paper's default artifacts. "
+            "Intended for the intervention dose-response protocol."
+        ),
+    )
     
     args = parser.parse_args()
     
@@ -111,7 +122,12 @@ def main():
         
         for model_name in model_list:
             for mcd_metrics in mcd_metrics_list:
-                best_hyperparameters_scores = select_best_hyperparameters(results_val_filtered, model_name, score_name, mcd_metrics=mcd_metrics, model_opts=model_opts)
+                if args.fix_config:
+                    best_hyperparameters_scores = select_scores_by_config(
+                        results_val_filtered, model_name, mcd_metrics=mcd_metrics, model_opts=model_opts
+                    )
+                else:
+                    best_hyperparameters_scores = select_best_hyperparameters(results_val_filtered, model_name, score_name, mcd_metrics=mcd_metrics, model_opts=model_opts)
                 best_hyperparameters_list.append({'dataset':dataset, 'model':model_name,'mcd_metrics':mcd_metrics,'score_name':score_name,'best_hyperparameters_scores':best_hyperparameters_scores})
                 
                 scores_test_iid_mean, scores_test_iid_std = select_best_scores(results_test_iid, best_hyperparameters_scores, model_name, score_name, mcd_metrics=mcd_metrics, model_opts=model_opts)
@@ -177,8 +193,9 @@ def main():
         label_model = 'ViT' if vit else 'Conv'
         
         # Save results
-        out_path_false = os.path.join(args.scores_dir, f'scores_{score_name}_MCD-False_{label_model}_{dict_clip.get(dataset, dataset)}.csv')
-        out_path_true = os.path.join(args.scores_dir, f'scores_{score_name}_MCD-True_{label_model}_{dict_clip.get(dataset, dataset)}.csv')
+        suffix = '_fix-config' if args.fix_config else ''
+        out_path_false = os.path.join(args.scores_dir, f'scores_{score_name}_MCD-False_{label_model}_{dict_clip.get(dataset, dataset)}{suffix}.csv')
+        out_path_true = os.path.join(args.scores_dir, f'scores_{score_name}_MCD-True_{label_model}_{dict_clip.get(dataset, dataset)}{suffix}.csv')
         
         logger.info(f"Saving scores to {out_path_false}")
         augrc_scores_ood[~mcd_methods_mask].to_csv(out_path_false)
@@ -211,8 +228,8 @@ def main():
         mcd_methods_mask = np.array(['MCD-' in x for x in  methods])
         
         # Save all scores
-        out_path_all_false = os.path.join(args.scores_dir, f'scores_all_{score_name}_MCD-False_{label_model}_{dict_clip.get(dataset, dataset)}.csv')
-        out_path_all_true = os.path.join(args.scores_dir, f'scores_all_{score_name}_MCD-True_{label_model}_{dict_clip.get(dataset, dataset)}.csv')
+        out_path_all_false = os.path.join(args.scores_dir, f'scores_all_{score_name}_MCD-False_{label_model}_{dict_clip.get(dataset, dataset)}{suffix}.csv')
+        out_path_all_true = os.path.join(args.scores_dir, f'scores_all_{score_name}_MCD-True_{label_model}_{dict_clip.get(dataset, dataset)}{suffix}.csv')
 
         logger.info(f"Saving all scores to {out_path_all_false}")
         metric_scores_ood[~mcd_methods_mask].to_csv(out_path_all_false)

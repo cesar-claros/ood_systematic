@@ -133,6 +133,35 @@ def select_best_hyperparameters(results_val, model_name, score_name, mcd_metrics
     scores_per_model = pd.concat(best_scores_list).sort_values(by=[score_name])
     return scores_per_model
 
+def select_scores_by_config(results_val, model_name, mcd_metrics: bool = False, model_opts=['RW0', 'RF0', 'ASHNone']):
+    """Run-averaged scores per (drop_out, reward, metric) — no cross-config selection.
+
+    Mirrors :func:`select_best_hyperparameters` up to the group-by step but skips both the
+    best-reward-per-(drop_out, metric) and best-drop_out-per-metric selections, so every
+    (drop_out, reward, metric) slice survives. Returns a DataFrame with the same MultiIndex
+    (model, network, drop_out, reward, RankWeight, RankFeat, ASH, metrics) used downstream.
+    """
+    dropout_list = ['do1'] if mcd_metrics else ['do0', 'do1']
+    metrics_flag = 'do1' if mcd_metrics else 'do0'
+    cond = (
+        (results_val['model'] == model_name)
+        & (results_val['RankWeight'] == model_opts[0])
+        & (results_val['RankFeat'] == model_opts[1])
+        & (results_val['ASH'] == model_opts[2])
+        & (results_val['drop_out'].isin(dropout_list))
+    )
+    grouped = (
+        results_val[cond]
+        .groupby(['model', 'network', 'drop_out', 'reward', 'RankWeight', 'RankFeat', 'ASH', 'metrics'])
+        .mean(numeric_only=True)
+    )
+    metrics_name = results_val[results_val['drop_out'] == metrics_flag]['metrics'].unique()
+    if mcd_metrics:
+        metrics_name = [m for m in metrics_name if 'MCD-' in m]
+    grouped = grouped[grouped.index.get_level_values('metrics').isin(metrics_name)]
+    return grouped
+
+
 def select_best_scores(results_test, best_hyperparameters, model_name, score_name, mcd_metrics:bool=False, model_opts=['RW0','RF0','ASHNone']):
     dropout_list = ['do1'] if mcd_metrics else ['do0','do1']
     best_metrics_mean_list = []
