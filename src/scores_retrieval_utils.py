@@ -140,6 +140,12 @@ def select_scores_by_config(results_val, model_name, mcd_metrics: bool = False, 
     best-reward-per-(drop_out, metric) and best-drop_out-per-metric selections, so every
     (drop_out, reward, metric) slice survives. Returns a DataFrame with the same MultiIndex
     (model, network, drop_out, reward, RankWeight, RankFeat, ASH, metrics) used downstream.
+
+    Metrics are routed to the family matching ``mcd_metrics`` (non-MCD for False, MCD-* for
+    True), matching the final split done via mcd_methods_mask in retrieve_scores.py. This
+    avoids missing (drop_out, metric) cells in test-set data when MCD-* rows are only
+    populated at do1 (or vice versa), which would otherwise raise KeyError downstream in
+    :func:`select_best_scores`.
     """
     dropout_list = ['do1'] if mcd_metrics else ['do0', 'do1']
     metrics_flag = 'do1' if mcd_metrics else 'do0'
@@ -158,6 +164,8 @@ def select_scores_by_config(results_val, model_name, mcd_metrics: bool = False, 
     metrics_name = results_val[results_val['drop_out'] == metrics_flag]['metrics'].unique()
     if mcd_metrics:
         metrics_name = [m for m in metrics_name if 'MCD-' in m]
+    else:
+        metrics_name = [m for m in metrics_name if 'MCD-' not in m]
     grouped = grouped[grouped.index.get_level_values('metrics').isin(metrics_name)]
     return grouped
 
