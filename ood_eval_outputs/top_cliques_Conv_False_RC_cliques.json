@@ -4,12 +4,12 @@
       "GEN",
       "REN",
       "Confidence",
-      "MSR"
+      "MSR",
+      "PCE"
     ],
     "near": [
       "Energy",
-      "NNGuide",
-      "MLS"
+      "NNGuide"
     ],
     "mid": [
       "Energy"
@@ -26,9 +26,7 @@
   },
   "supercifar100": {
     "test": [
-      "CTMmeanOC",
-      "CTM",
-      "CTMmean"
+      "CTM"
     ],
     "near": [
       "Energy",
@@ -36,15 +34,13 @@
       "MLS"
     ],
     "mid": [
-      "Energy",
-      "CTM"
+      "Energy"
     ],
     "far": [
-      "CTMmean",
-      "KPCA RecError global",
       "fDBD",
-      "CTMmeanOC",
-      "ViM"
+      "KPCA RecError global",
+      "ViM",
+      "CTM"
     ],
     "all": [
       "Energy",
@@ -58,17 +54,15 @@
     ],
     "near": [
       "fDBD",
-      "NeCo",
       "PE",
-      "NNGuide",
       "PCE",
+      "NeCo",
+      "NNGuide",
       "MLS"
     ],
     "mid": [
       "fDBD",
-      "NNGuide",
-      "CTMmean",
-      "CTMmeanOC"
+      "NNGuide"
     ],
     "far": [
       "fDBD"
@@ -97,80 +91,74 @@
   "_ranks": {
     "cifar10": {
       "test": {
-        "GEN": 3.2,
-        "REN": 3.2333,
-        "Confidence": 3.7667,
-        "MSR": 4.6
+        "GEN": 3.1,
+        "REN": 3.1,
+        "Confidence": 3.2667,
+        "MSR": 4.1333,
+        "PCE": 4.4
       },
       "near": {
         "Energy": 2.3667,
-        "NNGuide": 3.5333,
-        "MLS": 3.65
+        "NNGuide": 3.5333
       },
       "mid": {
-        "Energy": 3.4667
+        "Energy": 3.325
       },
       "far": {
-        "Energy": 3.2,
-        "NNGuide": 3.8667,
-        "MLS": 4.3667,
-        "NeCo": 4.5
+        "Energy": 3.1833,
+        "NNGuide": 3.8333,
+        "MLS": 4.3,
+        "NeCo": 4.3167
       },
       "all": {
-        "Energy": 3.125
+        "Energy": 3.05
       }
     },
     "supercifar100": {
       "test": {
-        "CTMmeanOC": 1.8333,
-        "CTM": 1.9333,
-        "CTMmean": 2.8333
+        "CTM": 1.2
       },
       "near": {
-        "Energy": 4.7167,
-        "NeCo": 5.8,
-        "MLS": 5.8667
+        "Energy": 4.6167,
+        "NeCo": 5.7,
+        "MLS": 5.7667
       },
       "mid": {
-        "Energy": 6.125,
-        "CTM": 7.3333
+        "Energy": 5.5417
       },
       "far": {
-        "CTMmean": 5.5333,
-        "KPCA RecError global": 5.7167,
-        "fDBD": 6.0333,
-        "CTMmeanOC": 6.45,
-        "ViM": 6.9667
+        "fDBD": 4.9833,
+        "KPCA RecError global": 5.1,
+        "ViM": 6.1167,
+        "CTM": 6.4
       },
       "all": {
-        "Energy": 7.125,
-        "CTM": 7.6417
+        "Energy": 6.3917,
+        "CTM": 7.1958
       }
     },
     "cifar100": {
       "test": {
-        "GEN": 1.3,
-        "MSR": 2.2333
+        "GEN": 1.2667,
+        "MSR": 2.2
       },
       "near": {
-        "fDBD": 7.6,
-        "NeCo": 8.05,
-        "PE": 8.1167,
-        "NNGuide": 8.2333,
-        "PCE": 8.2333,
-        "MLS": 9.25
+        "fDBD": 6.8333,
+        "PE": 7.2333,
+        "PCE": 7.2667,
+        "NeCo": 7.3167,
+        "NNGuide": 7.5667,
+        "MLS": 8.5
       },
       "mid": {
-        "fDBD": 6.3667,
-        "NNGuide": 6.7583,
-        "CTMmean": 6.8333,
-        "CTMmeanOC": 7.1917
+        "fDBD": 5.1833,
+        "NNGuide": 5.675
       },
       "far": {
-        "fDBD": 2.0
+        "fDBD": 1.3333
       },
       "all": {
-        "fDBD": 5.5833
+        "fDBD": 4.6333
       }
     },
     "tinyimagenet": {
@@ -181,13 +169,13 @@
         "CTM": 1.0933
       },
       "mid": {
-        "CTM": 2.2167
+        "CTM": 1.2667
       },
       "far": {
-        "CTM": 1.8667
+        "CTM": 1.5333
       },
       "all": {
-        "CTM": 1.4708
+        "CTM": 1.1917
       }
     }
   }
