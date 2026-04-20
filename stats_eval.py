@@ -316,16 +316,24 @@ def main():
         c_list = (c_list * (len(members_all)//len(c_list) + 1))[:len(members_all)]
 
 
+    display_rename = {
+        "KPCA RecError global": "KPCA RecError",
+        "PCA RecError global": "PCA RecError",
+        "MCD-KPCA RecError global": "MCD-KPCA RecError",
+        "MCD-PCA RecError global": "MCD-PCA RecError",
+    }
+    members_plot = members_all.rename(columns=display_rename)
+
     try:
-        plot_grid(members_all, color_dotline=c_list, ax=ax[0], zorder=10)
+        plot_grid(members_plot, color_dotline=c_list, ax=ax[0], zorder=10)
     except Exception as e:
         logger.error(f"Error plotting grid: {e}")
         return
 
     grouping_label = f', Grouping: {os.path.basename(args.clip_dir)}' if args.clip_dir != 'clip_scores' else ''
     ax[0].set_title(f'Top cliques\n(Backbone:{f"Convolutional" if BACKBONE=="Conv" else "Transformer"},\nMetrics={metric}{grouping_label})')
-    
-    sns.barplot(x=members_all.sum(axis=0), y=members_all.columns, color='gray', ax=ax[1])
+
+    sns.barplot(x=members_plot.sum(axis=0), y=members_plot.columns, color='gray', ax=ax[1])
     # For modern matplotlib versions
     try:
         ax[1].bar_label(ax[1].containers[0])
