@@ -28,7 +28,7 @@ from fd_shifts.loaders.data_loader import FDShiftsDataLoader
 
 from src import scores_methods, utils
 from src.utils import get_study_name, is_dropout_enabled, get_conf, extract_char_after_substring
-from src.head_diagnostics import compute_head_diagnostics
+from src.head_diagnostics import HeadLogitDiagnostics
 
 os.environ.setdefault("EXPERIMENT_ROOT_DIR", "/work/cniel/sw/FD_Shifts/project/experiments")
 os.environ.setdefault("DATASET_ROOT_DIR",    "/work/cniel/sw/FD_Shifts/project/datasets")
@@ -92,6 +92,9 @@ def main():
                 ash_method_opt  = parts[4]
                 use_cuda_opt    = "no" not in parts[5]
 
+                study_name = get_study_name(path)
+                do_enabled = is_dropout_enabled(path)
+                
                 # Only the clean config matches nc_metrics.csv's join keys.
                 if rank_weight_opt or rank_feat_opt or ash_method_opt != "None":
                     continue
@@ -100,8 +103,8 @@ def main():
                     use_cuda_opt = False
                 ash_val = None if ash_method_opt == "None" else ash_method_opt
 
-                study_name = get_study_name(path)
-                do_enabled = is_dropout_enabled(path)
+                if 'vit' not in path:
+                    continue
 
                 try:
                     cf = get_conf(path, study_name)
@@ -174,12 +177,20 @@ def main():
 
                     ts, ts_dist = _load_or_fit_temperature(cf, model_opts, model_eval, do_enabled)
 
-                    diags = compute_head_diagnostics(
-                        logits=model_eval["logits"],
-                        labels=model_eval["labels"],
-                        temperature=ts.temperature,
-                        logits_dist=model_eval.get("logits_dist") if do_enabled else None,
-                    )
+                    hld = HeadLogitDiagnostics(cf)
+                    hld_path = os.path.join(cf.exp.dir, "params",
+                                            f"HeadLogit_params{model_opts}.pt")
+                    if os.path.exists(hld_path):
+                        hld.load_params(filename=f"HeadLogit_params{model_opts}")
+                    else:
+                        hld.compute_head_diagnostics(
+                            logits=model_eval["logits"],
+                            labels=model_eval["labels"],
+                            temperature=ts.temperature,
+                            logits_dist=model_eval.get("logits_dist") if do_enabled else None,
+                        )
+                        hld.save_params(filename=f"HeadLogit_params{model_opts}")
+                    diags = dict(hld.diagnostics)
                     if do_enabled and ts_dist is not None:
                         diags["temperature_mcd"] = float(ts_dist.temperature)
 
