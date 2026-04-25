@@ -169,8 +169,8 @@ def main():
                     )
                     model_opts = f"_RW{int(rank_weight_opt)}_RF{int(rank_feat_opt)}_ASH{str(ash_val)}"
 
-                    logger.info("Evaluating on val split...")
-                    model_eval = utils.compute_model_evaluations(model, datamodule, set_name="val")
+                    logger.info("Evaluating on train split...")
+                    model_eval = utils.compute_model_evaluations(model, datamodule, set_name="train")
 
                     ts, ts_dist = _load_or_fit_temperature(cf, model_opts, model_eval, do_enabled)
 

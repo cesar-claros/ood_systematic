@@ -51,7 +51,9 @@ def main():
         cf.eval.query_studies.noise_study = ['corrupt_cifar100']
         cf.eval.query_studies.new_class_study = ['cifar10', 'svhn', 'tinyimagenet_resize']
         if do_enabled:
-            cf.model.avg_pool = False
+            if 'vgg' in path:    
+                print("Disabling average pooling for VGG-13 supercifar experiments with dropout enabled...")
+                cf.model.avg_pool = False
     if 'vit' in path:
         cf.data.num_workers = 12
     # Load module
@@ -70,11 +72,17 @@ def main():
     # 
     if do_enabled and use_cuda_opt:
         if (study_name=='devries' or study_name=='dg'):
-            new_batch_size = cf.trainer.batch_size//2
+            if 'tiny' in path:
+                new_batch_size = cf.trainer.batch_size//8
+            else:    
+                new_batch_size = cf.trainer.batch_size//2
             logger.info(f'Changing the batch size from {cf.trainer.batch_size} to {new_batch_size}...')
             cf.trainer.batch_size = new_batch_size
         elif (study_name=='confidnet'):
-            new_batch_size = cf.trainer.batch_size//4
+            if 'tiny' in path:
+                new_batch_size = cf.trainer.batch_size//16
+            else:    
+                new_batch_size = cf.trainer.batch_size//4
             logger.info(f'Changing the batch size from {cf.trainer.batch_size} to {new_batch_size}...')
             cf.trainer.batch_size = new_batch_size
     
