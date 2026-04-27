@@ -186,7 +186,7 @@ def main():
 
                 ts, ts_dist = _load_or_fit_temperature(cf, model_opts, model_eval, do_enabled)
 
-                hld = HeadLogitDiagnostics(cf)
+                hld = HeadLogitDiagnostics(cf, study_name=study_name)
                 hld_path = os.path.join(cf.exp.dir, "params",
                                         f"HeadLogit_params{model_opts}.pt")
                 # if os.path.exists(hld_path):

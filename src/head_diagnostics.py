@@ -23,11 +23,25 @@ from torch.nn import functional as F
 
 class HeadLogitDiagnostics:
 
-    def __init__(self, cf):
+    def __init__(self, cf, study_name: str | None = None):
         self.cf = cf
         self.num_classes = self.cf.data.num_classes
+        self.study_name = study_name
         self.temperature = None
         self.diagnostics = None
+
+    def _geometry_logits(self, logits: torch.Tensor) -> torch.Tensor:
+        """Drop DG's abstention column before classmean / covariance geometry.
+
+        DG outputs (N, K+1) logits where the (K+1)-th column is the abstention
+        head, not a real class. Mirrors ``NeuralCollapseMetrics.__init__``,
+        which slices ``self.w[:K]`` / ``self.b[:K]`` for the same reason.
+        Softmax-side diagnostics keep the full (K+1) columns since DG's
+        predictive distribution is genuinely (K+1)-way.
+        """
+        if self.study_name == "dg" and logits.shape[1] > self.num_classes:
+            return logits[:, : self.num_classes]
+        return logits
 
     @staticmethod
     def _scalar_stats(x: torch.Tensor, prefix: str) -> dict[str, float]:
@@ -165,8 +179,9 @@ class HeadLogitDiagnostics:
         out: dict[str, float] = {"temperature": T}
         out.update(self._softmax_diagnostics(logits,     prefix="raw"))
         out.update(self._softmax_diagnostics(logits / T, prefix="scaled"))
-        out.update(self._logit_classmean_geometry(logits, labels))
-        out.update(self._logit_covariance_geometry(logits))
+        geom_logits = self._geometry_logits(logits)
+        out.update(self._logit_classmean_geometry(geom_logits, labels))
+        out.update(self._logit_covariance_geometry(geom_logits))
         if logits_dist is not None:
             mean_logits = logits_dist.mean(dim=2)
             out.update(self._softmax_diagnostics(mean_logits,     prefix="raw_mcd"))
