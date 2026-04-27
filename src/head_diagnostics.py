@@ -38,9 +38,32 @@ class HeadLogitDiagnostics:
         which slices ``self.w[:K]`` / ``self.b[:K]`` for the same reason.
         Softmax-side diagnostics keep the full (K+1) columns since DG's
         predictive distribution is genuinely (K+1)-way.
+
+        Inference may already strip the abstention column upstream, so verify
+        the column count against ``num_classes`` before slicing:
+          - K cols (== num_classes): already stripped, return as-is.
+          - K+1 cols (== num_classes+1): drop the last column.
+          - anything else: log a warning and return as-is.
         """
-        if self.study_name == "dg" and logits.shape[1] > self.num_classes:
+        if self.study_name != "dg":
+            return logits
+        K_logits = logits.shape[1]
+        if K_logits == self.num_classes:
+            logger.info(
+                f"DG logits already have {K_logits} columns "
+                f"(== num_classes); no slicing applied."
+            )
+            return logits
+        if K_logits == self.num_classes + 1:
+            logger.info(
+                f"DG logits have {K_logits} columns (== num_classes+1); "
+                f"dropping the abstention column for geometry."
+            )
             return logits[:, : self.num_classes]
+        logger.warning(
+            f"DG logits have unexpected width: {K_logits} cols vs "
+            f"num_classes={self.num_classes}. Geometry computed on full tensor."
+        )
         return logits
 
     @staticmethod
