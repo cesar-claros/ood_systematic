@@ -106,9 +106,7 @@ def main():
                 study_name = get_study_name(path)
                 do_enabled = is_dropout_enabled(path)
 
-                if 'vit' not in path:
-                    continue
-                if do_enabled:
+                if 'vit' in path:
                     continue
 
                 try:
