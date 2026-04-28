@@ -10,15 +10,15 @@ from fd_shifts.loaders.data_loader import FDShiftsDataLoader
 from torch.nn import functional as F
 from src import scores_methods
 import numpy as np
+from src.head_diagnostics import HeadLogitDiagnostics
 from src.utils import get_study_name, is_dropout_enabled, get_conf, extract_char_after_substring
-
 # Set Default Environment Variables if not present
 os.environ.setdefault("EXPERIMENT_ROOT_DIR", '/work/cniel/sw/FD_Shifts/project/experiments')
 os.environ.setdefault("DATASET_ROOT_DIR", '/work/cniel/sw/FD_Shifts/project/datasets')
 
 def main():
-    parser = argparse.ArgumentParser(description="Neural Collapse Evaluation")
-    parser.add_argument("--output-dir", type=str, default="neural_collapse_metrics", help="Directory to save output metrics")
+    parser = argparse.ArgumentParser(description="Head Logit Evaluation")
+    parser.add_argument("--output-dir", type=str, default="head_logit_metrics", help="Directory to save output metrics")
     args = parser.parse_args()
 
     output_dir = args.output_dir
@@ -26,22 +26,22 @@ def main():
     logger.info(f"Output directory set to: {output_dir}")
 
     # File paths
-    nc_metrics_path = os.path.join(output_dir, 'nc_metrics.csv')
-    # nc_metrics_global_path = os.path.join(output_dir, 'nc_metrics_global.csv')
-    # nc_metrics_class_pred_path = os.path.join(output_dir, 'nc_metrics_class_pred.csv')
+    hl_metrics_path = os.path.join(output_dir, 'hl_metrics.csv')
+    # hl_metrics_global_path = os.path.join(output_dir, 'hl_metrics_global.csv')
+    # hl_metrics_class_pred_path = os.path.join(output_dir, 'hl_metrics_class_pred.csv')
 
     # Check if files exist to skip computation
-    # if os.path.exists(nc_metrics_path) and os.path.exists(nc_metrics_global_path) and os.path.exists(nc_metrics_class_pred_path):
-    if os.path.exists(nc_metrics_path):
+    # if os.path.exists(hl_metrics_path) and os.path.exists(hl_metrics_global_path) and os.path.exists(hl_metrics_class_pred_path):
+    if os.path.exists(hl_metrics_path):
         logger.info("Found existing metric files. Loading them...")
-        df_metrics = pd.read_csv(nc_metrics_path, index_col=0)
-        # df_metrics_global = pd.read_csv(nc_metrics_global_path, index_col=0)
-        # df_metrics_class_pred = pd.read_csv(nc_metrics_class_pred_path, index_col=0)
+        df_metrics = pd.read_csv(hl_metrics_path, index_col=0)
+        # df_metrics_global = pd.read_csv(hl_metrics_global_path, index_col=0)
+        # df_metrics_class_pred = pd.read_csv(hl_metrics_class_pred_path, index_col=0)
     else:
         logger.info("Metric files not found. Starting computation...")
-        nc_metrics_list = []
-        # nc_metrics_global_list = []
-        # nc_metrics_class_pred_list = []
+        hl_metrics_list = []
+        # hl_metrics_global_list = []
+        # hl_metrics_class_pred_list = []
 
         datasets = ['cifar10','supercifar','cifar100','tinyimagenet']
         
@@ -172,43 +172,43 @@ def main():
                         }
 
                         # Function to process and append metrics
-                        def process_nc(params_prefix, target_list):
-                            nc_eval = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
-                            nc_eval.load_params(filename=params_prefix + model_opts)
-                            logger.info(f"Loaded diagnostics: {nc_eval.nc_metrics.keys()}")
+                        def process_hl(params_prefix, target_list):
+                            hl_eval = HeadLogitDiagnostics(cf, study_name=study_name)
+                            hl_eval.load_params(filename=params_prefix + model_opts)
+                            logger.info(f"Loaded diagnostics: {hl_eval.diagnostics.keys()}")
                             metrics = {}
                             metrics.update(model_cfgs)
-                            metrics.update({k: nc_eval.nc_metrics[k].item() for k in nc_eval.nc_metrics})
+                            metrics.update(hl_eval.diagnostics.copy())  # Make a copy to avoid modifying the original
                             target_list.append(metrics)
 
-                        process_nc('NeuralCollapse_params', nc_metrics_list)
-                        # process_nc('NeuralCollapse_global_params', nc_metrics_global_list)
-                        # process_nc('NeuralCollapse_class_pred_params', nc_metrics_class_pred_list)
-                        
+                        process_hl('HeadLogit_params', hl_metrics_list)
+                        # process_hl('NeuralCollapse_global_params', hl_metrics_global_list)
+                        # process_hl('NeuralCollapse_class_pred_params', hl_metrics_class_pred_list)
+
                     except Exception as e:
                         logger.error(f"Error processing {path}: {e}")
                         continue
 
-        df_metrics = pd.DataFrame(nc_metrics_list)
-        # df_metrics_global = pd.DataFrame(nc_metrics_global_list)
-        # df_metrics_class_pred = pd.DataFrame(nc_metrics_class_pred_list)
+        df_metrics = pd.DataFrame(hl_metrics_list)
+        # df_metrics_global = pd.DataFrame(hl_metrics_global_list)
+        # df_metrics_class_pred = pd.DataFrame(hl_metrics_class_pred_list)
 
-        df_metrics.to_csv(nc_metrics_path)
-        # df_metrics_global.to_csv(nc_metrics_global_path)
+        df_metrics.to_csv(hl_metrics_path)
+        # df_metrics_global.to_csv(hl_metrics_global_path)
         # df_metrics_class_pred.to_csv(nc_metrics_class_pred_path)
         logger.success(f"Saved raw metrics to {output_dir}")
 
     # Post-processing
     # logger.info("Computing grouped averages...")
     # drop_cols = ['lr','reward','run','study']
-    # # Ensure these columns exist before dropping
+    # Ensure these columns exist before dropping
     # drop_cols = [c for c in drop_cols if c in df_metrics.columns]
     
     # means_cols = ['equiangular_uc','equinorm_uc','max_equiangular_uc','self_duality','var_collapse','cdnv_score','bias_collapse','M_etf_diff','wM_etf_diff']
     # weights_cols = ['equiangular_wc','equinorm_wc','max_equiangular_wc','w_etf_diff']
     # group_list = ['dropout','architecture','dataset']
     
-    # # Filter columns that actually exist in the dataframes
+    # Filter columns that actually exist in the dataframes
     # means_cols = [c for c in means_cols if c in df_metrics.columns]
     # weights_cols = [c for c in weights_cols if c in df_metrics.columns]
 

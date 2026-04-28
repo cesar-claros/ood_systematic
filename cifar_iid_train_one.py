@@ -48,11 +48,7 @@ def main():
     cf = utils.get_conf(path, study_name)
     ckpt_path = exp_utils._get_path_to_best_ckpt(
                     cf.exp.dir, 'last', cf.test.selection_mode )
-    # Remove mcd confidence measures from test evaluations
-    # to avoid computing multiple forward passes with dropout enabled when not needed
-    confids_test = cf.eval.confidence_measures.test
-    no_mcd_confid_test = [i for i in confids_test if 'mcd' not in i]
-    cf.eval.confidence_measures.test = no_mcd_confid_test
+    
     #
     if 'super' in path:
         cf.eval.query_studies.noise_study = ['corrupt_cifar100']
@@ -110,7 +106,13 @@ def main():
         new_batch_size = 128
         logger.info(f'Changing the batch size from {cf.trainer.batch_size} to {new_batch_size}...')
         cf.trainer.batch_size = new_batch_size
-
+    # Remove mcd confidence measures from test evaluations
+    # to avoid computing multiple forward passes with dropout enabled when not needed
+    confids_test = cf.eval.confidence_measures.test
+    logger.info(f'Original confidence measures for test evaluations: {confids_test}')
+    no_mcd_confid_test = [i for i in confids_test if 'mcd' not in i]
+    cf.eval.confidence_measures.test = no_mcd_confid_test
+    print(f'Updated confidence measures for test evaluations: {cf.eval.confidence_measures.test}')
     # Load datasets
     datamodule = FDShiftsDataLoader(cf)
     datamodule.setup()
@@ -144,7 +146,7 @@ def main():
         # model_eval['softmax'] = F.softmax(model_eval['logits'], dim=1, dtype=torch.float64)
         # model_eval['softmax_scaled'] = temperature_scale.get_scaled_softmax(model_eval['logits'])
         # model_eval['correct'] = (model_eval['softmax'].max(dim=1).indices == model_eval['labels']).long()
-        hld = HeadLogitDiagnostics(cf)
+        hld = HeadLogitDiagnostics(cf, study_name=study_name)
         hld.compute_head_diagnostics(
                     logits=model_eval["logits"],
                     labels=model_eval["labels"],
