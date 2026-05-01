@@ -25,7 +25,7 @@ def main():
     parser.add_argument("--dataset", 
                         type=str, 
                         required=True, 
-                        help="Name of the dataset (e.g., cifar10, supercifar, cifar100)",
+                        help="Name of the dataset (e.g., cifar10, supercifar100, cifar100, tinyimagenet)",
                         choices=['cifar10','supercifar100','cifar100','tinyimagenet'])
     parser.add_argument("--vit", action="store_true", help="Set this flag if using ViT model results")
     parser.add_argument("--scores-dir", type=str, default="scores_final", help="Directory to save final scores")

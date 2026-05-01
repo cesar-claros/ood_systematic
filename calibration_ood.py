@@ -63,9 +63,9 @@ def main():
     else:
         logger.debug(f"Output directory exists: {args.scores_dir}")
 
-    if os.path.exists(data_dict_path):
-        logger.info(f"Results already exist at {data_dict_path}. Skipping.")
-        return
+    # if os.path.exists(data_dict_path):
+    #     logger.info(f"Results already exist at {data_dict_path}. Skipping.")
+    #     return
 
     dataset = resolve_dataset_name(dataset_in, vit)
 
@@ -110,139 +110,183 @@ def main():
     data_dict = []
     for model in model_names:
         rewards = results_val[results_val['model']==model]['reward'].unique()
+        networks = results_val[results_val['model']==model]['network'].unique()
         # rewards = ['rew2.2', 'rew10', 'rew3', 'rew6'] if model=='dg' else ['rew2.2']
         for rew in rewards:
             for do in ['do0','do1']:
                 for run in range_models:
-                    condition = (results_val['model']==model) &\
-                                    (results_val['drop_out']==do) &\
-                                    (results_val['reward']==rew) &\
-                                    (results_val['run']==run+1)
-                    val_df = results_val[condition]
-                    mcd_condition = 2 if do=='do1' else 1
-                    assert len(val_df['filepath'].unique())<=mcd_condition, f"Expected at most {mcd_condition} unique filepath for model={model}, do={do}, rew={rew}, run={run+1}, but found {len(val_df['filepath'].unique())}"  
-                    # Looping when mcd_confids and non_mcd_confids exist for same (model, do, rew, run) - 
-                    for val_path in val_df['filepath'].unique():
-                        val = val_df[val_df['filepath']==val_path]
-                        logger.info(f"Processing model={model}, do={do}, rew={rew}, run={run+1} with {len(val)} validation samples.")
-                        # --- Pre-extract arrays to avoid pandas overhead/pickling costs ---
-                        val_labels = 1 - val['residuals'].to_numpy().astype(int)
+                    for net in networks:
+                        condition = (results_val['model']==model) &\
+                                        (results_val['drop_out']==do) &\
+                                        (results_val['reward']==rew) &\
+                                        (results_val['run']==run+1) &\
+                                        (results_val['network']==net)
+                        val_df = results_val[condition]
+                        mcd_condition = 2 if do=='do1' else 1
+                        assert len(val_df['filepath'].unique())<=mcd_condition, f"Expected at most {mcd_condition} unique filepath for model={model}, do={do}, rew={rew}, run={run+1}, but found {len(val_df['filepath'].unique())}"  
+                        # Looping when mcd_confids and non_mcd_confids exist for same (model, do, rew, run) - 
+                        for val_path in val_df['filepath'].unique():
+                            val = val_df[val_df['filepath']==val_path]
+                            logger.info(f"Processing model={model}, net={net}, do={do}, rew={rew}, run={run+1} with {len(val)} validation samples.")
+                            # --- Pre-extract arrays to avoid pandas overhead/pickling costs ---
+                            val_labels = 1 - val['residuals'].to_numpy().astype(int)
 
-                        val = val.dropna(axis=1).drop(
-                            ['residuals','model','network','drop_out','run','reward','RankWeight','RankFeat','ASH','filepath'],
-                            axis=1
-                        )
-                        
-                        # Pull val scores once
-                        val_scores_by_method = {c: val[c].to_numpy(dtype=float, copy=False) for c in val.columns}
-                        # Check for non-finite values in any of the score columns before parallel processing
-                        for c in val.columns:
-                            arr = val_scores_by_method[c]
-                            if not np.isfinite(arr).all():
-                                bad = np.sum(~np.isfinite(arr))
-                                logger.warning(f"Non-finite in val column {c}: {bad} / {arr.size}")
-
-                        # Pull OOD scores/labels once for this (model, do, rew, run)
-                        ood_pre = {}
-                        for ood in ood_sets:
-                            ood_all_df = results_ood[ood]
-                            cond_ood = (
-                                (ood_all_df['model'] == model) &
-                                (ood_all_df['drop_out'] == do) &
-                                (ood_all_df['reward'] == rew) &
-                                (ood_all_df['run'] == run + 1)
+                            val = val.dropna(axis=1).drop(
+                                ['residuals','model','network','drop_out','run','reward','RankWeight','RankFeat','ASH','filepath'],
+                                axis=1
                             )
-                            ood_df = ood_all_df[cond_ood]
-                            assert len(ood_df['filepath'].unique()) <= mcd_condition, (
-                                f"Expected at most {mcd_condition} unique filepath for OOD dataset={ood}, "
-                                f"model={model}, do={do}, rew={rew}, run={run+1}, but found {len(ood_df['filepath'].unique())}"
-                            )
-                            ood_df = ood_df[list(val.columns)+['residuals']]  # only keep relevant cols + residuals for labels
-                            ood_df = ood_df.dropna(axis=0)  # drop rows with NaNs in any of the score columns
-                            ood_labels = 1 - ood_df['residuals'].to_numpy().astype(int)
+                            
+                            # Pull val scores once
+                            val_scores_by_method = {c: val[c].to_numpy(dtype=float, copy=False) for c in val.columns}
+                            # Check for non-finite values in any of the score columns before parallel processing
+                            for c in val.columns:
+                                arr = val_scores_by_method[c]
+                                if not np.isfinite(arr).all():
+                                    bad = np.sum(~np.isfinite(arr))
+                                    logger.warning(f"Non-finite in val column {c}: {bad} / {arr.size}")
 
-                            # only keep the same methods we're calibrating on (handles missing cols safely)
-                            ood_scores_by_method = {
-                                c: ood_df[c].to_numpy(dtype=float, copy=False)
-                                for c in val.columns
-                                if c in ood_df.columns
-                            }
-
-                            ood_pre[ood] = (ood_labels, ood_scores_by_method)
-
-                        def run_one(csf_name: str, cal_method: str):
-                            rows = []
-                            s_val_raw = val_scores_by_method[csf_name]
-                            s_val, y_val = finite_xy(s_val_raw, val_labels)
-                            # If too few points after filtering, skip safely
-                            if s_val.size < s_val_raw.size:  # arbitrary threshold to ensure enough data for calibration; adjust as needed
-                                logger.warning(f"Skipping calibration for model={model}, do={do}, rew={rew}, run={run+1}, method={csf_name}, cal_method={cal_method} due to insufficient valid samples after filtering: {s_val.size} < 900")
-                                return []
-                            # Fit
-                            calibrator = Calibrator(method=cal_method.lower(), cv=5, random_state=42)
-                            calibrator.fit(s_val, y_val)
-
-                            # Val eval
-                            # p_val = calibrator.predict_proba(s_val)
-                            p_val_cv, y_val_cv = calibrator.get_cv_probs_labels()
-                            rows.append({
-                                'dataset': 'val',
-                                'method': csf_name,
-                                'calibration': cal_method,
-                                'model': model,
-                                'drop_out': do,
-                                'reward': rew,
-                                'run': run+1,
-                                'ece_l1': ece(p_val_cv, y_val_cv, mode='l1'),
-                                'ece_l2': ece(p_val_cv, y_val_cv, mode='l2'),
-                                'mce': ece(p_val_cv, y_val_cv, mode='inf'),
-                                'ece_l1_bound': calc_l1_bounds_from_mixed([p_val_cv], [y_val_cv], fixed_alpha=None)[0],
-                                'ece_l2_bound': calc_l2_bounds_from_mixed([p_val_cv], [y_val_cv], fixed_alpha=None)[0],
-                            })
-
-                            # OOD evals
+                            # Pull OOD scores/labels once for this (model, do, rew, run)
+                            ood_pre = {}
                             for ood in ood_sets:
-                                ood_labels_raw, ood_scores_map = ood_pre[ood]
-                                s_ood_raw = ood_scores_map.get(csf_name)
-                                if s_ood_raw is None:
-                                    continue
+                                ood_all_df = results_ood[ood]
+                                cond_ood = (
+                                    (ood_all_df['model'] == model) &
+                                    (ood_all_df['drop_out'] == do) &
+                                    (ood_all_df['reward'] == rew) &
+                                    (ood_all_df['run'] == run + 1) &
+                                    (ood_all_df['network'] == net)
+                                )
+                                ood_df = ood_all_df[cond_ood]
+                                assert len(ood_df['filepath'].unique()) <= mcd_condition, (
+                                    f"Expected at most {mcd_condition} unique filepath for OOD dataset={ood}, "
+                                    f"model={model}, do={do}, rew={rew}, run={run+1}, but found {len(ood_df['filepath'].unique())}"
+                                )
+                                ood_df = ood_df[list(val.columns)+['residuals']]  # only keep relevant cols + residuals for labels
+                                ood_df = ood_df.dropna(axis=0)  # drop rows with NaNs in any of the score columns
+                                ood_labels = 1 - ood_df['residuals'].to_numpy().astype(int)
 
-                                s_ood, y_ood = finite_xy(s_ood_raw, ood_labels_raw)
-                                if s_ood.size == 0:
-                                    continue
-                                # ood_labels, ood_scores_map = ood_pre[ood]
-                                # s_ood = ood_scores_map.get(csf_name)
-                                # if s_ood is None:
-                                    # continue
+                                # only keep the same methods we're calibrating on (handles missing cols safely)
+                                ood_scores_by_method = {
+                                    c: ood_df[c].to_numpy(dtype=float, copy=False)
+                                    for c in val.columns
+                                    if c in ood_df.columns
+                                }
 
-                                p_ood = calibrator.predict_proba(s_ood)
+                                ood_pre[ood] = (ood_labels, ood_scores_by_method)
+
+                            def run_one(csf_name: str, cal_method: str):
+                                rows = []
+                                s_val_raw = val_scores_by_method[csf_name]
+                                s_val, y_val = finite_xy(s_val_raw, val_labels)
+                                # If too few points after filtering, skip safely
+                                if s_val.size < s_val_raw.size:  # arbitrary threshold to ensure enough data for calibration; adjust as needed
+                                    logger.warning(f"Skipping calibration for model={model}, net={net}, do={do}, rew={rew}, run={run+1}, method={csf_name}, cal_method={cal_method} due to insufficient valid samples after filtering: {s_val.size} < 900")
+                                    return []
+                                # Fit
+                                calibrator = Calibrator(method=cal_method.lower(), cv=5, random_state=42)
+                                calibrator.fit(s_val, y_val)
+
+                                # Val eval
+                                # p_val = calibrator.predict_proba(s_val)
+                                p_val_cv, y_val_cv = calibrator.get_cv_probs_labels()
+                                k1_val, bar_p_val =  extract_k_and_pood([p_val_cv], [y_val_cv], bound_type='l1')
+                                k2_val, bar_p2_val =  extract_k_and_pood([p_val_cv], [y_val_cv], bound_type='l2')
+                                mask_id = (y_val_cv == 1)
+                                mask_ood = (y_val_cv == 0)
+                                n_id, n_ood = np.sum(mask_id), np.sum(mask_ood)
+                                alpha = n_ood / n_id
+                                if 'vgg' in net:
+                                    architecture = 'VGG13'
+                                elif 'vit' in net: 
+                                    architecture = 'ViT'
+                                elif 'resnet' in net:
+                                    architecture = 'ResNet18'
+                                else:
+                                    architecture = 'Unknown'
                                 rows.append({
-                                    'dataset': ood,
+                                    'dataset': 'val',
                                     'method': csf_name,
                                     'calibration': cal_method,
                                     'model': model,
+                                    'architecture': architecture,
                                     'drop_out': do,
                                     'reward': rew,
                                     'run': run+1,
-                                    'ece_l1': ece(p_ood, y_ood, mode='l1'),
-                                    'ece_l2': ece(p_ood, y_ood, mode='l2'),
-                                    'mce': ece(p_ood, y_ood, mode='inf'),
-                                    'ece_l1_bound': calc_l1_bounds_from_mixed([p_ood], [y_ood], fixed_alpha=None)[0],
-                                    'ece_l2_bound': calc_l2_bounds_from_mixed([p_ood], [y_ood], fixed_alpha=None)[0],
+                                    'ece_l1': ece(p_val_cv, y_val_cv, mode='l1'),
+                                    'ece_l2': ece(p_val_cv, y_val_cv, mode='l2'),
+                                    'mce': ece(p_val_cv, y_val_cv, mode='inf'),
+                                    'ece_l1_bound': calc_l1_bounds_from_mixed([p_val_cv], [y_val_cv], fixed_alpha=None)[0],
+                                    'ece_l2_bound': calc_l2_bounds_from_mixed([p_val_cv], [y_val_cv], fixed_alpha=None)[0],
+                                    'k1': k1_val[0],
+                                    'bar_p_ood': bar_p_val[0],
+                                    'k2': k2_val[0],
+                                    'bar_p2_ood': bar_p2_val[0],
+                                    'alpha': alpha,
                                 })
 
-                            return rows
+                                # OOD evals
+                                for ood in ood_sets:
+                                    ood_labels_raw, ood_scores_map = ood_pre[ood]
+                                    s_ood_raw = ood_scores_map.get(csf_name)
+                                    if s_ood_raw is None:
+                                        continue
 
-                        tasks = list(product(val.columns, calibration_methods))
+                                    s_ood, y_ood = finite_xy(s_ood_raw, ood_labels_raw)
+                                    if s_ood.size == 0:
+                                        continue
+                                    # ood_labels, ood_scores_map = ood_pre[ood]
+                                    # s_ood = ood_scores_map.get(csf_name)
+                                    # if s_ood is None:
+                                        # continue
 
-                        # Start with threads (usually good for sklearn/numpy + avoids pickling huge arrays)
-                        all_rows = Parallel(n_jobs=-1, prefer="threads")(
-                            delayed(run_one)(csf_name, cal_method) for csf_name, cal_method in tasks
-                        )
+                                    p_ood = calibrator.predict_proba(s_ood)
+                                    k1, bar_p_ood =  extract_k_and_pood([p_ood], [y_ood], bound_type='l1')
+                                    k2, bar_p2_ood =  extract_k_and_pood([p_ood], [y_ood], bound_type='l2')
+                                    mask_id = (y_ood == 1)
+                                    mask_ood = (y_ood == 0)
+                                    n_id, n_ood = np.sum(mask_id), np.sum(mask_ood)
+                                    alpha = n_ood / n_id
+                                    # if 'vgg' in net:
+                                    #     architecture = 'VGG13'
+                                    # elif 'vit' in net: 
+                                    #     architecture = 'ViT'
+                                    # elif 'resnet' in net:
+                                    #     architecture = 'ResNet18'
+                                    # else:
+                                    #     architecture = 'Unknown'
+                                    rows.append({
+                                        'dataset': ood,
+                                        'method': csf_name,
+                                        'calibration': cal_method,
+                                        'model': model,
+                                        'architecture': architecture,
+                                        'drop_out': do,
+                                        'reward': rew,
+                                        'run': run+1,
+                                        'ece_l1': ece(p_ood, y_ood, mode='l1'),
+                                        'ece_l2': ece(p_ood, y_ood, mode='l2'),
+                                        'mce': ece(p_ood, y_ood, mode='inf'),
+                                        'ece_l1_bound': calc_l1_bounds_from_mixed([p_ood], [y_ood], fixed_alpha=None)[0],
+                                        'ece_l2_bound': calc_l2_bounds_from_mixed([p_ood], [y_ood], fixed_alpha=None)[0],
+                                        'k1': k1[0],
+                                        'bar_p_ood': bar_p_ood[0],
+                                        'k2': k2[0],
+                                        'bar_p2_ood': bar_p2_ood[0],
+                                        'alpha': alpha,
+                                    })
 
-                        # Flatten into your existing list
-                        for rows in all_rows:
-                            data_dict.extend(rows)
+                                return rows
+
+                            tasks = list(product(val.columns, calibration_methods))
+
+                            # Start with threads (usually good for sklearn/numpy + avoids pickling huge arrays)
+                            all_rows = Parallel(n_jobs=-1, prefer="threads")(
+                                delayed(run_one)(csf_name, cal_method) for csf_name, cal_method in tasks
+                            )
+
+                            # Flatten into your existing list
+                            for rows in all_rows:
+                                data_dict.extend(rows)
 
 
     # ... keep the rest of your logic exactly as-is ...

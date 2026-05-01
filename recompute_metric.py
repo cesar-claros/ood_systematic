@@ -90,6 +90,14 @@ def main():
     vit_condition = 'ViT' if vit else 'Conv'
     load_path = os.path.join(args.scores_path, f'calibration_results_{dataset}_{vit_condition}.csv')
     results_df = pd.read_csv(load_path)
+    # Filter to VGG13 results only for Conv backbone, as per original script logic 
+    if vit_condition == 'Conv':
+        logger.info("Filtering results to VGG13 architecture for Conv backbone.")
+        results_df = results_df[results_df['architecture']=='VGG13'].copy()
+        results_df = results_df.drop(columns=['architecture'])
+    else:
+        results_df = results_df.drop(columns=['architecture'])
+    #
     best_hyperparameters_list = []
 
     # Create output directory if it doesn't exist
@@ -130,50 +138,52 @@ def main():
                     selected_scores_mean, selected_scores_full = select_best_scores(results_ood_df, best_hyperparameters_scores, model_name, score_name, mcd_metrics=mcd_metrics)
                     results_ood_avg[ood].append(selected_scores_mean)
                     results_ood_full[ood].append(selected_scores_full)
-                for i, results_ood_best in enumerate([results_ood_avg, results_ood_full]):
-                    score_list = [pd.concat(results_ood_best[data_key])[f'{score_name}'].to_frame().rename({f'{score_name}':'_'.join(data_key.split('_')[2:] if data_key.startswith('ood_') else data_key.split('_')[1:])},axis='columns') for data_key in results_ood_best]
-                    scores_combined = reduce(lambda x, y: pd.merge(x, y, left_index=True, right_index=True), score_list)
-                    scores_combined = scores_combined.reset_index()
-                    scores_combined = scores_combined.rename(set_name_dict,axis='columns')
-                    scores_combined['method'] = scores_combined['method'].replace(methods_dict)
-                    scores_combined['method'] = scores_combined['method'].str.replace('_',' ')
-                    #
-                    scores_combined = scores_combined.rename({'method':'methods'},axis='columns')
-                    scores_combined = scores_combined.drop(columns=['calibration'])
-                    # Do. not include modified scores for now
-                    # keep_exceptions = {"KPCA RecError global", "PCA RecError global", "MCD-KPCA RecError global", "MCD-PCA RecError global"}
+        for i, results_ood_best in enumerate([results_ood_avg, results_ood_full]):
+            logger.debug(f"Combining scores for {'average' if i==0 else 'full'} results.")
+            # logger.debug(f"Score name: {score_name}, model: {model_name}, mcd_metrics: {mcd_metrics}")
+            score_list = [pd.concat(results_ood_best[data_key])[f'{score_name}'].to_frame().rename({f'{score_name}':'_'.join(data_key.split('_')[2:] if data_key.startswith('ood_') else data_key.split('_')[1:])},axis='columns') for data_key in results_ood_best]
+            scores_combined = reduce(lambda x, y: pd.merge(x, y, left_index=True, right_index=True), score_list)
+            scores_combined = scores_combined.reset_index()
+            scores_combined = scores_combined.rename(set_name_dict,axis='columns')
+            scores_combined['method'] = scores_combined['method'].replace(methods_dict)
+            scores_combined['method'] = scores_combined['method'].str.replace('_',' ')
+            #
+            scores_combined = scores_combined.rename({'method':'methods'},axis='columns')
+            scores_combined = scores_combined.drop(columns=['calibration'])
+            # Do. not include modified scores for now
+            # keep_exceptions = {"KPCA RecError global", "PCA RecError global", "MCD-KPCA RecError global", "MCD-PCA RecError global"}
 
-                    # mask_keep = (
-                    #             scores_combined["methods"].isin(keep_exceptions)
-                    #             | ~scores_combined["methods"].str.contains(r"\bclass\b|\bglobal\b", case=False, regex=True, na=False)
-                    #             ) 
-                    # scores_combined = scores_combined[mask_keep]
-                    
-                    scores_combined.columns = scores_combined.columns.str.replace('_',' ')
-                    scores_combined = scores_combined.set_index(['model','drop out','methods','reward',])
-                    #
-                    if score_name=='ece_l2':
-                        scores_combined = np.sqrt(scores_combined)
-                    #
+            # mask_keep = (
+            #             scores_combined["methods"].isin(keep_exceptions)
+            #             | ~scores_combined["methods"].str.contains(r"\bclass\b|\bglobal\b", case=False, regex=True, na=False)
+            #             ) 
+            # scores_combined = scores_combined[mask_keep]
+            
+            scores_combined.columns = scores_combined.columns.str.replace('_',' ')
+            scores_combined = scores_combined.set_index(['model','drop out','methods','reward',])
+            #
+            if score_name=='ece_l2':
+                scores_combined = np.sqrt(scores_combined)
+            #
 
-                    methods = scores_combined.index.get_level_values('methods')
-                    mcd_methods_mask = np.array(['MCD-' in x for x in  methods])
-                    if i==0:
-                        path_mcd_false = f'scores_{score_name.upper()}_MCD-False_{vit_condition}_{dict_clip.get(dataset, dataset)}.csv'
-                        path_mcd_true = f'scores_{score_name.upper()}_MCD-True_{vit_condition}_{dict_clip.get(dataset, dataset)}.csv'
-                    else:
-                        path_mcd_false = f'scores_all_{score_name.upper()}_MCD-False_{vit_condition}_{dict_clip.get(dataset, dataset)}.csv'
-                        path_mcd_true = f'scores_all_{score_name.upper()}_MCD-True_{vit_condition}_{dict_clip.get(dataset, dataset)}.csv'
-                    # Save results
-                    out_path_false = os.path.join(args.scores_dir, path_mcd_false)
-                    out_path_true = os.path.join(args.scores_dir, path_mcd_true)
+            methods = scores_combined.index.get_level_values('methods')
+            mcd_methods_mask = np.array(['MCD-' in x for x in  methods])
+            if i==0:
+                path_mcd_false = f'scores_{score_name.upper()}_MCD-False_{vit_condition}_{dict_clip.get(dataset, dataset)}.csv'
+                path_mcd_true = f'scores_{score_name.upper()}_MCD-True_{vit_condition}_{dict_clip.get(dataset, dataset)}.csv'
+            else:
+                path_mcd_false = f'scores_all_{score_name.upper()}_MCD-False_{vit_condition}_{dict_clip.get(dataset, dataset)}.csv'
+                path_mcd_true = f'scores_all_{score_name.upper()}_MCD-True_{vit_condition}_{dict_clip.get(dataset, dataset)}.csv'
+            # Save results
+            out_path_false = os.path.join(args.scores_dir, path_mcd_false)
+            out_path_true = os.path.join(args.scores_dir, path_mcd_true)
 
-                    
+            
 
-                    logger.info(f"Saving scores to {out_path_false}")
-                    scores_combined[~mcd_methods_mask].to_csv(out_path_false)
-                    logger.info(f"Saving scores to {out_path_true}")
-                    scores_combined[mcd_methods_mask].to_csv(out_path_true)
+            logger.info(f"Saving scores to {out_path_false}")
+            scores_combined[~mcd_methods_mask].to_csv(out_path_false)
+            logger.info(f"Saving scores to {out_path_true}")
+            scores_combined[mcd_methods_mask].to_csv(out_path_true)
 
     # keep_exceptions = {"KPCA RecError global", "PCA RecError global", "MCD-KPCA RecError global", "MCD-PCA RecError global"}
     hyperparameters_df = pd.DataFrame(best_hyperparameters_list)
