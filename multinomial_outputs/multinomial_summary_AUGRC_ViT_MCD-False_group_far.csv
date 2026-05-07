@@ -1,2 +1,0 @@
-lodo_accuracy,lodo_jaccard,lodo_f1,lodo_clique_hit,lodo_n_samples,lodo_baseline_accuracy,lodo_baseline_jaccard,lodo_baseline_f1,lodo_baseline_clique_hit,lodo_best_model,dt_depth,dt_cv_accuracy,dt_cv_jaccard,dt_cv_f1,dt_cv_clique_hit,label,n_samples,n_classes,n_features,classes,target_mode
-0.375,0.7833333333333332,0.8683333333333334,1.0,40,0.0,0.29166666666666663,0.41666666666666663,0.75,RF,2,0.25,0.30416666666666664,0.32916666666666666,0.4,group_far,40,5,9,"GE,GradNorm,Residual,ViM,pNML",clique

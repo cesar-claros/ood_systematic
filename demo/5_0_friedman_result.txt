@@ -1,4 +1,0 @@
-Friedman Statistic: 46.16190476190479
-P-value: 8.418237046187836e-09
-Num Blocks: 15
-Num Methods: 6

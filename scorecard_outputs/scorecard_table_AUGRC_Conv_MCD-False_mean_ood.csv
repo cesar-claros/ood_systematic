@@ -1,7 +1,0 @@
-leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
-3,ViM,29,0.13793103448275862,"{'ViM': 4, 'CTM': 24, 'Energy': 1}"
-4,NNGuide,13,0.23076923076923078,"{'NNGuide': 3, 'Energy': 8, 'CTM': 2}"
-6,Energy,3,0.6666666666666666,"{'Energy': 2, 'fDBD': 1}"
-7,fDBD,6,1.0,{'fDBD': 6}
-9,CTMmeanOC,3,1.0,{'CTMmeanOC': 3}
-10,NNGuide,1,1.0,{'NNGuide': 1}

@@ -1,6 +1,0 @@
-leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
-1,CTM,5,1.0,{'CTM': 5}
-4,Energy,4,1.0,{'Energy': 4}
-5,CTMmean,5,0.4,"{'fDBD': 3, 'CTMmean': 2}"
-7,ViM,1,1.0,{'ViM': 1}
-8,ViM,3,1.0,{'ViM': 3}

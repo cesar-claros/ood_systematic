@@ -1,7 +1,0 @@
-dataset,model,metric,group,run,drop out,methods,reward,score,method_base,variation,backbone,n_classes,MCD,score_std,source,rank
-test,confidnet,AUGRC,0,1,do1,Confidence,2.2,4.4527963019924455,Confidence,(none),Conv,10,0,-4.4527963019924455,cifar10,0.16666666666666666
-test,confidnet,AUGRC,0,1,do0,GEN,2.2,4.619228405398543,GEN,(none),Conv,10,0,-4.619228405398543,cifar10,0.3333333333333333
-test,confidnet,AUGRC,0,1,do1,MSR,2.2,4.737487662731533,MSR,(none),Conv,10,0,-4.737487662731533,cifar10,0.5
-test,confidnet,AUGRC,0,1,do0,CTM,2.2,5.479098760914995,CTM,(none),Conv,10,0,-5.479098760914995,cifar10,0.6666666666666666
-test,confidnet,AUGRC,0,1,do0,fDBD,2.2,5.676993832287231,fDBD,(none),Conv,10,0,-5.676993832287231,cifar10,0.8333333333333334
-test,confidnet,AUGRC,0,1,do1,Energy,2.2,5.810537031740952,Energy,(none),Conv,10,0,-5.810537031740952,cifar10,1.0

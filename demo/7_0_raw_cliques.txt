@@ -1,5 +1,0 @@
-Clique 0: ['CTM', 'MSR']
-Clique 1: ['CTM', 'fDBD']
-Clique 2: ['Confidence', 'GEN']
-Clique 3: ['Confidence', 'MSR']
-Clique 4: ['Energy']

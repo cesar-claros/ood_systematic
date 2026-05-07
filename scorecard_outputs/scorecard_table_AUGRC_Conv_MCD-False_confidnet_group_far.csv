@@ -1,4 +1,0 @@
-leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
-1,CTMmean,4,1.0,{'CTMmean': 4}
-3,NNGuide,4,1.0,{'NNGuide': 4}
-4,fDBD,9,1.0,{'fDBD': 9}

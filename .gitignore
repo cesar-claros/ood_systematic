@@ -17,3 +17,6 @@ calibration_hyperparameters.py
 calibration_plots.py
 hpc_scripts/
 experiments/
+
+# Archived / exploratory code and outputs not used by the paper
+archived/

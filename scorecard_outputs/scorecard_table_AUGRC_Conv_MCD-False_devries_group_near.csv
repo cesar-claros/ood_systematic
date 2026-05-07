@@ -1,6 +1,0 @@
-leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
-1,CTM,5,1.0,{'CTM': 5}
-4,NNGuide,2,0.5,"{'NNGuide': 1, 'Energy': 1}"
-5,Energy,6,1.0,{'Energy': 6}
-7,fDBD,4,1.0,{'fDBD': 4}
-8,NNGuide,1,1.0,{'NNGuide': 1}

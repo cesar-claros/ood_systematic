@@ -1,5 +1,0 @@
-bin_id,bin_range,best_method,mean_rank,n_samples,methods_detail
-0,"(-inf, -1.129]",CTMmeanOC,1.1,75,"CTMmeanOC(1.10), Confidence(1.60), CTM(2.10)"
-1,"(-1.129, 0.662]",CTM,4.031550802139038,885,"CTM(4.03), REN(4.61), CTMmeanOC(5.47)"
-2,"(0.662, 1.518]",NNGuide,2.8684210526315788,283,"NNGuide(2.87), Energy(3.02), MLS(3.39)"
-3,"(1.518, inf]",ViM,1.5,77,"ViM(1.50), Confidence(2.25), Residual(2.73)"

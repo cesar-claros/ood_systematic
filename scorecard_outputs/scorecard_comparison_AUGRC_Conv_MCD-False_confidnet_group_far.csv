@@ -1,7 +1,0 @@
-feature_set,n_features,kfold_accuracy,kfold_balanced_accuracy,baseline
-PCA-2,2,1.0,1.0,0.5294117647058824
-PCA-3,3,1.0,1.0,0.5294117647058824
-"Top-2 RF (self_duality, var_collapse)",2,1.0,1.0,0.5294117647058824
-"Top-3 RF (self_duality, var_collapse, cdnv_score)",3,1.0,1.0,0.5294117647058824
-All 13 (tree),13,1.0,1.0,0.5294117647058824
-All 13 (RF),13,1.0,1.0,0.5294117647058824

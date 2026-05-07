@@ -1,5 +1,0 @@
-leaf_id,recommended_method,n_models,leaf_accuracy,class_distribution
-2,CTM,5,1.0,{'CTM': 5}
-4,Confidence,8,0.75,"{'Confidence': 6, 'NNGuide': 2}"
-5,CTMmeanOC,2,1.0,{'CTMmeanOC': 2}
-6,Maha,3,1.0,{'Maha': 3}

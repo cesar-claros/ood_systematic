@@ -1,2 +1,0 @@
-baseline_accuracy,kfold_accuracy,kfold_balanced_accuracy,kfold_n_folds,lodo_accuracy,lodo_balanced_accuracy,label,n_models,n_classes,n_pca_components,max_depth
-0.5294117647058824,1.0,1.0,4,0.5294117647058824,0.3333333333333333,group_far,17,3,3,3

@@ -1,2 +1,0 @@
-lodo_accuracy,lodo_jaccard,lodo_f1,lodo_clique_hit,lodo_n_samples,lodo_baseline_accuracy,lodo_baseline_jaccard,lodo_baseline_f1,lodo_baseline_clique_hit,lodo_best_model,dt_depth,dt_cv_accuracy,dt_cv_jaccard,dt_cv_f1,dt_cv_clique_hit,label,n_samples,n_classes,n_features,classes,target_mode
-0.0,0.3755833333333334,0.5027619047619047,0.855,200,0.0,0.05,0.08,0.2,RF,2,0.0,0.20175,0.295,0.6,group_all,200,5,9,"CTM,Energy,GE,Maha,fDBD",clique
