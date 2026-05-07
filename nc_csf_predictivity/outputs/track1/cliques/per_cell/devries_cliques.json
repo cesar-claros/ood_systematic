@@ -1,0 +1,1342 @@
+{
+  "cifar10": {
+    "do0_rew2.2": {
+      "near": {
+        "status": "ok",
+        "top_clique": [
+          "Confidence"
+        ],
+        "ranks": {
+          "Confidence": 1.0,
+          "NNGuide": 6.35,
+          "PE": 6.4,
+          "KPCA RecError global": 6.85,
+          "PCE": 7.45,
+          "GEN": 8.0,
+          "Energy": 8.55,
+          "NeCo": 8.55,
+          "MSR": 8.8,
+          "MLS": 9.25,
+          "GE": 9.35,
+          "REN": 9.4,
+          "ViM": 10.45,
+          "PCA RecError global": 12.0,
+          "pNML": 13.65,
+          "fDBD": 14.7,
+          "Maha": 15.8,
+          "CTM": 17.35,
+          "GradNorm": 17.4,
+          "Residual": 18.7
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 221.38571428571436,
+        "friedman_p": 1.8174375727523588e-36
+      },
+      "mid": {
+        "status": "ok",
+        "top_clique": [
+          "Confidence"
+        ],
+        "ranks": {
+          "Confidence": 1.475,
+          "NNGuide": 3.675,
+          "Energy": 5.05,
+          "PE": 5.7,
+          "NeCo": 5.775,
+          "MLS": 6.475,
+          "GE": 7.0,
+          "PCE": 8.05,
+          "KPCA RecError global": 9.675,
+          "MSR": 9.7,
+          "PCA RecError global": 10.65,
+          "GEN": 10.925,
+          "fDBD": 11.75,
+          "REN": 13.55,
+          "CTM": 13.725,
+          "ViM": 15.375,
+          "GradNorm": 16.475,
+          "pNML": 16.625,
+          "Maha": 18.425,
+          "Residual": 19.925
+        },
+        "n_blocks": 40,
+        "n_csfs": 20,
+        "friedman_W": 581.6685714285713,
+        "friedman_p": 3.7109508248021186e-111
+      },
+      "far": {
+        "status": "ok",
+        "top_clique": [
+          "Confidence"
+        ],
+        "ranks": {
+          "Confidence": 2.25,
+          "KPCA RecError global": 4.65,
+          "PE": 5.1,
+          "ViM": 5.5,
+          "NNGuide": 6.15,
+          "PCE": 6.6,
+          "REN": 7.3,
+          "GEN": 7.55,
+          "MSR": 8.2,
+          "pNML": 11.1,
+          "NeCo": 11.2,
+          "Energy": 11.6,
+          "GE": 11.6,
+          "MLS": 12.25,
+          "fDBD": 13.85,
+          "Maha": 14.05,
+          "CTM": 15.85,
+          "PCA RecError global": 17.7,
+          "Residual": 18.25,
+          "GradNorm": 19.25
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 264.0314285714285,
+        "friedman_p": 4.4022449478006996e-45
+      },
+      "all": {
+        "status": "ok",
+        "top_clique": [
+          "Confidence"
+        ],
+        "ranks": {
+          "Confidence": 1.55,
+          "NNGuide": 4.9625,
+          "PE": 5.725,
+          "PCE": 7.5375,
+          "Energy": 7.5625,
+          "KPCA RecError global": 7.7125,
+          "NeCo": 7.825,
+          "MLS": 8.6125,
+          "GE": 8.7375,
+          "MSR": 9.1,
+          "GEN": 9.35,
+          "REN": 10.95,
+          "ViM": 11.675,
+          "PCA RecError global": 12.75,
+          "fDBD": 13.0125,
+          "pNML": 14.5,
+          "CTM": 15.1625,
+          "Maha": 16.675,
+          "GradNorm": 17.4,
+          "Residual": 19.2
+        },
+        "n_blocks": 80,
+        "n_csfs": 20,
+        "friedman_W": 886.8057142857142,
+        "friedman_p": 7.280258883243617e-176
+      },
+      "test": {
+        "status": "ok",
+        "top_clique": [
+          "Confidence",
+          "REN"
+        ],
+        "ranks": {
+          "Confidence": 1.2,
+          "REN": 2.2,
+          "GEN": 2.6,
+          "MSR": 4.2,
+          "PCE": 5.3,
+          "KPCA RecError global": 6.2,
+          "PE": 6.4,
+          "NNGuide": 8.7,
+          "GE": 9.2,
+          "ViM": 11.8,
+          "NeCo": 11.8,
+          "PCA RecError global": 11.9,
+          "MLS": 12.8,
+          "fDBD": 12.8,
+          "Energy": 14.8,
+          "pNML": 15.6,
+          "Maha": 16.4,
+          "CTM": 17.5,
+          "Residual": 19.2,
+          "GradNorm": 19.4
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 178.25142857142862,
+        "friedman_p": 6.832562880674648e-28
+      }
+    },
+    "do1_rew2.2": {
+      "near": {
+        "status": "ok",
+        "top_clique": [
+          "Energy"
+        ],
+        "ranks": {
+          "Energy": 1.3,
+          "NeCo": 2.75,
+          "MLS": 3.15,
+          "NNGuide": 3.95,
+          "GradNorm": 5.4,
+          "GE": 5.5,
+          "PE": 6.25,
+          "PCE": 8.5,
+          "Confidence": 9.7,
+          "MSR": 9.95,
+          "GEN": 11.4,
+          "REN": 12.3,
+          "pNML": 13.25,
+          "PCA RecError global": 13.9,
+          "KPCA RecError global": 14.7,
+          "fDBD": 15.3,
+          "ViM": 15.75,
+          "Maha": 17.95,
+          "Residual": 19.0,
+          "CTM": 20.0
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 357.1771428571428,
+        "friedman_p": 3.3509236058682575e-64
+      },
+      "mid": {
+        "status": "ok",
+        "top_clique": [
+          "Energy"
+        ],
+        "ranks": {
+          "Energy": 1.85,
+          "MLS": 3.25,
+          "NNGuide": 3.45,
+          "NeCo": 3.5,
+          "GradNorm": 5.375,
+          "GE": 5.625,
+          "PE": 6.45,
+          "Confidence": 8.7,
+          "PCE": 9.1,
+          "fDBD": 10.25,
+          "MSR": 11.025,
+          "GEN": 12.975,
+          "pNML": 13.15,
+          "KPCA RecError global": 13.6,
+          "REN": 14.1,
+          "PCA RecError global": 14.1,
+          "ViM": 16.5,
+          "Maha": 18.175,
+          "Residual": 19.025,
+          "CTM": 19.8
+        },
+        "n_blocks": 40,
+        "n_csfs": 20,
+        "friedman_W": 686.6385714285716,
+        "friedman_p": 2.432234198131159e-133
+      },
+      "far": {
+        "status": "ok",
+        "top_clique": [
+          "Energy",
+          "NeCo"
+        ],
+        "ranks": {
+          "Energy": 2.1,
+          "NeCo": 2.5,
+          "MLS": 3.5,
+          "NNGuide": 3.55,
+          "GE": 5.15,
+          "GradNorm": 6.1,
+          "PE": 6.6,
+          "PCE": 7.9,
+          "MSR": 9.25,
+          "GEN": 10.8,
+          "Confidence": 11.45,
+          "REN": 11.7,
+          "pNML": 12.55,
+          "PCA RecError global": 14.35,
+          "ViM": 14.7,
+          "KPCA RecError global": 14.75,
+          "fDBD": 16.2,
+          "Maha": 17.85,
+          "Residual": 19.0,
+          "CTM": 20.0
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 348.3142857142857,
+        "friedman_p": 2.2777190170396597e-62
+      },
+      "all": {
+        "status": "ok",
+        "top_clique": [
+          "Energy"
+        ],
+        "ranks": {
+          "Energy": 1.775,
+          "NeCo": 3.0625,
+          "MLS": 3.2875,
+          "NNGuide": 3.6,
+          "GE": 5.475,
+          "GradNorm": 5.5625,
+          "PE": 6.4375,
+          "PCE": 8.65,
+          "Confidence": 9.6375,
+          "MSR": 10.3125,
+          "GEN": 12.0375,
+          "fDBD": 13.0,
+          "pNML": 13.025,
+          "REN": 13.05,
+          "PCA RecError global": 14.1125,
+          "KPCA RecError global": 14.1625,
+          "ViM": 15.8625,
+          "Maha": 18.0375,
+          "Residual": 19.0125,
+          "CTM": 19.9
+        },
+        "n_blocks": 80,
+        "n_csfs": 20,
+        "friedman_W": 1361.7285714285717,
+        "friedman_p": 2.0618035069526168e-277
+      },
+      "test": {
+        "status": "ok",
+        "top_clique": [
+          "GEN",
+          "MSR"
+        ],
+        "ranks": {
+          "MSR": 1.7,
+          "GEN": 1.7,
+          "PCE": 3.3,
+          "Confidence": 4.7,
+          "REN": 4.7,
+          "PE": 5.3,
+          "GE": 7.1,
+          "NNGuide": 8.2,
+          "GradNorm": 8.3,
+          "NeCo": 10.0,
+          "MLS": 11.0,
+          "Energy": 12.3,
+          "PCA RecError global": 12.7,
+          "KPCA RecError global": 14.4,
+          "ViM": 15.4,
+          "fDBD": 15.7,
+          "pNML": 16.5,
+          "Maha": 18.0,
+          "Residual": 19.0,
+          "CTM": 20.0
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 186.37714285714287,
+        "friedman_p": 1.7089269512219473e-29
+      }
+    }
+  },
+  "cifar100": {
+    "do0_rew2.2": {
+      "near": {
+        "status": "ok",
+        "top_clique": [
+          "MSR",
+          "NNGuide",
+          "PCE",
+          "PE",
+          "fDBD"
+        ],
+        "ranks": {
+          "fDBD": 4.6,
+          "PCE": 4.7,
+          "NNGuide": 5.2,
+          "PE": 5.6,
+          "MSR": 5.7,
+          "CTM": 7.05,
+          "GEN": 7.15,
+          "NeCo": 7.6,
+          "REN": 8.05,
+          "MLS": 8.35,
+          "ViM": 9.5,
+          "GE": 9.95,
+          "Energy": 11.15,
+          "KPCA RecError global": 11.9,
+          "Confidence": 15.3,
+          "PCA RecError global": 15.9,
+          "pNML": 16.85,
+          "GradNorm": 17.8,
+          "Maha": 17.9,
+          "Residual": 19.75
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 271.75428571428574,
+        "friedman_p": 1.1810526167064446e-46
+      },
+      "mid": {
+        "status": "ok",
+        "top_clique": [
+          "fDBD"
+        ],
+        "ranks": {
+          "fDBD": 1.975,
+          "NNGuide": 3.85,
+          "CTM": 4.375,
+          "ViM": 5.025,
+          "REN": 6.325,
+          "KPCA RecError global": 6.65,
+          "GEN": 7.925,
+          "PCE": 8.6,
+          "PE": 9.025,
+          "MSR": 9.175,
+          "NeCo": 10.375,
+          "MLS": 10.85,
+          "GE": 12.1,
+          "Confidence": 13.025,
+          "Energy": 13.225,
+          "Maha": 15.375,
+          "PCA RecError global": 16.675,
+          "pNML": 17.375,
+          "Residual": 18.825,
+          "GradNorm": 19.25
+        },
+        "n_blocks": 40,
+        "n_csfs": 20,
+        "friedman_W": 574.1071428571427,
+        "friedman_p": 1.4564548584887934e-109
+      },
+      "far": {
+        "status": "ok",
+        "top_clique": [
+          "fDBD"
+        ],
+        "ranks": {
+          "fDBD": 1.3,
+          "GEN": 4.95,
+          "NNGuide": 5.1,
+          "REN": 5.45,
+          "PCE": 6.25,
+          "MSR": 6.35,
+          "CTM": 6.4,
+          "ViM": 7.35,
+          "KPCA RecError global": 7.7,
+          "PE": 8.05,
+          "NeCo": 10.35,
+          "MLS": 10.6,
+          "GE": 11.9,
+          "Energy": 13.35,
+          "PCA RecError global": 15.5,
+          "Confidence": 16.85,
+          "pNML": 16.95,
+          "Maha": 17.65,
+          "GradNorm": 18.8,
+          "Residual": 19.15
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 318.76571428571424,
+        "friedman_p": 2.809875682512205e-56
+      },
+      "all": {
+        "status": "ok",
+        "top_clique": [
+          "fDBD"
+        ],
+        "ranks": {
+          "fDBD": 2.4625,
+          "NNGuide": 4.5,
+          "CTM": 5.55,
+          "REN": 6.5375,
+          "ViM": 6.725,
+          "GEN": 6.9875,
+          "PCE": 7.0375,
+          "MSR": 7.6,
+          "PE": 7.925,
+          "KPCA RecError global": 8.225,
+          "NeCo": 9.675,
+          "MLS": 10.1625,
+          "GE": 11.5125,
+          "Energy": 12.7375,
+          "Confidence": 14.55,
+          "PCA RecError global": 16.1875,
+          "Maha": 16.575,
+          "pNML": 17.1375,
+          "GradNorm": 18.775,
+          "Residual": 19.1375
+        },
+        "n_blocks": 80,
+        "n_csfs": 20,
+        "friedman_W": 1095.357857142857,
+        "friedman_p": 2.2578870307540553e-220
+      },
+      "test": {
+        "status": "ok",
+        "top_clique": [
+          "GEN"
+        ],
+        "ranks": {
+          "GEN": 1.0,
+          "MSR": 2.0,
+          "PCE": 3.4,
+          "fDBD": 3.7,
+          "REN": 5.6,
+          "CTM": 6.3,
+          "PE": 6.4,
+          "NNGuide": 7.9,
+          "NeCo": 9.4,
+          "GE": 10.0,
+          "MLS": 10.5,
+          "ViM": 12.3,
+          "KPCA RecError global": 12.8,
+          "Energy": 13.7,
+          "Confidence": 15.0,
+          "PCA RecError global": 16.0,
+          "pNML": 17.0,
+          "GradNorm": 18.2,
+          "Maha": 18.8,
+          "Residual": 20.0
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 187.36571428571426,
+        "friedman_p": 1.0898387986080274e-29
+      }
+    },
+    "do1_rew2.2": {
+      "near": {
+        "status": "ok",
+        "top_clique": [
+          "Energy",
+          "GE",
+          "MLS",
+          "NeCo",
+          "PE"
+        ],
+        "ranks": {
+          "NeCo": 3.35,
+          "GE": 4.05,
+          "Energy": 4.35,
+          "MLS": 4.35,
+          "PE": 4.9,
+          "REN": 7.1,
+          "NNGuide": 8.1,
+          "PCE": 8.95,
+          "CTM": 10.4,
+          "KPCA RecError global": 10.4,
+          "GradNorm": 10.6,
+          "MSR": 10.95,
+          "GEN": 11.45,
+          "pNML": 12.3,
+          "ViM": 14.4,
+          "PCA RecError global": 14.65,
+          "Confidence": 15.0,
+          "fDBD": 15.7,
+          "Residual": 19.1,
+          "Maha": 19.9
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 266.21142857142854,
+        "friedman_p": 1.5863782552052616e-45
+      },
+      "mid": {
+        "status": "ok",
+        "top_clique": [
+          "CTM",
+          "Energy"
+        ],
+        "ranks": {
+          "Energy": 2.225,
+          "CTM": 2.6,
+          "NeCo": 3.95,
+          "MLS": 4.85,
+          "GE": 5.325,
+          "KPCA RecError global": 6.95,
+          "GradNorm": 8.225,
+          "NNGuide": 8.225,
+          "PE": 9.125,
+          "pNML": 9.575,
+          "REN": 11.25,
+          "ViM": 11.55,
+          "PCE": 12.3,
+          "PCA RecError global": 12.325,
+          "MSR": 14.075,
+          "GEN": 14.575,
+          "fDBD": 16.675,
+          "Confidence": 17.425,
+          "Residual": 19.375,
+          "Maha": 19.4
+        },
+        "n_blocks": 40,
+        "n_csfs": 20,
+        "friedman_W": 617.0,
+        "friedman_p": 1.3010723256838244e-118
+      },
+      "far": {
+        "status": "ok",
+        "top_clique": [
+          "Energy",
+          "MLS",
+          "NeCo"
+        ],
+        "ranks": {
+          "Energy": 2.7,
+          "NeCo": 3.15,
+          "MLS": 4.35,
+          "GE": 5.9,
+          "CTM": 7.0,
+          "GradNorm": 8.15,
+          "PE": 8.2,
+          "KPCA RecError global": 8.25,
+          "REN": 9.85,
+          "NNGuide": 9.9,
+          "ViM": 10.1,
+          "PCE": 10.75,
+          "pNML": 10.95,
+          "PCA RecError global": 12.1,
+          "MSR": 12.55,
+          "GEN": 12.85,
+          "Confidence": 17.1,
+          "fDBD": 17.2,
+          "Residual": 19.45,
+          "Maha": 19.5
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 265.72285714285704,
+        "friedman_p": 1.9942109574270362e-45
+      },
+      "all": {
+        "status": "ok",
+        "top_clique": [
+          "Energy",
+          "NeCo"
+        ],
+        "ranks": {
+          "Energy": 2.875,
+          "NeCo": 3.6,
+          "MLS": 4.6,
+          "GE": 5.15,
+          "CTM": 5.65,
+          "PE": 7.8375,
+          "KPCA RecError global": 8.1375,
+          "NNGuide": 8.6125,
+          "GradNorm": 8.8,
+          "REN": 9.8625,
+          "pNML": 10.6,
+          "PCE": 11.075,
+          "ViM": 11.9,
+          "PCA RecError global": 12.85,
+          "MSR": 12.9125,
+          "GEN": 13.3625,
+          "fDBD": 16.5625,
+          "Confidence": 16.7375,
+          "Residual": 19.325,
+          "Maha": 19.55
+        },
+        "n_blocks": 80,
+        "n_csfs": 20,
+        "friedman_W": 1073.1785714285716,
+        "friedman_p": 1.2430814632132585e-215
+      },
+      "test": {
+        "status": "ok",
+        "top_clique": [
+          "MSR"
+        ],
+        "ranks": {
+          "MSR": 1.0,
+          "GEN": 2.4,
+          "PCE": 2.6,
+          "REN": 4.4,
+          "PE": 4.6,
+          "GE": 6.0,
+          "NeCo": 7.4,
+          "NNGuide": 8.1,
+          "MLS": 8.5,
+          "GradNorm": 10.6,
+          "Energy": 10.7,
+          "Confidence": 12.2,
+          "PCA RecError global": 12.5,
+          "KPCA RecError global": 14.7,
+          "pNML": 15.4,
+          "fDBD": 15.5,
+          "ViM": 16.4,
+          "CTM": 18.0,
+          "Residual": 19.0,
+          "Maha": 20.0
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 187.73142857142852,
+        "friedman_p": 9.227082887253406e-30
+      }
+    }
+  },
+  "supercifar100": {
+    "do0_rew2.2": {
+      "near": {
+        "status": "ok",
+        "top_clique": [
+          "CTM",
+          "REN"
+        ],
+        "ranks": {
+          "REN": 2.95,
+          "CTM": 3.35,
+          "GEN": 7.3,
+          "PE": 7.35,
+          "PCE": 7.7,
+          "NNGuide": 8.05,
+          "KPCA RecError global": 8.3,
+          "NeCo": 8.5,
+          "MSR": 8.55,
+          "MLS": 8.7,
+          "Confidence": 8.95,
+          "Energy": 10.85,
+          "GE": 11.05,
+          "fDBD": 11.6,
+          "ViM": 11.65,
+          "PCA RecError global": 14.65,
+          "pNML": 15.55,
+          "GradNorm": 17.65,
+          "Maha": 17.7,
+          "Residual": 19.6
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 223.92571428571432,
+        "friedman_p": 5.618449726945161e-37
+      },
+      "mid": {
+        "status": "ok",
+        "top_clique": [
+          "CTM",
+          "KPCA RecError global",
+          "ViM"
+        ],
+        "ranks": {
+          "CTM": 3.775,
+          "KPCA RecError global": 5.175,
+          "ViM": 5.275,
+          "REN": 7.375,
+          "NNGuide": 7.7,
+          "fDBD": 7.95,
+          "pNML": 8.55,
+          "Maha": 10.45,
+          "PE": 10.7,
+          "NeCo": 10.775,
+          "PCE": 11.7,
+          "GEN": 11.75,
+          "Energy": 11.95,
+          "MLS": 12.325,
+          "MSR": 12.65,
+          "Confidence": 12.8,
+          "Residual": 13.0,
+          "GE": 13.425,
+          "PCA RecError global": 13.85,
+          "GradNorm": 18.825
+        },
+        "n_blocks": 40,
+        "n_csfs": 20,
+        "friedman_W": 277.24857142857127,
+        "friedman_p": 8.9644854932822e-48
+      },
+      "far": {
+        "status": "ok",
+        "top_clique": [
+          "KPCA RecError global",
+          "ViM",
+          "pNML"
+        ],
+        "ranks": {
+          "KPCA RecError global": 2.85,
+          "pNML": 3.85,
+          "ViM": 4.1,
+          "fDBD": 5.4,
+          "CTM": 5.7,
+          "NNGuide": 6.6,
+          "REN": 9.2,
+          "Maha": 10.15,
+          "PCE": 11.2,
+          "Confidence": 11.3,
+          "GEN": 11.65,
+          "PE": 11.85,
+          "MSR": 12.3,
+          "NeCo": 12.5,
+          "GradNorm": 13.55,
+          "MLS": 14.2,
+          "Energy": 15.25,
+          "Residual": 15.3,
+          "PCA RecError global": 16.4,
+          "GE": 16.65
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 207.1542857142856,
+        "friedman_p": 1.2791970196489087e-33
+      },
+      "all": {
+        "status": "ok",
+        "top_clique": [
+          "CTM",
+          "KPCA RecError global"
+        ],
+        "ranks": {
+          "CTM": 4.15,
+          "KPCA RecError global": 5.375,
+          "ViM": 6.575,
+          "REN": 6.725,
+          "NNGuide": 7.5125,
+          "fDBD": 8.225,
+          "pNML": 9.125,
+          "PE": 10.15,
+          "PCE": 10.575,
+          "GEN": 10.6125,
+          "NeCo": 10.6375,
+          "Confidence": 11.4625,
+          "MSR": 11.5375,
+          "MLS": 11.8875,
+          "Maha": 12.1875,
+          "Energy": 12.5,
+          "GE": 13.6375,
+          "PCA RecError global": 14.6875,
+          "Residual": 15.225,
+          "GradNorm": 17.2125
+        },
+        "n_blocks": 80,
+        "n_csfs": 20,
+        "friedman_W": 498.1335714285715,
+        "friedman_p": 1.376441264768541e-93
+      },
+      "test": {
+        "status": "ok",
+        "top_clique": [
+          "CTM"
+        ],
+        "ranks": {
+          "CTM": 1.2,
+          "KPCA RecError global": 2.4,
+          "Confidence": 3.2,
+          "REN": 3.6,
+          "GEN": 5.3,
+          "fDBD": 6.6,
+          "MSR": 6.9,
+          "PCE": 8.1,
+          "ViM": 9.6,
+          "PE": 9.8,
+          "NNGuide": 10.4,
+          "NeCo": 11.6,
+          "MLS": 12.6,
+          "PCA RecError global": 14.6,
+          "GE": 14.7,
+          "Energy": 15.4,
+          "pNML": 17.1,
+          "Maha": 18.4,
+          "GradNorm": 18.6,
+          "Residual": 19.9
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 182.65714285714284,
+        "friedman_p": 9.267263679819755e-29
+      }
+    },
+    "do1_rew2.2": {
+      "near": {
+        "status": "ok",
+        "top_clique": [
+          "Energy",
+          "GE",
+          "MLS",
+          "NNGuide",
+          "NeCo",
+          "PE"
+        ],
+        "ranks": {
+          "MLS": 4.95,
+          "NeCo": 5.1,
+          "Energy": 5.15,
+          "GE": 5.3,
+          "NNGuide": 5.6,
+          "PE": 7.3,
+          "REN": 8.35,
+          "GradNorm": 8.45,
+          "GEN": 9.2,
+          "Confidence": 9.25,
+          "PCE": 9.35,
+          "MSR": 11.45,
+          "pNML": 11.95,
+          "KPCA RecError global": 12.55,
+          "fDBD": 13.8,
+          "ViM": 13.85,
+          "PCA RecError global": 15.5,
+          "CTM": 16.55,
+          "Residual": 17.35,
+          "Maha": 19.0
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 213.35428571428565,
+        "friedman_p": 7.385596176900539e-35
+      },
+      "mid": {
+        "status": "ok",
+        "top_clique": [
+          "Energy",
+          "GE"
+        ],
+        "ranks": {
+          "Energy": 3.9,
+          "GE": 4.7,
+          "NeCo": 6.4,
+          "MLS": 7.325,
+          "CTM": 7.425,
+          "PE": 8.175,
+          "pNML": 8.675,
+          "ViM": 9.4,
+          "KPCA RecError global": 10.1,
+          "REN": 10.8,
+          "PCE": 10.925,
+          "GradNorm": 11.325,
+          "GEN": 11.425,
+          "NNGuide": 11.475,
+          "MSR": 12.5,
+          "Residual": 12.675,
+          "Maha": 13.65,
+          "PCA RecError global": 14.35,
+          "fDBD": 16.975,
+          "Confidence": 17.8
+        },
+        "n_blocks": 40,
+        "n_csfs": 20,
+        "friedman_W": 291.5442857142857,
+        "friedman_p": 1.0776619248990555e-50
+      },
+      "far": {
+        "status": "ok",
+        "top_clique": [
+          "CTM",
+          "Energy",
+          "GE",
+          "pNML"
+        ],
+        "ranks": {
+          "Energy": 3.7,
+          "CTM": 4.45,
+          "GE": 5.15,
+          "pNML": 5.7,
+          "NeCo": 6.4,
+          "MLS": 7.4,
+          "PE": 8.95,
+          "ViM": 8.95,
+          "GradNorm": 9.15,
+          "KPCA RecError global": 10.6,
+          "PCE": 10.95,
+          "GEN": 11.5,
+          "REN": 11.95,
+          "Residual": 12.6,
+          "MSR": 12.7,
+          "Maha": 14.2,
+          "PCA RecError global": 14.35,
+          "NNGuide": 15.75,
+          "Confidence": 17.05,
+          "fDBD": 18.5
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 196.0690277464471,
+        "friedman_p": 2.0568337581165544e-31
+      },
+      "all": {
+        "status": "ok",
+        "top_clique": [
+          "Energy",
+          "GE"
+        ],
+        "ranks": {
+          "Energy": 4.1625,
+          "GE": 4.9625,
+          "NeCo": 6.075,
+          "MLS": 6.75,
+          "PE": 8.15,
+          "pNML": 8.75,
+          "CTM": 8.9625,
+          "GradNorm": 10.0625,
+          "ViM": 10.4,
+          "REN": 10.475,
+          "PCE": 10.5375,
+          "KPCA RecError global": 10.8375,
+          "GEN": 10.8875,
+          "NNGuide": 11.075,
+          "MSR": 12.2875,
+          "Residual": 13.825,
+          "PCA RecError global": 14.6375,
+          "Maha": 15.125,
+          "Confidence": 15.475,
+          "fDBD": 16.5625
+        },
+        "n_blocks": 80,
+        "n_csfs": 20,
+        "friedman_W": 526.8277599202992,
+        "friedman_p": 1.299600491387867e-99
+      },
+      "test": {
+        "status": "ok",
+        "top_clique": [
+          "MLS",
+          "MSR",
+          "NeCo",
+          "PCE"
+        ],
+        "ranks": {
+          "MSR": 2.6,
+          "NeCo": 3.0,
+          "PCE": 3.0,
+          "MLS": 3.4,
+          "GEN": 4.2,
+          "NNGuide": 6.3,
+          "PE": 6.6,
+          "REN": 7.4,
+          "GE": 9.1,
+          "Energy": 9.8,
+          "GradNorm": 11.3,
+          "KPCA RecError global": 11.6,
+          "Confidence": 12.7,
+          "PCA RecError global": 14.3,
+          "ViM": 15.5,
+          "fDBD": 16.3,
+          "pNML": 16.5,
+          "Residual": 17.9,
+          "CTM": 19.1,
+          "Maha": 19.4
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 181.03428571428572,
+        "friedman_p": 1.9355098185599506e-28
+      }
+    }
+  },
+  "tinyimagenet": {
+    "do0_rew2.2": {
+      "near": {
+        "status": "ok",
+        "top_clique": [
+          "CTM"
+        ],
+        "ranks": {
+          "CTM": 1.06,
+          "fDBD": 2.84,
+          "NNGuide": 3.22,
+          "REN": 4.52,
+          "KPCA RecError global": 4.84,
+          "GEN": 6.16,
+          "PCE": 8.04,
+          "MSR": 8.84,
+          "PE": 8.98,
+          "MLS": 9.26,
+          "NeCo": 9.94,
+          "Confidence": 12.04,
+          "GE": 12.58,
+          "Energy": 12.86,
+          "ViM": 15.06,
+          "GradNorm": 16.64,
+          "PCA RecError global": 16.72,
+          "pNML": 17.76,
+          "Maha": 18.7,
+          "Residual": 19.94
+        },
+        "n_blocks": 50,
+        "n_csfs": 20,
+        "friedman_W": 884.1405714285715,
+        "friedman_p": 2.690232553967892e-175
+      },
+      "mid": {
+        "status": "ok",
+        "top_clique": [
+          "CTM"
+        ],
+        "ranks": {
+          "CTM": 1.25,
+          "NNGuide": 2.3,
+          "REN": 3.75,
+          "fDBD": 4.6,
+          "PE": 6.7,
+          "GEN": 7.0,
+          "MLS": 7.1,
+          "PCE": 7.15,
+          "NeCo": 7.9,
+          "MSR": 8.45,
+          "GE": 10.9,
+          "Energy": 11.5,
+          "KPCA RecError global": 12.4,
+          "GradNorm": 14.95,
+          "ViM": 15.25,
+          "Confidence": 16.15,
+          "PCA RecError global": 16.55,
+          "pNML": 17.1,
+          "Maha": 19.0,
+          "Residual": 20.0
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 351.6171428571429,
+        "friedman_p": 4.7307125524240535e-63
+      },
+      "far": {
+        "status": "ok",
+        "top_clique": [
+          "CTM",
+          "KPCA RecError global"
+        ],
+        "ranks": {
+          "CTM": 1.4,
+          "KPCA RecError global": 1.7,
+          "fDBD": 2.9,
+          "REN": 4.6,
+          "NNGuide": 5.4,
+          "GEN": 5.9,
+          "MSR": 7.6,
+          "PCE": 8.2,
+          "PE": 9.6,
+          "MLS": 10.1,
+          "NeCo": 11.3,
+          "Confidence": 12.2,
+          "GE": 12.6,
+          "ViM": 13.1,
+          "Energy": 13.5,
+          "PCA RecError global": 17.2,
+          "pNML": 17.5,
+          "GradNorm": 17.9,
+          "Maha": 18.0,
+          "Residual": 19.3
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 177.34285714285716,
+        "friedman_p": 1.030959632012229e-27
+      },
+      "all": {
+        "status": "ok",
+        "top_clique": [
+          "CTM"
+        ],
+        "ranks": {
+          "CTM": 1.15,
+          "NNGuide": 3.2625,
+          "fDBD": 3.2875,
+          "REN": 4.3375,
+          "GEN": 6.3375,
+          "KPCA RecError global": 6.3375,
+          "PCE": 7.8375,
+          "PE": 8.4875,
+          "MSR": 8.5875,
+          "MLS": 8.825,
+          "NeCo": 9.6,
+          "GE": 12.1625,
+          "Energy": 12.6,
+          "Confidence": 13.0875,
+          "ViM": 14.8625,
+          "GradNorm": 16.375,
+          "PCA RecError global": 16.7375,
+          "pNML": 17.5625,
+          "Maha": 18.6875,
+          "Residual": 19.875
+        },
+        "n_blocks": 80,
+        "n_csfs": 20,
+        "friedman_W": 1357.6978571428572,
+        "friedman_p": 1.5086168860703975e-276
+      },
+      "test": {
+        "status": "ok",
+        "top_clique": [
+          "GEN",
+          "MSR"
+        ],
+        "ranks": {
+          "MSR": 2.0,
+          "GEN": 2.1,
+          "CTM": 3.4,
+          "fDBD": 3.5,
+          "PCE": 4.0,
+          "REN": 6.0,
+          "PE": 7.0,
+          "NNGuide": 8.0,
+          "MLS": 9.7,
+          "GE": 10.3,
+          "KPCA RecError global": 11.0,
+          "NeCo": 11.0,
+          "Energy": 13.0,
+          "Confidence": 14.8,
+          "ViM": 15.0,
+          "GradNorm": 16.2,
+          "PCA RecError global": 16.7,
+          "pNML": 17.3,
+          "Maha": 19.0,
+          "Residual": 20.0
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 185.4457142857143,
+        "friedman_p": 2.6103541596483256e-29
+      }
+    },
+    "do1_rew2.2": {
+      "near": {
+        "status": "ok",
+        "top_clique": [
+          "CTM"
+        ],
+        "ranks": {
+          "CTM": 1.24,
+          "NNGuide": 4.54,
+          "PE": 4.66,
+          "MLS": 5.28,
+          "REN": 5.86,
+          "PCE": 7.2,
+          "GEN": 7.56,
+          "KPCA RecError global": 7.78,
+          "NeCo": 7.92,
+          "GE": 8.28,
+          "MSR": 10.1,
+          "fDBD": 10.3,
+          "Energy": 10.38,
+          "Confidence": 13.9,
+          "ViM": 15.32,
+          "GradNorm": 15.74,
+          "PCA RecError global": 17.04,
+          "pNML": 18.32,
+          "Maha": 18.72,
+          "Residual": 19.86
+        },
+        "n_blocks": 50,
+        "n_csfs": 20,
+        "friedman_W": 806.0514285714289,
+        "friedman_p": 1.1120018129306565e-158
+      },
+      "mid": {
+        "status": "ok",
+        "top_clique": [
+          "CTM"
+        ],
+        "ranks": {
+          "CTM": 1.2,
+          "MLS": 4.35,
+          "NNGuide": 5.6,
+          "PE": 5.7,
+          "fDBD": 6.05,
+          "GE": 6.45,
+          "NeCo": 6.45,
+          "KPCA RecError global": 7.5,
+          "Energy": 8.15,
+          "REN": 8.65,
+          "PCE": 9.25,
+          "GEN": 10.55,
+          "MSR": 11.1,
+          "ViM": 14.3,
+          "GradNorm": 15.65,
+          "Confidence": 15.65,
+          "PCA RecError global": 16.45,
+          "pNML": 17.95,
+          "Maha": 19.0,
+          "Residual": 20.0
+        },
+        "n_blocks": 20,
+        "n_csfs": 20,
+        "friedman_W": 322.70285714285706,
+        "friedman_p": 4.352796104788804e-57
+      },
+      "far": {
+        "status": "ok",
+        "top_clique": [
+          "CTM"
+        ],
+        "ranks": {
+          "CTM": 1.8,
+          "MLS": 4.7,
+          "REN": 5.0,
+          "KPCA RecError global": 5.8,
+          "GEN": 6.0,
+          "PE": 6.5,
+          "PCE": 7.7,
+          "NeCo": 7.7,
+          "MSR": 8.2,
+          "GE": 8.8,
+          "fDBD": 9.5,
+          "Energy": 9.6,
+          "NNGuide": 10.6,
+          "Confidence": 13.1,
+          "GradNorm": 15.4,
+          "ViM": 15.6,
+          "PCA RecError global": 17.0,
+          "pNML": 18.2,
+          "Maha": 18.8,
+          "Residual": 20.0
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 154.5885714285714,
+        "friedman_p": 2.8444475460093963e-23
+      },
+      "all": {
+        "status": "ok",
+        "top_clique": [
+          "CTM"
+        ],
+        "ranks": {
+          "CTM": 1.3,
+          "MLS": 4.975,
+          "PE": 5.15,
+          "NNGuide": 5.5625,
+          "REN": 6.45,
+          "KPCA RecError global": 7.4625,
+          "NeCo": 7.525,
+          "PCE": 7.775,
+          "GE": 7.8875,
+          "GEN": 8.1125,
+          "fDBD": 9.1375,
+          "Energy": 9.725,
+          "MSR": 10.1125,
+          "Confidence": 14.2375,
+          "ViM": 15.1,
+          "GradNorm": 15.675,
+          "PCA RecError global": 16.8875,
+          "pNML": 18.2125,
+          "Maha": 18.8,
+          "Residual": 19.9125
+        },
+        "n_blocks": 80,
+        "n_csfs": 20,
+        "friedman_W": 1245.4449999999997,
+        "friedman_p": 1.7214892550116506e-252
+      },
+      "test": {
+        "status": "ok",
+        "top_clique": [
+          "MSR"
+        ],
+        "ranks": {
+          "MSR": 1.0,
+          "GEN": 2.0,
+          "PCE": 3.0,
+          "REN": 4.0,
+          "PE": 5.0,
+          "fDBD": 6.0,
+          "CTM": 7.0,
+          "MLS": 8.5,
+          "GE": 8.5,
+          "NeCo": 10.0,
+          "NNGuide": 11.0,
+          "Energy": 12.0,
+          "Confidence": 13.7,
+          "KPCA RecError global": 13.7,
+          "ViM": 14.6,
+          "PCA RecError global": 16.4,
+          "GradNorm": 16.6,
+          "pNML": 18.0,
+          "Maha": 19.0,
+          "Residual": 20.0
+        },
+        "n_blocks": 10,
+        "n_csfs": 20,
+        "friedman_W": 189.3028571428572,
+        "friedman_p": 4.5108109627979174e-30
+      }
+    }
+  }
+}

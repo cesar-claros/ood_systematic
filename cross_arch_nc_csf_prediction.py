@@ -12,6 +12,7 @@ import argparse
 import csv
 import logging
 import math
+import warnings
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -182,14 +183,16 @@ def resolve_score_file(
     """Find a score CSV, preferring per-run ``scores_all`` files."""
     labels: Iterable[str]
     if backbone_label == "auto":
+        suffixes = (f"_{source}.csv", f"_{source}_fix-config.csv")
         labels = sorted(
             {
-                path.name.split(f"_MCD-{mcd}_", maxsplit=1)[1].rsplit(
-                    f"_{source}.csv", maxsplit=1
-                )[0]
+                tail.removesuffix(suffix)
                 for path in scores_dir.glob(
-                    f"scores*_{metric}_MCD-{mcd}_*_{source}.csv"
+                    f"scores*_{metric}_MCD-{mcd}_*_{source}*.csv"
                 )
+                for tail in [path.name.split(f"_MCD-{mcd}_", maxsplit=1)[1]]
+                for suffix in suffixes
+                if tail.endswith(suffix)
             }
         )
     else:
@@ -197,9 +200,13 @@ def resolve_score_file(
 
     for label in labels:
         for prefix in ("scores_all", "scores"):
-            candidate = scores_dir / f"{prefix}_{metric}_MCD-{mcd}_{label}_{source}.csv"
-            if candidate.exists():
-                return candidate
+            for suffix in ("", "_fix-config"):
+                candidate = (
+                    scores_dir
+                    / f"{prefix}_{metric}_MCD-{mcd}_{label}_{source}{suffix}.csv"
+                )
+                if candidate.exists():
+                    return candidate
     raise FileNotFoundError(
         f"No {metric} score file found for source={source}, mcd={mcd}, "
         f"backbone_label={backbone_label} in {scores_dir}"
@@ -251,6 +258,9 @@ def read_competitive_labels(
     drop_confidence: bool,
 ) -> dict[ModelKey, dict[str, float]]:
     """Read mean group AUGRC per CSF for every model configuration."""
+    if not scores_dir.exists():
+        raise FileNotFoundError(f"Scores directory does not exist: {scores_dir}")
+
     scores_by_key: dict[ModelKey, dict[str, list[float]]] = defaultdict(
         lambda: defaultdict(list)
     )
@@ -660,6 +670,11 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     """Run the cross-architecture NC-to-CSF prediction analysis."""
+    warnings.filterwarnings(
+        "ignore",
+        message="y_pred contains classes not in y_true",
+        category=UserWarning,
+    )
     logging.basicConfig(
         level=logging.INFO,
         format="%(levelname)s:%(name)s:%(message)s",
