@@ -20,6 +20,6 @@ experiments/
 regression_outputs/
 # Archived / exploratory code and outputs not used by the paper
 archived/
-/scores_risk/
-/scores_risk_resnet18/
-/scores_calibration/
+scores_risk/
+scores_risk_resnet18/
+scores_calibration/
