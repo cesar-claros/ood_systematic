@@ -31,3 +31,4 @@ clip_scores/
 clip_scores_openood/
 mantel_outputs_papyan/
 nc_csf_predictivity/outputs/
+ood_eval_outputs/
