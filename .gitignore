@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 .DS_Store
 *$py.class
-data/
+/data/
 *.sh
 configs_exp/
 scores/
