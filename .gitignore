@@ -23,3 +23,6 @@ archived/
 scores_risk/
 scores_risk_resnet18/
 scores_calibration/
+projection_analysis_outputs/
+projection_clique_outputs/
+ood_eval_outputs/
