@@ -39,8 +39,8 @@ ood_systematic/
 |   |-- stats/                        # Holm-Wilcoxon tests
 |   `-- outputs/                      # generated parquets and figures (regenerable)
 |
-|-- cifar_iid_train.py                # Stage 1: train CSFs on the validation split
-|-- cifar_test.py                     # Stage 2: evaluate CSFs on each OOD dataset
+|-- csf_fit.py                        # Stage 1: fit CSFs on the validation split
+|-- csf_eval.py                       # Stage 2: evaluate CSFs on each OOD dataset
 |-- retrieve_scores.py                # Stage 3: aggregate per-cell scores into CSVs (run twice; once with --fix-config)
 |-- neural_collapse_eval.py           # Stage 4: compute Papyan NC metrics
 |-- clip_proximity.py                 # Stage 5a: CLIP feature distances per dataset
@@ -166,12 +166,12 @@ After unzipping, the Stage 6 and Stage 7 commands listed below regenerate every 
 
 The complete pipeline has eight stages, executed in order. Stages 1 to 4 operate per checkpoint and per dataset; we recommend dispatching them in parallel via your cluster's job scheduler (12 CPU workers and two GPU types in parallel were used in the paper; see Appendix C).
 
-### Stage 1: Train Confidence Score Functions on the validation split
+### Stage 1: Fit Confidence Score Functions on the validation split
 
 For each FD-Shifts checkpoint, fit the trainable CSFs (Mahalanobis covariance, Temperature scaling, NeCo PCA, KPCA Nystrom basis, ConfidNet head, etc.) on the validation set:
 
 ```bash
-python cifar_iid_train.py \
+python csf_fit.py \
     --model_path=cifar10_paper_sweep/dg_bbvgg13_do0_run1_rew2.2 \
     --no-rank_weight --no-rank_feature --ash=None \
     --use_cuda --temperature_scale
@@ -192,7 +192,7 @@ Repeat for every checkpoint in the FD-Shifts release plus the TinyImageNet and R
 For each (checkpoint, OOD dataset) pair:
 
 ```bash
-python cifar_test.py \
+python csf_eval.py \
     --model_path=cifar10_paper_sweep/dg_bbvgg13_do0_run1_rew2.2 \
     --no-rank_weight --no-rank_feature --ash=None \
     --use_cuda --temperature_scale \
