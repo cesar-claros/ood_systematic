@@ -440,17 +440,21 @@ Total disk footprint after the full pipeline: about 230 MB excluding any FD-Shif
 Please cite the FD-Shifts paper if you use their framework and the released checkpoints:
 
 ```bibtex
-@article{jaeger2022call,
-  title={A Call to Reflect on Evaluation Practices for Failure Detection in Image Classification},
-  author={Jaeger, Paul F. and Lueth, Carsten T. and Klein, Lukas and Bungert, Till J.},
-  journal={ICLR},
-  year={2023}
+@inproceedings{
+    jaeger2023a,
+    title={A Call to Reflect on Evaluation Practices for Failure Detection in Image Classification},
+    author={Paul F Jaeger and Carsten Tim L{\"u}th and Lukas Klein and Till J. Bungert},
+    booktitle={International Conference on Learning Representations},
+    year={2023},
+    url={https://openreview.net/forum?id=YnkGMIh0gvX}
 }
 
 @article{traub2024overcoming,
-  title={Overcoming Common Flaws in the Evaluation of Selective Classification Systems},
-  author={Traub, Jonathan and Bungert, Till J. and L\"uth, Carsten T. and Baumgartner, Michael and Maier-Hein, Klaus H. and Maier-Hein, Lena and Jaeger, Paul F.},
-  journal={arXiv preprint arXiv:2407.01032},
+  title={Overcoming common flaws in the evaluation of selective classification systems},
+  author={Traub, Jeremias and Bungert, Till J and L{\"u}th, Carsten T and Baumgartner, Michael and Maier-Hein, Klaus H and Maier-Hein, Lena and J{\"a}ger, Paul F},
+  journal={Advances in Neural Information Processing Systems},
+  volume={37},
+  pages={2323--2347},
   year={2024}
 }
 ```
