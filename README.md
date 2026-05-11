@@ -420,7 +420,7 @@ Total disk footprint after the full pipeline: about 230 MB excluding any FD-Shif
 | Figure 1 (top-clique panels) | `stats_eval.py --all-paradigms --metric-group RC` (1) | `ood_eval_outputs/top_cliques_all_paradigms_False_RC.pdf` |
 | Figure 2 (cross-architecture regret) | `nc_csf_predictivity.evaluation.regret_by_side_clique_bc` | `nc_csf_predictivity/outputs/figures/regret_by_side_clique_bc_xarch.pdf` |
 | Figure 3 (OpenOOD comparison) | `stats_eval.py --clip-dir clip_scores_openood --metric-group RC` (1) | `ood_eval_outputs/top_cliques_all_paradigms_False_RC_clip_scores_openood.pdf` |
-| Appendix A hyperparameter tables | `recompute_metric.py` | `scores_calibration/hyperparameters_results_*.csv` |
+| Appendix A hyperparameter tables | `retrieve_scores.py` | `scores_risk/hyperparameters_results_*.csv` |
 | Appendix B NC tables | `neural_collapse_eval.py` | `neural_collapse_metrics/nc_metrics_*.csv` |
 | Appendix D Table 6 (OOD grouping) | `clip_clustering.py --latex` | `clip_scores/clip_distances_*.csv` plus printed LaTeX |
 | Appendix D Table 7 (CLIP distances) | `clip_proximity.py` + `clip_clustering.py` | `clip_scores/` |
