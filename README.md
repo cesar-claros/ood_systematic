@@ -2,7 +2,7 @@
 
 This repository contains the code and analysis pipeline for *A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training Paradigm Shifts*. The paper studies how the geometry of a learned representation (measured via Neural Collapse metrics) governs which Confidence Score Function (CSF) is competitive for OOD detection on a given trained classifier, and proposes a per-CSF logistic predictor that recommends a competitive shortlist of detectors for an unseen model without OOD validation data.
 
-The repository covers the full pipeline from FD-Shifts pretrained checkpoints through CSF training and evaluation, statistical analysis, Neural Collapse computation, CLIP-based OOD stratification, and the cross-architecture predictor used in Section 4.4. Reproducing every paper figure end to end takes one to two weeks of wall-clock time on a small GPU cluster (Appendix C). For reproducibility purposes, the heaviest intermediate artifacts are also published as zip archives (see [Quick reproduction with prebuilt archives](#quick-reproduction-with-prebuilt-archives)).
+The repository covers the full pipeline from FD-Shifts pretrained checkpoints through CSF fitting and evaluation, statistical analysis, Neural Collapse computation, CLIP-based OOD stratification, and the cross-architecture predictor used in Section 4.4. Reproducing every paper figure end to end takes one to two weeks of wall-clock time on a small GPU cluster (Appendix C). For reproducibility purposes, the heaviest intermediate artifacts are also published as zip archives (see [Quick reproduction with prebuilt archives](#quick-reproduction-with-prebuilt-archives)).
 
 ### Note on shared artifacts with our AISTATS 2026 paper
 
@@ -164,7 +164,7 @@ After unzipping, the Stage 6 and Stage 7 commands listed below regenerate every 
 
 ## Full pipeline reproduction
 
-The complete pipeline has eight stages, executed in order. Stages 1 to 4 operate per checkpoint and per dataset; we recommend dispatching them in parallel via your cluster's job scheduler (12 CPU workers and two GPU types in parallel were used in the paper; see Appendix C).
+The complete pipeline has seven stages, executed in order. Stages 1 to 4 operate per checkpoint and per dataset; we recommend dispatching them in parallel via your cluster's job scheduler (12 CPU workers and two GPU types in parallel were used in the paper; see Appendix C).
 
 ### Stage 1: Fit Confidence Score Functions on the validation split
 

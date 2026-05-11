@@ -8,7 +8,7 @@ from fd_shifts.utils import exp_utils
 from fd_shifts.models import get_model
 from fd_shifts.loaders.data_loader import FDShiftsDataLoader
 from torch.nn import functional as F
-from src import scores_methods
+from src.neural_collapse import NeuralCollapseMetrics
 import numpy as np
 from src.utils import get_study_name, is_dropout_enabled, get_conf, extract_char_after_substring
 
@@ -144,8 +144,7 @@ def main():
                     # datamodule.setup()
                     
                     # Instantiate model wrapper
-                    # Assuming scores_methods is imported and available
-                    try:                        
+                    try:
                         # Compute evaluations
                         model_opts = f'_RW{int(rank_weight_opt)}_RF{int(rank_feat_opt)}_ASH{str(ash_method_opt)}'
                         
@@ -173,7 +172,7 @@ def main():
 
                         # Function to process and append metrics
                         def process_nc(params_prefix, target_list):
-                            nc_eval = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+                            nc_eval = NeuralCollapseMetrics(module, study_name, cf)
                             nc_eval.load_params(filename=params_prefix + model_opts)
                             logger.info(f"Loaded diagnostics: {nc_eval.nc_metrics.keys()}")
                             metrics = {}

@@ -1,7 +1,22 @@
 import pandas as pd
 import os
 from fd_shifts.analysis import metrics
-from src import scores_methods
+from src.csfs import (
+    ClassTypicalMatching,
+    EntropyScores,
+    GradNorm,
+    KernelPCA,
+    MahalanobisDistance,
+    NNGuide,
+    NeCo,
+    ProjectionFiltering,
+    ResidualScore,
+    TemperatureScaling,
+    ViMScore,
+    fDBD,
+    pNML,
+)
+from src.neural_collapse import NeuralCollapseMetrics
 from src import scores_funcs
 from src.rc_stats import RiskCoverageStats
 from torch.nn import functional as F
@@ -16,7 +31,7 @@ print(f'Using {DEVICE}...')
 #%%
 def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool, model_opts:str='', temp_scaled:bool=False):
     # Temperature 
-    temperature_scale = scores_methods.TemperatureScaling(cf)
+    temperature_scale = TemperatureScaling(cf)
     temperature_scale.load_params(filename='Temperature_params'+model_opts)
     #
     labels_train = model_evaluations['train']['labels']
@@ -27,19 +42,19 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     encoded_val = model_evaluations['val']['encoded']
     correct_val = model_evaluations['val']['correct']
     # Neural Collapse Metrics
-    neural_collapse = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+    neural_collapse = NeuralCollapseMetrics(module, study_name, cf)
     neural_collapse.compute_NeuralCollapse_params(encoded_train, labels_train)
     neural_collapse.save_params(filename='NeuralCollapse_params'+model_opts)
     # Global
     # Kernel PCA Global
-    kpca_global = scores_methods.KernelPCA(module, study_name, cf, mode='global')
+    kpca_global = KernelPCA(module, study_name, cf, mode='global')
     kpca_global.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val, 
                                         labels_train=labels_train, only_correct=True, 
                                         temperature=temperature_scale.temperature, 
                                         center_on='all', kernel='rbf')
     kpca_global.save_params(filename='KernelPCA_global_params'+model_opts)
     # Projection Filtering Global
-    projection_filtering_global = scores_methods.ProjectionFiltering(module, study_name, cf, mode='global')
+    projection_filtering_global = ProjectionFiltering(module, study_name, cf, mode='global')
     projection_filtering_global.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val, labels_train=labels_train, only_correct=True)
     projection_filtering_global.save_params(filename='ProjectionFiltering_global_params'+model_opts)
     logits_global_train = projection_filtering_global.get_logits(encoded_train)
@@ -47,32 +62,32 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     encoded_global_train = projection_filtering_global.get_backprojection(encoded_train)
     encoded_global_val = projection_filtering_global.get_backprojection(encoded_val)
     # Neural Collapse Global Metrics
-    neural_collapse_global = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+    neural_collapse_global = NeuralCollapseMetrics(module, study_name, cf)
     neural_collapse_global.compute_NeuralCollapse_params(encoded_global_train, labels_train)
     neural_collapse_global.save_params(filename='NeuralCollapse_global_params'+model_opts)
     # Class Typical Matching Global
-    ctm_global = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm_global = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm_global.compute_CTM_params(encoded_global_train, labels_train)
     ctm_global.save_params(filename='CTM_global_params'+model_opts)
     del ctm_global
     # NNGuide PCA global
-    nnguide_global = scores_methods.NNGuide(module,study_name,cf)
+    nnguide_global = NNGuide(module,study_name,cf)
     nnguide_global.tune_hyperparameters(encoded_global_train, encoded_global_val, 1-correct_val,
                                         labels_train = labels_train, logits_train= logits_global_train,)
     nnguide_global.save_params(filename='NNGuide_global_params'+model_opts)
     del nnguide_global
     # fDBD PCA global
-    fDBD_global = scores_methods.fDBD(module,study_name,cf)
+    fDBD_global = fDBD(module,study_name,cf)
     fDBD_global.compute_fDBD_params(encoded_global_train)
     fDBD_global.save_params(filename='fDBD_global_params'+model_opts)
     del fDBD_global
     # Mahalanobis distance global
-    maha_distance_global = scores_methods.MahalanobisDistance(cf) 
+    maha_distance_global = MahalanobisDistance(cf) 
     maha_distance_global.compute_MahaDist_params(encoded_global_train, labels_train)
     maha_distance_global.save_params(filename='MahalanobisDistance_global_params'+model_opts)
     del maha_distance_global
     # pNML global
-    pnml_global = scores_methods.pNML(module,study_name,cf)
+    pnml_global = pNML(module,study_name,cf)
     pnml_global.compute_pNML_params(encoded_global_train)
     pnml_global.save_params(filename='pNML_global_params'+model_opts)
     del pnml_global
@@ -81,7 +96,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     logits_global_val = projection_filtering_global.get_logits(encoded_val)
     del projection_filtering_global
     # Temperature Global
-    temperature_global = scores_methods.TemperatureScaling(cf)
+    temperature_global = TemperatureScaling(cf)
     temperature_global.compute_temperature(logits_global_val, labels_val)
     temperature_global.save_params(filename='Temperature_global_params'+model_opts)
     # Softmax global
@@ -89,25 +104,25 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     del logits_global_val
     del temperature_global
     # Generalized entropy Global
-    generalized_entropy_global = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy_global = EntropyScores(cf, 'generalized')
     generalized_entropy_global.compute_entropy_params(softmax_global_val, 1-correct_val)
     generalized_entropy_global.save_params(filename='GEN_global_params'+model_opts)
     del generalized_entropy_global
     # Renyi entropy Global
-    renyi_entropy_global = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy_global = EntropyScores(cf, 'renyi')
     renyi_entropy_global.compute_entropy_params(softmax_global_val, 1-correct_val)
     renyi_entropy_global.save_params(filename='REN_global_params'+model_opts)
     del renyi_entropy_global
     del softmax_global_val
     # Kernel PCA Class
-    kpca_class = scores_methods.KernelPCA(module, study_name, cf, mode='class')
+    kpca_class = KernelPCA(module, study_name, cf, mode='class')
     kpca_class.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val, 
                                         labels_train=labels_train, only_correct=True, 
                                         temperature=temperature_scale.temperature, 
                                         center_on='all', kernel='rbf')
     kpca_class.save_params(filename='KernelPCA_class_params'+model_opts)
     # Projection Filtering Class
-    projection_filtering_class = scores_methods.ProjectionFiltering(module, study_name, cf, mode='class')
+    projection_filtering_class = ProjectionFiltering(module, study_name, cf, mode='class')
     projection_filtering_class.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val, labels_train=labels_train, only_correct=True)
     projection_filtering_class.save_params(filename='ProjectionFiltering_class_params'+model_opts)
     logits_class_train = projection_filtering_class.get_logits(encoded_train)
@@ -127,17 +142,17 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     # encoded_class_pred_val = torch.vstack([encoded_class_val[preds_val[t]][t] for t in range(encoded_val.shape[0])])
     encoded_class_pred_val, logits_class_pred_val = projection_filtering_class.get_combined_backprojection(encoded_class_val, combine='prediction', preds=preds_val)
     # Neural Collapse Global Metrics
-    neural_collapse_class_pred = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+    neural_collapse_class_pred = NeuralCollapseMetrics(module, study_name, cf)
     neural_collapse_class_pred.compute_NeuralCollapse_params(encoded_class_pred_train, labels_train)
     neural_collapse_class_pred.save_params(filename='NeuralCollapse_class_pred_params'+model_opts)
     # Class Typical Matching Class
-    ctm_class = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='class')
+    ctm_class = ClassTypicalMatching(module, study_name, cf, mode='class')
     ctm_class.compute_CTM_params(encoded_class_train, labels_train)
     ctm_class.save_params(filename='CTM_class_params'+model_opts)
     del ctm_class
     #
     # Temperature Class Pred
-    temperature_class_pred = scores_methods.TemperatureScaling(cf)
+    temperature_class_pred = TemperatureScaling(cf)
     temperature_class_pred.compute_temperature(logits_class_pred_val, labels_val)
     temperature_class_pred.save_params(filename='Temperature_class_pred_params'+model_opts)
     # Softmax from filtered logits
@@ -145,19 +160,19 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     del logits_class_pred_val
     del temperature_class_pred
     # Generalized entropy Class Pred
-    generalized_entropy_class_pred = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy_class_pred = EntropyScores(cf, 'generalized')
     generalized_entropy_class_pred.compute_entropy_params(softmax_class_pred_val, 1-correct_val)
     generalized_entropy_class_pred.save_params(filename='GEN_class_pred_params'+model_opts)
     del generalized_entropy_class_pred
     # Renyi entropy Class Pred
-    renyi_entropy_class_pred = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy_class_pred = EntropyScores(cf, 'renyi')
     renyi_entropy_class_pred.compute_entropy_params(softmax_class_pred_val, 1-correct_val)
     renyi_entropy_class_pred.save_params(filename='REN_class_pred_params'+model_opts)
     del renyi_entropy_class_pred
     del softmax_class_pred_val
     #
     # Class Typical Matching Class w/predictions
-    ctm_class_pred = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm_class_pred = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm_class_pred.compute_CTM_params(encoded_class_pred_train, labels_train)
     ctm_class_pred.save_params(filename='CTM_class_pred_params'+model_opts)
     del ctm_class_pred
@@ -181,29 +196,29 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     encoded_class_avg_val, logits_class_avg_val = projection_filtering_class.get_combined_backprojection(encoded_class_val, combine='average')
     del encoded_class_train
     # Neural Collapse Global Metrics
-    neural_collapse_class_avg = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+    neural_collapse_class_avg = NeuralCollapseMetrics(module, study_name, cf)
     neural_collapse_class_avg.compute_NeuralCollapse_params(encoded_class_avg_train, labels_train)
     neural_collapse_class_avg.save_params(filename='NeuralCollapse_class_avg_params'+model_opts)
     #
     #
     # NNGuide PCA class w/predictions
-    nnguide_class_pred = scores_methods.NNGuide(module,study_name,cf)
+    nnguide_class_pred = NNGuide(module,study_name,cf)
     nnguide_class_pred.tune_hyperparameters(encoded_class_pred_train, encoded_class_pred_val, 1-correct_val,
                                         labels_train = labels_train, logits_train= logits_class_train,)
     nnguide_class_pred.save_params(filename='NNGuide_class_pred_params'+model_opts)
     del nnguide_class_pred
     # fDBD PCA class w/predictions
-    fDBD_class_pred = scores_methods.fDBD(module,study_name,cf)
+    fDBD_class_pred = fDBD(module,study_name,cf)
     fDBD_class_pred.compute_fDBD_params(encoded_class_pred_train)
     fDBD_class_pred.save_params(filename='fDBD_class_pred_params'+model_opts)
     del fDBD_class_pred
     # Mahalanobis distance class w/predictions
-    maha_distance_class_pred = scores_methods.MahalanobisDistance(cf) 
+    maha_distance_class_pred = MahalanobisDistance(cf) 
     maha_distance_class_pred.compute_MahaDist_params(encoded_class_pred_train, labels_train)
     maha_distance_class_pred.save_params(filename='MahalanobisDistance_class_pred_params'+model_opts)
     del maha_distance_class_pred
     # pNML class w/predictions
-    pnml_class_pred = scores_methods.pNML(module,study_name,cf)
+    pnml_class_pred = pNML(module,study_name,cf)
     pnml_class_pred.compute_pNML_params(encoded_class_pred_train)
     pnml_class_pred.save_params(filename='pNML_class_pred_params'+model_opts)
     del pnml_class_pred
@@ -212,7 +227,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     logits_class_val = projection_filtering_class.get_logits(encoded_val)
     del projection_filtering_class
     # Temperature Class
-    temperature_class = scores_methods.TemperatureScaling(cf)
+    temperature_class = TemperatureScaling(cf)
     temperature_class.compute_temperature(logits_class_val, labels_val)
     temperature_class.save_params(filename='Temperature_class_params'+model_opts)
     # Softmax from filtered logits
@@ -220,19 +235,19 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     del logits_class_val
     del temperature_class
     # Generalized entropy Class 
-    generalized_entropy_class = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy_class = EntropyScores(cf, 'generalized')
     generalized_entropy_class.compute_entropy_params(softmax_class_val, 1-correct_val)
     generalized_entropy_class.save_params(filename='GEN_class_params'+model_opts)
     del generalized_entropy_class
     # Renyi entropy Class
-    renyi_entropy_class = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy_class = EntropyScores(cf, 'renyi')
     renyi_entropy_class.compute_entropy_params(softmax_class_val, 1-correct_val)
     renyi_entropy_class.save_params(filename='REN_class_params'+model_opts)
     del renyi_entropy_class
     del softmax_class_val
     #
     # Temperature Class Avg
-    temperature_class_avg = scores_methods.TemperatureScaling(cf)
+    temperature_class_avg = TemperatureScaling(cf)
     temperature_class_avg.compute_temperature(logits_class_avg_val, labels_val)
     temperature_class_avg.save_params(filename='Temperature_class_avg_params'+model_opts)
     # Softmax from filtered logits
@@ -240,40 +255,40 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     del logits_class_avg_val
     del temperature_class_avg
     # Generalized entropy Class Pred
-    generalized_entropy_class_avg = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy_class_avg = EntropyScores(cf, 'generalized')
     generalized_entropy_class_avg.compute_entropy_params(softmax_class_avg_val, 1-correct_val)
     generalized_entropy_class_avg.save_params(filename='GEN_class_avg_params'+model_opts)
     del generalized_entropy_class_avg
     # Renyi entropy Class Pred
-    renyi_entropy_class_avg = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy_class_avg = EntropyScores(cf, 'renyi')
     renyi_entropy_class_avg.compute_entropy_params(softmax_class_avg_val, 1-correct_val)
     renyi_entropy_class_avg.save_params(filename='REN_class_avg_params'+model_opts)
     del renyi_entropy_class_avg
     del softmax_class_avg_val
     #
     # Class Typical Matching Class averaged
-    ctm_class_avg = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm_class_avg = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm_class_avg.compute_CTM_params(encoded_class_avg_train, labels_train)
     ctm_class_avg.save_params(filename='CTM_class_avg_params'+model_opts)
     del ctm_class_avg
     # NNGuide PCA class averaged
-    nnguide_class_avg = scores_methods.NNGuide(module,study_name,cf)
+    nnguide_class_avg = NNGuide(module,study_name,cf)
     nnguide_class_avg.tune_hyperparameters(encoded_class_avg_train, encoded_class_avg_val, 1-correct_val,
                                         labels_train = labels_train, logits_train= logits_class_train,)
     nnguide_class_avg.save_params(filename='NNGuide_class_avg_params'+model_opts)
     del nnguide_class_avg
     # fDBD PCA class averaged
-    fDBD_class_avg = scores_methods.fDBD(module,study_name,cf)
+    fDBD_class_avg = fDBD(module,study_name,cf)
     fDBD_class_avg.compute_fDBD_params(encoded_class_avg_train)
     fDBD_class_avg.save_params(filename='fDBD_class_avg_params'+model_opts)
     del fDBD_class_avg
     # Mahalanobis distance class averaged
-    maha_distance_class_avg = scores_methods.MahalanobisDistance(cf) 
+    maha_distance_class_avg = MahalanobisDistance(cf) 
     maha_distance_class_avg.compute_MahaDist_params(encoded_class_avg_train, labels_train)
     maha_distance_class_avg.save_params(filename='MahalanobisDistance_class_avg_params'+model_opts)
     del maha_distance_class_avg
     # pNML class averaged
-    pnml_class_avg = scores_methods.pNML(module,study_name,cf)
+    pnml_class_avg = pNML(module,study_name,cf)
     pnml_class_avg.compute_pNML_params(encoded_class_avg_train)
     pnml_class_avg.save_params(filename='pNML_class_avg_params'+model_opts)
     del pnml_class_avg
@@ -282,58 +297,58 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     # Validation evaluations
     softmax_val = model_evaluations['val']['softmax_scaled'] if temp_scaled else model_evaluations['val']['softmax'] 
     # Class Typical Matching
-    ctm = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm.compute_CTM_params(encoded_train, labels_train)
     ctm.save_params(filename='CTM_params'+model_opts)
     del ctm
     # Class Typical Matching for correct only
-    ctm_oc = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm_oc = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm_oc.compute_CTM_params(encoded_train, labels_train, only_correct=True)
     ctm_oc.save_params(filename='CTM_oc_params'+model_opts)
     del ctm_oc
     # Generalized entropy
-    generalized_entropy = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy = EntropyScores(cf, 'generalized')
     generalized_entropy.compute_entropy_params(softmax_val, 1-correct_val)
     generalized_entropy.save_params(filename='GEN_params'+model_opts)
     del generalized_entropy
     # Renyi entropy
-    renyi_entropy = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy = EntropyScores(cf, 'renyi')
     renyi_entropy.compute_entropy_params(softmax_val, 1-correct_val)
     renyi_entropy.save_params(filename='REN_params'+model_opts)
     del renyi_entropy
     # NNGuide
-    nnguide = scores_methods.NNGuide(module,study_name,cf)
+    nnguide = NNGuide(module,study_name,cf)
     nnguide.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val,
                                         labels_train = labels_train, logits_train= logits_train,)
     nnguide.save_params(filename='NNGuide_params'+model_opts)
     del nnguide
     # fDBD 
-    fDBD = scores_methods.fDBD(module,study_name,cf)
+    fDBD = fDBD(module,study_name,cf)
     fDBD.compute_fDBD_params(encoded_train)
     fDBD.save_params(filename='fDBD_params'+model_opts)
     del fDBD
     # Mahalanobis distance 
-    maha_distance = scores_methods.MahalanobisDistance(cf) 
+    maha_distance = MahalanobisDistance(cf) 
     maha_distance.compute_MahaDist_params(encoded_train, labels_train)
     maha_distance.save_params(filename='MahalanobisDistance_params'+model_opts)
     del maha_distance
     # pNML 
-    pnml = scores_methods.pNML(module,study_name,cf)
+    pnml = pNML(module,study_name,cf)
     pnml.compute_pNML_params(encoded_train)
     pnml.save_params(filename='pNML_params'+model_opts)
     del pnml
     # ViM Score 
-    vim = scores_methods.ViMScore(module,study_name,cf)
+    vim = ViMScore(module,study_name,cf)
     vim.compute_ViM_params(encoded_train)
     vim.save_params(filename='ViM_params'+model_opts)
     del vim
     # Residual Score 
-    residual = scores_methods.ResidualScore(module,study_name,cf)
+    residual = ResidualScore(module,study_name,cf)
     residual.compute_Residual_params(encoded_train)
     residual.save_params(filename='Residual_params'+model_opts)
     del residual
     # NeCo Score 
-    neco = scores_methods.NeCo(module,study_name,cf)
+    neco = NeCo(module,study_name,cf)
     neco.compute_NeCo_params(encoded_train)
     neco.save_params(filename='NeCo_params'+model_opts)
     del neco
@@ -341,7 +356,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
 
     if do_enabled:
         # Temperature distribution 
-        temperature_scale_dist = scores_methods.TemperatureScaling(cf)
+        temperature_scale_dist = TemperatureScaling(cf)
         temperature_scale_dist.load_params(filename='Temperature_distribution_params'+model_opts)
         #
         encoded_dist_train = model_evaluations['train']['encoded_dist']
@@ -349,19 +364,19 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         encoded_dist_val = model_evaluations['val']['encoded_dist']
         correct_mcd_val = model_evaluations['val']['correct_mcd']
         # Neural Collapse Metrics for Distribution
-        neural_collapse_dist = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+        neural_collapse_dist = NeuralCollapseMetrics(module, study_name, cf)
         neural_collapse_dist.compute_NeuralCollapse_params(encoded_dist_train.mean(dim=2), labels_train)
         neural_collapse_dist.save_params(filename='NeuralCollapse_distribution_params'+model_opts)
         # Global
         # Kernel PCA Global
-        kpca_global_dist = scores_methods.KernelPCA(module, study_name, cf, mode='global')
+        kpca_global_dist = KernelPCA(module, study_name, cf, mode='global')
         kpca_global_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val, 
                                             labels_train=labels_train, only_correct=True, 
                                             temperature=temperature_scale_dist.temperature, 
                                             center_on='all', kernel='rbf')
         kpca_global_dist.save_params(filename='KernelPCA_global_distribution_params'+model_opts)
         # Projection Filtering Global for distribution
-        projection_filtering_global_dist = scores_methods.ProjectionFiltering(module, study_name, cf, mode='global')
+        projection_filtering_global_dist = ProjectionFiltering(module, study_name, cf, mode='global')
         projection_filtering_global_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val, 
                                                                 labels_train=labels_train, only_correct=True)
         projection_filtering_global_dist.save_params(filename='ProjectionFiltering_global_distribution_params'+model_opts)
@@ -370,32 +385,32 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         encoded_global_dist_train = projection_filtering_global_dist.get_backprojection(encoded_dist_train.mean(dim=2))
         encoded_global_dist_val = projection_filtering_global_dist.get_backprojection(encoded_dist_val.mean(dim=2))
         # Neural Collapse Global Metrics for Distribution
-        neural_collapse_global_dist = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+        neural_collapse_global_dist = NeuralCollapseMetrics(module, study_name, cf)
         neural_collapse_global_dist.compute_NeuralCollapse_params(encoded_global_dist_train, labels_train)
         neural_collapse_global_dist.save_params(filename='NeuralCollapse_global_distribution_params'+model_opts)
         # Class Typical Matching Global for distribution
-        ctm_global_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_global_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_global_dist.compute_CTM_params(encoded_global_dist_train, labels_train)
         ctm_global_dist.save_params(filename='CTM_global_distribution_params'+model_opts)
         del ctm_global_dist
         # NNGuide PCA global for distribution
-        nnguide_global_dist = scores_methods.NNGuide(module,study_name,cf)
+        nnguide_global_dist = NNGuide(module,study_name,cf)
         nnguide_global_dist.tune_hyperparameters(encoded_global_dist_train, encoded_global_dist_val, 1-correct_mcd_val,
                                         labels_train = labels_train, logits_train= logits_global_dist_train,)
         nnguide_global_dist.save_params(filename='NNGuide_global_distribution_params'+model_opts)
         del nnguide_global_dist
         # fDBD PCA global for distribution
-        fDBD_global_dist = scores_methods.fDBD(module,study_name,cf)
+        fDBD_global_dist = fDBD(module,study_name,cf)
         fDBD_global_dist.compute_fDBD_params(encoded_global_dist_train)
         fDBD_global_dist.save_params(filename='fDBD_global_distribution_params'+model_opts)
         del fDBD_global_dist
         # Mahalanobis distance global for distribution
-        maha_distance_global_dist = scores_methods.MahalanobisDistance(cf) 
+        maha_distance_global_dist = MahalanobisDistance(cf) 
         maha_distance_global_dist.compute_MahaDist_params(encoded_global_dist_train, labels_train)
         maha_distance_global_dist.save_params(filename='MahalanobisDistance_global_distribution_params'+model_opts)
         del maha_distance_global_dist
         # pNML global for distribution
-        pnml_global_dist = scores_methods.pNML(module,study_name,cf)
+        pnml_global_dist = pNML(module,study_name,cf)
         pnml_global_dist.compute_pNML_params(encoded_global_dist_train)
         pnml_global_dist.save_params(filename='pNML_global_distribution_params'+model_opts)
         del pnml_global_dist
@@ -404,7 +419,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         logits_global_dist_val = projection_filtering_global_dist.get_logits(encoded_dist_val.mean(dim=2))
         del projection_filtering_global_dist
         # Temperature global for distribution
-        temperature_global_dist = scores_methods.TemperatureScaling(cf)
+        temperature_global_dist = TemperatureScaling(cf)
         temperature_global_dist.compute_temperature(logits_global_dist_val, labels_val)
         temperature_global_dist.save_params(filename='Temperature_global_distribution_params'+model_opts)
         # Softmax global for distribution
@@ -412,25 +427,25 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         del temperature_global_dist
         del logits_global_dist_val
         # Generalized entropy Global for distribution
-        generalized_entropy_global_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_global_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_global_dist.compute_entropy_params(softmax_global_dist_val, 1-correct_mcd_val)
         generalized_entropy_global_dist.save_params(filename='GEN_global_distribution_params'+model_opts)
         del generalized_entropy_global_dist
         # Renyi entropy Global for distribution
-        renyi_entropy_global_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_global_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_global_dist.compute_entropy_params(softmax_global_dist_val, 1-correct_mcd_val)
         renyi_entropy_global_dist.save_params(filename='REN_global_distribution_params'+model_opts)
         del renyi_entropy_global_dist
         del softmax_global_dist_val
         # Kernel PCA Class
-        kpca_class_dist = scores_methods.KernelPCA(module, study_name, cf, mode='class')
+        kpca_class_dist = KernelPCA(module, study_name, cf, mode='class')
         kpca_class_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val, 
                                             labels_train=labels_train, only_correct=True, 
                                             temperature=temperature_scale_dist.temperature, 
                                             center_on='all', kernel='rbf')
         kpca_class_dist.save_params(filename='KernelPCA_class_distribution_params'+model_opts)
         # Projection Filtering Class for distribution
-        projection_filtering_class_dist = scores_methods.ProjectionFiltering(module, study_name, cf, mode='class')
+        projection_filtering_class_dist = ProjectionFiltering(module, study_name, cf, mode='class')
         projection_filtering_class_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val, 
                                                                 labels_train=labels_train, only_correct=True)
         projection_filtering_class_dist.save_params(filename='ProjectionFiltering_class_distribution_params'+model_opts)
@@ -450,17 +465,17 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         # encoded_class_pred_dist_val = torch.vstack([encoded_class_dist_val[preds_dist_val[t]][t] for t in range(encoded_dist_val.shape[0])])
         encoded_class_pred_dist_val, logits_class_pred_dist_val = projection_filtering_class_dist.get_combined_backprojection(encoded_class_dist_val, combine='prediction', preds=preds_dist_val)
         # Neural Collapse Global Metrics for Distribution
-        neural_collapse_class_pred_dist = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+        neural_collapse_class_pred_dist = NeuralCollapseMetrics(module, study_name, cf)
         neural_collapse_class_pred_dist.compute_NeuralCollapse_params(encoded_class_pred_dist_train, labels_train)
         neural_collapse_class_pred_dist.save_params(filename='NeuralCollapse_class_pred_distribution_params'+model_opts)
         # Class Typical Matching Class for distribution
-        ctm_class_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='class')
+        ctm_class_dist = ClassTypicalMatching(module, study_name, cf, mode='class')
         ctm_class_dist.compute_CTM_params(encoded_class_dist_train, labels_train)
         ctm_class_dist.save_params(filename='CTM_class_distribution_params'+model_opts)
         del ctm_class_dist
         #
         # Temperature Class for distribution
-        temperature_class_pred_dist = scores_methods.TemperatureScaling(cf)
+        temperature_class_pred_dist = TemperatureScaling(cf)
         temperature_class_pred_dist.compute_temperature(logits_class_pred_dist_val, labels_val)
         temperature_class_pred_dist.save_params(filename='Temperature_class_pred_distribution_params'+model_opts)
         # Softmax from filtered logits
@@ -468,19 +483,19 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         del logits_class_pred_dist_val
         del temperature_class_pred_dist
         # Generalized entropy Class for distribution
-        generalized_entropy_class_pred_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_class_pred_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_class_pred_dist.compute_entropy_params(softmax_class_pred_dist_val, 1-correct_mcd_val)
         generalized_entropy_class_pred_dist.save_params(filename='GEN_class_pred_distribution_params'+model_opts)
         del generalized_entropy_class_pred_dist
         # Renyi entropy Class for distribution
-        renyi_entropy_class_pred_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_class_pred_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_class_pred_dist.compute_entropy_params(softmax_class_pred_dist_val, 1-correct_mcd_val)
         renyi_entropy_class_pred_dist.save_params(filename='REN_class_pred_distribution_params'+model_opts)
         del renyi_entropy_class_pred_dist
         del softmax_class_pred_dist_val
         #
         # Class Typical Matching Class w/predictions for distribution
-        ctm_class_pred_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_class_pred_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_class_pred_dist.compute_CTM_params(encoded_class_pred_dist_train, labels_train)
         ctm_class_pred_dist.save_params(filename='CTM_class_pred_distribution_params'+model_opts)
         del ctm_class_pred_dist
@@ -504,27 +519,27 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         encoded_class_avg_dist_val, logits_class_avg_dist_val = projection_filtering_class_dist.get_combined_backprojection(encoded_class_dist_val, combine='average')
         del encoded_class_dist_train
         # Neural Collapse Global Metrics for Distribution
-        neural_collapse_class_avg_dist = scores_methods.NeuralCollapseMetrics(module, study_name, cf)
+        neural_collapse_class_avg_dist = NeuralCollapseMetrics(module, study_name, cf)
         neural_collapse_class_avg_dist.compute_NeuralCollapse_params(encoded_class_avg_dist_train, labels_train)
         neural_collapse_class_avg_dist.save_params(filename='NeuralCollapse_class_avg_distribution_params'+model_opts)
         # NNGuide PCA class w/predictions for distribution
-        nnguide_class_pred_dist = scores_methods.NNGuide(module,study_name,cf)
+        nnguide_class_pred_dist = NNGuide(module,study_name,cf)
         nnguide_class_pred_dist.tune_hyperparameters(encoded_class_pred_dist_train, encoded_class_pred_dist_val, 1-correct_mcd_val,
                                         labels_train = labels_train, logits_train= logits_class_dist_train,)
         nnguide_class_pred_dist.save_params(filename='NNGuide_class_pred_distribution_params'+model_opts)
         del nnguide_class_pred_dist
         # fDBD PCA class w/predictions for distribution
-        fDBD_class_pred_dist = scores_methods.fDBD(module,study_name,cf)
+        fDBD_class_pred_dist = fDBD(module,study_name,cf)
         fDBD_class_pred_dist.compute_fDBD_params(encoded_class_pred_dist_train)
         fDBD_class_pred_dist.save_params(filename='fDBD_class_pred_distribution_params'+model_opts)
         del fDBD_class_pred_dist
         # Mahalanobis distance class w/predictions
-        maha_distance_class_pred_dist = scores_methods.MahalanobisDistance(cf) 
+        maha_distance_class_pred_dist = MahalanobisDistance(cf) 
         maha_distance_class_pred_dist.compute_MahaDist_params(encoded_class_pred_dist_train, labels_train)
         maha_distance_class_pred_dist.save_params(filename='MahalanobisDistance_class_pred_distribution_params'+model_opts)
         del maha_distance_class_pred_dist
         # pNML class w/predictions
-        pnml_class_pred_dist = scores_methods.pNML(module,study_name,cf)
+        pnml_class_pred_dist = pNML(module,study_name,cf)
         pnml_class_pred_dist.compute_pNML_params(encoded_class_pred_dist_train)
         pnml_class_pred_dist.save_params(filename='pNML_class_pred_distribution_params'+model_opts)
         del pnml_class_pred_dist
@@ -534,7 +549,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         # del encoded_dist_val
         del projection_filtering_class_dist
         # Temperature Class for distribution
-        temperature_class_dist = scores_methods.TemperatureScaling(cf)
+        temperature_class_dist = TemperatureScaling(cf)
         temperature_class_dist.compute_temperature(logits_class_dist_val, labels_val)
         temperature_class_dist.save_params(filename='Temperature_class_distribution_params'+model_opts)
         # Softmax from filtered logits for distribution
@@ -542,19 +557,19 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         del temperature_class_dist
         del logits_class_dist_val
         # Generalized entropy Class for distribution
-        generalized_entropy_class_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_class_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_class_dist.compute_entropy_params(softmax_class_dist_val, 1-correct_mcd_val)
         generalized_entropy_class_dist.save_params(filename='GEN_class_distribution_params'+model_opts)
         del generalized_entropy_class_dist
         # Renyi entropy Class for distribution
-        renyi_entropy_class_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_class_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_class_dist.compute_entropy_params(softmax_class_dist_val, 1-correct_mcd_val)
         renyi_entropy_class_dist.save_params(filename='REN_class_distribution_params'+model_opts)
         del renyi_entropy_class_dist
         del softmax_class_dist_val
         #
         # Temperature Class for distribution
-        temperature_class_avg_dist = scores_methods.TemperatureScaling(cf)
+        temperature_class_avg_dist = TemperatureScaling(cf)
         temperature_class_avg_dist.compute_temperature(logits_class_avg_dist_val, labels_val)
         temperature_class_avg_dist.save_params(filename='Temperature_class_avg_distribution_params'+model_opts)
         # Softmax from filtered logits
@@ -562,40 +577,40 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         del logits_class_avg_dist_val
         del temperature_class_avg_dist
         # Generalized entropy Class for distribution
-        generalized_entropy_class_avg_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_class_avg_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_class_avg_dist.compute_entropy_params(softmax_class_avg_dist_val, 1-correct_mcd_val)
         generalized_entropy_class_avg_dist.save_params(filename='GEN_class_avg_distribution_params'+model_opts)
         del generalized_entropy_class_avg_dist
         # Renyi entropy Class for distribution
-        renyi_entropy_class_avg_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_class_avg_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_class_avg_dist.compute_entropy_params(softmax_class_avg_dist_val, 1-correct_mcd_val)
         renyi_entropy_class_avg_dist.save_params(filename='REN_class_avg_distribution_params'+model_opts)
         del renyi_entropy_class_avg_dist
         del softmax_class_avg_dist_val
         #
         # Class Typical Matching Class averaged for distribution
-        ctm_class_avg_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_class_avg_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_class_avg_dist.compute_CTM_params(encoded_class_avg_dist_train, labels_train)
         ctm_class_avg_dist.save_params(filename='CTM_class_avg_distribution_params'+model_opts)
         del ctm_class_avg_dist
         # NNGuide PCA class averaged for distribution
-        nnguide_class_avg_dist = scores_methods.NNGuide(module,study_name,cf)
+        nnguide_class_avg_dist = NNGuide(module,study_name,cf)
         nnguide_class_avg_dist.tune_hyperparameters(encoded_class_avg_dist_train, encoded_class_avg_dist_val, 1-correct_mcd_val,
                                         labels_train = labels_train, logits_train= logits_class_dist_train,)
         nnguide_class_avg_dist.save_params(filename='NNGuide_class_avg_distribution_params'+model_opts)
         del nnguide_class_avg_dist
         # fDBD PCA class averaged for distribution
-        fDBD_class_avg_dist = scores_methods.fDBD(module,study_name,cf)
+        fDBD_class_avg_dist = fDBD(module,study_name,cf)
         fDBD_class_avg_dist.compute_fDBD_params(encoded_class_avg_dist_train)
         fDBD_class_avg_dist.save_params(filename='fDBD_class_avg_distribution_params'+model_opts)
         del fDBD_class_avg_dist
         # Mahalanobis distance class averaged for distribution
-        maha_distance_class_avg_dist = scores_methods.MahalanobisDistance(cf) 
+        maha_distance_class_avg_dist = MahalanobisDistance(cf) 
         maha_distance_class_avg_dist.compute_MahaDist_params(encoded_class_avg_dist_train, labels_train)
         maha_distance_class_avg_dist.save_params(filename='MahalanobisDistance_class_avg_distribution_params'+model_opts)
         del maha_distance_class_avg_dist
         # pNML class averaged for distribution
-        pnml_class_avg_dist = scores_methods.pNML(module,study_name,cf)
+        pnml_class_avg_dist = pNML(module,study_name,cf)
         pnml_class_avg_dist.compute_pNML_params(encoded_class_avg_dist_train)
         pnml_class_avg_dist.save_params(filename='pNML_class_avg_distribution_params'+model_opts)
         del pnml_class_avg_dist
@@ -604,59 +619,59 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         # Validation evaluations for distribution
         softmax_dist_val = model_evaluations['val']['softmax_scaled_dist'] if temp_scaled else model_evaluations['val']['softmax_dist']
         # Class Typical Matching
-        ctm_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_dist.compute_CTM_params(encoded_dist_train.mean(dim=2), labels_train)
         ctm_dist.save_params(filename='CTM_distribution_params'+model_opts)
         del ctm_dist
         # Class Typical Matching for only correct predictions
-        ctm_oc_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_oc_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_oc_dist.compute_CTM_params(encoded_dist_train.mean(dim=2), labels_train, only_correct=True)
         ctm_oc_dist.save_params(filename='CTM_oc_distribution_params'+model_opts)
         del ctm_oc_dist
         # Generalized entropy for distribution
-        generalized_entropy_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_dist.compute_entropy_params(softmax_dist_val.mean(dim=2), 1-correct_mcd_val)
         generalized_entropy_dist.save_params(filename='GEN_distribution_params'+model_opts)
         del generalized_entropy_dist
         # Renyi entropy for distribution
-        renyi_entropy_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_dist.compute_entropy_params(softmax_dist_val.mean(dim=2), 1-correct_mcd_val)
         renyi_entropy_dist.save_params(filename='REN_distribution_params'+model_opts)
         del renyi_entropy_dist
         # del correct_mcd_val
         # NNGuide for distribution
-        nnguide_dist = scores_methods.NNGuide(module,study_name,cf)
+        nnguide_dist = NNGuide(module,study_name,cf)
         nnguide_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val,
                                         labels_train = labels_train, logits_train= logits_dist_train.mean(dim=2),)
         nnguide_dist.save_params(filename='NNGuide_distribution_params'+model_opts)
         del nnguide_dist
         # fDBD for distribution
-        fDBD_dist = scores_methods.fDBD(module,study_name,cf)
+        fDBD_dist = fDBD(module,study_name,cf)
         fDBD_dist.compute_fDBD_params(encoded_dist_train.mean(dim=2))
         fDBD_dist.save_params(filename='fDBD_distribution_params'+model_opts)
         del fDBD_dist
         # Mahalanobis distance for distribution
-        maha_distance_dist = scores_methods.MahalanobisDistance(cf) 
+        maha_distance_dist = MahalanobisDistance(cf) 
         maha_distance_dist.compute_MahaDist_params(encoded_dist_train.mean(dim=2), labels_train)
         maha_distance_dist.save_params(filename='MahalanobisDistance_distribution_params'+model_opts)
         del maha_distance_dist
         # pNML for distribution
-        pnml_dist = scores_methods.pNML(module,study_name,cf)
+        pnml_dist = pNML(module,study_name,cf)
         pnml_dist.compute_pNML_params(encoded_dist_train.mean(dim=2))
         pnml_dist.save_params(filename='pNML_distribution_params'+model_opts)
         del pnml_dist
         # ViM Score for distribution
-        vim_dist = scores_methods.ViMScore(module,study_name,cf)
+        vim_dist = ViMScore(module,study_name,cf)
         vim_dist.compute_ViM_params(encoded_dist_train.mean(dim=2))
         vim_dist.save_params(filename='ViM_distribution_params'+model_opts)
         del vim_dist
         # Residual Score for distribution
-        residual_dist = scores_methods.ResidualScore(module,study_name,cf)
+        residual_dist = ResidualScore(module,study_name,cf)
         residual_dist.compute_Residual_params(encoded_dist_train.mean(dim=2))
         residual_dist.save_params(filename='Residual_distribution_params'+model_opts)
         del residual_dist
         # NeCo Score for distribution
-        neco_dist = scores_methods.NeCo(module,study_name,cf)
+        neco_dist = NeCo(module,study_name,cf)
         neco_dist.compute_NeCo_params(encoded_dist_train.mean(dim=2))
         neco_dist.save_params(filename='NeCo_distribution_params'+model_opts)
         del neco_dist
@@ -667,140 +682,140 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
 # Load parameters
 def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str=''):
     # Temperature 
-    temperature_scale = scores_methods.TemperatureScaling(cf)
+    temperature_scale = TemperatureScaling(cf)
     temperature_scale.load_params(filename='Temperature_params'+model_opts)
     # Global
     # Kernel PCA Global
-    kpca_global = scores_methods.KernelPCA(module, study_name, cf, mode='global')
+    kpca_global = KernelPCA(module, study_name, cf, mode='global')
     kpca_global.load_params(filename='KernelPCA_global_params'+model_opts)
     # Projection Filtering Global
-    projection_filtering_global = scores_methods.ProjectionFiltering(module, study_name, cf, mode='global')
+    projection_filtering_global = ProjectionFiltering(module, study_name, cf, mode='global')
     projection_filtering_global.load_params(filename='ProjectionFiltering_global_params'+model_opts)
     # Class Typical Matching Global
-    ctm_global = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm_global = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm_global.load_params(filename='CTM_global_params'+model_opts)
     # NNGuide PCA global
-    nnguide_global = scores_methods.NNGuide(module,study_name,cf)
+    nnguide_global = NNGuide(module,study_name,cf)
     nnguide_global.load_params(filename='NNGuide_global_params'+model_opts)
     # fDBD PCA global
-    fDBD_global = scores_methods.fDBD(module,study_name,cf)
+    fDBD_global = fDBD(module,study_name,cf)
     fDBD_global.load_params(filename='fDBD_global_params'+model_opts)
     # Mahalanobis distance global
-    maha_distance_global = scores_methods.MahalanobisDistance(cf) 
+    maha_distance_global = MahalanobisDistance(cf) 
     maha_distance_global.load_params(filename='MahalanobisDistance_global_params'+model_opts)
     # pNML global
-    pnml_global = scores_methods.pNML(module,study_name,cf)
+    pnml_global = pNML(module,study_name,cf)
     pnml_global.load_params(filename='pNML_global_params'+model_opts)
     # Temperature Global
-    temperature_global = scores_methods.TemperatureScaling(cf)
+    temperature_global = TemperatureScaling(cf)
     temperature_global.load_params(filename='Temperature_global_params'+model_opts)
     # Generalized entropy Global
-    generalized_entropy_global = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy_global = EntropyScores(cf, 'generalized')
     generalized_entropy_global.load_params(filename='GEN_global_params'+model_opts)
     # Renyi entropy Global
-    renyi_entropy_global = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy_global = EntropyScores(cf, 'renyi')
     renyi_entropy_global.load_params(filename='REN_global_params'+model_opts)
     # Kernel PCA Class
-    kpca_class = scores_methods.KernelPCA(module, study_name, cf, mode='class')
+    kpca_class = KernelPCA(module, study_name, cf, mode='class')
     kpca_class.load_params(filename='KernelPCA_class_params'+model_opts)
     # Projection Filtering Class
-    projection_filtering_class = scores_methods.ProjectionFiltering(module, study_name, cf, mode='class')
+    projection_filtering_class = ProjectionFiltering(module, study_name, cf, mode='class')
     projection_filtering_class.load_params(filename='ProjectionFiltering_class_params'+model_opts)
     # Class Typical Matching Class
-    ctm_class = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='class')
+    ctm_class = ClassTypicalMatching(module, study_name, cf, mode='class')
     ctm_class.load_params(filename='CTM_class_params'+model_opts)
     #
     # Temperature Class Pred
-    temperature_class_pred = scores_methods.TemperatureScaling(cf)
+    temperature_class_pred = TemperatureScaling(cf)
     temperature_class_pred.load_params(filename='Temperature_class_pred_params'+model_opts)
     # Generalized entropy Class Pred
-    generalized_entropy_class_pred = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy_class_pred = EntropyScores(cf, 'generalized')
     generalized_entropy_class_pred.load_params(filename='GEN_class_pred_params'+model_opts)
     # Renyi entropy Class Pred
-    renyi_entropy_class_pred = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy_class_pred = EntropyScores(cf, 'renyi')
     renyi_entropy_class_pred.load_params(filename='REN_class_pred_params'+model_opts)
     #
     # Class Typical Matching Class w/predictions
-    ctm_class_pred = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm_class_pred = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm_class_pred.load_params(filename='CTM_class_pred_params'+model_opts)
     # NNGuide PCA class w/predictions
-    nnguide_class_pred = scores_methods.NNGuide(module,study_name,cf)
+    nnguide_class_pred = NNGuide(module,study_name,cf)
     nnguide_class_pred.load_params(filename='NNGuide_class_pred_params'+model_opts)
     # fDBD PCA class w/predictions
-    fDBD_class_pred = scores_methods.fDBD(module,study_name,cf)
+    fDBD_class_pred = fDBD(module,study_name,cf)
     fDBD_class_pred.load_params(filename='fDBD_class_pred_params'+model_opts)
     # Mahalanobis distance class w/predictions
-    maha_distance_class_pred = scores_methods.MahalanobisDistance(cf) 
+    maha_distance_class_pred = MahalanobisDistance(cf) 
     maha_distance_class_pred.load_params(filename='MahalanobisDistance_class_pred_params'+model_opts)
     # pNML class w/predictions
-    pnml_class_pred = scores_methods.pNML(module,study_name,cf)
+    pnml_class_pred = pNML(module,study_name,cf)
     pnml_class_pred.load_params(filename='pNML_class_pred_params'+model_opts)
     # Temperature Class
-    temperature_class = scores_methods.TemperatureScaling(cf)
+    temperature_class = TemperatureScaling(cf)
     temperature_class.load_params(filename='Temperature_class_params'+model_opts)
     # Generalized entropy Class
-    generalized_entropy_class = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy_class = EntropyScores(cf, 'generalized')
     generalized_entropy_class.load_params(filename='GEN_class_params'+model_opts)
     # Renyi entropy Class
-    renyi_entropy_class = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy_class = EntropyScores(cf, 'renyi')
     renyi_entropy_class.load_params(filename='REN_class_params'+model_opts)
     # Temperature Class Avg
-    temperature_class_avg = scores_methods.TemperatureScaling(cf)
+    temperature_class_avg = TemperatureScaling(cf)
     temperature_class_avg.load_params(filename='Temperature_class_avg_params'+model_opts)
     # Generalized entropy Class Pred
-    generalized_entropy_class_avg = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy_class_avg = EntropyScores(cf, 'generalized')
     generalized_entropy_class_avg.load_params(filename='GEN_class_avg_params'+model_opts)
     # Renyi entropy Class Pred
-    renyi_entropy_class_avg = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy_class_avg = EntropyScores(cf, 'renyi')
     renyi_entropy_class_avg.load_params(filename='REN_class_avg_params'+model_opts)
 
     # Class Typical Matching Class averaged
-    ctm_class_avg = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm_class_avg = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm_class_avg.load_params(filename='CTM_class_avg_params'+model_opts)
     # NNGuide PCA class averaged
-    nnguide_class_avg = scores_methods.NNGuide(module,study_name,cf)
+    nnguide_class_avg = NNGuide(module,study_name,cf)
     nnguide_class_avg.load_params(filename='NNGuide_class_avg_params'+model_opts)
     # fDBD PCA class averaged
-    fDBD_class_avg = scores_methods.fDBD(module,study_name,cf)
+    fDBD_class_avg = fDBD(module,study_name,cf)
     fDBD_class_avg.load_params(filename='fDBD_class_avg_params'+model_opts)
     # Mahalanobis distance class averaged
-    maha_distance_class_avg = scores_methods.MahalanobisDistance(cf) 
+    maha_distance_class_avg = MahalanobisDistance(cf) 
     maha_distance_class_avg.load_params(filename='MahalanobisDistance_class_avg_params'+model_opts)
     # pNML class averaged
-    pnml_class_avg = scores_methods.pNML(module,study_name,cf)
+    pnml_class_avg = pNML(module,study_name,cf)
     pnml_class_avg.load_params(filename='pNML_class_avg_params'+model_opts)
     # Class Typical Matching
-    ctm = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm.load_params(filename='CTM_params'+model_opts)
     # Class Typical Matching for correct only
-    ctm_oc = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+    ctm_oc = ClassTypicalMatching(module, study_name, cf, mode='global')
     ctm_oc.load_params(filename='CTM_oc_params'+model_opts)
     # Generalized entropy
-    generalized_entropy = scores_methods.EntropyScores(cf, 'generalized')
+    generalized_entropy = EntropyScores(cf, 'generalized')
     generalized_entropy.load_params(filename='GEN_params'+model_opts)
     # Renyi entropy
-    renyi_entropy = scores_methods.EntropyScores(cf, 'renyi')
+    renyi_entropy = EntropyScores(cf, 'renyi')
     renyi_entropy.load_params(filename='REN_params'+model_opts)
     # NNGuide
-    nnguide = scores_methods.NNGuide(module,study_name,cf)
+    nnguide = NNGuide(module,study_name,cf)
     nnguide.load_params(filename='NNGuide_params'+model_opts)
     # fDBD 
-    fDBD = scores_methods.fDBD(module,study_name,cf)
+    fDBD = fDBD(module,study_name,cf)
     fDBD.load_params(filename='fDBD_params'+model_opts)
     # Mahalanobis distance 
-    maha_distance = scores_methods.MahalanobisDistance(cf) 
+    maha_distance = MahalanobisDistance(cf) 
     maha_distance.load_params(filename='MahalanobisDistance_params'+model_opts)
     # pNML 
-    pnml = scores_methods.pNML(module,study_name,cf)
+    pnml = pNML(module,study_name,cf)
     pnml.load_params(filename='pNML_params'+model_opts)
     # ViM Score 
-    vim = scores_methods.ViMScore(module,study_name,cf)
+    vim = ViMScore(module,study_name,cf)
     vim.load_params(filename='ViM_params'+model_opts)
     # Residual Score 
-    residual = scores_methods.ResidualScore(module,study_name,cf)
+    residual = ResidualScore(module,study_name,cf)
     residual.load_params(filename='Residual_params'+model_opts)
     # NeCo Score 
-    neco = scores_methods.NeCo(module,study_name,cf)
+    neco = NeCo(module,study_name,cf)
     neco.load_params(filename='NeCo_params'+model_opts)
 
     funcs = {
@@ -852,140 +867,140 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
 
     if do_enabled:
         # Temperature for distribution
-        temperature_scale_dist = scores_methods.TemperatureScaling(cf)
+        temperature_scale_dist = TemperatureScaling(cf)
         temperature_scale_dist.load_params(filename='Temperature_distribution_params'+model_opts)
         # Kernel PCA Global
-        kpca_global_dist = scores_methods.KernelPCA(module, study_name, cf, mode='global')
+        kpca_global_dist = KernelPCA(module, study_name, cf, mode='global')
         kpca_global_dist.load_params(filename='KernelPCA_global_distribution_params'+model_opts)
         # Projection Filtering Global
-        projection_filtering_global_dist = scores_methods.ProjectionFiltering(module, study_name, cf, mode='global')
+        projection_filtering_global_dist = ProjectionFiltering(module, study_name, cf, mode='global')
         projection_filtering_global_dist.load_params(filename='ProjectionFiltering_global_distribution_params'+model_opts)
         # Class Typical Matching Global
-        ctm_global_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_global_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_global_dist.load_params(filename='CTM_global_distribution_params'+model_opts)
         # NNGuide PCA global
-        nnguide_global_dist = scores_methods.NNGuide(module,study_name,cf)
+        nnguide_global_dist = NNGuide(module,study_name,cf)
         nnguide_global_dist.load_params(filename='NNGuide_global_distribution_params'+model_opts)
         # fDBD PCA global
-        fDBD_global_dist = scores_methods.fDBD(module,study_name,cf)
+        fDBD_global_dist = fDBD(module,study_name,cf)
         fDBD_global_dist.load_params(filename='fDBD_global_distribution_params'+model_opts)
         # Mahalanobis distance global for distribution
-        maha_distance_global_dist = scores_methods.MahalanobisDistance(cf) 
+        maha_distance_global_dist = MahalanobisDistance(cf) 
         maha_distance_global_dist.load_params(filename='MahalanobisDistance_global_distribution_params'+model_opts)
         # pNML global for distribution
-        pnml_global_dist = scores_methods.pNML(module,study_name,cf)
+        pnml_global_dist = pNML(module,study_name,cf)
         pnml_global_dist.load_params(filename='pNML_global_distribution_params'+model_opts)
         # Temperature global
-        temperature_global_dist = scores_methods.TemperatureScaling(cf)
+        temperature_global_dist = TemperatureScaling(cf)
         temperature_global_dist.load_params(filename='Temperature_global_distribution_params'+model_opts)
         # Generalized entropy Global for distribution
-        generalized_entropy_global_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_global_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_global_dist.load_params(filename='GEN_global_distribution_params'+model_opts)
         # Renyi entropy Global for distribution
-        renyi_entropy_global_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_global_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_global_dist.load_params(filename='REN_global_distribution_params'+model_opts)
         # Kernel PCA Class
-        kpca_class_dist = scores_methods.KernelPCA(module, study_name, cf, mode='class')
+        kpca_class_dist = KernelPCA(module, study_name, cf, mode='class')
         kpca_class_dist.load_params(filename='KernelPCA_class_distribution_params'+model_opts)
         # Projection Filtering Class for distribution
-        projection_filtering_class_dist = scores_methods.ProjectionFiltering(module, study_name, cf, mode='class')
+        projection_filtering_class_dist = ProjectionFiltering(module, study_name, cf, mode='class')
         projection_filtering_class_dist.load_params(filename='ProjectionFiltering_class_distribution_params'+model_opts)
         # Class Typical Matching Class for distribution
-        ctm_class_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='class')
+        ctm_class_dist = ClassTypicalMatching(module, study_name, cf, mode='class')
         ctm_class_dist.load_params(filename='CTM_class_distribution_params'+model_opts)
         #
         # Temperature Class for distribution
-        temperature_class_pred_dist = scores_methods.TemperatureScaling(cf)
+        temperature_class_pred_dist = TemperatureScaling(cf)
         temperature_class_pred_dist.load_params(filename='Temperature_class_pred_distribution_params'+model_opts)
         # Generalized entropy Class for distribution
-        generalized_entropy_class_pred_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_class_pred_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_class_pred_dist.load_params(filename='GEN_class_pred_distribution_params'+model_opts)
         # Renyi entropy Class for distribution
-        renyi_entropy_class_pred_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_class_pred_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_class_pred_dist.load_params(filename='REN_class_pred_distribution_params'+model_opts)
         #
         # Class Typical Matching Class w/predictions for distribution
-        ctm_class_pred_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_class_pred_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_class_pred_dist.load_params(filename='CTM_class_pred_distribution_params'+model_opts)
         # NNGuide PCA class w/predictions for distribution
-        nnguide_class_pred_dist = scores_methods.NNGuide(module,study_name,cf)
+        nnguide_class_pred_dist = NNGuide(module,study_name,cf)
         nnguide_class_pred_dist.load_params(filename='NNGuide_class_pred_distribution_params'+model_opts)
         # fDBD PCA class w/predictions for distribution
-        fDBD_class_pred_dist = scores_methods.fDBD(module,study_name,cf)
+        fDBD_class_pred_dist = fDBD(module,study_name,cf)
         fDBD_class_pred_dist.load_params(filename='fDBD_class_pred_distribution_params'+model_opts)
         # Mahalanobis distance class w/predictions
-        maha_distance_class_pred_dist = scores_methods.MahalanobisDistance(cf) 
+        maha_distance_class_pred_dist = MahalanobisDistance(cf) 
         maha_distance_class_pred_dist.load_params(filename='MahalanobisDistance_class_pred_distribution_params'+model_opts)
         # pNML class w/predictions
-        pnml_class_pred_dist = scores_methods.pNML(module,study_name,cf)
+        pnml_class_pred_dist = pNML(module,study_name,cf)
         pnml_class_pred_dist.load_params(filename='pNML_class_pred_distribution_params'+model_opts)
         # Temperature Class for distribution
-        temperature_class_dist = scores_methods.TemperatureScaling(cf)
+        temperature_class_dist = TemperatureScaling(cf)
         temperature_class_dist.load_params(filename='Temperature_class_distribution_params'+model_opts)
         # Generalized entropy Class for distribution
-        generalized_entropy_class_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_class_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_class_dist.load_params(filename='GEN_class_distribution_params'+model_opts)
         # Renyi entropy Class for distribution
-        renyi_entropy_class_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_class_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_class_dist.load_params(filename='REN_class_distribution_params'+model_opts)
         #
         # Temperature Class for distribution
-        temperature_class_avg_dist = scores_methods.TemperatureScaling(cf)
+        temperature_class_avg_dist = TemperatureScaling(cf)
         temperature_class_avg_dist.load_params(filename='Temperature_class_avg_distribution_params'+model_opts)
         # Generalized entropy Class for distribution
-        generalized_entropy_class_avg_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_class_avg_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_class_avg_dist.load_params(filename='GEN_class_avg_distribution_params'+model_opts)
         # Renyi entropy Class for distribution
-        renyi_entropy_class_avg_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_class_avg_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_class_avg_dist.load_params(filename='REN_class_avg_distribution_params'+model_opts)
         #
         # Class Typical Matching Class averaged for distribution
-        ctm_class_avg_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_class_avg_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_class_avg_dist.load_params(filename='CTM_class_avg_distribution_params'+model_opts)
         # NNGuide PCA class averaged for distribution
-        nnguide_class_avg_dist = scores_methods.NNGuide(module,study_name,cf)
+        nnguide_class_avg_dist = NNGuide(module,study_name,cf)
         nnguide_class_avg_dist.load_params(filename='NNGuide_class_avg_distribution_params'+model_opts)
         # fDBD PCA class averaged for distribution
-        fDBD_class_avg_dist = scores_methods.fDBD(module,study_name,cf)
+        fDBD_class_avg_dist = fDBD(module,study_name,cf)
         fDBD_class_avg_dist.load_params(filename='fDBD_class_avg_distribution_params'+model_opts)
         # Mahalanobis distance class averaged for distribution
-        maha_distance_class_avg_dist = scores_methods.MahalanobisDistance(cf) 
+        maha_distance_class_avg_dist = MahalanobisDistance(cf) 
         maha_distance_class_avg_dist.load_params(filename='MahalanobisDistance_class_avg_distribution_params'+model_opts)
         # pNML class averaged for distribution
-        pnml_class_avg_dist = scores_methods.pNML(module,study_name,cf)
+        pnml_class_avg_dist = pNML(module,study_name,cf)
         pnml_class_avg_dist.load_params(filename='pNML_class_avg_distribution_params'+model_opts)
         # Class Typical Matching
-        ctm_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_dist.load_params(filename='CTM_distribution_params'+model_opts)
         # Class Typical Matching for only correct predictions
-        ctm_oc_dist = scores_methods.ClassTypicalMatching(module, study_name, cf, mode='global')
+        ctm_oc_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
         ctm_oc_dist.load_params(filename='CTM_oc_distribution_params'+model_opts)
         # Generalized entropy for distribution
-        generalized_entropy_dist = scores_methods.EntropyScores(cf, 'generalized')
+        generalized_entropy_dist = EntropyScores(cf, 'generalized')
         generalized_entropy_dist.load_params(filename='GEN_distribution_params'+model_opts)
         # Renyi entropy for distribution
-        renyi_entropy_dist = scores_methods.EntropyScores(cf, 'renyi')
+        renyi_entropy_dist = EntropyScores(cf, 'renyi')
         renyi_entropy_dist.load_params(filename='REN_distribution_params'+model_opts)
         # NNGuide for distribution
-        nnguide_dist = scores_methods.NNGuide(module,study_name,cf)
+        nnguide_dist = NNGuide(module,study_name,cf)
         nnguide_dist.load_params(filename='NNGuide_distribution_params'+model_opts)
         # fDBD for distribution
-        fDBD_dist = scores_methods.fDBD(module,study_name,cf)
+        fDBD_dist = fDBD(module,study_name,cf)
         fDBD_dist.load_params(filename='fDBD_distribution_params'+model_opts)
         # Mahalanobis distance for distribution
-        maha_distance_dist = scores_methods.MahalanobisDistance(cf) 
+        maha_distance_dist = MahalanobisDistance(cf) 
         maha_distance_dist.load_params(filename='MahalanobisDistance_distribution_params'+model_opts)
         # pNML for distribution
-        pnml_dist = scores_methods.pNML(module,study_name,cf)
+        pnml_dist = pNML(module,study_name,cf)
         pnml_dist.load_params(filename='pNML_distribution_params'+model_opts)
         # ViM Score for distribution
-        vim_dist = scores_methods.ViMScore(module,study_name,cf)
+        vim_dist = ViMScore(module,study_name,cf)
         vim_dist.load_params(filename='ViM_distribution_params'+model_opts)
         # Residual Score for distribution
-        residual_dist = scores_methods.ResidualScore(module,study_name,cf)
+        residual_dist = ResidualScore(module,study_name,cf)
         residual_dist.load_params(filename='Residual_distribution_params'+model_opts)
         # NeCo Score for distribution
-        neco_dist = scores_methods.NeCo(module,study_name,cf)
+        neco_dist = NeCo(module,study_name,cf)
         neco_dist.load_params(filename='NeCo_distribution_params'+model_opts)
 
         funcs_do = {
@@ -1045,7 +1060,7 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
 def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:bool, model_opts:str='', n_bins:int=20, temp_scaled:bool=False):
     if do_enabled:
         score_methods, score_methods_do = load_score_methods(cf, module, study_name, do_enabled, model_opts=model_opts)    
-        gradnorm_score = scores_methods.GradNorm(module, study_name, cf)
+        gradnorm_score = GradNorm(module, study_name, cf)
         encoded_distribution = model_evaluations['encoded_dist']
         logits_distribution = model_evaluations['logits_dist']
         softmax_distribution = model_evaluations['softmax_scaled_dist'] if temp_scaled else model_evaluations['softmax_dist']
@@ -1276,7 +1291,7 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
     else:
         score_methods = load_score_methods(cf, module, study_name, do_enabled, model_opts=model_opts)
 
-    gradnorm_score = scores_methods.GradNorm(module, study_name, cf)
+    gradnorm_score = GradNorm(module, study_name, cf)
     encoded = model_evaluations['encoded']
     logits = model_evaluations['logits']
     softmax = model_evaluations['softmax_scaled'] if temp_scaled else model_evaluations['softmax']
@@ -1590,7 +1605,7 @@ def compute_metrics(module, study_name, cf, model_evaluations, eval_name:str, do
         # change here
     # if do_enabled:
     #     score_methods, score_methods_do = load_score_methods(cf, module, study_name, do_enabled)    
-    #     gradnorm_score = scores_methods.GradNorm(module, study_name, cf)
+    #     gradnorm_score = GradNorm(module, study_name, cf)
     #     encoded_distribution = model_evaluations[key_dict]['encoded_dist']
     #     logits_distribution = model_evaluations[key_dict]['logits_dist']
     #     softmax_distribution = model_evaluations[key_dict]['softmax_scaled_dist'] if temp_scaled else model_evaluations[key_dict]['softmax_dist']
@@ -1655,7 +1670,7 @@ def compute_metrics(module, study_name, cf, model_evaluations, eval_name:str, do
     # else:
     #     score_methods = load_score_methods(cf, module, study_name, do_enabled)
 
-    # gradnorm_score = scores_methods.GradNorm(module, study_name, cf)
+    # gradnorm_score = GradNorm(module, study_name, cf)
     # encoded = model_evaluations[key_dict]['encoded']
     # logits = model_evaluations[key_dict]['logits']
     # softmax = model_evaluations[key_dict]['softmax_scaled'] if temp_scaled else model_evaluations[key_dict]['softmax']

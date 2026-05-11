@@ -8,12 +8,13 @@ import pandas as pd
 from torch.nn import functional as F
 from src import utils
 from src import utils_funcs 
-from src import scores_methods
+from src.trained_module import TrainedModule
+from src.csfs.temperature_scaling import TemperatureScaling
 from fd_shifts import logger
 #%%
 def main():
     # Create the parser
-    parser = argparse.ArgumentParser(description="Uncertainty evaluation")
+    parser = argparse.ArgumentParser(description="Fit CSFs on validation/training splits")
     # Add an argument
     parser.add_argument('--model_path', type=str, required=True, help="Path of folder where experiment is found")
     parser.add_argument('--rank_weight', required=True, action=argparse.BooleanOptionalAction, help="Adding RankWeight functionality to model")
@@ -108,7 +109,7 @@ def main():
     datamodule = FDShiftsDataLoader(cf)
     datamodule.setup()
     # Instantiate model with added functionality
-    model = scores_methods.TrainedModule(module, study_name, cf, 
+    model = TrainedModule(module, study_name, cf,
                                         rank_weight=rank_weight_opt, 
                                         rank_feat=rank_feat_opt, 
                                         ash_method=ash_method_opt, 
@@ -127,11 +128,11 @@ def main():
         # utils.save_data(cf, model_eval, filename=set_name)
         # Compute temperature scale
         if set_name == 'val':
-            temperature_scale = scores_methods.TemperatureScaling(cf)
+            temperature_scale = TemperatureScaling(cf)
             temperature_scale.compute_temperature(model_eval['logits'], model_eval['labels'])
             temperature_scale.save_params(filename='Temperature_params'+model_opts)
             if do_enabled:
-                temperature_scale_dist = scores_methods.TemperatureScaling(cf)
+                temperature_scale_dist = TemperatureScaling(cf)
                 temperature_scale_dist.compute_temperature(model_eval['logits_dist'].mean(dim=2), model_eval['labels'])
                 temperature_scale_dist.save_params(filename='Temperature_distribution_params'+model_opts)
         model_eval['softmax'] = F.softmax(model_eval['logits'], dim=1, dtype=torch.float64)
