@@ -322,11 +322,11 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
                                         labels_train = labels_train, logits_train= logits_train,)
     nnguide.save_params(filename='NNGuide_params'+model_opts)
     del nnguide
-    # fDBD 
-    fDBD = fDBD(module,study_name,cf)
-    fDBD.compute_fDBD_params(encoded_train)
-    fDBD.save_params(filename='fDBD_params'+model_opts)
-    del fDBD
+    # fDBD
+    fdbd_inst = fDBD(module,study_name,cf)
+    fdbd_inst.compute_fDBD_params(encoded_train)
+    fdbd_inst.save_params(filename='fDBD_params'+model_opts)
+    del fdbd_inst
     # Mahalanobis distance 
     maha_distance = MahalanobisDistance(cf) 
     maha_distance.compute_MahaDist_params(encoded_train, labels_train)
@@ -799,9 +799,9 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
     # NNGuide
     nnguide = NNGuide(module,study_name,cf)
     nnguide.load_params(filename='NNGuide_params'+model_opts)
-    # fDBD 
-    fDBD = fDBD(module,study_name,cf)
-    fDBD.load_params(filename='fDBD_params'+model_opts)
+    # fDBD
+    fdbd_inst = fDBD(module,study_name,cf)
+    fdbd_inst.load_params(filename='fDBD_params'+model_opts)
     # Mahalanobis distance 
     maha_distance = MahalanobisDistance(cf) 
     maha_distance.load_params(filename='MahalanobisDistance_params'+model_opts)
@@ -857,7 +857,7 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
             'generalized_entropy':generalized_entropy,
             'renyi_entropy':renyi_entropy,
             'nnguide':nnguide,
-            'fDBD':fDBD,
+            'fDBD':fdbd_inst,
             'maha_distance':maha_distance,
             'pnml':pnml,
             'vim':vim,
