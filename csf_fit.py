@@ -134,7 +134,7 @@ def main():
             if do_enabled:
                 temperature_scale_dist = TemperatureScaling(cf)
                 temperature_scale_dist.compute_temperature(model_eval['logits_dist'].mean(dim=2), model_eval['labels'])
-                temperature_scale_dist.save_params(filename='Temperature_distribution_params'+model_opts)
+                # temperature_scale_dist.save_params(filename='Temperature_distribution_params'+model_opts)
         model_eval['softmax'] = F.softmax(model_eval['logits'], dim=1, dtype=torch.float64)
         model_eval['softmax_scaled'] = temperature_scale.get_scaled_softmax(model_eval['logits'])
         model_eval['correct'] = (model_eval['softmax'].max(dim=1).indices == model_eval['labels']).long()

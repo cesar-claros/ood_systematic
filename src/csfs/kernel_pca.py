@@ -133,6 +133,7 @@ class KernelPCA:
         # Compute K_mm and K_nm
         K_mm = self._kernel(X_ref, X_ref)  # (m, m)
         # Eigendecomposition (only top n_components)
+        logger.info(f'Computing eigendecomposition of K_mm with shape {K_mm.shape}. NaNs: {torch.isnan(K_mm).sum()}...')
         evals, evecs = self._get_eigendecomposition(K_mm)
         evals = torch.maximum(evals, torch.tensor(1e-12))
         normalization = (evecs / torch.sqrt(evals))@ evecs.T
@@ -143,6 +144,7 @@ class KernelPCA:
         # # Explained variance selection
         # sigma = (K_nm-K_c).T@((K_nm-K_c))
         sigma = cov(K_nm-K_c, centered=True, rowvar=False)
+        logger.info(f'Computing eigendecomposition of sigma with shape {sigma.shape}. NaNs: {torch.isnan(sigma).sum()}...')
         evals_full, evecs_full = self._get_eigendecomposition(sigma)
         evals_full_accuml = evals_full.cumsum(0)
         explained_variance_ratio_ = evals_full_accuml/evals_full_accuml[-1]
