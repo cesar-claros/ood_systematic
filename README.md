@@ -457,7 +457,7 @@ Please cite the FD-Shifts paper if you use their framework and the released chec
 
 Please refer to their github page for more information on the FD-Shifts framework: [https://github.com/fd-shifts/fd-shifts.pytorch](https://github.com/fd-shifts/fd-shifts.pytorch)
 
-Please cite our paper if you use our framework and released checkpoints for ResNet-18 models and TinyImageNet models
+Please cite our paper if you use our framework and/or released checkpoints for ResNet-18 models and TinyImageNet models
 
 ```bibtex
 @misc{claros-olivares2026systematic,
