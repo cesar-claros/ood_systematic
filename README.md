@@ -435,7 +435,7 @@ Total disk footprint after the full pipeline: about 230 MB excluding any FD-Shif
 
 ---
 
-## Citing FD-Shifts and external datasets
+## Citing FD-Shifts, our framework, and external datasets
 
 Please cite the FD-Shifts paper if you use their framework and the released checkpoints:
 
