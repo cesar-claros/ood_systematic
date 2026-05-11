@@ -464,7 +464,7 @@ Please refer to their github page for more information on the FD-Shifts framewor
 Please cite our paper if you use our framework and/or released checkpoints for ResNet-18 models and TinyImageNet models
 
 ```bibtex
-@misc{claros-olivares2026systematic,
+@misc{claros2026systematic,
       title={A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training Paradigm Shifts}, 
       author={Claudio César Claros Olivares and Austin J. Brockmeier},
       year={2026},
