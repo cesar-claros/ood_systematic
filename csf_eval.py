@@ -8,7 +8,7 @@ import argparse
 import pandas as pd
 from torch.nn import functional as F
 from src import utils
-from src import utils_funcs
+from src import csf_pipeline
 from src.trained_module import TrainedModule
 from src.csfs.temperature_scaling import TemperatureScaling
 #%%
@@ -23,6 +23,11 @@ def main():
     parser.add_argument('--use_cuda', required=True, action=argparse.BooleanOptionalAction, help="Adding RankFeature functionality to model")
     parser.add_argument('--temperature_scale', required=True, action=argparse.BooleanOptionalAction, help="Carry operations out using temperature scaling")
     parser.add_argument('--test_mode', required=True, type=str, help="Sets considered for evaluation", default='None', choices=['val','iid_test','iid_test_corruptions','ood_sncs_c100','ood_sncs_c10','ood_nsncs_svhn','ood_nsncs_ti','ood_nsncs_lsun_cropped','ood_nsncs_lsun_resize','ood_nsncs_isun','ood_nsncs_textures','ood_nsncs_places365'])
+    csf_group = parser.add_mutually_exclusive_group()
+    csf_group.add_argument('--csfs', type=str, default=None,
+                           help="Comma-separated CSF families to evaluate (default: all). E.g. 'KernelPCA,Mahalanobis'.")
+    csf_group.add_argument('--skip-csfs', dest='skip_csfs', type=str, default=None,
+                           help="Comma-separated CSF families to skip (default: none). E.g. 'KernelPCA'.")
     # Parse the arguments
     args = parser.parse_args()
     path = args.model_path
@@ -32,6 +37,10 @@ def main():
     use_cuda_opt = args.use_cuda
     test_mode = args.test_mode
     temperature_scale_opt = args.temperature_scale
+    csfs_arg = [s.strip() for s in args.csfs.split(',')] if args.csfs else None
+    skip_csfs_arg = [s.strip() for s in args.skip_csfs.split(',')] if args.skip_csfs else None
+    active = csf_pipeline.build_active(csfs=csfs_arg, skip_csfs=skip_csfs_arg)
+    logger.info(f"Active CSF families: {sorted(active)}")
 
     cuda_available = torch.cuda.is_available()
     if cuda_available and use_cuda_opt:
@@ -187,7 +196,7 @@ def main():
     # model_name = f'RW{int(rank_weight_opt)}_RF{int(rank_feat_opt)}_ASH{str(ash_method_opt)}'
     # eval_name = 'iid_val'
     # Evaluate score methods and fucntions
-    utils_funcs.compute_metrics(module, study_name, cf, model_evaluations, test_mode, do_enabled, model_opts=model_opts, n_bins=20, temp_scaled=temperature_scale_opt)
+    csf_pipeline.compute_metrics(module, study_name, cf, model_evaluations, test_mode, do_enabled, model_opts=model_opts, n_bins=20, temp_scaled=temperature_scale_opt, active=active)
     
     # utils_funcs.compute_metrics(module, study_name, cf, model_evaluations, model_name, eval_name, do_enabled, temp_scaled=True)
 if __name__ == "__main__":
