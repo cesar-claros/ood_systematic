@@ -138,13 +138,13 @@ Place the unzipped checkpoints under `$EXPERIMENT_ROOT_DIR` so that FD-Shifts ca
 
 ## Quick reproduction with prebuilt archives
 
-Five folders dominate the disk footprint and are expensive to regenerate (Stage 3, Stage 4, and Stage 5 outputs). To reproduce only the Stage 6 statistical analyses and the Stage 7 NC-predictor figures (which take minutes to tens of minutes), download and unzip the following archives at the repository root:
+Five folders dominate the disk footprint and are expensive to regenerate (Stage 3, Stage 4, and Stage 5 outputs). To reproduce only the Stage 6 statistical analyses and the Stage 7 NC-predictor figures (which takes less than an hour, instead of one to two weeks), download and unzip the following archives at the repository root:
 
 | Archive | Folder produced | Size | Cost to regenerate from scratch |
 | --- | --- | --- | --- |
 | `clip_scores.zip` | `clip_scores/` | 128 KB | hours (CLIP feature extraction over four datasets) |
 | `clip_robustness.zip` | `clip_robustness/` | 1.6 MB | hours (CLIP across three encoders) |
-| `neural_collapse_metrics.zip` | `neural_collapse_metrics/` | 312 KB | tens of minutes (NC metric extraction over 376 checkpoints) |
+| `neural_collapse_metrics.zip` | `neural_collapse_metrics/` | 312 KB | several minutes (NC metric extraction over 376 checkpoints) |
 | `scores_risk.zip` | `scores_risk/` | 70 MB | one to two weeks (Stage 1, 2, 3 over the FD-Shifts pool) |
 | `scores_risk_resnet18.zip` | `scores_risk_resnet18/` | 18 MB | days (Stage 1, 2, 3 over the ResNet-18 pool) |
 | `scores_calibration.zip` | `scores_calibration/` | 114 MB | AISTATS 2026 companion paper only — not needed for this pipeline |
