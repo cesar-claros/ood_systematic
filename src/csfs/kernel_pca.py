@@ -108,11 +108,22 @@ class KernelPCA:
         # Returns eigenvalues (descending), eigenvectors
         try:
             eigvals, eigvecs = torch.linalg.eigh(M)
-        except:
-            n,m = M.shape
+        except Exception:
+            n, m = M.shape
             epsilon = 1e-6
-            M_p = M + epsilon*torch.eye(min(m,n),device=self.device) 
-            eigvals, eigvecs = torch.linalg.eigh(M_p)
+            M_p = M + epsilon * torch.eye(min(m, n), device=self.device)
+            try:
+                eigvals, eigvecs = torch.linalg.eigh(M_p)
+            except Exception:
+                logger.warning(
+                    "KernelPCA: GPU eigh failed twice (cusolver); "
+                    "falling back to CPU fp64 LAPACK."
+                )
+                M_cpu = M.detach().double().cpu()
+                M_cpu = (M_cpu + M_cpu.T) / 2
+                eigvals, eigvecs = torch.linalg.eigh(M_cpu)
+                eigvals = eigvals.to(dtype=M.dtype, device=M.device)
+                eigvecs = eigvecs.to(dtype=M.dtype, device=M.device)
         idx = torch.argsort(eigvals, descending=True)
         return eigvals[idx], eigvecs[:, idx]
     
