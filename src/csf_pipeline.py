@@ -284,6 +284,84 @@ def _merge_csv_cols(new_df: pd.DataFrame, path: str) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
+# Model-health diagnostics.
+# ---------------------------------------------------------------------------
+
+def check_model_health(model_evaluations: dict, cf) -> list[str]:
+    """Inspect the validation outputs and flag classic degeneracy modes.
+
+    Returns a list of human-readable warning strings (empty if healthy).
+    Detects:
+      - Validation accuracy at or near chance level (model didn't learn).
+      - Prediction collapse (>=95% of argmaxes go to a single class) — the
+        Deep-Gamblers always-abstain failure mode when the reward is too low.
+      - Near-constant penultimate-layer features (mean per-dim std below
+        1e-4) — kernel-based CSFs (KernelPCA, NeCo, ...) will fail on these.
+      - NaN / Inf in logits or features.
+
+    The function is read-only and cheap (a few tensor reductions on the val
+    split). Call it once at the top of csf_fit.py before any CSF fitting.
+    """
+    warnings: list[str] = []
+    val = model_evaluations.get("val")
+    if val is None:
+        return warnings
+    softmax = val.get("softmax")
+    correct = val.get("correct")
+    encoded = val.get("encoded")
+    logits = val.get("logits")
+    if softmax is None or correct is None:
+        return warnings
+
+    # 1. Validation accuracy at chance.
+    num_classes = getattr(cf.data, "num_classes", softmax.shape[1])
+    chance = 1.0 / num_classes
+    val_acc = correct.float().mean().item()
+    if val_acc < 2.0 * chance:
+        warnings.append(
+            f"Validation accuracy {val_acc:.3f} is at or below 2x chance "
+            f"({chance:.3f}); the model probably didn't learn. Downstream "
+            f"CSFs will be unreliable."
+        )
+
+    # 2. Prediction collapse: most argmaxes concentrate in one class.
+    preds = softmax.max(dim=1).indices
+    pred_counts = torch.bincount(preds, minlength=softmax.shape[1])
+    n = preds.shape[0]
+    top_class = pred_counts.argmax().item()
+    top_frac = pred_counts.max().item() / max(n, 1)
+    if top_frac >= 0.95:
+        warnings.append(
+            f"{top_frac:.1%} of validation predictions go to a single class "
+            f"(class index {top_class}); the model has collapsed to a constant "
+            f"output. For Deep Gamblers, this typically means the abstention "
+            f"reward was too low and training converged to always-abstain."
+        )
+
+    # 3. Near-constant features.
+    if encoded is not None:
+        feature_std = encoded.float().std(dim=0).mean().item()
+        if feature_std < 1e-4:
+            warnings.append(
+                f"Mean per-dim std of penultimate features on the validation "
+                f"set is {feature_std:.2e} (near-zero). Kernel-based CSFs "
+                f"(KernelPCA, NeCo, ...) will produce rank-deficient kernel "
+                f"matrices and likely crash."
+            )
+
+    # 4. NaN / Inf in logits or features.
+    for name, t in (("logits", logits), ("encoded features", encoded)):
+        if t is None:
+            continue
+        if torch.isnan(t).any().item():
+            warnings.append(f"NaNs detected in validation {name}.")
+        if torch.isinf(t).any().item():
+            warnings.append(f"Infs detected in validation {name}.")
+
+    return warnings
+
+
+# ---------------------------------------------------------------------------
 # Projection / Temperature fitting helpers (csf_fit-side responsibility).
 # ---------------------------------------------------------------------------
 

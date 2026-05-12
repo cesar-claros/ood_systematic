@@ -163,6 +163,20 @@ def main():
             model_eval['softmax_scaled_dist'] = temperature_scale_dist.get_scaled_softmax(model_eval['logits_dist'])
             model_eval['correct_mcd'] = (model_eval['softmax_dist'].mean(dim=2).max(dim=1).indices == model_eval['labels']).long()
         model_evaluations.update({set_name:model_eval})
+    # Diagnose model degeneracy (e.g., Deep Gamblers always-abstain with low
+    # reward, NaN/Inf in features). Warn loudly so the user can decide whether
+    # to proceed; this is non-fatal because downstream errors will surface
+    # anyway, but the diagnostic helps explain WHY they happen.
+    health_warnings = csf_pipeline.check_model_health(model_evaluations, cf)
+    for w in health_warnings:
+        logger.warning(f"[model-health] {w}")
+    if health_warnings:
+        logger.warning(
+            f"[model-health] Model {path} appears degenerate. "
+            f"Kernel-based CSFs (KernelPCA, NeCo, ...) and other feature-space "
+            f"CSFs may fail; downstream metrics will be unreliable."
+        )
+
     # Fit (or load) ProjectionFiltering and projection-specific Temperature variants.
     csf_pipeline.fit_projections(cf, module, study_name, model_evaluations, do_enabled,
                                  model_opts, temperature_scale_opt, projections)
