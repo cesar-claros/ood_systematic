@@ -1478,8 +1478,8 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
     def gate(mode, family):
         return mode in projections and family in active
     if do_enabled:
-        score_methods, score_methods_do = load_score_methods(cf, module, study_name, do_enabled, model_opts=model_opts, active=active, projections=projections)    
-        gradnorm_score = GradNorm(module, study_name, cf)
+        score_methods, score_methods_do = load_score_methods(cf, module, study_name, do_enabled, model_opts=model_opts, active=active, projections=projections)
+        gradnorm_score = GradNorm(module, study_name, cf) if "GradNorm" in active else _MISSING_CSF
         encoded_distribution = model_evaluations['encoded_dist']
         logits_distribution = model_evaluations['logits_dist']
         softmax_distribution = model_evaluations['softmax_scaled_dist'] if temp_scaled else model_evaluations['softmax_dist']
@@ -1686,7 +1686,7 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
     else:
         score_methods = load_score_methods(cf, module, study_name, do_enabled, model_opts=model_opts, active=active, projections=projections)
 
-    gradnorm_score = GradNorm(module, study_name, cf)
+    gradnorm_score = GradNorm(module, study_name, cf) if "GradNorm" in active else _MISSING_CSF
     encoded = model_evaluations['encoded']
     logits = model_evaluations['logits']
     softmax = model_evaluations['softmax_scaled'] if temp_scaled else model_evaluations['softmax']
