@@ -5,7 +5,7 @@ optional `active` set passed to each public function. When `active` is None,
 all families are run (behavior identical to src.utils_funcs).
 
 Families are addressed by canonical names (see ALL_FAMILIES). Aliases like
-"KPCA" → "KernelPCA" or "Maha" → "MahalanobisDistance" are normalized via
+"KPCA" → "KPCA_RecError" or "Maha" → "MahalanobisDistance" are normalized via
 normalize_family().
 
 Two families cannot be skipped because they are structural backbones:
@@ -57,13 +57,15 @@ print(f"Using {DEVICE}...")
 # Family inventory + aliases.
 # ---------------------------------------------------------------------------
 
-#: Canonical family names. Each is addressable via --csfs / --skip-csfs.
+#: Canonical family names. Each is user-addressable via --csfs / --skip-csfs.
+#: NOTE: ProjectionFiltering and Temperature are NOT here — they are internal
+#: backbones, not CSFs. PCA_RecError is the actual reconstruction-error CSF
+#: that consumes ProjectionFiltering's output (mirroring KPCA_RecError vs
+#: the KernelPCA algorithm class).
 ALL_FAMILIES: frozenset[str] = frozenset({
-    # Backbones (cannot be skipped):
-    "ProjectionFiltering",
-    "Temperature",
     # Parametric CSFs (have save_params files):
-    "KernelPCA",
+    "KPCA_RecError",
+    "PCA_RecError",
     "CTM",
     "NNGuide",
     "fDBD",
@@ -87,21 +89,31 @@ ALL_FAMILIES: frozenset[str] = frozenset({
     "Confidence",
 })
 
-#: Families that cannot be skipped (structural backbones).
+#: Internal backbone names that flow through the active set but are NOT in
+#: ALL_FAMILIES. Users cannot reference them via --csfs / --skip-csfs (they
+#: would get an "Unknown CSF family" error); the pipeline manages them
+#: automatically.
 BACKBONES: frozenset[str] = frozenset({"ProjectionFiltering", "Temperature"})
 
 #: Families whose `_global`/`_class*` variants consume ProjectionFiltering outputs.
+#: PCA_RecError IS in this set: it IS the score produced by ProjectionFiltering's
+#: own reconstruction error, so it depends on PF being set up.
 PF_DEPENDENTS: frozenset[str] = frozenset({
     "CTM", "NNGuide", "fDBD", "MahalanobisDistance", "pNML",
     "GEN", "REN", "MSR", "MLS", "PE", "PCE", "GE", "Energy",
     "GradNorm", "NeuralCollapse",
+    "PCA_RecError",
 })
 
-#: Lowercased alias → canonical name.
+#: Lowercased alias → canonical name. Auto-generated for every name in
+#: ALL_FAMILIES, plus a few manual conveniences.
 _ALIASES: dict[str, str] = {name.lower(): name for name in ALL_FAMILIES}
 _ALIASES.update({
-    "kpca":                     "KernelPCA",
-    "pf":                       "ProjectionFiltering",
+    "kpca":                     "KPCA_RecError",
+    "kpcarecerror":             "KPCA_RecError",
+    "kernelpca":                "KPCA_RecError",
+    "pcarecerror":              "PCA_RecError",
+    "pca":                      "PCA_RecError",
     "classtypicalmatching":     "CTM",
     "maha":                     "MahalanobisDistance",
     "mahalanobis":              "MahalanobisDistance",
@@ -109,13 +121,14 @@ _ALIASES.update({
     "neuralcollapsemetrics":    "NeuralCollapse",
     "vimscore":                 "ViM",
     "residualscore":            "Residual",
-    "temperaturescaling":       "Temperature",
 })
 
-#: Canonical family → confids-key prefix (None means no confids keys).
+#: Canonical family → confids-key prefix (None means no confids keys of its
+#: own — only the case for `NeuralCollapse`, whose parameter files are
+#: consumed by the predictor sub-package, not by stats()).
 _FAMILY_TO_PREFIX: dict[str, str | None] = {
-    "KernelPCA":           "KPCA_RecError",
-    "ProjectionFiltering": "PCA_RecError",
+    "KPCA_RecError":       "KPCA_RecError",
+    "PCA_RecError":        "PCA_RecError",
     "CTM":                 "CTM",
     "NNGuide":             "NNGuide",
     "fDBD":                "fDBD",
@@ -136,7 +149,6 @@ _FAMILY_TO_PREFIX: dict[str, str | None] = {
     "MI":                  "MI",
     "Confidence":          "Confidence",
     "NeuralCollapse":      None,
-    "Temperature":         None,
 }
 
 
@@ -212,6 +224,15 @@ def _key_in_family_prefixes(key: str, prefixes: set[str]) -> bool:
         if base == prefix or base.startswith(prefix + "_"):
             return True
     return False
+
+
+def _needs_pf(active: set[str]) -> bool:
+    """True if any family that actually consumes ProjectionFiltering output
+    is active. KernelPCA is NOT a PF consumer (it uses raw features); only
+    `PF_DEPENDENTS` families plus an explicit request for the
+    `ProjectionFiltering` family trigger PF setup.
+    """
+    return bool(active & PF_DEPENDENTS) or "ProjectionFiltering" in active
 
 
 def filter_confids(confids: dict, active: set[str], projections: set[str] | None = None) -> dict:
@@ -427,7 +448,7 @@ def _load_or_fit_pf(cf, module, study_name, mode, model_opts, mcd,
 
 
 def fit_projections(cf, module, study_name, model_evaluations, do_enabled,
-                    model_opts, temp_scaled, projections):
+                    model_opts, temp_scaled, projections, active=None):
     """Fit ProjectionFiltering instances and their per-projection Temperature scalings.
 
     Called from csf_fit.py BEFORE run_score_methods. Each PF / Temperature
@@ -452,6 +473,18 @@ def fit_projections(cf, module, study_name, model_evaluations, do_enabled,
     projections = projections - {"plain"}
     if not projections:
         return
+    # Skip PF setup entirely if no active family consumes PF output (e.g.,
+    # `--csfs KernelPCA --projections global` — KernelPCA uses raw features).
+    if active is not None and not _needs_pf(set(active)):
+        logger.info(
+            "Skipping ProjectionFiltering fits: no active family consumes "
+            "PF outputs (active=%s).", sorted(active),
+        )
+        return
+    # If we reach here, _needs_pf was True (or no active set was given, in which
+    # case the caller wants to fit everything). The pf_needed local supports
+    # the same gate that we use in run_score_methods / load_score_methods / stats.
+    pf_needed = True
 
     encoded_train = model_evaluations["train"]["encoded"]
     encoded_val = model_evaluations["val"]["encoded"]
@@ -460,7 +493,7 @@ def fit_projections(cf, module, study_name, model_evaluations, do_enabled,
     correct_val = model_evaluations["val"]["correct"]
 
     # ---- Deterministic branch ----
-    if "global" in projections:
+    if "global" in projections and pf_needed:
         pf_global = _load_or_fit_pf(
             cf, module, study_name, "global", model_opts, mcd=False,
             encoded_train=encoded_train, encoded_val=encoded_val,
@@ -469,7 +502,7 @@ def fit_projections(cf, module, study_name, model_evaluations, do_enabled,
         logits_global_val = pf_global.get_logits(encoded_val)
         _load_or_fit_temperature(cf, model_opts, "global", logits_global_val, labels_val)
 
-    if projections & {"class", "class_pred"}:
+    if (projections & {"class", "class_pred"}) and pf_needed:
         pf_class = _load_or_fit_pf(
             cf, module, study_name, "class", model_opts, mcd=False,
             encoded_train=encoded_train, encoded_val=encoded_val,
@@ -500,7 +533,7 @@ def fit_projections(cf, module, study_name, model_evaluations, do_enabled,
     encoded_dist_val_mean = model_evaluations["val"]["encoded_dist"].mean(dim=2)
     correct_mcd_val = model_evaluations["val"]["correct_mcd"]
 
-    if "global" in projections:
+    if "global" in projections and pf_needed:
         pf_global_dist = _load_or_fit_pf(
             cf, module, study_name, "global", model_opts, mcd=True,
             encoded_train=encoded_dist_train_mean, encoded_val=encoded_dist_val_mean,
@@ -511,7 +544,7 @@ def fit_projections(cf, module, study_name, model_evaluations, do_enabled,
             cf, model_opts, "global_distribution", logits_global_dist_val, labels_val,
         )
 
-    if projections & {"class", "class_pred"}:
+    if (projections & {"class", "class_pred"}) and pf_needed:
         pf_class_dist = _load_or_fit_pf(
             cf, module, study_name, "class", model_opts, mcd=True,
             encoded_train=encoded_dist_train_mean, encoded_val=encoded_dist_val_mean,
@@ -541,6 +574,7 @@ def fit_projections(cf, module, study_name, model_evaluations, do_enabled,
 def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool, model_opts:str='', temp_scaled:bool=False, active: set | None = None, projections: set | None = None):
     active = set(ALL_FAMILIES) if active is None else set(active)
     projections = set(ALL_PROJECTIONS) if projections is None else set(projections)
+    pf_needed = _needs_pf(active)
     def gate(mode, family):
         return mode in projections and family in active
     # Temperature 
@@ -561,7 +595,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         neural_collapse.save_params(filename='NeuralCollapse_params'+model_opts)
     # Global
     # Kernel PCA Global
-    if gate("global", "KernelPCA"):
+    if gate("global", "KPCA_RecError"):
         kpca_global = KernelPCA(module, study_name, cf, mode='global')
         kpca_global.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val, 
                                             labels_train=labels_train, only_correct=True, 
@@ -569,7 +603,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
                                             center_on='all', kernel='rbf')
         kpca_global.save_params(filename='KernelPCA_global_params'+model_opts)
     # Projection Filtering Global (only loaded if any global-mode CSF is requested).
-    if "global" in projections:
+    if "global" in projections and pf_needed:
         projection_filtering_global = ProjectionFiltering(module, study_name, cf, mode='global')
         projection_filtering_global.load_params(filename='ProjectionFiltering_global_params'+model_opts)
         logits_global_train = projection_filtering_global.get_logits(encoded_train)
@@ -612,7 +646,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         pnml_global.compute_pNML_params(encoded_global_train)
         pnml_global.save_params(filename='pNML_global_params'+model_opts)
         del pnml_global
-    if "global" in projections:
+    if "global" in projections and pf_needed:
         del encoded_global_train
         logits_global_val = projection_filtering_global.get_logits(encoded_val)
         del projection_filtering_global
@@ -635,10 +669,10 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         renyi_entropy_global.compute_entropy_params(softmax_global_val, 1-correct_val)
         renyi_entropy_global.save_params(filename='REN_global_params'+model_opts)
         del renyi_entropy_global
-    if "global" in projections:
+    if "global" in projections and pf_needed:
         del softmax_global_val
     # Kernel PCA Class
-    if gate("class", "KernelPCA"):
+    if gate("class", "KPCA_RecError"):
         kpca_class = KernelPCA(module, study_name, cf, mode='class')
         kpca_class.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val, 
                                             labels_train=labels_train, only_correct=True, 
@@ -646,7 +680,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
                                             center_on='all', kernel='rbf')
         kpca_class.save_params(filename='KernelPCA_class_params'+model_opts)
     # Projection Filtering Class (only loaded if any class- or class_pred-mode CSF is requested).
-    if "class" in projections or "class_pred" in projections:
+    if ("class" in projections or "class_pred" in projections) and pf_needed:
         projection_filtering_class = ProjectionFiltering(module, study_name, cf, mode='class')
         projection_filtering_class.load_params(filename='ProjectionFiltering_class_params'+model_opts)
         logits_class_train = projection_filtering_class.get_logits(encoded_train)
@@ -702,7 +736,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         ctm_class_pred.compute_CTM_params(encoded_class_pred_train, labels_train)
         ctm_class_pred.save_params(filename='CTM_class_pred_params'+model_opts)
         del ctm_class_pred
-    if "class" in projections or "class_pred" in projections:
+    if ("class" in projections or "class_pred" in projections) and pf_needed:
         del encoded_class_train
     #
     #
@@ -743,7 +777,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         softmax_class_val = temperature_class.get_scaled_softmax(logits_class_val) if temp_scaled else F.softmax(logits_class_val, dim=1, dtype=torch.float64)
         del logits_class_val
         del temperature_class
-    if "class" in projections or "class_pred" in projections:
+    if ("class" in projections or "class_pred" in projections) and pf_needed:
         del projection_filtering_class
     # Generalized entropy Class 
     if gate("class", "GEN"):
@@ -759,7 +793,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         del renyi_entropy_class
     if "class" in projections:
         del softmax_class_val
-    if "class" in projections or "class_pred" in projections:
+    if ("class" in projections or "class_pred" in projections) and pf_needed:
         del logits_class_train
     # Validation evaluations
     softmax_val = model_evaluations['val']['softmax_scaled'] if temp_scaled else model_evaluations['val']['softmax'] 
@@ -848,7 +882,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             neural_collapse_dist.save_params(filename='NeuralCollapse_distribution_params'+model_opts)
         # Global
         # Kernel PCA Global
-        if gate("global", "KernelPCA"):
+        if gate("global", "KPCA_RecError"):
             kpca_global_dist = KernelPCA(module, study_name, cf, mode='global')
             kpca_global_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val, 
                                                 labels_train=labels_train, only_correct=True, 
@@ -856,7 +890,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
                                                 center_on='all', kernel='rbf')
             kpca_global_dist.save_params(filename='KernelPCA_global_distribution_params'+model_opts)
         # Projection Filtering Global for distribution (only loaded if any global-mode CSF is requested).
-        if "global" in projections:
+        if "global" in projections and pf_needed:
             projection_filtering_global_dist = ProjectionFiltering(module, study_name, cf, mode='global')
             projection_filtering_global_dist.load_params(filename='ProjectionFiltering_global_distribution_params'+model_opts)
             logits_global_dist_train = projection_filtering_global_dist.get_logits(encoded_dist_train.mean(dim=2))
@@ -899,7 +933,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             pnml_global_dist.compute_pNML_params(encoded_global_dist_train)
             pnml_global_dist.save_params(filename='pNML_global_distribution_params'+model_opts)
             del pnml_global_dist
-        if "global" in projections:
+        if "global" in projections and pf_needed:
             del encoded_global_dist_train
             logits_global_dist_val = projection_filtering_global_dist.get_logits(encoded_dist_val.mean(dim=2))
             del projection_filtering_global_dist
@@ -922,10 +956,10 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             renyi_entropy_global_dist.compute_entropy_params(softmax_global_dist_val, 1-correct_mcd_val)
             renyi_entropy_global_dist.save_params(filename='REN_global_distribution_params'+model_opts)
             del renyi_entropy_global_dist
-        if "global" in projections:
+        if "global" in projections and pf_needed:
             del softmax_global_dist_val
         # Kernel PCA Class
-        if gate("class", "KernelPCA"):
+        if gate("class", "KPCA_RecError"):
             kpca_class_dist = KernelPCA(module, study_name, cf, mode='class')
             kpca_class_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val, 
                                                 labels_train=labels_train, only_correct=True, 
@@ -933,7 +967,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
                                                 center_on='all', kernel='rbf')
             kpca_class_dist.save_params(filename='KernelPCA_class_distribution_params'+model_opts)
         # Projection Filtering Class for distribution (only loaded if any class- or class_pred-mode CSF is requested).
-        if "class" in projections or "class_pred" in projections:
+        if ("class" in projections or "class_pred" in projections) and pf_needed:
             projection_filtering_class_dist = ProjectionFiltering(module, study_name, cf, mode='class')
             projection_filtering_class_dist.load_params(filename='ProjectionFiltering_class_distribution_params'+model_opts)
             logits_class_dist_train = projection_filtering_class_dist.get_logits(encoded_dist_train.mean(dim=2))
@@ -988,7 +1022,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             ctm_class_pred_dist.compute_CTM_params(encoded_class_pred_dist_train, labels_train)
             ctm_class_pred_dist.save_params(filename='CTM_class_pred_distribution_params'+model_opts)
             del ctm_class_pred_dist
-        if "class" in projections or "class_pred" in projections:
+        if ("class" in projections or "class_pred" in projections) and pf_needed:
             del encoded_class_dist_train
         # NNGuide PCA class w/predictions for distribution
         if gate("class_pred", "NNGuide"):
@@ -1027,7 +1061,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             softmax_class_dist_val = temperature_class_dist.get_scaled_softmax(logits_class_dist_val) if temp_scaled else F.softmax(logits_class_dist_val, dim=1, dtype=torch.float64)
             del temperature_class_dist
             del logits_class_dist_val
-        if "class" in projections or "class_pred" in projections:
+        if ("class" in projections or "class_pred" in projections) and pf_needed:
             del projection_filtering_class_dist
         # Generalized entropy Class for distribution
         if gate("class", "GEN"):
@@ -1043,7 +1077,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             del renyi_entropy_class_dist
         if "class" in projections:
             del softmax_class_dist_val
-        if "class" in projections or "class_pred" in projections:
+        if ("class" in projections or "class_pred" in projections) and pf_needed:
             del logits_class_dist_train
         # Validation evaluations for distribution
         softmax_dist_val = model_evaluations['val']['softmax_scaled_dist'] if temp_scaled else model_evaluations['val']['softmax_dist']
@@ -1123,6 +1157,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
 def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='', active: set | None = None, projections: set | None = None):
     active = set(ALL_FAMILIES) if active is None else set(active)
     projections = set(ALL_PROJECTIONS) if projections is None else set(projections)
+    pf_needed = _needs_pf(active)
     def gate(mode, family):
         return mode in projections and family in active
     # Pre-initialize all gated CSF instances to _MISSING_CSF. If the family
@@ -1144,11 +1179,11 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
     temperature_scale.load_params(filename='Temperature_params'+model_opts)
     # Global
     # Kernel PCA Global
-    if gate("global", "KernelPCA"):
+    if gate("global", "KPCA_RecError"):
         kpca_global = KernelPCA(module, study_name, cf, mode='global')
         kpca_global.load_params(filename='KernelPCA_global_params'+model_opts)
     # Projection Filtering Global (only loaded if any global-mode CSF is requested).
-    if "global" in projections:
+    if "global" in projections and pf_needed:
         projection_filtering_global = ProjectionFiltering(module, study_name, cf, mode='global')
         projection_filtering_global.load_params(filename='ProjectionFiltering_global_params'+model_opts)
     else:
@@ -1174,7 +1209,7 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
         pnml_global = pNML(module,study_name,cf)
         pnml_global.load_params(filename='pNML_global_params'+model_opts)
     # Temperature Global
-    if "global" in projections:
+    if "global" in projections and pf_needed:
         temperature_global = TemperatureScaling(cf)
         temperature_global.load_params(filename='Temperature_global_params'+model_opts)
     else:
@@ -1188,11 +1223,11 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
         renyi_entropy_global = EntropyScores(cf, 'renyi')
         renyi_entropy_global.load_params(filename='REN_global_params'+model_opts)
     # Kernel PCA Class
-    if gate("class", "KernelPCA"):
+    if gate("class", "KPCA_RecError"):
         kpca_class = KernelPCA(module, study_name, cf, mode='class')
         kpca_class.load_params(filename='KernelPCA_class_params'+model_opts)
     # Projection Filtering Class (only loaded if any class- or class_pred-mode CSF is requested).
-    if "class" in projections or "class_pred" in projections:
+    if ("class" in projections or "class_pred" in projections) and pf_needed:
         projection_filtering_class = ProjectionFiltering(module, study_name, cf, mode='class')
         projection_filtering_class.load_params(filename='ProjectionFiltering_class_params'+model_opts)
     else:
@@ -1352,11 +1387,11 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
         temperature_scale_dist = TemperatureScaling(cf)
         temperature_scale_dist.load_params(filename='Temperature_distribution_params'+model_opts)
         # Kernel PCA Global
-        if gate("global", "KernelPCA"):
+        if gate("global", "KPCA_RecError"):
             kpca_global_dist = KernelPCA(module, study_name, cf, mode='global')
             kpca_global_dist.load_params(filename='KernelPCA_global_distribution_params'+model_opts)
         # Projection Filtering Global for distribution (only loaded if any global-mode CSF is requested).
-        if "global" in projections:
+        if "global" in projections and pf_needed:
             projection_filtering_global_dist = ProjectionFiltering(module, study_name, cf, mode='global')
             projection_filtering_global_dist.load_params(filename='ProjectionFiltering_global_distribution_params'+model_opts)
         else:
@@ -1382,7 +1417,7 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
             pnml_global_dist = pNML(module,study_name,cf)
             pnml_global_dist.load_params(filename='pNML_global_distribution_params'+model_opts)
         # Temperature global for distribution
-        if "global" in projections:
+        if "global" in projections and pf_needed:
             temperature_global_dist = TemperatureScaling(cf)
             temperature_global_dist.load_params(filename='Temperature_global_distribution_params'+model_opts)
         else:
@@ -1396,11 +1431,11 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
             renyi_entropy_global_dist = EntropyScores(cf, 'renyi')
             renyi_entropy_global_dist.load_params(filename='REN_global_distribution_params'+model_opts)
         # Kernel PCA Class
-        if gate("class", "KernelPCA"):
+        if gate("class", "KPCA_RecError"):
             kpca_class_dist = KernelPCA(module, study_name, cf, mode='class')
             kpca_class_dist.load_params(filename='KernelPCA_class_distribution_params'+model_opts)
         # Projection Filtering Class for distribution (only loaded if any class- or class_pred-mode CSF is requested).
-        if "class" in projections or "class_pred" in projections:
+        if ("class" in projections or "class_pred" in projections) and pf_needed:
             projection_filtering_class_dist = ProjectionFiltering(module, study_name, cf, mode='class')
             projection_filtering_class_dist.load_params(filename='ProjectionFiltering_class_distribution_params'+model_opts)
         else:
@@ -1553,6 +1588,7 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
 def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:bool, model_opts:str='', n_bins:int=20, temp_scaled:bool=False, active: set | None = None, projections: set | None = None):
     active = set(ALL_FAMILIES) if active is None else set(active)
     projections = set(ALL_PROJECTIONS) if projections is None else set(projections)
+    pf_needed = _needs_pf(active)
     def gate(mode, family):
         return mode in projections and family in active
     if do_enabled:
@@ -1572,11 +1608,11 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
         logits_class_pred_distribution_mcd = None
         softmax_global_distribution_mcd = softmax_class_distribution_mcd = None
         softmax_class_pred_distribution_mcd = None
-        if "global" in projections:
+        if "global" in projections and pf_needed:
             encoded_global_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_backprojection, encoded_distribution)
             logits_global_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_logits, encoded_distribution)
             softmax_global_distribution_mcd = score_methods_do['temperature_global_dist'].get_scaled_softmax(logits_global_distribution_mcd) if temp_scaled else F.softmax(logits_global_distribution_mcd, dim=1, dtype=torch.float64)
-        if "class" in projections or "class_pred" in projections:
+        if ("class" in projections or "class_pred" in projections) and pf_needed:
             encoded_class_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_backprojection, encoded_distribution)
             logits_class_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_logits, encoded_distribution)
             if "class" in projections:
@@ -1590,11 +1626,11 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
         residuals_distribution = 1-correct_distribution
         mcd_confids = {
             # Kernel RecError global for distribution
-            'MCD-KPCA_RecError_global' : scores_funcs.mcd_function(score_methods_do['kpca_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
-            'MCD-KPCA_ERecError_global' : scores_funcs.mcd_expected_function(score_methods_do['kpca_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
+            'MCD-KPCA_RecError_global' : scores_funcs.mcd_function(score_methods_do['kpca_global_dist'].get_scores, encoded_distribution) if "global" in projections and pf_needed else None,
+            'MCD-KPCA_ERecError_global' : scores_funcs.mcd_expected_function(score_methods_do['kpca_global_dist'].get_scores, encoded_distribution) if "global" in projections and pf_needed else None,
             # RecError global for distribution
-            'MCD-PCA_RecError_global' : scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
-            'MCD-PCA_ERecError_global' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
+            'MCD-PCA_RecError_global' : scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_scores, encoded_distribution) if "global" in projections and pf_needed else None,
+            'MCD-PCA_ERecError_global' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_global_dist'].get_scores, encoded_distribution) if "global" in projections and pf_needed else None,
             # CTM global for distribution
             'MCD-CTM_global' :          score_methods_do['ctm_global_dist'].get_scores(encoded_global_distribution_mcd, similarity='weight'),
             'MCD-CTM_global_mean' :     score_methods_do['ctm_global_dist'].get_scores(encoded_global_distribution_mcd, similarity='mean'),
@@ -1602,31 +1638,31 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             'MCD-ECTM_global_mean' :    score_methods_do['ctm_global_dist'].get_scores(encoded_distribution, similarity='mean'),
             # NNGuide global for distribution
             'MCD-NNGuide_global':       score_methods_do['nnguide_global_dist'].get_scores(encoded_global_distribution_mcd),
-            'MCD-ENNGuide_global':      scores_funcs.mcd_expected_function(score_methods_do['nnguide_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
+            'MCD-ENNGuide_global':      scores_funcs.mcd_expected_function(score_methods_do['nnguide_global_dist'].get_scores, encoded_distribution) if "global" in projections and pf_needed else None,
             # fDBD global for distribution
             'MCD-fDBD_global':          score_methods_do['fDBD_global_dist'].get_scores(encoded_global_distribution_mcd, logits_eval=logits_global_distribution_mcd),
-            'MCD-EfDBD_global':         scores_funcs.mcd_expected_function(score_methods_do['fDBD_global_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution) if "global" in projections else None,
+            'MCD-EfDBD_global':         scores_funcs.mcd_expected_function(score_methods_do['fDBD_global_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution) if "global" in projections and pf_needed else None,
             # Maha Distance global for distribution
             'MCD-Maha_global':          score_methods_do['maha_distance_global_dist'].get_scores(encoded_global_distribution_mcd),
-            'MCD-EMaha_global':         scores_funcs.mcd_expected_function(score_methods_do['maha_distance_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
+            'MCD-EMaha_global':         scores_funcs.mcd_expected_function(score_methods_do['maha_distance_global_dist'].get_scores, encoded_distribution) if "global" in projections and pf_needed else None,
             # pNML global for distribution
             'MCD-pNML_global':          score_methods_do['pnml_global_dist'].get_scores(encoded_global_distribution_mcd),
-            'MCD-EpNML_global':         scores_funcs.mcd_expected_function(score_methods_do['pnml_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
+            'MCD-EpNML_global':         scores_funcs.mcd_expected_function(score_methods_do['pnml_global_dist'].get_scores, encoded_distribution) if "global" in projections and pf_needed else None,
             # Entropies global for distribution
             'MCD-GEN_global' :          score_methods_do['generalized_entropy_global_dist'].get_scores(softmax_global_distribution_mcd),
             'MCD-REN_global' :          score_methods_do['renyi_entropy_global_dist'].get_scores(softmax_global_distribution_mcd),
             # Kernel RecError global for distribution
-            'MCD-KPCA_RecError_class' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution) if "class" in projections else None,
-            'MCD-KPCA_ERecError_class' : scores_funcs.mcd_expected_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution) if "class" in projections else None,
+            'MCD-KPCA_RecError_class' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution) if "class" in projections and pf_needed else None,
+            'MCD-KPCA_ERecError_class' : scores_funcs.mcd_expected_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution) if "class" in projections and pf_needed else None,
             # RecError class for distribution
-            'MCD-PCA_RecError_class' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution) if "class" in projections else None,
-            'MCD-PCA_ERecError_class' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution) if "class" in projections else None,
+            'MCD-PCA_RecError_class' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution) if "class" in projections and pf_needed else None,
+            'MCD-PCA_ERecError_class' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution) if "class" in projections and pf_needed else None,
             # Kernel RecError global for distribution
-            'MCD-KPCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, predictions_eval=preds_distribution) if "class_pred" in projections else None,
-            'MCD-KPCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices) if "class_pred" in projections else None,
+            'MCD-KPCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, predictions_eval=preds_distribution) if "class_pred" in projections and pf_needed else None,
+            'MCD-KPCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices) if "class_pred" in projections and pf_needed else None,
             # RecError class pred for distribution
-            'MCD-PCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, X_back_projected_eval=encoded_class_pred_distribution_mcd) if "class_pred" in projections else None,
-            'MCD-PCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices) if "class_pred" in projections else None,
+            'MCD-PCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, X_back_projected_eval=encoded_class_pred_distribution_mcd) if "class_pred" in projections and pf_needed else None,
+            'MCD-PCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices) if "class_pred" in projections and pf_needed else None,
             # CTM class for distribution
             'MCD-CTM_class' :           score_methods_do['ctm_class_dist'].get_scores(encoded_class_distribution_mcd, similarity='weight'),
             'MCD-CTM_class_mean' :      score_methods_do['ctm_class_dist'].get_scores(encoded_class_distribution_mcd, similarity='mean'),
@@ -1637,16 +1673,16 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             'MCD-ECTM_class_pred_mean': score_methods_do['ctm_class_pred_dist'].get_scores( encoded_distribution, similarity='mean'),   
             # NNGuide class pred for distribution
             'MCD-NNGuide_class_pred':   score_methods_do['nnguide_class_pred_dist'].get_scores(encoded_class_pred_distribution_mcd),
-            'MCD-ENNGuide_class_pred':  scores_funcs.mcd_expected_function(score_methods_do['nnguide_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections else None,
+            'MCD-ENNGuide_class_pred':  scores_funcs.mcd_expected_function(score_methods_do['nnguide_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections and pf_needed else None,
             # fDBD class pred for distribution
             'MCD-fDBD_class_pred':      score_methods_do['fDBD_class_pred_dist'].get_scores(encoded_class_pred_distribution_mcd, logits_eval=logits_class_distribution_mcd),
-            'MCD-EfDBD_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['fDBD_class_pred_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution) if "class_pred" in projections else None,
+            'MCD-EfDBD_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['fDBD_class_pred_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution) if "class_pred" in projections and pf_needed else None,
             # Maha class pred for distribution
             'MCD-Maha_class_pred':      score_methods_do['maha_distance_class_pred_dist'].get_scores(encoded_class_pred_distribution_mcd),
-            'MCD-EMaha_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['maha_distance_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections else None,
+            'MCD-EMaha_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['maha_distance_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections and pf_needed else None,
             # pNML class pred for distribution
             'MCD-pNML_class_pred':      score_methods_do['pnml_class_pred_dist'].get_scores(encoded_class_pred_distribution_mcd),
-            'MCD-EpNML_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['pnml_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections else None,
+            'MCD-EpNML_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['pnml_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections and pf_needed else None,
             # Entropies class for distribution
             'MCD-GEN_class' :           score_methods_do['generalized_entropy_class_dist'].get_scores(softmax_class_distribution_mcd),
             'MCD-REN_class' :           score_methods_do['renyi_entropy_class_dist'].get_scores(softmax_class_distribution_mcd),
@@ -1700,30 +1736,30 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             'MCD-EGE' :                 scores_funcs.mcd_expected_function(scores_funcs.guessing_entropy, softmax_distribution),
             'MCD-EEnergy' :             scores_funcs.mcd_expected_function(scores_funcs.energy, logits_distribution, temperature=score_methods_do['temperature_scale_dist'].temperature),    
             # Scores that do not requiere preprocessing using global projection filtering
-            'MCD-MSR_global' :         scores_funcs.maximum_softmax_response(softmax_global_distribution_mcd) if "global" in projections else None,
-            'MCD-PE_global' :          scores_funcs.predictive_entropy(softmax_global_distribution_mcd) if "global" in projections else None,
-            'MCD-MLS_global' :         scores_funcs.maximum_logit_score(logits_global_distribution_mcd, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections else None,
-            'MCD-PCE_global' :         scores_funcs.predictive_collision_entropy(softmax_global_distribution_mcd) if "global" in projections else None,
-            'MCD-GE_global' :          scores_funcs.guessing_entropy(softmax_global_distribution_mcd) if "global" in projections else None,
-            'MCD-Energy_global' :      scores_funcs.energy(logits_global_distribution_mcd, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections else None,
+            'MCD-MSR_global' :         scores_funcs.maximum_softmax_response(softmax_global_distribution_mcd) if "global" in projections and pf_needed else None,
+            'MCD-PE_global' :          scores_funcs.predictive_entropy(softmax_global_distribution_mcd) if "global" in projections and pf_needed else None,
+            'MCD-MLS_global' :         scores_funcs.maximum_logit_score(logits_global_distribution_mcd, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections and pf_needed else None,
+            'MCD-PCE_global' :         scores_funcs.predictive_collision_entropy(softmax_global_distribution_mcd) if "global" in projections and pf_needed else None,
+            'MCD-GE_global' :          scores_funcs.guessing_entropy(softmax_global_distribution_mcd) if "global" in projections and pf_needed else None,
+            'MCD-Energy_global' :      scores_funcs.energy(logits_global_distribution_mcd, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections and pf_needed else None,
             # Scores that do not requiere preprocessing using class projection filtering
-            'MCD-MSR_class' :         scores_funcs.maximum_softmax_response(softmax_class_distribution_mcd) if "class" in projections else None,
-            'MCD-PE_class' :          scores_funcs.predictive_entropy(softmax_class_distribution_mcd) if "class" in projections else None,
-            'MCD-MLS_class' :         scores_funcs.maximum_logit_score(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature) if "class" in projections else None,
-            'MCD-PCE_class' :         scores_funcs.predictive_collision_entropy(softmax_class_distribution_mcd) if "class" in projections else None,
-            'MCD-GE_class' :          scores_funcs.guessing_entropy(softmax_class_distribution_mcd) if "class" in projections else None,
-            'MCD-Energy_class' :      scores_funcs.energy(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature) if "class" in projections else None,
+            'MCD-MSR_class' :         scores_funcs.maximum_softmax_response(softmax_class_distribution_mcd) if "class" in projections and pf_needed else None,
+            'MCD-PE_class' :          scores_funcs.predictive_entropy(softmax_class_distribution_mcd) if "class" in projections and pf_needed else None,
+            'MCD-MLS_class' :         scores_funcs.maximum_logit_score(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature) if "class" in projections and pf_needed else None,
+            'MCD-PCE_class' :         scores_funcs.predictive_collision_entropy(softmax_class_distribution_mcd) if "class" in projections and pf_needed else None,
+            'MCD-GE_class' :          scores_funcs.guessing_entropy(softmax_class_distribution_mcd) if "class" in projections and pf_needed else None,
+            'MCD-Energy_class' :      scores_funcs.energy(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature) if "class" in projections and pf_needed else None,
             # Scores that do not requiere preprocessing using class projection filtering
-            'MCD-MSR_class_pred' :         scores_funcs.maximum_softmax_response(softmax_class_pred_distribution_mcd) if "class_pred" in projections else None,
-            'MCD-PE_class_pred' :          scores_funcs.predictive_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections else None,
-            'MCD-MLS_class_pred' :         scores_funcs.maximum_logit_score(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections else None,
-            'MCD-PCE_class_pred' :         scores_funcs.predictive_collision_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections else None,
-            'MCD-GE_class_pred' :          scores_funcs.guessing_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections else None,
-            'MCD-Energy_class_pred' :      scores_funcs.energy(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections else None,
+            'MCD-MSR_class_pred' :         scores_funcs.maximum_softmax_response(softmax_class_pred_distribution_mcd) if "class_pred" in projections and pf_needed else None,
+            'MCD-PE_class_pred' :          scores_funcs.predictive_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections and pf_needed else None,
+            'MCD-MLS_class_pred' :         scores_funcs.maximum_logit_score(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections and pf_needed else None,
+            'MCD-PCE_class_pred' :         scores_funcs.predictive_collision_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections and pf_needed else None,
+            'MCD-GE_class_pred' :          scores_funcs.guessing_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections and pf_needed else None,
+            'MCD-Energy_class_pred' :      scores_funcs.energy(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections and pf_needed else None,
             #             
             'MCD-GradNorm' :            scores_funcs.mcd_function(gradnorm_score.get_scores, encoded_distribution, use_cuda=use_cuda, temperature=score_methods_do['temperature_scale_dist'].temperature),
-            'MCD-GradNorm_global' :     gradnorm_score.get_scores(encoded_global_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections else None,
-            'MCD-GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections else None,
+            'MCD-GradNorm_global' :     gradnorm_score.get_scores(encoded_global_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections and pf_needed else None,
+            'MCD-GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections and pf_needed else None,
             #
             'MCD-MI' :          scores_funcs.mcd_mutual_information(softmax_distribution),
             'MCD-Confidence' :  confid_distribution.mean(dim=1),
@@ -1776,11 +1812,11 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
     encoded_global = encoded_class = encoded_class_pred = None
     logits_global = logits_class = logits_class_pred = None
     softmax_global = softmax_class = softmax_class_pred = None
-    if "global" in projections:
+    if "global" in projections and pf_needed:
         encoded_global = score_methods['projection_filtering_global'].get_backprojection(encoded)
         logits_global = score_methods['projection_filtering_global'].get_logits(encoded)
         softmax_global = score_methods['temperature_global'].get_scaled_softmax(logits_global) if temp_scaled else F.softmax(logits_global, dim=1, dtype=torch.float64)
-    if "class" in projections or "class_pred" in projections:
+    if ("class" in projections or "class_pred" in projections) and pf_needed:
         encoded_class = score_methods['projection_filtering_class'].get_backprojection(encoded)
         logits_class = score_methods['projection_filtering_class'].get_logits(encoded)
         if "class" in projections:
@@ -1868,29 +1904,29 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
                 'GE' :                  scores_funcs.guessing_entropy(softmax),
                 'Energy' :              scores_funcs.energy(logits, temperature=score_methods['temperature_scale'].temperature),
                 # Scores that do not requiere preprocessing using global projection filtering
-                'MSR_global' :          scores_funcs.maximum_softmax_response(softmax_global) if "global" in projections else None,
-                'PE_global' :           scores_funcs.predictive_entropy(softmax_global) if "global" in projections else None,
-                'MLS_global' :          scores_funcs.maximum_logit_score(logits_global, temperature=score_methods['temperature_global'].temperature) if "global" in projections else None,
-                'PCE_global' :          scores_funcs.predictive_collision_entropy(softmax_global) if "global" in projections else None,
-                'GE_global' :           scores_funcs.guessing_entropy(softmax_global) if "global" in projections else None,
-                'Energy_global' :       scores_funcs.energy(logits_global, temperature=score_methods['temperature_global'].temperature) if "global" in projections else None,
+                'MSR_global' :          scores_funcs.maximum_softmax_response(softmax_global) if "global" in projections and pf_needed else None,
+                'PE_global' :           scores_funcs.predictive_entropy(softmax_global) if "global" in projections and pf_needed else None,
+                'MLS_global' :          scores_funcs.maximum_logit_score(logits_global, temperature=score_methods['temperature_global'].temperature) if "global" in projections and pf_needed else None,
+                'PCE_global' :          scores_funcs.predictive_collision_entropy(softmax_global) if "global" in projections and pf_needed else None,
+                'GE_global' :           scores_funcs.guessing_entropy(softmax_global) if "global" in projections and pf_needed else None,
+                'Energy_global' :       scores_funcs.energy(logits_global, temperature=score_methods['temperature_global'].temperature) if "global" in projections and pf_needed else None,
                 # Scores that do not requiere preprocessing using class projection filtering
-                'MSR_class' :           scores_funcs.maximum_softmax_response(softmax_class) if "class" in projections else None,
-                'MSR_class_pred' :      scores_funcs.maximum_softmax_response(softmax_class_pred) if "class_pred" in projections else None,
-                'PE_class' :            scores_funcs.predictive_entropy(softmax_class) if "class" in projections else None,
-                'PE_class_pred' :       scores_funcs.predictive_entropy(softmax_class_pred) if "class_pred" in projections else None,
-                'MLS_class' :           scores_funcs.maximum_logit_score(logits_class, temperature=score_methods['temperature_class'].temperature) if "class" in projections else None,
-                'MLS_class_pred' :      scores_funcs.maximum_logit_score(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature) if "class_pred" in projections else None,
-                'PCE_class' :           scores_funcs.predictive_collision_entropy(softmax_class) if "class" in projections else None,
-                'PCE_class_pred' :      scores_funcs.predictive_collision_entropy(softmax_class_pred) if "class_pred" in projections else None,
-                'GE_class' :            scores_funcs.guessing_entropy(softmax_class) if "class" in projections else None,
-                'GE_class_pred' :       scores_funcs.guessing_entropy(softmax_class_pred) if "class_pred" in projections else None,
-                'Energy_class' :        scores_funcs.energy(logits_class, temperature=score_methods['temperature_class'].temperature) if "class" in projections else None,
-                'Energy_class_pred' :   scores_funcs.energy(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature) if "class_pred" in projections else None,
+                'MSR_class' :           scores_funcs.maximum_softmax_response(softmax_class) if "class" in projections and pf_needed else None,
+                'MSR_class_pred' :      scores_funcs.maximum_softmax_response(softmax_class_pred) if "class_pred" in projections and pf_needed else None,
+                'PE_class' :            scores_funcs.predictive_entropy(softmax_class) if "class" in projections and pf_needed else None,
+                'PE_class_pred' :       scores_funcs.predictive_entropy(softmax_class_pred) if "class_pred" in projections and pf_needed else None,
+                'MLS_class' :           scores_funcs.maximum_logit_score(logits_class, temperature=score_methods['temperature_class'].temperature) if "class" in projections and pf_needed else None,
+                'MLS_class_pred' :      scores_funcs.maximum_logit_score(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature) if "class_pred" in projections and pf_needed else None,
+                'PCE_class' :           scores_funcs.predictive_collision_entropy(softmax_class) if "class" in projections and pf_needed else None,
+                'PCE_class_pred' :      scores_funcs.predictive_collision_entropy(softmax_class_pred) if "class_pred" in projections and pf_needed else None,
+                'GE_class' :            scores_funcs.guessing_entropy(softmax_class) if "class" in projections and pf_needed else None,
+                'GE_class_pred' :       scores_funcs.guessing_entropy(softmax_class_pred) if "class_pred" in projections and pf_needed else None,
+                'Energy_class' :        scores_funcs.energy(logits_class, temperature=score_methods['temperature_class'].temperature) if "class" in projections and pf_needed else None,
+                'Energy_class_pred' :   scores_funcs.energy(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature) if "class_pred" in projections and pf_needed else None,
                 # 
                 'GradNorm' :            gradnorm_score.get_scores(encoded, temperature=score_methods['temperature_scale'].temperature, use_cuda=use_cuda),
-                'GradNorm_global' :     gradnorm_score.get_scores(encoded_global, temperature=score_methods['temperature_global'].temperature, use_cuda=use_cuda) if "global" in projections else None,
-                'GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred, temperature=score_methods['temperature_class_pred'].temperature, use_cuda=use_cuda) if "class_pred" in projections else None,    
+                'GradNorm_global' :     gradnorm_score.get_scores(encoded_global, temperature=score_methods['temperature_global'].temperature, use_cuda=use_cuda) if "global" in projections and pf_needed else None,
+                'GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred, temperature=score_methods['temperature_class_pred'].temperature, use_cuda=use_cuda) if "class_pred" in projections and pf_needed else None,    
                 'Confidence' :          confid,
     }
     # Filter confids to active families only (the rest are preserved

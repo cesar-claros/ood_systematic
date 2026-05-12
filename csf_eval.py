@@ -25,9 +25,9 @@ def main():
     parser.add_argument('--test_mode', required=True, type=str, help="Sets considered for evaluation", default='None', choices=['val','iid_test','iid_test_corruptions','ood_sncs_c100','ood_sncs_c10','ood_nsncs_svhn','ood_nsncs_ti','ood_nsncs_lsun_cropped','ood_nsncs_lsun_resize','ood_nsncs_isun','ood_nsncs_textures','ood_nsncs_places365'])
     csf_group = parser.add_mutually_exclusive_group()
     csf_group.add_argument('--csfs', type=str, default=None,
-                           help="Comma-separated CSF families to evaluate (default: all). E.g. 'KernelPCA,Mahalanobis'.")
+                           help="Comma-separated CSF families to evaluate (default: all). E.g. 'KPCA_RecError,Mahalanobis'.")
     csf_group.add_argument('--skip-csfs', dest='skip_csfs', type=str, default=None,
-                           help="Comma-separated CSF families to skip (default: none). E.g. 'KernelPCA'.")
+                           help="Comma-separated CSF families to skip (default: none). E.g. 'KPCA_RecError'.")
     parser.add_argument('--projections', type=str, default='plain,global,class,class_pred',
                         help=("Comma-separated projection modes to evaluate "
                               "(default: 'plain,global,class,class_pred'). Use 'none' to skip all."))

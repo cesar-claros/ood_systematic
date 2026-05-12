@@ -24,9 +24,9 @@ def main():
     parser.add_argument('--temperature_scale', required=True, action=argparse.BooleanOptionalAction, help="Carry operations out using temperature scaling")
     csf_group = parser.add_mutually_exclusive_group()
     csf_group.add_argument('--csfs', type=str, default=None,
-                           help="Comma-separated CSF families to fit (default: all). E.g. 'KernelPCA,Mahalanobis'.")
+                           help="Comma-separated CSF families to fit (default: all). E.g. 'KPCA_RecError,Mahalanobis'.")
     csf_group.add_argument('--skip-csfs', dest='skip_csfs', type=str, default=None,
-                           help="Comma-separated CSF families to skip (default: none). E.g. 'KernelPCA'.")
+                           help="Comma-separated CSF families to skip (default: none). E.g. 'KPCA_RecError'.")
     parser.add_argument('--projections', type=str, default='plain,global,class,class_pred',
                         help=("Comma-separated projection modes to fit "
                               "(default: 'plain,global,class,class_pred'). 'plain' = CSFs operating "
@@ -173,13 +173,13 @@ def main():
     if health_warnings:
         logger.warning(
             f"[model-health] Model {path} appears degenerate. "
-            f"Kernel-based CSFs (KernelPCA, NeCo, ...) and other feature-space "
+            f"Kernel-based CSFs (KPCA_RecError, NeCo, ...) and other feature-space "
             f"CSFs may fail; downstream metrics will be unreliable."
         )
 
     # Fit (or load) ProjectionFiltering and projection-specific Temperature variants.
     csf_pipeline.fit_projections(cf, module, study_name, model_evaluations, do_enabled,
-                                 model_opts, temperature_scale_opt, projections)
+                                 model_opts, temperature_scale_opt, projections, active=active)
     # Compute score methods
     csf_pipeline.run_score_methods(cf, module, study_name, model_evaluations, do_enabled, model_opts=model_opts, temp_scaled=temperature_scale_opt, active=active, projections=projections)
 
