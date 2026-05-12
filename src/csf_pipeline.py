@@ -1485,27 +1485,38 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
         softmax_distribution = model_evaluations['softmax_scaled_dist'] if temp_scaled else model_evaluations['softmax_dist']
         preds_distribution = softmax_distribution.mean(dim=2).max(dim=1).indices
         #
-        encoded_global_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_backprojection, encoded_distribution)  
-        encoded_class_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_backprojection, encoded_distribution)
-        # encoded_class_pred_distribution_mcd = torch.vstack([encoded_class_distribution_mcd[preds_distribution[t]][t] for t in range(encoded_distribution.shape[0])])  
-        encoded_class_pred_distribution_mcd, logits_class_pred_distribution_mcd = score_methods_do['projection_filtering_class_dist'].get_combined_backprojection(encoded_class_distribution_mcd, combine='prediction', preds=preds_distribution)
-        # 
-        logits_global_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_logits, encoded_distribution)
-        logits_class_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_logits, encoded_distribution)
-        softmax_global_distribution_mcd = score_methods_do['temperature_global_dist'].get_scaled_softmax(logits_global_distribution_mcd) if temp_scaled else F.softmax(logits_global_distribution_mcd, dim=1, dtype=torch.float64)
-        softmax_class_distribution_mcd = score_methods_do['temperature_class_dist'].get_scaled_softmax(logits_class_distribution_mcd) if temp_scaled else F.softmax(logits_class_distribution_mcd, dim=1, dtype=torch.float64)
-        softmax_class_pred_distribution_mcd = score_methods_do['temperature_class_pred_dist'].get_scaled_softmax(logits_class_pred_distribution_mcd) if temp_scaled else F.softmax(logits_class_pred_distribution_mcd, dim=1, dtype=torch.float64)
+        # Pre-initialize MCD projection-derived tensors; populate only for the
+        # requested projection modes. Confids entries that use them are gated
+        # by mode below.
+        encoded_global_distribution_mcd = encoded_class_distribution_mcd = None
+        encoded_class_pred_distribution_mcd = None
+        logits_global_distribution_mcd = logits_class_distribution_mcd = None
+        logits_class_pred_distribution_mcd = None
+        softmax_global_distribution_mcd = softmax_class_distribution_mcd = None
+        softmax_class_pred_distribution_mcd = None
+        if "global" in projections:
+            encoded_global_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_backprojection, encoded_distribution)
+            logits_global_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_logits, encoded_distribution)
+            softmax_global_distribution_mcd = score_methods_do['temperature_global_dist'].get_scaled_softmax(logits_global_distribution_mcd) if temp_scaled else F.softmax(logits_global_distribution_mcd, dim=1, dtype=torch.float64)
+        if "class" in projections or "class_pred" in projections:
+            encoded_class_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_backprojection, encoded_distribution)
+            logits_class_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_logits, encoded_distribution)
+            if "class" in projections:
+                softmax_class_distribution_mcd = score_methods_do['temperature_class_dist'].get_scaled_softmax(logits_class_distribution_mcd) if temp_scaled else F.softmax(logits_class_distribution_mcd, dim=1, dtype=torch.float64)
+            if "class_pred" in projections:
+                encoded_class_pred_distribution_mcd, logits_class_pred_distribution_mcd = score_methods_do['projection_filtering_class_dist'].get_combined_backprojection(encoded_class_distribution_mcd, combine='prediction', preds=preds_distribution)
+                softmax_class_pred_distribution_mcd = score_methods_do['temperature_class_pred_dist'].get_scaled_softmax(logits_class_pred_distribution_mcd) if temp_scaled else F.softmax(logits_class_pred_distribution_mcd, dim=1, dtype=torch.float64)
         # 
         confid_distribution = model_evaluations['confid_dist']
         correct_distribution = model_evaluations['correct_mcd']
         residuals_distribution = 1-correct_distribution
         mcd_confids = {
             # Kernel RecError global for distribution
-            'MCD-KPCA_RecError_global' : scores_funcs.mcd_function(score_methods_do['kpca_global_dist'].get_scores, encoded_distribution),
-            'MCD-KPCA_ERecError_global' : scores_funcs.mcd_expected_function(score_methods_do['kpca_global_dist'].get_scores, encoded_distribution),
+            'MCD-KPCA_RecError_global' : scores_funcs.mcd_function(score_methods_do['kpca_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
+            'MCD-KPCA_ERecError_global' : scores_funcs.mcd_expected_function(score_methods_do['kpca_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
             # RecError global for distribution
-            'MCD-PCA_RecError_global' : scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_scores, encoded_distribution),
-            'MCD-PCA_ERecError_global' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_global_dist'].get_scores, encoded_distribution),
+            'MCD-PCA_RecError_global' : scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
+            'MCD-PCA_ERecError_global' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
             # CTM global for distribution
             'MCD-CTM_global' :          score_methods_do['ctm_global_dist'].get_scores(encoded_global_distribution_mcd, similarity='weight'),
             'MCD-CTM_global_mean' :     score_methods_do['ctm_global_dist'].get_scores(encoded_global_distribution_mcd, similarity='mean'),
@@ -1513,31 +1524,31 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             'MCD-ECTM_global_mean' :    score_methods_do['ctm_global_dist'].get_scores(encoded_distribution, similarity='mean'),
             # NNGuide global for distribution
             'MCD-NNGuide_global':       score_methods_do['nnguide_global_dist'].get_scores(encoded_global_distribution_mcd),
-            'MCD-ENNGuide_global':      scores_funcs.mcd_expected_function(score_methods_do['nnguide_global_dist'].get_scores, encoded_distribution),
+            'MCD-ENNGuide_global':      scores_funcs.mcd_expected_function(score_methods_do['nnguide_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
             # fDBD global for distribution
             'MCD-fDBD_global':          score_methods_do['fDBD_global_dist'].get_scores(encoded_global_distribution_mcd, logits_eval=logits_global_distribution_mcd),
-            'MCD-EfDBD_global':         scores_funcs.mcd_expected_function(score_methods_do['fDBD_global_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution),
+            'MCD-EfDBD_global':         scores_funcs.mcd_expected_function(score_methods_do['fDBD_global_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution) if "global" in projections else None,
             # Maha Distance global for distribution
             'MCD-Maha_global':          score_methods_do['maha_distance_global_dist'].get_scores(encoded_global_distribution_mcd),
-            'MCD-EMaha_global':         scores_funcs.mcd_expected_function(score_methods_do['maha_distance_global_dist'].get_scores, encoded_distribution),
+            'MCD-EMaha_global':         scores_funcs.mcd_expected_function(score_methods_do['maha_distance_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
             # pNML global for distribution
             'MCD-pNML_global':          score_methods_do['pnml_global_dist'].get_scores(encoded_global_distribution_mcd),
-            'MCD-EpNML_global':         scores_funcs.mcd_expected_function(score_methods_do['pnml_global_dist'].get_scores, encoded_distribution),
+            'MCD-EpNML_global':         scores_funcs.mcd_expected_function(score_methods_do['pnml_global_dist'].get_scores, encoded_distribution) if "global" in projections else None,
             # Entropies global for distribution
             'MCD-GEN_global' :          score_methods_do['generalized_entropy_global_dist'].get_scores(softmax_global_distribution_mcd),
             'MCD-REN_global' :          score_methods_do['renyi_entropy_global_dist'].get_scores(softmax_global_distribution_mcd),
             # Kernel RecError global for distribution
-            'MCD-KPCA_RecError_class' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution),
-            'MCD-KPCA_ERecError_class' : scores_funcs.mcd_expected_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution),
+            'MCD-KPCA_RecError_class' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution) if "class" in projections else None,
+            'MCD-KPCA_ERecError_class' : scores_funcs.mcd_expected_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution) if "class" in projections else None,
             # RecError class for distribution
-            'MCD-PCA_RecError_class' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution),
-            'MCD-PCA_ERecError_class' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution),
+            'MCD-PCA_RecError_class' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution) if "class" in projections else None,
+            'MCD-PCA_ERecError_class' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution) if "class" in projections else None,
             # Kernel RecError global for distribution
-            'MCD-KPCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, predictions_eval=preds_distribution),
-            'MCD-KPCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices),
+            'MCD-KPCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, predictions_eval=preds_distribution) if "class_pred" in projections else None,
+            'MCD-KPCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices) if "class_pred" in projections else None,
             # RecError class pred for distribution
-            'MCD-PCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, X_back_projected_eval=encoded_class_pred_distribution_mcd),
-            'MCD-PCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices),
+            'MCD-PCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, X_back_projected_eval=encoded_class_pred_distribution_mcd) if "class_pred" in projections else None,
+            'MCD-PCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices) if "class_pred" in projections else None,
             # CTM class for distribution
             'MCD-CTM_class' :           score_methods_do['ctm_class_dist'].get_scores(encoded_class_distribution_mcd, similarity='weight'),
             'MCD-CTM_class_mean' :      score_methods_do['ctm_class_dist'].get_scores(encoded_class_distribution_mcd, similarity='mean'),
@@ -1548,16 +1559,16 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             'MCD-ECTM_class_pred_mean': score_methods_do['ctm_class_pred_dist'].get_scores( encoded_distribution, similarity='mean'),   
             # NNGuide class pred for distribution
             'MCD-NNGuide_class_pred':   score_methods_do['nnguide_class_pred_dist'].get_scores(encoded_class_pred_distribution_mcd),
-            'MCD-ENNGuide_class_pred':  scores_funcs.mcd_expected_function(score_methods_do['nnguide_class_pred_dist'].get_scores, encoded_distribution),
+            'MCD-ENNGuide_class_pred':  scores_funcs.mcd_expected_function(score_methods_do['nnguide_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections else None,
             # fDBD class pred for distribution
             'MCD-fDBD_class_pred':      score_methods_do['fDBD_class_pred_dist'].get_scores(encoded_class_pred_distribution_mcd, logits_eval=logits_class_distribution_mcd),
-            'MCD-EfDBD_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['fDBD_class_pred_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution),
+            'MCD-EfDBD_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['fDBD_class_pred_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution) if "class_pred" in projections else None,
             # Maha class pred for distribution
             'MCD-Maha_class_pred':      score_methods_do['maha_distance_class_pred_dist'].get_scores(encoded_class_pred_distribution_mcd),
-            'MCD-EMaha_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['maha_distance_class_pred_dist'].get_scores, encoded_distribution),
+            'MCD-EMaha_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['maha_distance_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections else None,
             # pNML class pred for distribution
             'MCD-pNML_class_pred':      score_methods_do['pnml_class_pred_dist'].get_scores(encoded_class_pred_distribution_mcd),
-            'MCD-EpNML_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['pnml_class_pred_dist'].get_scores, encoded_distribution),
+            'MCD-EpNML_class_pred':     scores_funcs.mcd_expected_function(score_methods_do['pnml_class_pred_dist'].get_scores, encoded_distribution) if "class_pred" in projections else None,
             # Entropies class for distribution
             'MCD-GEN_class' :           score_methods_do['generalized_entropy_class_dist'].get_scores(softmax_class_distribution_mcd),
             'MCD-REN_class' :           score_methods_do['renyi_entropy_class_dist'].get_scores(softmax_class_distribution_mcd),
@@ -1611,30 +1622,30 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             'MCD-EGE' :                 scores_funcs.mcd_expected_function(scores_funcs.guessing_entropy, softmax_distribution),
             'MCD-EEnergy' :             scores_funcs.mcd_expected_function(scores_funcs.energy, logits_distribution, temperature=score_methods_do['temperature_scale_dist'].temperature),    
             # Scores that do not requiere preprocessing using global projection filtering
-            'MCD-MSR_global' :         scores_funcs.maximum_softmax_response(softmax_global_distribution_mcd),
-            'MCD-PE_global' :          scores_funcs.predictive_entropy(softmax_global_distribution_mcd),
-            'MCD-MLS_global' :         scores_funcs.maximum_logit_score(logits_global_distribution_mcd, temperature=score_methods_do['temperature_global_dist'].temperature),
-            'MCD-PCE_global' :         scores_funcs.predictive_collision_entropy(softmax_global_distribution_mcd),
-            'MCD-GE_global' :          scores_funcs.guessing_entropy(softmax_global_distribution_mcd),
-            'MCD-Energy_global' :      scores_funcs.energy(logits_global_distribution_mcd, temperature=score_methods_do['temperature_global_dist'].temperature),
+            'MCD-MSR_global' :         scores_funcs.maximum_softmax_response(softmax_global_distribution_mcd) if "global" in projections else None,
+            'MCD-PE_global' :          scores_funcs.predictive_entropy(softmax_global_distribution_mcd) if "global" in projections else None,
+            'MCD-MLS_global' :         scores_funcs.maximum_logit_score(logits_global_distribution_mcd, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections else None,
+            'MCD-PCE_global' :         scores_funcs.predictive_collision_entropy(softmax_global_distribution_mcd) if "global" in projections else None,
+            'MCD-GE_global' :          scores_funcs.guessing_entropy(softmax_global_distribution_mcd) if "global" in projections else None,
+            'MCD-Energy_global' :      scores_funcs.energy(logits_global_distribution_mcd, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections else None,
             # Scores that do not requiere preprocessing using class projection filtering
-            'MCD-MSR_class' :         scores_funcs.maximum_softmax_response(softmax_class_distribution_mcd),
-            'MCD-PE_class' :          scores_funcs.predictive_entropy(softmax_class_distribution_mcd),
-            'MCD-MLS_class' :         scores_funcs.maximum_logit_score(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature),
-            'MCD-PCE_class' :         scores_funcs.predictive_collision_entropy(softmax_class_distribution_mcd),
-            'MCD-GE_class' :          scores_funcs.guessing_entropy(softmax_class_distribution_mcd),
-            'MCD-Energy_class' :      scores_funcs.energy(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature),
+            'MCD-MSR_class' :         scores_funcs.maximum_softmax_response(softmax_class_distribution_mcd) if "class" in projections else None,
+            'MCD-PE_class' :          scores_funcs.predictive_entropy(softmax_class_distribution_mcd) if "class" in projections else None,
+            'MCD-MLS_class' :         scores_funcs.maximum_logit_score(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature) if "class" in projections else None,
+            'MCD-PCE_class' :         scores_funcs.predictive_collision_entropy(softmax_class_distribution_mcd) if "class" in projections else None,
+            'MCD-GE_class' :          scores_funcs.guessing_entropy(softmax_class_distribution_mcd) if "class" in projections else None,
+            'MCD-Energy_class' :      scores_funcs.energy(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature) if "class" in projections else None,
             # Scores that do not requiere preprocessing using class projection filtering
-            'MCD-MSR_class_pred' :         scores_funcs.maximum_softmax_response(softmax_class_pred_distribution_mcd),
-            'MCD-PE_class_pred' :          scores_funcs.predictive_entropy(softmax_class_pred_distribution_mcd),
-            'MCD-MLS_class_pred' :         scores_funcs.maximum_logit_score(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature),
-            'MCD-PCE_class_pred' :         scores_funcs.predictive_collision_entropy(softmax_class_pred_distribution_mcd),
-            'MCD-GE_class_pred' :          scores_funcs.guessing_entropy(softmax_class_pred_distribution_mcd),
-            'MCD-Energy_class_pred' :      scores_funcs.energy(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature),
+            'MCD-MSR_class_pred' :         scores_funcs.maximum_softmax_response(softmax_class_pred_distribution_mcd) if "class_pred" in projections else None,
+            'MCD-PE_class_pred' :          scores_funcs.predictive_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections else None,
+            'MCD-MLS_class_pred' :         scores_funcs.maximum_logit_score(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections else None,
+            'MCD-PCE_class_pred' :         scores_funcs.predictive_collision_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections else None,
+            'MCD-GE_class_pred' :          scores_funcs.guessing_entropy(softmax_class_pred_distribution_mcd) if "class_pred" in projections else None,
+            'MCD-Energy_class_pred' :      scores_funcs.energy(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections else None,
             #             
             'MCD-GradNorm' :            scores_funcs.mcd_function(gradnorm_score.get_scores, encoded_distribution, use_cuda=use_cuda, temperature=score_methods_do['temperature_scale_dist'].temperature),
-            'MCD-GradNorm_global' :     gradnorm_score.get_scores(encoded_global_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_global_dist'].temperature),
-            'MCD-GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_class_pred_dist'].temperature),
+            'MCD-GradNorm_global' :     gradnorm_score.get_scores(encoded_global_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_global_dist'].temperature) if "global" in projections else None,
+            'MCD-GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_class_pred_dist'].temperature) if "class_pred" in projections else None,
             #
             'MCD-MI' :          scores_funcs.mcd_mutual_information(softmax_distribution),
             'MCD-Confidence' :  confid_distribution.mean(dim=1),
@@ -1679,18 +1690,26 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
     encoded = model_evaluations['encoded']
     logits = model_evaluations['logits']
     softmax = model_evaluations['softmax_scaled'] if temp_scaled else model_evaluations['softmax']
-    preds = softmax.max(dim=1).indices 
-    #
-    encoded_global = score_methods['projection_filtering_global'].get_backprojection(encoded)
-    encoded_class = score_methods['projection_filtering_class'].get_backprojection(encoded)
-    # encoded_class_pred = torch.vstack([encoded_class[preds[t]][t] for t in range(encoded.shape[0])])
-    encoded_class_pred, logits_class_pred = score_methods['projection_filtering_class'].get_combined_backprojection(encoded_class, combine='prediction', preds=preds)
-    logits_global = score_methods['projection_filtering_global'].get_logits(encoded)
-    logits_class = score_methods['projection_filtering_class'].get_logits(encoded)
-    softmax_global = score_methods['temperature_global'].get_scaled_softmax(logits_global) if temp_scaled else F.softmax(logits_global, dim=1, dtype=torch.float64)
-    softmax_class = score_methods['temperature_class'].get_scaled_softmax(logits_class) if temp_scaled else F.softmax(logits_class, dim=1, dtype=torch.float64)
-    
-    softmax_class_pred = score_methods['temperature_class_pred'].get_scaled_softmax(logits_class_pred) if temp_scaled else F.softmax(logits_class_pred, dim=1, dtype=torch.float64)
+    preds = softmax.max(dim=1).indices
+    # Pre-initialize projection-derived tensors. Each block below sets them
+    # only when the corresponding mode is in `projections`; otherwise they
+    # stay None. Confids entries that reference them are gated by mode in
+    # the dict literal below and filtered out via filter_confids().
+    encoded_global = encoded_class = encoded_class_pred = None
+    logits_global = logits_class = logits_class_pred = None
+    softmax_global = softmax_class = softmax_class_pred = None
+    if "global" in projections:
+        encoded_global = score_methods['projection_filtering_global'].get_backprojection(encoded)
+        logits_global = score_methods['projection_filtering_global'].get_logits(encoded)
+        softmax_global = score_methods['temperature_global'].get_scaled_softmax(logits_global) if temp_scaled else F.softmax(logits_global, dim=1, dtype=torch.float64)
+    if "class" in projections or "class_pred" in projections:
+        encoded_class = score_methods['projection_filtering_class'].get_backprojection(encoded)
+        logits_class = score_methods['projection_filtering_class'].get_logits(encoded)
+        if "class" in projections:
+            softmax_class = score_methods['temperature_class'].get_scaled_softmax(logits_class) if temp_scaled else F.softmax(logits_class, dim=1, dtype=torch.float64)
+        if "class_pred" in projections:
+            encoded_class_pred, logits_class_pred = score_methods['projection_filtering_class'].get_combined_backprojection(encoded_class, combine='prediction', preds=preds)
+            softmax_class_pred = score_methods['temperature_class_pred'].get_scaled_softmax(logits_class_pred) if temp_scaled else F.softmax(logits_class_pred, dim=1, dtype=torch.float64)
     #
     confid = model_evaluations['confid']
     correct = model_evaluations['correct']
@@ -1771,29 +1790,29 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
                 'GE' :                  scores_funcs.guessing_entropy(softmax),
                 'Energy' :              scores_funcs.energy(logits, temperature=score_methods['temperature_scale'].temperature),
                 # Scores that do not requiere preprocessing using global projection filtering
-                'MSR_global' :          scores_funcs.maximum_softmax_response(softmax_global),
-                'PE_global' :           scores_funcs.predictive_entropy(softmax_global),
-                'MLS_global' :          scores_funcs.maximum_logit_score(logits_global, temperature=score_methods['temperature_global'].temperature),
-                'PCE_global' :          scores_funcs.predictive_collision_entropy(softmax_global),
-                'GE_global' :           scores_funcs.guessing_entropy(softmax_global),
-                'Energy_global' :       scores_funcs.energy(logits_global, temperature=score_methods['temperature_global'].temperature),
+                'MSR_global' :          scores_funcs.maximum_softmax_response(softmax_global) if "global" in projections else None,
+                'PE_global' :           scores_funcs.predictive_entropy(softmax_global) if "global" in projections else None,
+                'MLS_global' :          scores_funcs.maximum_logit_score(logits_global, temperature=score_methods['temperature_global'].temperature) if "global" in projections else None,
+                'PCE_global' :          scores_funcs.predictive_collision_entropy(softmax_global) if "global" in projections else None,
+                'GE_global' :           scores_funcs.guessing_entropy(softmax_global) if "global" in projections else None,
+                'Energy_global' :       scores_funcs.energy(logits_global, temperature=score_methods['temperature_global'].temperature) if "global" in projections else None,
                 # Scores that do not requiere preprocessing using class projection filtering
-                'MSR_class' :           scores_funcs.maximum_softmax_response(softmax_class),
-                'MSR_class_pred' :      scores_funcs.maximum_softmax_response(softmax_class_pred),
-                'PE_class' :            scores_funcs.predictive_entropy(softmax_class),
-                'PE_class_pred' :       scores_funcs.predictive_entropy(softmax_class_pred),
-                'MLS_class' :           scores_funcs.maximum_logit_score(logits_class, temperature=score_methods['temperature_class'].temperature),
-                'MLS_class_pred' :      scores_funcs.maximum_logit_score(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature),
-                'PCE_class' :           scores_funcs.predictive_collision_entropy(softmax_class),
-                'PCE_class_pred' :      scores_funcs.predictive_collision_entropy(softmax_class_pred),
-                'GE_class' :            scores_funcs.guessing_entropy(softmax_class),
-                'GE_class_pred' :       scores_funcs.guessing_entropy(softmax_class_pred),
-                'Energy_class' :        scores_funcs.energy(logits_class, temperature=score_methods['temperature_class'].temperature),
-                'Energy_class_pred' :   scores_funcs.energy(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature),
+                'MSR_class' :           scores_funcs.maximum_softmax_response(softmax_class) if "class" in projections else None,
+                'MSR_class_pred' :      scores_funcs.maximum_softmax_response(softmax_class_pred) if "class_pred" in projections else None,
+                'PE_class' :            scores_funcs.predictive_entropy(softmax_class) if "class" in projections else None,
+                'PE_class_pred' :       scores_funcs.predictive_entropy(softmax_class_pred) if "class_pred" in projections else None,
+                'MLS_class' :           scores_funcs.maximum_logit_score(logits_class, temperature=score_methods['temperature_class'].temperature) if "class" in projections else None,
+                'MLS_class_pred' :      scores_funcs.maximum_logit_score(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature) if "class_pred" in projections else None,
+                'PCE_class' :           scores_funcs.predictive_collision_entropy(softmax_class) if "class" in projections else None,
+                'PCE_class_pred' :      scores_funcs.predictive_collision_entropy(softmax_class_pred) if "class_pred" in projections else None,
+                'GE_class' :            scores_funcs.guessing_entropy(softmax_class) if "class" in projections else None,
+                'GE_class_pred' :       scores_funcs.guessing_entropy(softmax_class_pred) if "class_pred" in projections else None,
+                'Energy_class' :        scores_funcs.energy(logits_class, temperature=score_methods['temperature_class'].temperature) if "class" in projections else None,
+                'Energy_class_pred' :   scores_funcs.energy(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature) if "class_pred" in projections else None,
                 # 
                 'GradNorm' :            gradnorm_score.get_scores(encoded, temperature=score_methods['temperature_scale'].temperature, use_cuda=use_cuda),
-                'GradNorm_global' :     gradnorm_score.get_scores(encoded_global, temperature=score_methods['temperature_global'].temperature, use_cuda=use_cuda),
-                'GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred, temperature=score_methods['temperature_class_pred'].temperature, use_cuda=use_cuda),    
+                'GradNorm_global' :     gradnorm_score.get_scores(encoded_global, temperature=score_methods['temperature_global'].temperature, use_cuda=use_cuda) if "global" in projections else None,
+                'GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred, temperature=score_methods['temperature_class_pred'].temperature, use_cuda=use_cuda) if "class_pred" in projections else None,    
                 'Confidence' :          confid,
     }
     # Filter confids to active families only (the rest are preserved
