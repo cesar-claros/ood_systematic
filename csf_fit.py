@@ -27,6 +27,10 @@ def main():
                            help="Comma-separated CSF families to fit (default: all). E.g. 'KernelPCA,Mahalanobis'.")
     csf_group.add_argument('--skip-csfs', dest='skip_csfs', type=str, default=None,
                            help="Comma-separated CSF families to skip (default: none). E.g. 'KernelPCA'.")
+    parser.add_argument('--projections', type=str, default='global,class,class_pred',
+                        help=("Comma-separated ProjectionFiltering modes to fit "
+                              "(default: 'global,class,class_pred'). Use 'none' to skip all projections "
+                              "and only fit the raw Temperature."))
     # Parse the arguments
     args = parser.parse_args()
     path = args.model_path
@@ -39,6 +43,11 @@ def main():
     skip_csfs_arg = [s.strip() for s in args.skip_csfs.split(',')] if args.skip_csfs else None
     active = csf_pipeline.build_active(csfs=csfs_arg, skip_csfs=skip_csfs_arg)
     logger.info(f"Active CSF families: {sorted(active)}")
+    if args.projections.strip().lower() in ('none', ''):
+        projections = set()
+    else:
+        projections = {s.strip() for s in args.projections.split(',') if s.strip()}
+    logger.info(f"Projections to fit: {sorted(projections) if projections else 'none'}")
 
     cuda_available = torch.cuda.is_available()
     if cuda_available and use_cuda_opt:
@@ -133,15 +142,17 @@ def main():
         logger.info(f'Evaluating model with {set_name} dataset...')
         model_eval = utils.compute_model_evaluations(model, datamodule, set_name=set_name)
         # utils.save_data(cf, model_eval, filename=set_name)
-        # Compute temperature scale
+        # Compute (or load) temperature scale.
         if set_name == 'val':
-            temperature_scale = TemperatureScaling(cf)
-            temperature_scale.compute_temperature(model_eval['logits'], model_eval['labels'])
-            temperature_scale.save_params(filename='Temperature_params'+model_opts)
+            temperature_scale = csf_pipeline._load_or_fit_temperature(
+                cf, model_opts, suffix=None,
+                logits=model_eval['logits'], labels=model_eval['labels'],
+            )
             if do_enabled:
-                temperature_scale_dist = TemperatureScaling(cf)
-                temperature_scale_dist.compute_temperature(model_eval['logits_dist'].mean(dim=2), model_eval['labels'])
-                # temperature_scale_dist.save_params(filename='Temperature_distribution_params'+model_opts)
+                temperature_scale_dist = csf_pipeline._load_or_fit_temperature(
+                    cf, model_opts, suffix='distribution',
+                    logits=model_eval['logits_dist'].mean(dim=2), labels=model_eval['labels'],
+                )
         model_eval['softmax'] = F.softmax(model_eval['logits'], dim=1, dtype=torch.float64)
         model_eval['softmax_scaled'] = temperature_scale.get_scaled_softmax(model_eval['logits'])
         model_eval['correct'] = (model_eval['softmax'].max(dim=1).indices == model_eval['labels']).long()
@@ -150,6 +161,9 @@ def main():
             model_eval['softmax_scaled_dist'] = temperature_scale_dist.get_scaled_softmax(model_eval['logits_dist'])
             model_eval['correct_mcd'] = (model_eval['softmax_dist'].mean(dim=2).max(dim=1).indices == model_eval['labels']).long()
         model_evaluations.update({set_name:model_eval})
+    # Fit (or load) ProjectionFiltering and projection-specific Temperature variants.
+    csf_pipeline.fit_projections(cf, module, study_name, model_evaluations, do_enabled,
+                                 model_opts, temperature_scale_opt, projections)
     # Compute score methods
     csf_pipeline.run_score_methods(cf, module, study_name, model_evaluations, do_enabled, model_opts=model_opts, temp_scaled=temperature_scale_opt, active=active)
 

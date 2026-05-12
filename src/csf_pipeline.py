@@ -275,6 +275,163 @@ def _merge_csv_cols(new_df: pd.DataFrame, path: str) -> pd.DataFrame:
     return new_df
 
 
+# ---------------------------------------------------------------------------
+# Projection / Temperature fitting helpers (csf_fit-side responsibility).
+# ---------------------------------------------------------------------------
+
+#: Projection modes addressable via csf_fit.py --projections.
+ALL_PROJECTIONS: frozenset[str] = frozenset({"global", "class", "class_pred"})
+
+
+def _params_path(cf, filename: str) -> str:
+    """Resolve the on-disk path for a save_params filename (without .pt)."""
+    return f"{cf.exp.dir}/params/{filename}.pt"
+
+
+def _load_or_fit_temperature(cf, model_opts, suffix, logits, labels):
+    """Load Temperature_<suffix>_params if the file exists, else fit and save.
+
+    Pass suffix=None for the raw Temperature (file: Temperature_params).
+    """
+    fname = f"Temperature_{suffix}_params" if suffix else "Temperature_params"
+    temp = TemperatureScaling(cf)
+    if os.path.exists(_params_path(cf, fname + model_opts)):
+        temp.load_params(filename=fname + model_opts)
+        logger.info(f"Loaded existing {fname}{model_opts}")
+    else:
+        temp.compute_temperature(logits, labels)
+        temp.save_params(filename=fname + model_opts)
+    return temp
+
+
+def _load_or_fit_pf(cf, module, study_name, mode, model_opts, mcd,
+                    encoded_train, encoded_val, residuals_val, labels_train):
+    """Load ProjectionFiltering_<mode>[_distribution]_params if it exists, else fit and save."""
+    suffix = "_distribution" if mcd else ""
+    fname = f"ProjectionFiltering_{mode}{suffix}_params"
+    pf = ProjectionFiltering(module, study_name, cf, mode=mode)
+    if os.path.exists(_params_path(cf, fname + model_opts)):
+        pf.load_params(filename=fname + model_opts)
+        logger.info(f"Loaded existing {fname}{model_opts}")
+    else:
+        pf.tune_hyperparameters(
+            encoded_train, encoded_val, residuals_val,
+            labels_train=labels_train, only_correct=True,
+        )
+        pf.save_params(filename=fname + model_opts)
+    return pf
+
+
+def fit_projections(cf, module, study_name, model_evaluations, do_enabled,
+                    model_opts, temp_scaled, projections):
+    """Fit ProjectionFiltering instances and their per-projection Temperature scalings.
+
+    Called from csf_fit.py BEFORE run_score_methods. Each PF / Temperature
+    pair is load-if-exists, fit-if-not. PF_class is shared between 'class'
+    and 'class_pred' projections; if either is requested, PF_class is
+    fit/loaded once.
+
+    Parameters
+    ----------
+    projections : Iterable[str]
+        Subset of ALL_PROJECTIONS. Empty set = no projections (only the raw
+        Temperature_params is needed; csf_fit.py handles that separately).
+    """
+    projections = set(projections)
+    invalid = projections - ALL_PROJECTIONS
+    if invalid:
+        raise ValueError(
+            f"Unknown projections {sorted(invalid)}. "
+            f"Allowed: {sorted(ALL_PROJECTIONS)}."
+        )
+    if not projections:
+        return
+
+    encoded_train = model_evaluations["train"]["encoded"]
+    encoded_val = model_evaluations["val"]["encoded"]
+    labels_train = model_evaluations["train"]["labels"]
+    labels_val = model_evaluations["val"]["labels"]
+    correct_val = model_evaluations["val"]["correct"]
+
+    # ---- Deterministic branch ----
+    if "global" in projections:
+        pf_global = _load_or_fit_pf(
+            cf, module, study_name, "global", model_opts, mcd=False,
+            encoded_train=encoded_train, encoded_val=encoded_val,
+            residuals_val=1 - correct_val, labels_train=labels_train,
+        )
+        logits_global_val = pf_global.get_logits(encoded_val)
+        _load_or_fit_temperature(cf, model_opts, "global", logits_global_val, labels_val)
+
+    if projections & {"class", "class_pred"}:
+        pf_class = _load_or_fit_pf(
+            cf, module, study_name, "class", model_opts, mcd=False,
+            encoded_train=encoded_train, encoded_val=encoded_val,
+            residuals_val=1 - correct_val, labels_train=labels_train,
+        )
+        if "class" in projections:
+            logits_class_val = pf_class.get_logits(encoded_val)
+            _load_or_fit_temperature(cf, model_opts, "class", logits_class_val, labels_val)
+        if "class_pred" in projections:
+            softmax_val = (
+                model_evaluations["val"]["softmax_scaled"] if temp_scaled
+                else model_evaluations["val"]["softmax"]
+            )
+            preds_val = softmax_val.max(dim=1).indices
+            encoded_class_val = pf_class.get_backprojection(encoded_val)
+            _, logits_class_pred_val = pf_class.get_combined_backprojection(
+                encoded_class_val, combine="prediction", preds=preds_val,
+            )
+            _load_or_fit_temperature(
+                cf, model_opts, "class_pred", logits_class_pred_val, labels_val,
+            )
+
+    # ---- MCD branch ----
+    if not do_enabled:
+        return
+
+    encoded_dist_train_mean = model_evaluations["train"]["encoded_dist"].mean(dim=2)
+    encoded_dist_val_mean = model_evaluations["val"]["encoded_dist"].mean(dim=2)
+    correct_mcd_val = model_evaluations["val"]["correct_mcd"]
+
+    if "global" in projections:
+        pf_global_dist = _load_or_fit_pf(
+            cf, module, study_name, "global", model_opts, mcd=True,
+            encoded_train=encoded_dist_train_mean, encoded_val=encoded_dist_val_mean,
+            residuals_val=1 - correct_mcd_val, labels_train=labels_train,
+        )
+        logits_global_dist_val = pf_global_dist.get_logits(encoded_dist_val_mean)
+        _load_or_fit_temperature(
+            cf, model_opts, "global_distribution", logits_global_dist_val, labels_val,
+        )
+
+    if projections & {"class", "class_pred"}:
+        pf_class_dist = _load_or_fit_pf(
+            cf, module, study_name, "class", model_opts, mcd=True,
+            encoded_train=encoded_dist_train_mean, encoded_val=encoded_dist_val_mean,
+            residuals_val=1 - correct_mcd_val, labels_train=labels_train,
+        )
+        if "class" in projections:
+            logits_class_dist_val = pf_class_dist.get_logits(encoded_dist_val_mean)
+            _load_or_fit_temperature(
+                cf, model_opts, "class_distribution", logits_class_dist_val, labels_val,
+            )
+        if "class_pred" in projections:
+            softmax_dist_val = (
+                model_evaluations["val"]["softmax_scaled_dist"] if temp_scaled
+                else model_evaluations["val"]["softmax_dist"]
+            )
+            preds_dist_val = softmax_dist_val.mean(dim=2).max(dim=1).indices
+            encoded_class_dist_val = pf_class_dist.get_backprojection(encoded_dist_val_mean)
+            _, logits_class_pred_dist_val = pf_class_dist.get_combined_backprojection(
+                encoded_class_dist_val, combine="prediction", preds=preds_dist_val,
+            )
+            _load_or_fit_temperature(
+                cf, model_opts, "class_pred_distribution",
+                logits_class_pred_dist_val, labels_val,
+            )
+
+
 def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool, model_opts:str='', temp_scaled:bool=False, active: set | None = None):
     active = set(ALL_FAMILIES) if active is None else set(active)
     # Temperature 
@@ -304,8 +461,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         kpca_global.save_params(filename='KernelPCA_global_params'+model_opts)
     # Projection Filtering Global
     projection_filtering_global = ProjectionFiltering(module, study_name, cf, mode='global')
-    projection_filtering_global.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val, labels_train=labels_train, only_correct=True)
-    projection_filtering_global.save_params(filename='ProjectionFiltering_global_params'+model_opts)
+    projection_filtering_global.load_params(filename='ProjectionFiltering_global_params'+model_opts)
     logits_global_train = projection_filtering_global.get_logits(encoded_train)
     # Backprojections for global
     encoded_global_train = projection_filtering_global.get_backprojection(encoded_train)
@@ -352,8 +508,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     del projection_filtering_global
     # Temperature Global
     temperature_global = TemperatureScaling(cf)
-    temperature_global.compute_temperature(logits_global_val, labels_val)
-    temperature_global.save_params(filename='Temperature_global_params'+model_opts)
+    temperature_global.load_params(filename='Temperature_global_params'+model_opts)
     # Softmax global
     softmax_global_val = temperature_global.get_scaled_softmax(logits_global_val) if temp_scaled else F.softmax(logits_global_val, dim=1, dtype=torch.float64)
     del logits_global_val
@@ -381,8 +536,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         kpca_class.save_params(filename='KernelPCA_class_params'+model_opts)
     # Projection Filtering Class
     projection_filtering_class = ProjectionFiltering(module, study_name, cf, mode='class')
-    projection_filtering_class.tune_hyperparameters(encoded_train, encoded_val, 1-correct_val, labels_train=labels_train, only_correct=True)
-    projection_filtering_class.save_params(filename='ProjectionFiltering_class_params'+model_opts)
+    projection_filtering_class.load_params(filename='ProjectionFiltering_class_params'+model_opts)
     logits_class_train = projection_filtering_class.get_logits(encoded_train)
     # Backprojections for class
     encoded_class_train = projection_filtering_class.get_backprojection(encoded_train)
@@ -413,8 +567,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     #
     # Temperature Class Pred
     temperature_class_pred = TemperatureScaling(cf)
-    temperature_class_pred.compute_temperature(logits_class_pred_val, labels_val)
-    temperature_class_pred.save_params(filename='Temperature_class_pred_params'+model_opts)
+    temperature_class_pred.load_params(filename='Temperature_class_pred_params'+model_opts)
     # Softmax from filtered logits
     softmax_class_pred_val = temperature_class_pred.get_scaled_softmax(logits_class_pred_val) if temp_scaled else F.softmax(logits_class_pred_val, dim=1, dtype=torch.float64)
     del logits_class_pred_val
@@ -439,30 +592,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         ctm_class_pred.compute_CTM_params(encoded_class_pred_train, labels_train)
         ctm_class_pred.save_params(filename='CTM_class_pred_params'+model_opts)
         del ctm_class_pred
-    # Backprojections for class averaged
-    # encoded_class_avg_train = []
-    # for t in range(encoded_train.shape[0]):
-    #     avg_sampled = []
-    #     for c in range(cf.data.num_classes):
-    #         avg_sampled.append(encoded_class_train[c][t])
-    #     encoded_class_avg_train.append(torch.stack(avg_sampled,dim=0).mean(dim=0))
-    # encoded_class_avg_train = torch.stack(encoded_class_avg_train, dim=0)
-    encoded_class_avg_train, logits_class_avg_train = projection_filtering_class.get_combined_backprojection(encoded_class_train, combine='average')
-    # Backprojections for class averaged
-    # encoded_class_avg_val = []
-    # for t in range(encoded_val.shape[0]):
-    #     avg_sampled = []
-    #     for c in range(cf.data.num_classes):
-    #         avg_sampled.append(encoded_class_val[c][t])
-    #     encoded_class_avg_val.append(torch.stack(avg_sampled,dim=0).mean(dim=0))
-    # encoded_class_avg_val = torch.stack(encoded_class_avg_val, dim=0)
-    encoded_class_avg_val, logits_class_avg_val = projection_filtering_class.get_combined_backprojection(encoded_class_val, combine='average')
     del encoded_class_train
-    # Neural Collapse Global Metrics
-    if "NeuralCollapse" in active:
-        neural_collapse_class_avg = NeuralCollapseMetrics(module, study_name, cf)
-        neural_collapse_class_avg.compute_NeuralCollapse_params(encoded_class_avg_train, labels_train)
-        neural_collapse_class_avg.save_params(filename='NeuralCollapse_class_avg_params'+model_opts)
     #
     #
     # NNGuide PCA class w/predictions
@@ -496,8 +626,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
     del projection_filtering_class
     # Temperature Class
     temperature_class = TemperatureScaling(cf)
-    temperature_class.compute_temperature(logits_class_val, labels_val)
-    temperature_class.save_params(filename='Temperature_class_params'+model_opts)
+    temperature_class.load_params(filename='Temperature_class_params'+model_opts)
     # Softmax from filtered logits
     softmax_class_val = temperature_class.get_scaled_softmax(logits_class_val) if temp_scaled else F.softmax(logits_class_val, dim=1, dtype=torch.float64)
     del logits_class_val
@@ -515,61 +644,6 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         renyi_entropy_class.save_params(filename='REN_class_params'+model_opts)
         del renyi_entropy_class
     del softmax_class_val
-    #
-    # Temperature Class Avg
-    temperature_class_avg = TemperatureScaling(cf)
-    temperature_class_avg.compute_temperature(logits_class_avg_val, labels_val)
-    temperature_class_avg.save_params(filename='Temperature_class_avg_params'+model_opts)
-    # Softmax from filtered logits
-    softmax_class_avg_val = temperature_class_avg.get_scaled_softmax(logits_class_avg_val) if temp_scaled else F.softmax(logits_class_avg_val, dim=1, dtype=torch.float64)
-    del logits_class_avg_val
-    del temperature_class_avg
-    # Generalized entropy Class Pred
-    if "GEN" in active:
-        generalized_entropy_class_avg = EntropyScores(cf, 'generalized')
-        generalized_entropy_class_avg.compute_entropy_params(softmax_class_avg_val, 1-correct_val)
-        generalized_entropy_class_avg.save_params(filename='GEN_class_avg_params'+model_opts)
-        del generalized_entropy_class_avg
-    # Renyi entropy Class Pred
-    if "REN" in active:
-        renyi_entropy_class_avg = EntropyScores(cf, 'renyi')
-        renyi_entropy_class_avg.compute_entropy_params(softmax_class_avg_val, 1-correct_val)
-        renyi_entropy_class_avg.save_params(filename='REN_class_avg_params'+model_opts)
-        del renyi_entropy_class_avg
-    del softmax_class_avg_val
-    #
-    # Class Typical Matching Class averaged
-    if "CTM" in active:
-        ctm_class_avg = ClassTypicalMatching(module, study_name, cf, mode='global')
-        ctm_class_avg.compute_CTM_params(encoded_class_avg_train, labels_train)
-        ctm_class_avg.save_params(filename='CTM_class_avg_params'+model_opts)
-        del ctm_class_avg
-    # NNGuide PCA class averaged
-    if "NNGuide" in active:
-        nnguide_class_avg = NNGuide(module,study_name,cf)
-        nnguide_class_avg.tune_hyperparameters(encoded_class_avg_train, encoded_class_avg_val, 1-correct_val,
-                                            labels_train = labels_train, logits_train= logits_class_train,)
-        nnguide_class_avg.save_params(filename='NNGuide_class_avg_params'+model_opts)
-        del nnguide_class_avg
-    # fDBD PCA class averaged
-    if "fDBD" in active:
-        fDBD_class_avg = fDBD(module,study_name,cf)
-        fDBD_class_avg.compute_fDBD_params(encoded_class_avg_train)
-        fDBD_class_avg.save_params(filename='fDBD_class_avg_params'+model_opts)
-        del fDBD_class_avg
-    # Mahalanobis distance class averaged
-    if "MahalanobisDistance" in active:
-        maha_distance_class_avg = MahalanobisDistance(cf) 
-        maha_distance_class_avg.compute_MahaDist_params(encoded_class_avg_train, labels_train)
-        maha_distance_class_avg.save_params(filename='MahalanobisDistance_class_avg_params'+model_opts)
-        del maha_distance_class_avg
-    # pNML class averaged
-    if "pNML" in active:
-        pnml_class_avg = pNML(module,study_name,cf)
-        pnml_class_avg.compute_pNML_params(encoded_class_avg_train)
-        pnml_class_avg.save_params(filename='pNML_class_avg_params'+model_opts)
-        del pnml_class_avg
-    del encoded_class_avg_train
     del logits_class_train
     # Validation evaluations
     softmax_val = model_evaluations['val']['softmax_scaled'] if temp_scaled else model_evaluations['val']['softmax'] 
@@ -667,9 +741,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             kpca_global_dist.save_params(filename='KernelPCA_global_distribution_params'+model_opts)
         # Projection Filtering Global for distribution
         projection_filtering_global_dist = ProjectionFiltering(module, study_name, cf, mode='global')
-        projection_filtering_global_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val, 
-                                                                labels_train=labels_train, only_correct=True)
-        projection_filtering_global_dist.save_params(filename='ProjectionFiltering_global_distribution_params'+model_opts)
+        projection_filtering_global_dist.load_params(filename='ProjectionFiltering_global_distribution_params'+model_opts)
         logits_global_dist_train = projection_filtering_global_dist.get_logits(encoded_dist_train.mean(dim=2))
         # Backprojections global for distribution
         encoded_global_dist_train = projection_filtering_global_dist.get_backprojection(encoded_dist_train.mean(dim=2))
@@ -716,8 +788,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         del projection_filtering_global_dist
         # Temperature global for distribution
         temperature_global_dist = TemperatureScaling(cf)
-        temperature_global_dist.compute_temperature(logits_global_dist_val, labels_val)
-        temperature_global_dist.save_params(filename='Temperature_global_distribution_params'+model_opts)
+        temperature_global_dist.load_params(filename='Temperature_global_distribution_params'+model_opts)
         # Softmax global for distribution
         softmax_global_dist_val = temperature_global_dist.get_scaled_softmax(logits_global_dist_val) if temp_scaled else F.softmax(logits_global_dist_val, dim=1, dtype=torch.float64)
         del temperature_global_dist
@@ -745,9 +816,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             kpca_class_dist.save_params(filename='KernelPCA_class_distribution_params'+model_opts)
         # Projection Filtering Class for distribution
         projection_filtering_class_dist = ProjectionFiltering(module, study_name, cf, mode='class')
-        projection_filtering_class_dist.tune_hyperparameters(encoded_dist_train.mean(dim=2), encoded_dist_val.mean(dim=2), 1-correct_mcd_val, 
-                                                                labels_train=labels_train, only_correct=True)
-        projection_filtering_class_dist.save_params(filename='ProjectionFiltering_class_distribution_params'+model_opts)
+        projection_filtering_class_dist.load_params(filename='ProjectionFiltering_class_distribution_params'+model_opts)
         logits_class_dist_train = projection_filtering_class_dist.get_logits(encoded_dist_train.mean(dim=2))
         # Backprojections for class for distribution
         encoded_class_dist_train = projection_filtering_class_dist.get_backprojection(encoded_dist_train.mean(dim=2))
@@ -777,8 +846,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         #
         # Temperature Class for distribution
         temperature_class_pred_dist = TemperatureScaling(cf)
-        temperature_class_pred_dist.compute_temperature(logits_class_pred_dist_val, labels_val)
-        temperature_class_pred_dist.save_params(filename='Temperature_class_pred_distribution_params'+model_opts)
+        temperature_class_pred_dist.load_params(filename='Temperature_class_pred_distribution_params'+model_opts)
         # Softmax from filtered logits
         softmax_class_pred_dist_val = temperature_class_pred_dist.get_scaled_softmax(logits_class_pred_dist_val) if temp_scaled else F.softmax(logits_class_pred_dist_val, dim=1, dtype=torch.float64)
         del logits_class_pred_dist_val
@@ -803,30 +871,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             ctm_class_pred_dist.compute_CTM_params(encoded_class_pred_dist_train, labels_train)
             ctm_class_pred_dist.save_params(filename='CTM_class_pred_distribution_params'+model_opts)
             del ctm_class_pred_dist
-        # Backprojections for class averaged for distribution
-        # encoded_class_avg_dist_train = []
-        # for t in range(encoded_dist_train.shape[0]):
-        #     avg_sampled = []
-        #     for c in range(cf.data.num_classes):
-        #         avg_sampled.append(encoded_class_dist_train[c][t])
-        #     encoded_class_avg_dist_train.append(torch.stack(avg_sampled,dim=0).mean(dim=0))
-        # encoded_class_avg_dist_train = torch.stack(encoded_class_avg_dist_train, dim=0)
-        encoded_class_avg_dist_train, logits_class_avg_dist_train = projection_filtering_class_dist.get_combined_backprojection(encoded_class_dist_train, combine='average')
-        #
-        # encoded_class_avg_dist_val = []
-        # for t in range(encoded_dist_val.shape[0]):
-        #     avg_sampled = []
-        #     for c in range(cf.data.num_classes):
-        #         avg_sampled.append(encoded_class_dist_val[c][t])
-        #     encoded_class_avg_dist_val.append(torch.stack(avg_sampled,dim=0).mean(dim=0))
-        # encoded_class_avg_dist_val = torch.stack(encoded_class_avg_dist_val, dim=0)
-        encoded_class_avg_dist_val, logits_class_avg_dist_val = projection_filtering_class_dist.get_combined_backprojection(encoded_class_dist_val, combine='average')
         del encoded_class_dist_train
-        # Neural Collapse Global Metrics for Distribution
-        if "NeuralCollapse" in active:
-            neural_collapse_class_avg_dist = NeuralCollapseMetrics(module, study_name, cf)
-            neural_collapse_class_avg_dist.compute_NeuralCollapse_params(encoded_class_avg_dist_train, labels_train)
-            neural_collapse_class_avg_dist.save_params(filename='NeuralCollapse_class_avg_distribution_params'+model_opts)
         # NNGuide PCA class w/predictions for distribution
         if "NNGuide" in active:
             nnguide_class_pred_dist = NNGuide(module,study_name,cf)
@@ -859,8 +904,7 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         del projection_filtering_class_dist
         # Temperature Class for distribution
         temperature_class_dist = TemperatureScaling(cf)
-        temperature_class_dist.compute_temperature(logits_class_dist_val, labels_val)
-        temperature_class_dist.save_params(filename='Temperature_class_distribution_params'+model_opts)
+        temperature_class_dist.load_params(filename='Temperature_class_distribution_params'+model_opts)
         # Softmax from filtered logits for distribution
         softmax_class_dist_val = temperature_class_dist.get_scaled_softmax(logits_class_dist_val) if temp_scaled else F.softmax(logits_class_dist_val, dim=1, dtype=torch.float64)
         del temperature_class_dist
@@ -878,61 +922,6 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
             renyi_entropy_class_dist.save_params(filename='REN_class_distribution_params'+model_opts)
             del renyi_entropy_class_dist
         del softmax_class_dist_val
-        #
-        # Temperature Class for distribution
-        temperature_class_avg_dist = TemperatureScaling(cf)
-        temperature_class_avg_dist.compute_temperature(logits_class_avg_dist_val, labels_val)
-        temperature_class_avg_dist.save_params(filename='Temperature_class_avg_distribution_params'+model_opts)
-        # Softmax from filtered logits
-        softmax_class_avg_dist_val = temperature_class_avg_dist.get_scaled_softmax(logits_class_avg_dist_val) if temp_scaled else F.softmax(logits_class_avg_dist_val, dim=1, dtype=torch.float64)
-        del logits_class_avg_dist_val
-        del temperature_class_avg_dist
-        # Generalized entropy Class for distribution
-        if "GEN" in active:
-            generalized_entropy_class_avg_dist = EntropyScores(cf, 'generalized')
-            generalized_entropy_class_avg_dist.compute_entropy_params(softmax_class_avg_dist_val, 1-correct_mcd_val)
-            generalized_entropy_class_avg_dist.save_params(filename='GEN_class_avg_distribution_params'+model_opts)
-            del generalized_entropy_class_avg_dist
-        # Renyi entropy Class for distribution
-        if "REN" in active:
-            renyi_entropy_class_avg_dist = EntropyScores(cf, 'renyi')
-            renyi_entropy_class_avg_dist.compute_entropy_params(softmax_class_avg_dist_val, 1-correct_mcd_val)
-            renyi_entropy_class_avg_dist.save_params(filename='REN_class_avg_distribution_params'+model_opts)
-            del renyi_entropy_class_avg_dist
-        del softmax_class_avg_dist_val
-        #
-        # Class Typical Matching Class averaged for distribution
-        if "CTM" in active:
-            ctm_class_avg_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
-            ctm_class_avg_dist.compute_CTM_params(encoded_class_avg_dist_train, labels_train)
-            ctm_class_avg_dist.save_params(filename='CTM_class_avg_distribution_params'+model_opts)
-            del ctm_class_avg_dist
-        # NNGuide PCA class averaged for distribution
-        if "NNGuide" in active:
-            nnguide_class_avg_dist = NNGuide(module,study_name,cf)
-            nnguide_class_avg_dist.tune_hyperparameters(encoded_class_avg_dist_train, encoded_class_avg_dist_val, 1-correct_mcd_val,
-                                            labels_train = labels_train, logits_train= logits_class_dist_train,)
-            nnguide_class_avg_dist.save_params(filename='NNGuide_class_avg_distribution_params'+model_opts)
-            del nnguide_class_avg_dist
-        # fDBD PCA class averaged for distribution
-        if "fDBD" in active:
-            fDBD_class_avg_dist = fDBD(module,study_name,cf)
-            fDBD_class_avg_dist.compute_fDBD_params(encoded_class_avg_dist_train)
-            fDBD_class_avg_dist.save_params(filename='fDBD_class_avg_distribution_params'+model_opts)
-            del fDBD_class_avg_dist
-        # Mahalanobis distance class averaged for distribution
-        if "MahalanobisDistance" in active:
-            maha_distance_class_avg_dist = MahalanobisDistance(cf) 
-            maha_distance_class_avg_dist.compute_MahaDist_params(encoded_class_avg_dist_train, labels_train)
-            maha_distance_class_avg_dist.save_params(filename='MahalanobisDistance_class_avg_distribution_params'+model_opts)
-            del maha_distance_class_avg_dist
-        # pNML class averaged for distribution
-        if "pNML" in active:
-            pnml_class_avg_dist = pNML(module,study_name,cf)
-            pnml_class_avg_dist.compute_pNML_params(encoded_class_avg_dist_train)
-            pnml_class_avg_dist.save_params(filename='pNML_class_avg_distribution_params'+model_opts)
-            del pnml_class_avg_dist
-        del encoded_class_avg_dist_train
         del logits_class_dist_train
         # Validation evaluations for distribution
         softmax_dist_val = model_evaluations['val']['softmax_scaled_dist'] if temp_scaled else model_evaluations['val']['softmax_dist']
@@ -1017,15 +1006,13 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
     # end still constructs cleanly. Stats() then either filters the entries
     # via filter_confids() or sees None returned from _MissingCSF.
     kpca_global = kpca_class = _MISSING_CSF
-    ctm_global = ctm_class = ctm_class_pred = ctm_class_avg = ctm = ctm_oc = _MISSING_CSF
-    nnguide_global = nnguide_class_pred = nnguide_class_avg = nnguide = _MISSING_CSF
-    fDBD_global = fDBD_class_pred = fDBD_class_avg = fdbd_inst = _MISSING_CSF
-    maha_distance_global = maha_distance_class_pred = maha_distance_class_avg = maha_distance = _MISSING_CSF
-    pnml_global = pnml_class_pred = pnml_class_avg = pnml = _MISSING_CSF
-    generalized_entropy_global = generalized_entropy_class_pred = generalized_entropy_class = _MISSING_CSF
-    generalized_entropy_class_avg = generalized_entropy = _MISSING_CSF
-    renyi_entropy_global = renyi_entropy_class_pred = renyi_entropy_class = _MISSING_CSF
-    renyi_entropy_class_avg = renyi_entropy = _MISSING_CSF
+    ctm_global = ctm_class = ctm_class_pred = ctm = ctm_oc = _MISSING_CSF
+    nnguide_global = nnguide_class_pred = nnguide = _MISSING_CSF
+    fDBD_global = fDBD_class_pred = fdbd_inst = _MISSING_CSF
+    maha_distance_global = maha_distance_class_pred = maha_distance = _MISSING_CSF
+    pnml_global = pnml_class_pred = pnml = _MISSING_CSF
+    generalized_entropy_global = generalized_entropy_class_pred = generalized_entropy_class = generalized_entropy = _MISSING_CSF
+    renyi_entropy_global = renyi_entropy_class_pred = renyi_entropy_class = renyi_entropy = _MISSING_CSF
     vim = residual = neco = _MISSING_CSF
     # Temperature
     temperature_scale = TemperatureScaling(cf)
@@ -1124,38 +1111,7 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
     if "REN" in active:
         renyi_entropy_class = EntropyScores(cf, 'renyi')
         renyi_entropy_class.load_params(filename='REN_class_params'+model_opts)
-    # Temperature Class Avg
-    temperature_class_avg = TemperatureScaling(cf)
-    temperature_class_avg.load_params(filename='Temperature_class_avg_params'+model_opts)
-    # Generalized entropy Class Pred
-    if "GEN" in active:
-        generalized_entropy_class_avg = EntropyScores(cf, 'generalized')
-        generalized_entropy_class_avg.load_params(filename='GEN_class_avg_params'+model_opts)
-    # Renyi entropy Class Pred
-    if "REN" in active:
-        renyi_entropy_class_avg = EntropyScores(cf, 'renyi')
-        renyi_entropy_class_avg.load_params(filename='REN_class_avg_params'+model_opts)
 
-    # Class Typical Matching Class averaged
-    if "CTM" in active:
-        ctm_class_avg = ClassTypicalMatching(module, study_name, cf, mode='global')
-        ctm_class_avg.load_params(filename='CTM_class_avg_params'+model_opts)
-    # NNGuide PCA class averaged
-    if "NNGuide" in active:
-        nnguide_class_avg = NNGuide(module,study_name,cf)
-        nnguide_class_avg.load_params(filename='NNGuide_class_avg_params'+model_opts)
-    # fDBD PCA class averaged
-    if "fDBD" in active:
-        fDBD_class_avg = fDBD(module,study_name,cf)
-        fDBD_class_avg.load_params(filename='fDBD_class_avg_params'+model_opts)
-    # Mahalanobis distance class averaged
-    if "MahalanobisDistance" in active:
-        maha_distance_class_avg = MahalanobisDistance(cf) 
-        maha_distance_class_avg.load_params(filename='MahalanobisDistance_class_avg_params'+model_opts)
-    # pNML class averaged
-    if "pNML" in active:
-        pnml_class_avg = pNML(module,study_name,cf)
-        pnml_class_avg.load_params(filename='pNML_class_avg_params'+model_opts)
     # Class Typical Matching
     if "CTM" in active:
         ctm = ClassTypicalMatching(module, study_name, cf, mode='global')
@@ -1227,14 +1183,6 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
             'temperature_class':temperature_class,
             'generalized_entropy_class':generalized_entropy_class,
             'renyi_entropy_class':renyi_entropy_class,
-            'temperature_class_avg':temperature_class_avg,
-            'generalized_entropy_class_avg':generalized_entropy_class_avg,
-            'renyi_entropy_class_avg':renyi_entropy_class_avg,
-            'ctm_class_avg':ctm_class_avg,
-            'nnguide_class_avg':nnguide_class_avg,
-            'fDBD_class_avg':fDBD_class_avg,
-            'maha_distance_class_avg':maha_distance_class_avg,
-            'pnml_class_avg':pnml_class_avg,
             'ctm':ctm,
             'ctm_oc':ctm_oc,
             'generalized_entropy':generalized_entropy,
@@ -1252,22 +1200,13 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
         # Pre-initialize MCD-side gated variables. See the deterministic
         # block above for rationale.
         kpca_global_dist = kpca_class_dist = _MISSING_CSF
-        ctm_global_dist = ctm_class_dist = ctm_class_pred_dist = _MISSING_CSF
-        ctm_class_avg_dist = ctm_dist = ctm_oc_dist = _MISSING_CSF
-        nnguide_global_dist = nnguide_class_pred_dist = _MISSING_CSF
-        nnguide_class_avg_dist = nnguide_dist = _MISSING_CSF
-        fDBD_global_dist = fDBD_class_pred_dist = _MISSING_CSF
-        fDBD_class_avg_dist = fDBD_dist = _MISSING_CSF
-        maha_distance_global_dist = maha_distance_class_pred_dist = _MISSING_CSF
-        maha_distance_class_avg_dist = maha_distance_dist = _MISSING_CSF
-        pnml_global_dist = pnml_class_pred_dist = _MISSING_CSF
-        pnml_class_avg_dist = pnml_dist = _MISSING_CSF
-        generalized_entropy_global_dist = generalized_entropy_class_pred_dist = _MISSING_CSF
-        generalized_entropy_class_dist = generalized_entropy_class_avg_dist = _MISSING_CSF
-        generalized_entropy_dist = _MISSING_CSF
-        renyi_entropy_global_dist = renyi_entropy_class_pred_dist = _MISSING_CSF
-        renyi_entropy_class_dist = renyi_entropy_class_avg_dist = _MISSING_CSF
-        renyi_entropy_dist = _MISSING_CSF
+        ctm_global_dist = ctm_class_dist = ctm_class_pred_dist = ctm_dist = ctm_oc_dist = _MISSING_CSF
+        nnguide_global_dist = nnguide_class_pred_dist = nnguide_dist = _MISSING_CSF
+        fDBD_global_dist = fDBD_class_pred_dist = fDBD_dist = _MISSING_CSF
+        maha_distance_global_dist = maha_distance_class_pred_dist = maha_distance_dist = _MISSING_CSF
+        pnml_global_dist = pnml_class_pred_dist = pnml_dist = _MISSING_CSF
+        generalized_entropy_global_dist = generalized_entropy_class_pred_dist = generalized_entropy_class_dist = generalized_entropy_dist = _MISSING_CSF
+        renyi_entropy_global_dist = renyi_entropy_class_pred_dist = renyi_entropy_class_dist = renyi_entropy_dist = _MISSING_CSF
         vim_dist = residual_dist = neco_dist = _MISSING_CSF
         # Temperature for distribution
         temperature_scale_dist = TemperatureScaling(cf)
@@ -1365,39 +1304,6 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
         if "REN" in active:
             renyi_entropy_class_dist = EntropyScores(cf, 'renyi')
             renyi_entropy_class_dist.load_params(filename='REN_class_distribution_params'+model_opts)
-        #
-        # Temperature Class for distribution
-        temperature_class_avg_dist = TemperatureScaling(cf)
-        temperature_class_avg_dist.load_params(filename='Temperature_class_avg_distribution_params'+model_opts)
-        # Generalized entropy Class for distribution
-        if "GEN" in active:
-            generalized_entropy_class_avg_dist = EntropyScores(cf, 'generalized')
-            generalized_entropy_class_avg_dist.load_params(filename='GEN_class_avg_distribution_params'+model_opts)
-        # Renyi entropy Class for distribution
-        if "REN" in active:
-            renyi_entropy_class_avg_dist = EntropyScores(cf, 'renyi')
-            renyi_entropy_class_avg_dist.load_params(filename='REN_class_avg_distribution_params'+model_opts)
-        #
-        # Class Typical Matching Class averaged for distribution
-        if "CTM" in active:
-            ctm_class_avg_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
-            ctm_class_avg_dist.load_params(filename='CTM_class_avg_distribution_params'+model_opts)
-        # NNGuide PCA class averaged for distribution
-        if "NNGuide" in active:
-            nnguide_class_avg_dist = NNGuide(module,study_name,cf)
-            nnguide_class_avg_dist.load_params(filename='NNGuide_class_avg_distribution_params'+model_opts)
-        # fDBD PCA class averaged for distribution
-        if "fDBD" in active:
-            fDBD_class_avg_dist = fDBD(module,study_name,cf)
-            fDBD_class_avg_dist.load_params(filename='fDBD_class_avg_distribution_params'+model_opts)
-        # Mahalanobis distance class averaged for distribution
-        if "MahalanobisDistance" in active:
-            maha_distance_class_avg_dist = MahalanobisDistance(cf) 
-            maha_distance_class_avg_dist.load_params(filename='MahalanobisDistance_class_avg_distribution_params'+model_opts)
-        # pNML class averaged for distribution
-        if "pNML" in active:
-            pnml_class_avg_dist = pNML(module,study_name,cf)
-            pnml_class_avg_dist.load_params(filename='pNML_class_avg_distribution_params'+model_opts)
         # Class Typical Matching
         if "CTM" in active:
             ctm_dist = ClassTypicalMatching(module, study_name, cf, mode='global')
@@ -1469,14 +1375,6 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
             'temperature_class_dist':               temperature_class_dist,
             'generalized_entropy_class_dist':       generalized_entropy_class_dist,
             'renyi_entropy_class_dist':             renyi_entropy_class_dist,
-            'temperature_class_avg_dist':           temperature_class_avg_dist,
-            'generalized_entropy_class_avg_dist':   generalized_entropy_class_avg_dist,
-            'renyi_entropy_class_avg_dist':         renyi_entropy_class_avg_dist,
-            'ctm_class_avg_dist':                   ctm_class_avg_dist,
-            'nnguide_class_avg_dist':               nnguide_class_avg_dist,
-            'fDBD_class_avg_dist':                  fDBD_class_avg_dist,
-            'maha_distance_class_avg_dist':         maha_distance_class_avg_dist,
-            'pnml_class_avg_dist':                  pnml_class_avg_dist,
             'ctm_dist':                             ctm_dist,
             'ctm_oc_dist':                          ctm_oc_dist,
             'generalized_entropy_dist':             generalized_entropy_dist,
@@ -1511,22 +1409,12 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
         encoded_class_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_backprojection, encoded_distribution)
         # encoded_class_pred_distribution_mcd = torch.vstack([encoded_class_distribution_mcd[preds_distribution[t]][t] for t in range(encoded_distribution.shape[0])])  
         encoded_class_pred_distribution_mcd, logits_class_pred_distribution_mcd = score_methods_do['projection_filtering_class_dist'].get_combined_backprojection(encoded_class_distribution_mcd, combine='prediction', preds=preds_distribution)
-        # Backprojections for class averaged for distribution
-        # encoded_class_avg_distribution_mcd = []
-        # for t in range(encoded_distribution.shape[0]):
-        #     avg_sampled = []
-        #     for c in range(cf.data.num_classes):
-        #         avg_sampled.append(encoded_class_distribution_mcd[c][t])
-        #     encoded_class_avg_distribution_mcd.append(torch.stack(avg_sampled,dim=0).mean(dim=0))
-        # encoded_class_avg_distribution_mcd = torch.stack(encoded_class_avg_distribution_mcd, dim=0)
-        encoded_class_avg_distribution_mcd, logits_class_avg_distribution_mcd = score_methods_do['projection_filtering_class_dist'].get_combined_backprojection(encoded_class_distribution_mcd, combine='average')
         # 
         logits_global_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_global_dist'].get_logits, encoded_distribution)
         logits_class_distribution_mcd = scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_logits, encoded_distribution)
         softmax_global_distribution_mcd = score_methods_do['temperature_global_dist'].get_scaled_softmax(logits_global_distribution_mcd) if temp_scaled else F.softmax(logits_global_distribution_mcd, dim=1, dtype=torch.float64)
         softmax_class_distribution_mcd = score_methods_do['temperature_class_dist'].get_scaled_softmax(logits_class_distribution_mcd) if temp_scaled else F.softmax(logits_class_distribution_mcd, dim=1, dtype=torch.float64)
         softmax_class_pred_distribution_mcd = score_methods_do['temperature_class_pred_dist'].get_scaled_softmax(logits_class_pred_distribution_mcd) if temp_scaled else F.softmax(logits_class_pred_distribution_mcd, dim=1, dtype=torch.float64)
-        softmax_class_avg_distribution_mcd = score_methods_do['temperature_class_avg_dist'].get_scaled_softmax(logits_class_avg_distribution_mcd) if temp_scaled else F.softmax(logits_class_avg_distribution_mcd, dim=1, dtype=torch.float64)        
         # 
         confid_distribution = model_evaluations['confid_dist']
         correct_distribution = model_evaluations['correct_mcd']
@@ -1570,10 +1458,6 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             # RecError class pred for distribution
             'MCD-PCA_RecError_class_pred' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, X_back_projected_eval=encoded_class_pred_distribution_mcd),
             'MCD-PCA_ERecError_class_pred' : scores_funcs.mcd_expected_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, predictions_eval=softmax_distribution.max(dim=1).indices),
-            # RecError class avg for distribution
-            'MCD-PCA_RecError_class_avg' : scores_funcs.mcd_function(score_methods_do['projection_filtering_class_dist'].get_scores, encoded_distribution, X_back_projected_eval=encoded_class_avg_distribution_mcd),
-            # Kernel RecError class avg for distribution
-            'MCD-KPCA_RecError_class_avg' : scores_funcs.mcd_function(score_methods_do['kpca_class_dist'].get_scores, encoded_distribution, combine='average'),
             # CTM class for distribution
             'MCD-CTM_class' :           score_methods_do['ctm_class_dist'].get_scores(encoded_class_distribution_mcd, similarity='weight'),
             'MCD-CTM_class_mean' :      score_methods_do['ctm_class_dist'].get_scores(encoded_class_distribution_mcd, similarity='mean'),
@@ -1597,27 +1481,8 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             # Entropies class for distribution
             'MCD-GEN_class' :           score_methods_do['generalized_entropy_class_dist'].get_scores(softmax_class_distribution_mcd),
             'MCD-REN_class' :           score_methods_do['renyi_entropy_class_dist'].get_scores(softmax_class_distribution_mcd),
-            'MCD-GEN_class_avg' :       score_methods_do['generalized_entropy_class_avg_dist'].get_scores(softmax_class_avg_distribution_mcd),
-            'MCD-REN_class_avg' :       score_methods_do['renyi_entropy_class_avg_dist'].get_scores(softmax_class_avg_distribution_mcd),
             'MCD-GEN_class_pred' :       score_methods_do['generalized_entropy_class_pred_dist'].get_scores(softmax_class_pred_distribution_mcd),
             'MCD-REN_class_pred' :       score_methods_do['renyi_entropy_class_pred_dist'].get_scores(softmax_class_pred_distribution_mcd),
-            # CTM class avg for distribution
-            'MCD-CTM_class_avg' :      score_methods_do['ctm_class_avg_dist'].get_scores(encoded_class_avg_distribution_mcd, similarity='weight'),
-            'MCD-CTM_class_avg_mean' : score_methods_do['ctm_class_avg_dist'].get_scores(encoded_class_avg_distribution_mcd, similarity='mean'),
-            'MCD-ECTM_class_avg' :     score_methods_do['ctm_class_avg_dist'].get_scores( encoded_distribution, similarity='weight'),
-            'MCD-ECTM_class_avg_mean': score_methods_do['ctm_class_avg_dist'].get_scores( encoded_distribution, similarity='mean'),   
-            # NNGuide class avg for distribution
-            'MCD-NNGuide_class_avg':   score_methods_do['nnguide_class_avg_dist'].get_scores(encoded_class_avg_distribution_mcd),
-            'MCD-ENNGuide_class_avg':  scores_funcs.mcd_expected_function(score_methods_do['nnguide_class_avg_dist'].get_scores, encoded_distribution),
-            # fDBD class avg for distribution
-            'MCD-fDBD_class_avg':      score_methods_do['fDBD_class_avg_dist'].get_scores(encoded_class_avg_distribution_mcd, logits_eval=logits_class_distribution_mcd),
-            'MCD-EfDBD_class_avg':     scores_funcs.mcd_expected_function(score_methods_do['fDBD_class_avg_dist'].get_scores, encoded_distribution, logits_eval=logits_distribution),
-            # Maha class avg for distribution
-            'MCD-Maha_class_avg':      score_methods_do['maha_distance_class_avg_dist'].get_scores(encoded_class_avg_distribution_mcd),
-            'MCD-EMaha_class_avg':     scores_funcs.mcd_expected_function(score_methods_do['maha_distance_class_avg_dist'].get_scores, encoded_distribution),
-            # pNML class avg for distribution
-            'MCD-pNML_class_avg':      score_methods_do['pnml_class_avg_dist'].get_scores(encoded_class_avg_distribution_mcd),
-            'MCD-EpNML_class_avg':     scores_funcs.mcd_expected_function(score_methods_do['pnml_class_avg_dist'].get_scores, encoded_distribution),
             # CTM for distribution
             'MCD-CTM' :                scores_funcs.mcd_function(score_methods_do['ctm_dist'].get_scores, encoded_distribution, similarity='weight'),
             'MCD-ECTM' :               score_methods_do['ctm_dist'].get_scores(encoded_distribution, similarity='weight'),
@@ -1680,13 +1545,6 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             'MCD-GE_class' :          scores_funcs.guessing_entropy(softmax_class_distribution_mcd),
             'MCD-Energy_class' :      scores_funcs.energy(logits_class_distribution_mcd, temperature=score_methods_do['temperature_class_dist'].temperature),
             # Scores that do not requiere preprocessing using class projection filtering
-            'MCD-MSR_class_avg' :         scores_funcs.maximum_softmax_response(softmax_class_avg_distribution_mcd),
-            'MCD-PE_class_avg' :          scores_funcs.predictive_entropy(softmax_class_avg_distribution_mcd),
-            'MCD-MLS_class_avg' :         scores_funcs.maximum_logit_score(logits_class_avg_distribution_mcd, temperature=score_methods_do['temperature_class_avg_dist'].temperature),
-            'MCD-PCE_class_avg' :         scores_funcs.predictive_collision_entropy(softmax_class_avg_distribution_mcd),
-            'MCD-GE_class_avg' :          scores_funcs.guessing_entropy(softmax_class_avg_distribution_mcd),
-            'MCD-Energy_class_avg' :      scores_funcs.energy(logits_class_avg_distribution_mcd, temperature=score_methods_do['temperature_class_avg_dist'].temperature),
-            # Scores that do not requiere preprocessing using class projection filtering
             'MCD-MSR_class_pred' :         scores_funcs.maximum_softmax_response(softmax_class_pred_distribution_mcd),
             'MCD-PE_class_pred' :          scores_funcs.predictive_entropy(softmax_class_pred_distribution_mcd),
             'MCD-MLS_class_pred' :         scores_funcs.maximum_logit_score(logits_class_pred_distribution_mcd, temperature=score_methods_do['temperature_class_pred_dist'].temperature),
@@ -1696,7 +1554,6 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
             #             
             'MCD-GradNorm' :            scores_funcs.mcd_function(gradnorm_score.get_scores, encoded_distribution, use_cuda=use_cuda, temperature=score_methods_do['temperature_scale_dist'].temperature),
             'MCD-GradNorm_global' :     gradnorm_score.get_scores(encoded_global_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_global_dist'].temperature),
-            'MCD-GradNorm_class_avg' :  gradnorm_score.get_scores(encoded_class_avg_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_class_avg_dist'].temperature),
             'MCD-GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred_distribution_mcd, use_cuda=use_cuda, temperature=score_methods_do['temperature_class_pred_dist'].temperature),
             #
             'MCD-MI' :          scores_funcs.mcd_mutual_information(softmax_distribution),
@@ -1753,17 +1610,6 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
     softmax_global = score_methods['temperature_global'].get_scaled_softmax(logits_global) if temp_scaled else F.softmax(logits_global, dim=1, dtype=torch.float64)
     softmax_class = score_methods['temperature_class'].get_scaled_softmax(logits_class) if temp_scaled else F.softmax(logits_class, dim=1, dtype=torch.float64)
     
-    #
-    # Backprojections for class averaged
-    # encoded_class_avg = []
-    # for t in range(encoded.shape[0]):
-    #     avg_sample = []
-    #     for c in range(cf.data.num_classes):
-    #         avg_sample.append(encoded_class[c][t])
-    #     encoded_class_avg.append(torch.stack(avg_sample, dim=0).mean(dim=0))
-    # encoded_class_avg = torch.stack(encoded_class_avg, dim=0)
-    encoded_class_avg, logits_class_avg = score_methods['projection_filtering_class'].get_combined_backprojection(encoded_class, combine='average')
-    softmax_class_avg = score_methods['temperature_class_avg'].get_scaled_softmax(logits_class_avg) if temp_scaled else F.softmax(logits_class_avg, dim=1, dtype=torch.float64)
     softmax_class_pred = score_methods['temperature_class_pred'].get_scaled_softmax(logits_class_pred) if temp_scaled else F.softmax(logits_class_pred, dim=1, dtype=torch.float64)
     #
     confid = model_evaluations['confid']
@@ -1793,14 +1639,10 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
                 'KPCA_RecError_class':  score_methods['kpca_class'].get_scores(encoded),
                 # KPCA RecError class pred
                 'KPCA_RecError_class_pred':  score_methods['kpca_class'].get_scores(encoded,predictions_eval=preds),
-                # KPCA RecError class pred
-                'KPCA_RecError_class_avg':  score_methods['kpca_class'].get_scores(encoded,combine='average'),
                 # RecError class
                 'PCA_RecError_class':   score_methods['projection_filtering_class'].get_scores(encoded),
                 # RecError class pred
                 'PCA_RecError_class_pred':  score_methods['projection_filtering_class'].get_scores(encoded, X_back_projected_eval=encoded_class_pred),
-                # RecError class avg
-                'PCA_RecError_class_avg':  score_methods['projection_filtering_class'].get_scores(encoded, X_back_projected_eval=encoded_class_avg),
                 # CTM class
                 'CTM_class':            score_methods['ctm_class'].get_scores(encoded_class, similarity='weight'),
                 'CTM_class_mean':       score_methods['ctm_class'].get_scores(encoded_class, similarity='mean'),
@@ -1818,21 +1660,8 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
                 # Entropies
                 'GEN_class' :           score_methods['generalized_entropy_class'].get_scores(softmax_class),
                 'REN_class' :           score_methods['renyi_entropy_class'].get_scores(softmax_class),
-                'GEN_class_avg' :       score_methods['generalized_entropy_class_avg'].get_scores(softmax_class_avg),
-                'REN_class_avg' :       score_methods['renyi_entropy_class_avg'].get_scores(softmax_class_avg),
                 'GEN_class_pred' :      score_methods['generalized_entropy_class_pred'].get_scores(softmax_class_pred),
                 'REN_class_pred' :      score_methods['renyi_entropy_class_pred'].get_scores(softmax_class_pred),
-                # CTM class avg
-                'CTM_class_avg':        score_methods['ctm_class_avg'].get_scores(encoded_class_avg, similarity='weight'),
-                'CTM_class_avg_mean':   score_methods['ctm_class_avg'].get_scores(encoded_class_avg, similarity='mean'),
-                # NNGuide class avg
-                'NNGuide_class_avg':    score_methods['nnguide_class_avg'].get_scores(encoded_class_avg),
-                # fDBD class avg
-                'fDBD_class_avg':       score_methods['fDBD_class_avg'].get_scores(encoded_class_avg, logits_eval=logits_class),
-                # Maha class avg
-                'Maha_class_avg':       score_methods['maha_distance_class_avg'].get_scores(encoded_class_avg),
-                # pNML class avg
-                'pNML_class_avg':       score_methods['pnml_class_avg'].get_scores(encoded_class_avg),
                 # CTM
                 'CTM':                  score_methods['ctm'].get_scores(encoded, similarity='weight'),
                 'CTM_mean':             score_methods['ctm'].get_scores(encoded, similarity='mean'),
@@ -1870,27 +1699,20 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
                 'Energy_global' :       scores_funcs.energy(logits_global, temperature=score_methods['temperature_global'].temperature),
                 # Scores that do not requiere preprocessing using class projection filtering
                 'MSR_class' :           scores_funcs.maximum_softmax_response(softmax_class),
-                'MSR_class_avg' :       scores_funcs.maximum_softmax_response(softmax_class_avg),
                 'MSR_class_pred' :      scores_funcs.maximum_softmax_response(softmax_class_pred),
                 'PE_class' :            scores_funcs.predictive_entropy(softmax_class),
-                'PE_class_avg' :        scores_funcs.predictive_entropy(softmax_class_avg),
                 'PE_class_pred' :       scores_funcs.predictive_entropy(softmax_class_pred),
                 'MLS_class' :           scores_funcs.maximum_logit_score(logits_class, temperature=score_methods['temperature_class'].temperature),
-                'MLS_class_avg' :       scores_funcs.maximum_logit_score(logits_class_avg, temperature=score_methods['temperature_class_avg'].temperature),
                 'MLS_class_pred' :      scores_funcs.maximum_logit_score(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature),
                 'PCE_class' :           scores_funcs.predictive_collision_entropy(softmax_class),
-                'PCE_class_avg' :       scores_funcs.predictive_collision_entropy(softmax_class_avg),
                 'PCE_class_pred' :      scores_funcs.predictive_collision_entropy(softmax_class_pred),
                 'GE_class' :            scores_funcs.guessing_entropy(softmax_class),
-                'GE_class_avg' :        scores_funcs.guessing_entropy(softmax_class_avg),
                 'GE_class_pred' :       scores_funcs.guessing_entropy(softmax_class_pred),
                 'Energy_class' :        scores_funcs.energy(logits_class, temperature=score_methods['temperature_class'].temperature),
-                'Energy_class_avg' :    scores_funcs.energy(logits_class_avg, temperature=score_methods['temperature_class_avg'].temperature),
                 'Energy_class_pred' :   scores_funcs.energy(logits_class_pred, temperature=score_methods['temperature_class_pred'].temperature),
                 # 
                 'GradNorm' :            gradnorm_score.get_scores(encoded, temperature=score_methods['temperature_scale'].temperature, use_cuda=use_cuda),
                 'GradNorm_global' :     gradnorm_score.get_scores(encoded_global, temperature=score_methods['temperature_global'].temperature, use_cuda=use_cuda),
-                'GradNorm_class_avg' :  gradnorm_score.get_scores(encoded_class_avg, temperature=score_methods['temperature_class_avg'].temperature, use_cuda=use_cuda),
                 'GradNorm_class_pred' : gradnorm_score.get_scores(encoded_class_pred, temperature=score_methods['temperature_class_pred'].temperature, use_cuda=use_cuda),    
                 'Confidence' :          confid,
     }
