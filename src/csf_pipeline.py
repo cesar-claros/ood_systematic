@@ -220,6 +220,33 @@ def filter_confids(confids: dict, active: set[str]) -> dict:
     return {k: v for k, v in confids.items() if _key_in_family_prefixes(k, active_prefixes)}
 
 
+class _MissingCSF:
+    """Placeholder for a CSF not loaded (because its family was skipped).
+
+    Any attribute access returns the same _MissingCSF instance, so chained
+    accesses like `score_methods['kpca_global'].get_scores` don't raise.
+    Calling the result returns ``None`` — confids entries that involve a
+    missing CSF become ``None`` in the dict, and ``filter_confids`` then
+    drops those keys (matched by family prefix) before the stats DataFrame
+    is built.
+
+    Known limit: ``scores_funcs.mcd_expected_function`` calls the wrapped
+    function per MCD sample and stacks the outputs via ``torch.vstack`` —
+    stacking ``None`` raises. So skipping a family on a do=1 (MCD) model
+    will still crash on its ``MCD-E*`` confids entries; the fix for the
+    MCD path would need per-family gating of the confids construction.
+    """
+    __slots__ = ()
+    def __getattr__(self, name):
+        return self
+    def __call__(self, *args, **kwargs):
+        return None
+
+
+#: Module-level singleton used as the placeholder for skipped CSFs.
+_MISSING_CSF = _MissingCSF()
+
+
 def _merge_csv_rows(new_df: pd.DataFrame, path: str) -> pd.DataFrame:
     """Merge new_df (index = method name) into the existing CSV at `path`.
 
@@ -984,7 +1011,23 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
 # Load parameters
 def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='', active: set | None = None):
     active = set(ALL_FAMILIES) if active is None else set(active)
-    # Temperature 
+    # Pre-initialize all gated CSF instances to _MISSING_CSF. If the family
+    # is active, the load block below overwrites the placeholder; if the
+    # family was skipped, the placeholder stays and the funcs dict at the
+    # end still constructs cleanly. Stats() then either filters the entries
+    # via filter_confids() or sees None returned from _MissingCSF.
+    kpca_global = kpca_class = _MISSING_CSF
+    ctm_global = ctm_class = ctm_class_pred = ctm_class_avg = ctm = ctm_oc = _MISSING_CSF
+    nnguide_global = nnguide_class_pred = nnguide_class_avg = nnguide = _MISSING_CSF
+    fDBD_global = fDBD_class_pred = fDBD_class_avg = fdbd_inst = _MISSING_CSF
+    maha_distance_global = maha_distance_class_pred = maha_distance_class_avg = maha_distance = _MISSING_CSF
+    pnml_global = pnml_class_pred = pnml_class_avg = pnml = _MISSING_CSF
+    generalized_entropy_global = generalized_entropy_class_pred = generalized_entropy_class = _MISSING_CSF
+    generalized_entropy_class_avg = generalized_entropy = _MISSING_CSF
+    renyi_entropy_global = renyi_entropy_class_pred = renyi_entropy_class = _MISSING_CSF
+    renyi_entropy_class_avg = renyi_entropy = _MISSING_CSF
+    vim = residual = neco = _MISSING_CSF
+    # Temperature
     temperature_scale = TemperatureScaling(cf)
     temperature_scale.load_params(filename='Temperature_params'+model_opts)
     # Global
@@ -1206,6 +1249,26 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
             }   
 
     if do_enabled:
+        # Pre-initialize MCD-side gated variables. See the deterministic
+        # block above for rationale.
+        kpca_global_dist = kpca_class_dist = _MISSING_CSF
+        ctm_global_dist = ctm_class_dist = ctm_class_pred_dist = _MISSING_CSF
+        ctm_class_avg_dist = ctm_dist = ctm_oc_dist = _MISSING_CSF
+        nnguide_global_dist = nnguide_class_pred_dist = _MISSING_CSF
+        nnguide_class_avg_dist = nnguide_dist = _MISSING_CSF
+        fDBD_global_dist = fDBD_class_pred_dist = _MISSING_CSF
+        fDBD_class_avg_dist = fDBD_dist = _MISSING_CSF
+        maha_distance_global_dist = maha_distance_class_pred_dist = _MISSING_CSF
+        maha_distance_class_avg_dist = maha_distance_dist = _MISSING_CSF
+        pnml_global_dist = pnml_class_pred_dist = _MISSING_CSF
+        pnml_class_avg_dist = pnml_dist = _MISSING_CSF
+        generalized_entropy_global_dist = generalized_entropy_class_pred_dist = _MISSING_CSF
+        generalized_entropy_class_dist = generalized_entropy_class_avg_dist = _MISSING_CSF
+        generalized_entropy_dist = _MISSING_CSF
+        renyi_entropy_global_dist = renyi_entropy_class_pred_dist = _MISSING_CSF
+        renyi_entropy_class_dist = renyi_entropy_class_avg_dist = _MISSING_CSF
+        renyi_entropy_dist = _MISSING_CSF
+        vim_dist = residual_dist = neco_dist = _MISSING_CSF
         # Temperature for distribution
         temperature_scale_dist = TemperatureScaling(cf)
         temperature_scale_dist.load_params(filename='Temperature_distribution_params'+model_opts)
