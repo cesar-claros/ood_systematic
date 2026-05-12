@@ -28,6 +28,9 @@ def main():
                            help="Comma-separated CSF families to evaluate (default: all). E.g. 'KernelPCA,Mahalanobis'.")
     csf_group.add_argument('--skip-csfs', dest='skip_csfs', type=str, default=None,
                            help="Comma-separated CSF families to skip (default: none). E.g. 'KernelPCA'.")
+    parser.add_argument('--projections', type=str, default='plain,global,class,class_pred',
+                        help=("Comma-separated projection modes to evaluate "
+                              "(default: 'plain,global,class,class_pred'). Use 'none' to skip all."))
     # Parse the arguments
     args = parser.parse_args()
     path = args.model_path
@@ -41,6 +44,11 @@ def main():
     skip_csfs_arg = [s.strip() for s in args.skip_csfs.split(',')] if args.skip_csfs else None
     active = csf_pipeline.build_active(csfs=csfs_arg, skip_csfs=skip_csfs_arg)
     logger.info(f"Active CSF families: {sorted(active)}")
+    if args.projections.strip().lower() in ('none', ''):
+        projections = set()
+    else:
+        projections = {s.strip() for s in args.projections.split(',') if s.strip()}
+    logger.info(f"Projections to evaluate: {sorted(projections) if projections else 'none'}")
 
     cuda_available = torch.cuda.is_available()
     if cuda_available and use_cuda_opt:
@@ -196,7 +204,7 @@ def main():
     # model_name = f'RW{int(rank_weight_opt)}_RF{int(rank_feat_opt)}_ASH{str(ash_method_opt)}'
     # eval_name = 'iid_val'
     # Evaluate score methods and fucntions
-    csf_pipeline.compute_metrics(module, study_name, cf, model_evaluations, test_mode, do_enabled, model_opts=model_opts, n_bins=20, temp_scaled=temperature_scale_opt, active=active)
+    csf_pipeline.compute_metrics(module, study_name, cf, model_evaluations, test_mode, do_enabled, model_opts=model_opts, n_bins=20, temp_scaled=temperature_scale_opt, active=active, projections=projections)
     
     # utils_funcs.compute_metrics(module, study_name, cf, model_evaluations, model_name, eval_name, do_enabled, temp_scaled=True)
 if __name__ == "__main__":

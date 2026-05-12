@@ -27,10 +27,12 @@ def main():
                            help="Comma-separated CSF families to fit (default: all). E.g. 'KernelPCA,Mahalanobis'.")
     csf_group.add_argument('--skip-csfs', dest='skip_csfs', type=str, default=None,
                            help="Comma-separated CSF families to skip (default: none). E.g. 'KernelPCA'.")
-    parser.add_argument('--projections', type=str, default='global,class,class_pred',
-                        help=("Comma-separated ProjectionFiltering modes to fit "
-                              "(default: 'global,class,class_pred'). Use 'none' to skip all projections "
-                              "and only fit the raw Temperature."))
+    parser.add_argument('--projections', type=str, default='plain,global,class,class_pred',
+                        help=("Comma-separated projection modes to fit "
+                              "(default: 'plain,global,class,class_pred'). 'plain' = CSFs operating "
+                              "on raw features/logits (no PF); 'global', 'class', 'class_pred' = CSFs "
+                              "operating on ProjectionFiltering outputs. Use 'none' to skip all "
+                              "(only the raw Temperature is fit)."))
     # Parse the arguments
     args = parser.parse_args()
     path = args.model_path
@@ -165,11 +167,11 @@ def main():
     csf_pipeline.fit_projections(cf, module, study_name, model_evaluations, do_enabled,
                                  model_opts, temperature_scale_opt, projections)
     # Compute score methods
-    csf_pipeline.run_score_methods(cf, module, study_name, model_evaluations, do_enabled, model_opts=model_opts, temp_scaled=temperature_scale_opt, active=active)
+    csf_pipeline.run_score_methods(cf, module, study_name, model_evaluations, do_enabled, model_opts=model_opts, temp_scaled=temperature_scale_opt, active=active, projections=projections)
 
     eval_name = 'iid_val'
     # Evaluate score methods and fucntions
-    csf_pipeline.compute_metrics(module, study_name, cf, model_evaluations, eval_name, do_enabled, model_opts=model_opts, n_bins=20, temp_scaled=temperature_scale_opt, active=active)
+    csf_pipeline.compute_metrics(module, study_name, cf, model_evaluations, eval_name, do_enabled, model_opts=model_opts, n_bins=20, temp_scaled=temperature_scale_opt, active=active, projections=projections)
 
 if __name__ == "__main__":
     main()
