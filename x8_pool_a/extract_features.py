@@ -36,6 +36,9 @@ OOD_DATASETS = ["isun", "lsun_cropped", "lsun_resize", "svhn", "places365",
 DATASETS = ID_DATASETS + OOD_DATASETS
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
+# Pinned pre-SDPA ref (Aug 2023): runs on torch 1.13 (paper container) and
+# torch 2.x alike; matches the hub cache baked into the container image.
+DINOV2_HUB_REPO = "facebookresearch/dinov2:81b2b64"
 
 
 def load_encoder(name: str, device: str):
@@ -47,7 +50,26 @@ def load_encoder(name: str, device: str):
     """
     if name.startswith("dinov2"):
         import torchvision.transforms as T
-        model = torch.hub.load("facebookresearch/dinov2", name)
+        try:
+            # skip_validation: the fork check rejects commit SHAs outright
+            model = torch.hub.load(DINOV2_HUB_REPO, name, skip_validation=True)
+        except Exception as hub_err:
+            # Fallback for environments with a modern timm (>=0.9). The paper
+            # container instead bakes a build-verified hub cache (TORCH_HOME),
+            # because fd-shifts pins timm==0.5.4 which predates DINOv2.
+            timm_names = {"dinov2_vitb14": "vit_base_patch14_dinov2.lvd142m"}
+            try:
+                import timm
+                model = timm.create_model(timm_names[name], pretrained=True,
+                                          num_classes=0, img_size=224)
+                print(f"torch.hub dinov2 load failed ({hub_err}); "
+                      f"using timm {timm_names[name]}")
+            except Exception as timm_err:
+                raise RuntimeError(
+                    f"DINOv2 unavailable: torch.hub failed ({hub_err}) and "
+                    f"timm fallback failed ({timm_err}). Use the rebuilt "
+                    "paper container (baked hub cache) or a venv with "
+                    "torch>=2 per the dispatch runbook.") from timm_err
         preprocess = T.Compose([
             T.Resize(256, interpolation=T.InterpolationMode.BICUBIC),
             T.CenterCrop(224),
