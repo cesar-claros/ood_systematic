@@ -57,14 +57,14 @@ run_fit_eval() {
     local exp="$1" ash="$2" csfs="$3" tag="$4"
     echo "--- [$tag] fit: $exp  ($(date '+%T'))"
     if ! python csf_fit.py --model_path="$exp" "${COMMON[@]}" \
-            --ash "$ash" --csfs "$csfs" --projections none; then
+            --ash "$ash" --csfs "$csfs" --projections plain; then
         echo "FAIL [$tag] fit: $exp" | tee -a pilot_failures.log
         return 1
     fi
     for mode in $TEST_MODES; do
         echo "--- [$tag] eval $mode: $exp  ($(date '+%T'))"
         if ! python csf_eval.py --model_path="$exp" "${COMMON[@]}" \
-                --ash "$ash" --csfs "$csfs" --projections none \
+                --ash "$ash" --csfs "$csfs" --projections plain \
                 --test_mode "$mode"; then
             echo "FAIL [$tag] eval $mode: $exp" | tee -a pilot_failures.log
         fi
