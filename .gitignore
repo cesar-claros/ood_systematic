@@ -1,16 +1,16 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-.DS_Store
 *$py.class
+.DS_Store
+
+# Local environments and dataset caches
+.venv/
 /data/
+
+# Legacy scripts / configs excluded from the paper repo
 *.sh
 configs_exp/
-scores/
-scores_final/
-# clip_scores/
-# ood_eval_outputs/
-# neural_collapse_metrics/
 neural_collapse_vis.py
 calibration_example.py
 calibration_hyperparameters.py
@@ -18,17 +18,34 @@ calibration_plots.py
 hpc_scripts/
 experiments/
 regression_outputs/
+
 # Archived / exploratory code and outputs not used by the paper
 archived/
+
+# Downloaded score/metric archives (Google Drive / Zenodo) and their unzipped folders
+*.zip
+scores/
+scores_final/
 scores_risk/
 scores_risk_resnet18/
 scores_calibration/
-projection_analysis_outputs/
-projection_clique_outputs/
-ood_eval_outputs/
+neural_collapse_metrics/
 clip_robustness/
 clip_scores/
 clip_scores_openood/
+
+# Analysis outputs (regenerable from the archives; headline numbers are logged
+# in ../documentation/NeurIPS_2026_rebuttal_experiments.md)
+ood_eval_outputs*/
+projection_analysis_outputs/
+projection_clique_outputs/
 mantel_outputs_papyan/
+mantel_partial_outputs/
 nc_csf_predictivity/outputs/
-ood_eval_outputs/
+
+# X8 Pool A caches (features come back from the HPC; synthetic dir is the self-test)
+pool_a_features/
+x8_pool_a/_synthetic_features/
+
+# Generated scratch variants (sed copy of stats_eval.py, FPR@95-only metric branch)
+stats_eval_fpr_only.py

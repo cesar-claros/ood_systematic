@@ -199,14 +199,9 @@ def main():
             # Compute correct predictions based on the mean softmax across MC runs
             model_eval['correct_mcd'] = (model_eval['softmax_dist'].mean(dim=2).max(dim=1).indices == model_eval['labels']).long()
         model_evaluations.update({set_name:model_eval})
-    # Compute score methods
-    # utils_funcs.run_score_methods(cf, module, study_name, model_evaluations, do_enabled, temp_scaled=True)
-    # model_name = f'RW{int(rank_weight_opt)}_RF{int(rank_feat_opt)}_ASH{str(ash_method_opt)}'
-    # eval_name = 'iid_val'
-    # Evaluate score methods and fucntions
+    # Evaluate score methods and functions.
     csf_pipeline.compute_metrics(module, study_name, cf, model_evaluations, test_mode, do_enabled, model_opts=model_opts, n_bins=20, temp_scaled=temperature_scale_opt, active=active, projections=projections)
-    
-    # utils_funcs.compute_metrics(module, study_name, cf, model_evaluations, model_name, eval_name, do_enabled, temp_scaled=True)
+
 if __name__ == "__main__":
     main()
 # %%

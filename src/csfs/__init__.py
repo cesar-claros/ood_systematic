@@ -7,7 +7,7 @@ once a new CSF is added to the re-exports below.
 To add a new CSF:
     1. Copy `_template.py` to `<your_csf_name>.py` and fill it in.
     2. Add the import + symbol to the re-exports + __all__ below.
-    3. Wire it into `src/utils_funcs.py` (alongside the other CSF
+    3. Wire it into `src/csf_pipeline.py` (alongside the other CSF
        instantiations in `run_score_methods` / `load_score_methods`).
 """
 

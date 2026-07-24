@@ -3,7 +3,7 @@
 Copy this file to `<your_csf_name>.py`, rename `TemplateCSF` to your class
 name, and fill in the four numbered sections. Then add the class to
 `src/csfs/__init__.py` (re-exports + __all__) and wire instantiations into
-`src/utils_funcs.run_score_methods` / `load_score_methods`.
+`src/csf_pipeline.run_score_methods` / `load_score_methods`.
 
 Conventions used by the existing CSFs in this directory (model your CSF on
 whichever subset applies):

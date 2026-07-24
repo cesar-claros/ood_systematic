@@ -1,23 +1,30 @@
 """Selective CSF fitting/evaluation pipeline.
 
-This module mirrors src.utils_funcs but adds CSF-family filtering via an
-optional `active` set passed to each public function. When `active` is None,
-all families are run (behavior identical to src.utils_funcs).
+This is the active orchestrator for fitting and evaluating CSFs across the
+ProjectionFiltering / Temperature / Mahalanobis / etc. families. It supports
+two orthogonal filters:
 
-Families are addressed by canonical names (see ALL_FAMILIES). Aliases like
-"KPCA" → "KPCA_RecError" or "Maha" → "MahalanobisDistance" are normalized via
-normalize_family().
+  - `--csfs` / `--skip-csfs` (active set, families in ALL_FAMILIES).
+  - `--projections` (modes: plain / global / class / class_pred).
 
-Two families cannot be skipped because they are structural backbones:
-  - ProjectionFiltering: provides projections consumed by ~30 dependent CSFs.
-  - Temperature:         provides the softmax scaling used everywhere.
+Both are passed through via `active: set` and `projections: set` parameters
+on the public functions. When either is None, the default is "everything".
 
-If a user lists either of these in --skip-csfs, build_active() raises.
+Two internal backbones flow through the active set but are NOT user-facing
+in ALL_FAMILIES (users would get an `Unknown CSF family` error from
+normalize_family if they listed them):
+  - `ProjectionFiltering`: produces the projections consumed by all
+    `_global` / `_class` / `_class_pred` CSF variants.
+  - `Temperature`: provides the raw softmax scaling.
+
+The pre-split monolith (everything fit unconditionally, no family/projection
+filtering, ~1700 lines) lives at `archived/utils_funcs.py` as a historical
+reference; it is not imported anywhere in the active tree.
 
 CSV writes in stats() merge with any existing file rather than overwriting,
 keyed on the CSF identifier (index for stats; column for confids). This lets
-re-runs with a different --csfs / --skip-csfs subset preserve other families'
-results.
+re-runs with a different --csfs / --skip-csfs / --projections subset
+preserve other families' results.
 """
 
 import os
