@@ -10,7 +10,6 @@ __pycache__/
 
 # Legacy scripts / configs excluded from the paper repo
 *.sh
-configs_exp/
 neural_collapse_vis.py
 calibration_example.py
 calibration_hyperparameters.py
