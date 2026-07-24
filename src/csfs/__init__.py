@@ -19,6 +19,8 @@ from src.csfs.gradnorm import GradNorm
 from src.csfs.kernel_pca import KernelPCA
 from src.csfs.kl_matching import KLMatching
 from src.csfs.mahalanobis import MahalanobisDistance
+from src.csfs.mahalanobis_pp import MahalanobisPP
+from src.csfs.nci import NCI
 from src.csfs.neco import NeCo
 from src.csfs.nnguide import NNGuide
 from src.csfs.pnml import pNML
@@ -36,6 +38,8 @@ __all__ = [
     "KernelPCA",
     "KLMatching",
     "MahalanobisDistance",
+    "MahalanobisPP",
+    "NCI",
     "NeCo",
     "NNGuide",
     "pNML",

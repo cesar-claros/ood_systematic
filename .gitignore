@@ -49,3 +49,7 @@ x8_pool_a/_synthetic_features/
 
 # Generated scratch variants (sed copy of stats_eval.py, FPR@95-only metric branch)
 stats_eval_fpr_only.py
+
+# Exception to the *.sh rule: the Pool A extraction runner must sync to the HPC
+!x8_pool_a/run_pool_a_hpc.sh
+!run_new_csfs_pilot.sh

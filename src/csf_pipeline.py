@@ -38,6 +38,8 @@ from src.csfs import (
     GradNorm,
     KernelPCA,
     MahalanobisDistance,
+    MahalanobisPP,
+    NCI,
     NeCo,
     NNGuide,
     pNML,
@@ -77,6 +79,8 @@ ALL_FAMILIES: frozenset[str] = frozenset({
     "NNGuide",
     "fDBD",
     "MahalanobisDistance",
+    "MahalanobisPP",
+    "NCI",
     "pNML",
     "GEN",
     "REN",
@@ -124,6 +128,9 @@ _ALIASES.update({
     "classtypicalmatching":     "CTM",
     "maha":                     "MahalanobisDistance",
     "mahalanobis":              "MahalanobisDistance",
+    "mahapp":                   "MahalanobisPP",
+    "maha++":                   "MahalanobisPP",
+    "mahalanobis++":            "MahalanobisPP",
     "nc":                       "NeuralCollapse",
     "neuralcollapsemetrics":    "NeuralCollapse",
     "vimscore":                 "ViM",
@@ -140,6 +147,8 @@ _FAMILY_TO_PREFIX: dict[str, str | None] = {
     "NNGuide":             "NNGuide",
     "fDBD":                "fDBD",
     "MahalanobisDistance": "Maha",
+    "MahalanobisPP":       "MahaPP",
+    "NCI":                 "NCI",
     "pNML":                "pNML",
     "GEN":                 "GEN",
     "REN":                 "REN",
@@ -841,12 +850,29 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         fdbd_inst.compute_fDBD_params(encoded_train)
         fdbd_inst.save_params(filename='fDBD_params'+model_opts)
         del fdbd_inst
-    # Mahalanobis distance 
+    # Mahalanobis distance
     if gate("plain", "MahalanobisDistance"):
-        maha_distance = MahalanobisDistance(cf) 
+        maha_distance = MahalanobisDistance(cf)
         maha_distance.compute_MahaDist_params(encoded_train, labels_train)
         maha_distance.save_params(filename='MahalanobisDistance_params'+model_opts)
         del maha_distance
+    # Mahalanobis++ (L2-normalized features)
+    if gate("plain", "MahalanobisPP"):
+        maha_pp = MahalanobisPP(cf)
+        maha_pp.compute_MahaDist_params(encoded_train, labels_train)
+        maha_pp.save_params(filename='MahalanobisPP_params'+model_opts)
+        del maha_pp
+    # NCI (neural-collapse-inspired; alpha selected on validation)
+    if gate("plain", "NCI"):
+        nci_score = NCI(module, study_name, cf)
+        nci_score.compute_NCI_params(
+            encoded_train,
+            activations_val=encoded_val,
+            logits_val=model_evaluations['val']['logits'],
+            correct_val=correct_val,
+        )
+        nci_score.save_params(filename='NCI_params'+model_opts)
+        del nci_score
     # pNML 
     if gate("plain", "pNML"):
         pnml = pNML(module,study_name,cf)
@@ -1318,11 +1344,21 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
     if gate("plain", "fDBD"):
         fdbd_inst = fDBD(module,study_name,cf)
         fdbd_inst.load_params(filename='fDBD_params'+model_opts)
-    # Mahalanobis distance 
+    # Mahalanobis distance
     if gate("plain", "MahalanobisDistance"):
-        maha_distance = MahalanobisDistance(cf) 
+        maha_distance = MahalanobisDistance(cf)
         maha_distance.load_params(filename='MahalanobisDistance_params'+model_opts)
-    # pNML 
+    # Mahalanobis++
+    maha_pp = _MISSING_CSF
+    if gate("plain", "MahalanobisPP"):
+        maha_pp = MahalanobisPP(cf)
+        maha_pp.load_params(filename='MahalanobisPP_params'+model_opts)
+    # NCI
+    nci_score = _MISSING_CSF
+    if gate("plain", "NCI"):
+        nci_score = NCI(module, study_name, cf)
+        nci_score.load_params(filename='NCI_params'+model_opts)
+    # pNML
     if gate("plain", "pNML"):
         pnml = pNML(module,study_name,cf)
         pnml.load_params(filename='pNML_params'+model_opts)
@@ -1372,11 +1408,13 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
             'nnguide':nnguide,
             'fDBD':fdbd_inst,
             'maha_distance':maha_distance,
+            'maha_pp':maha_pp,
+            'nci':nci_score,
             'pnml':pnml,
             'vim':vim,
             'residual':residual,
             'neco':neco,
-            }   
+            }
 
     if do_enabled:
         # Pre-initialize MCD-side gated variables. See the deterministic
@@ -1895,6 +1933,10 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
                 'fDBD':                 score_methods['fDBD'].get_scores(encoded, logits_eval=logits),
                 # Maha
                 'Maha':                 score_methods['maha_distance'].get_scores(encoded),
+                # Mahalanobis++ (L2-normalized features)
+                'MahaPP':               score_methods['maha_pp'].get_scores(encoded),
+                # NCI (weight alignment + L1 norm filter)
+                'NCI':                  score_methods['nci'].get_scores(encoded, logits_eval=logits),
                 # pNML
                 'pNML':                 score_methods['pnml'].get_scores(encoded),
                 # ViM
