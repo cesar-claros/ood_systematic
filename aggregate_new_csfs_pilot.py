@@ -19,11 +19,13 @@ import pathlib
 
 import pandas as pd
 
+# Mode vocabulary as used by the paper's sweep manifests (configs_exp/).
 KNOWN_MODES = [
-    "iid_test", "ood_nsncs_svhn", "ood_nsncs_ti", "ood_nsncs_lsun_cropped",
+    "iid_test", "iid_test_corruptions",
+    "ood_sncs_c10", "ood_sncs_c100", "ood_sncs_sc100",
+    "ood_nsncs_svhn", "ood_nsncs_ti", "ood_nsncs_lsun_cropped",
     "ood_nsncs_lsun_resize", "ood_nsncs_isun", "ood_nsncs_textures",
-    "ood_nsncs_places365", "ood_sncs_c100", "ood_nsncs_c10",
-    "ood_nsncs_c100",
+    "ood_nsncs_places365",
 ]
 NEW_METHODS = {"MahaPP", "NCI"}
 REFERENCE_METHODS = {"Maha", "NeCo", "CTM", "ViM", "Residual", "Energy",
