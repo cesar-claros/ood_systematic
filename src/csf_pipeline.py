@@ -275,11 +275,11 @@ class _MissingCSF:
     drops those keys (matched by family prefix) before the stats DataFrame
     is built.
 
-    Known limit: ``scores_funcs.mcd_expected_function`` calls the wrapped
-    function per MCD sample and stacks the outputs via ``torch.vstack`` —
-    stacking ``None`` raises. So skipping a family on a do=1 (MCD) model
-    will still crash on its ``MCD-E*`` confids entries; the fix for the
-    MCD path would need per-family gating of the confids construction.
+    Resolved limit (2026-07-25): ``scores_funcs.mcd_function`` and
+    ``mcd_expected_function`` now detect this placeholder and return ``None``
+    directly, so skipping a family on a do=1 (MCD) model no longer crashes
+    on its ``MCD-*`` confids entries; the ``None`` entries are dropped by
+    ``filter_confids`` as usual.
     """
     __slots__ = ()
     def __getattr__(self, name):

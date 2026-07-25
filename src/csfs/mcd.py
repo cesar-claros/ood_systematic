@@ -22,6 +22,10 @@ from src.csfs.base_detectors import predictive_entropy
 @validate_softmax_logit_distribution
 def mcd_function(func, logit_softmax_distribution: ArrayType, **kwargs):
     """Reduce the MCD distribution to its mean, then call `func` on the result."""
+    if type(func).__name__ == "_MissingCSF":
+        # Skipped family (--csfs subset): return None so the confids entry is
+        # dropped by filter_confids instead of crashing the MCD path.
+        return None
     mean_logit_softmax_distribution = logit_softmax_distribution.mean(dim=2)
     if 'temperature' in kwargs.keys():
         temperature = kwargs['temperature']
@@ -65,6 +69,10 @@ def mcd_function(func, logit_softmax_distribution: ArrayType, **kwargs):
 @validate_softmax_logit_distribution
 def mcd_expected_function(func, logit_softmax_distribution: ArrayType, **kwargs):
     """Apply `func` to each MCD sample independently, then average the resulting scores."""
+    if type(func).__name__ == "_MissingCSF":
+        # Skipped family (--csfs subset): torch.vstack over per-sample Nones
+        # would raise; return None so filter_confids drops the entry.
+        return None
     mcd_repetitions = logit_softmax_distribution.shape[2]
     if 'temperature' in kwargs.keys():
         temperature = kwargs['temperature']

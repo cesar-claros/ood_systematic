@@ -43,6 +43,18 @@ def main() -> None:
         raise NotImplementedError(
             "react_calibrate supports CNN backbones only (pilot scope)")
     cf = utils.get_conf(path, study_name)
+    do_enabled = utils.is_dropout_enabled(path)
+    # Mirror csf_fit.py's SuperCIFAR handling: without avg_pool=False the
+    # VGG head shape differs from the dropout-enabled checkpoints and the
+    # state dict fails to load.
+    if 'super' in path:
+        cf.eval.query_studies.noise_study = ['corrupt_cifar100']
+        cf.eval.query_studies.new_class_study = ['cifar10', 'svhn',
+                                                 'tinyimagenet_resize']
+        if do_enabled and 'vgg' in path:
+            logger.info("Disabling average pooling for VGG-13 supercifar "
+                        "experiments with dropout enabled...")
+            cf.model.avg_pool = False
     ckpt_path = exp_utils._get_path_to_best_ckpt(
         cf.exp.dir, 'last', cf.test.selection_mode)
     module = get_model(cf.model.name)(cf)
