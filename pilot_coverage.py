@@ -1,15 +1,18 @@
 """Report which (experiment, arm) combinations of the E-F pilot are complete.
 
 Ground truth is what exists on disk, not the runner logs (which can
-interleave when multiple sweeps share a filename). For every experiment in
-the given list(s) it checks, per arm:
+interleave when multiple sweeps share a filename). Completion is checked for
+EVERY eval mode of the experiment's source (mode lists derived from the
+configs_exp/ sweep manifests; corruptions excluded), per arm:
 
-  newcsf : MahaPP and NCI rows present in stats_RW0_RF0_ASHNone_iid_test.csv
-  ash    : stats_RW0_RF0_ASHash*_iid_test.csv exists
-  react  : stats_RW0_RF0_ASHreact@*_iid_test.csv exists
+  newcsf : stats_RW0_RF0_ASHNone_<mode>.csv contains MahaPP and NCI rows
+  ash    : stats_RW0_RF0_ASHash*_<mode>.csv exists
+  react  : stats_RW0_RF0_ASHreact@*_<mode>.csv exists
 
-and writes one rerun list per arm containing the incomplete experiments
-(rerun_newcsf.txt, rerun_ash.txt, rerun_react.txt).
+Incomplete experiments are written to one rerun list per arm
+(rerun_newcsf.txt, rerun_ash.txt, rerun_react.txt) for direct use as
+EXPERIMENTS_FILE with ARMS=<arm> (split per source before launching, since
+TEST_MODES differs per source).
 
   python pilot_coverage.py --experiments-file pilot_all.txt
 """
@@ -22,19 +25,53 @@ import pathlib
 
 import pandas as pd
 
+CODE_DIR = pathlib.Path(__file__).resolve().parent
 ARMS = ["newcsf", "ash", "react"]
+SOURCES = ["cifar10", "cifar100", "supercifar", "tinyimagenet"]
 
 
-def newcsf_done(analysis: pathlib.Path) -> bool:
-    f = analysis / "stats_RW0_RF0_ASHNone_iid_test.csv"
-    if not f.exists():
-        return False
-    idx = pd.read_csv(f, index_col=0).index
-    return "MahaPP" in idx and "NCI" in idx
+def source_catalog(configs_dir: pathlib.Path) -> dict[str, dict]:
+    """Sweep-path prefix -> {source, modes} from the sweep manifests."""
+    catalog: dict[str, dict] = {}
+    for source in SOURCES:
+        train = configs_dir / f"configs_{source}_iid_train.txt"
+        if not train.exists():
+            continue
+        first = train.read_text().splitlines()[1].split()[1]
+        prefix = first.split("/")[0]
+        modes = []
+        for f in sorted(configs_dir.glob(f"configs_{source}_iid_test_*.txt")) \
+                + sorted(configs_dir.glob(f"configs_{source}_ood_test_*.txt")):
+            rows = f.read_text().splitlines()[1:]
+            if rows:
+                mode = rows[0].split()[-1]
+                if mode != "iid_test_corruptions" and mode not in modes:
+                    modes.append(mode)
+        catalog[prefix] = {"source": source, "modes": modes}
+    return catalog
 
 
-def glob_done(analysis: pathlib.Path, pattern: str) -> bool:
-    return any(analysis.glob(pattern))
+def stats_index(path: pathlib.Path) -> set[str]:
+    """Method-name index of a stats CSV (first column only, fast)."""
+    try:
+        return set(pd.read_csv(path, usecols=[0], index_col=0).index)
+    except (OSError, ValueError, pd.errors.ParserError):
+        return set()
+
+
+def arm_complete(analysis: pathlib.Path, arm: str, modes: list[str]) -> bool:
+    for mode in modes:
+        if arm == "newcsf":
+            f = analysis / f"stats_RW0_RF0_ASHNone_{mode}.csv"
+            if not f.exists() or not {"MahaPP", "NCI"} <= stats_index(f):
+                return False
+        elif arm == "ash":
+            if not any(analysis.glob(f"stats_RW0_RF0_ASHash*_{mode}.csv")):
+                return False
+        elif arm == "react":
+            if not any(analysis.glob(f"stats_RW0_RF0_ASHreact@*_{mode}.csv")):
+                return False
+    return True
 
 
 def main() -> None:
@@ -42,7 +79,13 @@ def main() -> None:
     ap.add_argument("--experiments-file", nargs="+", required=True)
     ap.add_argument("--experiment-root",
                     default=os.environ.get("EXPERIMENT_ROOT_DIR", "."))
+    ap.add_argument("--configs-dir", default=str(CODE_DIR / "configs_exp"))
     args = ap.parse_args()
+
+    catalog = source_catalog(pathlib.Path(args.configs_dir))
+    if not catalog:
+        raise SystemExit(f"No sweep manifests found in {args.configs_dir}; "
+                         "cannot derive per-source mode lists")
 
     exps = []
     for ef in args.experiments_file:
@@ -53,16 +96,22 @@ def main() -> None:
 
     root = pathlib.Path(args.experiment_root)
     missing: dict[str, list[str]] = {arm: [] for arm in ARMS}
+    unknown = []
     for exp in exps:
+        entry = catalog.get(exp.split("/")[0])
+        if entry is None:
+            unknown.append(exp)
+            continue
         analysis = root / exp / "analysis"
-        if not newcsf_done(analysis):
-            missing["newcsf"].append(exp)
-        if not glob_done(analysis, "stats_RW0_RF0_ASHash*_iid_test.csv"):
-            missing["ash"].append(exp)
-        if not glob_done(analysis, "stats_RW0_RF0_ASHreact@*_iid_test.csv"):
-            missing["react"].append(exp)
+        for arm in ARMS:
+            if not arm_complete(analysis, arm, entry["modes"]):
+                missing[arm].append(exp)
 
-    print(f"experiments checked: {len(exps)}")
+    print(f"experiments checked: {len(exps)} "
+          f"(modes verified per source: "
+          f"{ {v['source']: len(v['modes']) for v in catalog.values()} })")
+    for exp in unknown:
+        print(f"UNKNOWN SWEEP PREFIX (skipped): {exp}")
     for arm in ARMS:
         n = len(missing[arm])
         print(f"  {arm:<7s} complete: {len(exps) - n:>4d}   missing: {n}")
