@@ -10,11 +10,13 @@ configs_exp/ sweep manifests; corruptions excluded), per arm:
   react  : stats_RW0_RF0_ASHreact@*_<mode>.csv exists
 
 Incomplete experiments are written to one rerun list per arm
-(rerun_newcsf.txt, rerun_ash.txt, rerun_react.txt) for direct use as
-EXPERIMENTS_FILE with ARMS=<arm> (split per source before launching, since
-TEST_MODES differs per source).
+(rerun_newcsf.txt, rerun_ash.txt, rerun_react.txt), and additionally to
+per-(arm, source, missing-mode-set) lists for which ready-to-run launch
+commands are printed with a minimal TEST_MODES (only the modes actually
+missing for that group). Use --source to audit a subset of sources.
 
   python pilot_coverage.py --experiments-file pilot_all.txt
+  python pilot_coverage.py --experiments-file pilot_all.txt --source tinyimagenet
 """
 
 from __future__ import annotations
@@ -92,6 +94,10 @@ def main() -> None:
                     default=os.environ.get("EXPERIMENT_ROOT_DIR", "."))
     ap.add_argument("--configs-dir", default=str(CODE_DIR / "configs_exp"))
     ap.add_argument("--clip-dir", default=str(CODE_DIR / "clip_scores"))
+    ap.add_argument("--source", nargs="*", choices=SOURCES, default=None,
+                    help="restrict the audit to these sources")
+    ap.add_argument("--sif", default="systematic_ood.sif",
+                    help="container image used in the printed commands")
     ap.add_argument("--detail", action="store_true",
                     help="also print, per (source, arm), how many "
                          "experiments are missing each mode")
@@ -119,12 +125,15 @@ def main() -> None:
         for arm in ARMS:
             mode_counts[(source, arm)] = {}
     unknown = []
+    groups: dict[tuple[str, str, tuple[str, ...]], list[str]] = {}
     for exp in exps:
         entry = catalog.get(exp.split("/")[0])
         if entry is None:
             unknown.append(exp)
             continue
         source = entry["source"]
+        if args.source and source not in args.source:
+            continue
         totals[source] = totals.get(source, 0) + 1
         analysis = root / exp / "analysis"
         for arm in ARMS:
@@ -133,11 +142,14 @@ def main() -> None:
                 missing[arm].append(exp)
                 miss_by_source[arm][source] = (
                     miss_by_source[arm].get(source, 0) + 1)
+                groups.setdefault((arm, source, tuple(missing_modes)),
+                                  []).append(exp)
                 for mode in missing_modes:
                     mode_counts[(source, arm)][mode] = (
                         mode_counts[(source, arm)].get(mode, 0) + 1)
 
-    print(f"experiments checked: {len(exps)} "
+    print(f"experiments checked: {sum(totals.values())} of {len(exps)} listed"
+          f"{' (source filter: ' + ' '.join(args.source) + ')' if args.source else ''} "
           f"(modes verified per source: "
           f"{ {v['source']: len(v['modes']) for v in catalog.values()} })")
     for exp in unknown:
@@ -162,14 +174,34 @@ def main() -> None:
                                            key=lambda kv: -kv[1]))
                 print(f"  {source}/{arm}: {summary}")
 
+    n_checked = sum(totals.values())
     print("\noverall:")
     for arm in ARMS:
         n = len(missing[arm])
-        print(f"  {arm:<7s} complete: {len(exps) - n:>4d}   missing: {n}")
+        print(f"  {arm:<7s} complete: {n_checked - n:>4d}   missing: {n}")
         out = pathlib.Path(f"rerun_{arm}.txt")
         out.write_text("\n".join(missing[arm]) + "\n" if missing[arm] else "")
         if missing[arm]:
             print(f"          -> {out}")
+
+    if groups:
+        print("\ncommands to complete the missing experiments "
+              "(set CUDA_VISIBLE_DEVICES per launch):")
+        counters: dict[tuple[str, str], int] = {}
+        for (arm, source, modes), grp_exps in sorted(groups.items()):
+            counters[(arm, source)] = counters.get((arm, source), 0) + 1
+            suffix = (f"_g{counters[(arm, source)]}"
+                      if sum(1 for a, s, _ in groups if (a, s) == (arm, source)) > 1
+                      else "")
+            list_path = pathlib.Path(f"rerun_{arm}_{source}{suffix}.txt")
+            list_path.write_text("\n".join(grp_exps) + "\n")
+            print(f"\n# {arm} / {source}: {len(grp_exps)} experiments, "
+                  f"{len(modes)} mode(s)")
+            print(f"CUDA_VISIBLE_DEVICES=<GPU> VENV=/nonexistent "
+                  f"ARMS={arm} EXPERIMENTS_FILE={list_path} \\")
+            print(f"  TEST_MODES=\"{' '.join(modes)}\" \\")
+            print(f"  nohup singularity exec --nv {args.sif} "
+                  f"bash run_new_csfs_pilot.sh > {list_path.stem}.log 2>&1 &")
 
 
 if __name__ == "__main__":
