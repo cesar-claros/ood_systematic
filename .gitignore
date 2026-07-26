@@ -30,6 +30,7 @@ scores_risk_resnet18/
 scores_calibration/
 neural_collapse_metrics/
 clip_robustness/
+# clip_scores/
 clip_scores_openood/
 
 # Analysis outputs (regenerable from the archives; headline numbers are logged
