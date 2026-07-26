@@ -96,22 +96,40 @@ def main() -> None:
 
     root = pathlib.Path(args.experiment_root)
     missing: dict[str, list[str]] = {arm: [] for arm in ARMS}
+    totals: dict[str, int] = {}
+    miss_by_source: dict[str, dict[str, int]] = {arm: {} for arm in ARMS}
     unknown = []
     for exp in exps:
         entry = catalog.get(exp.split("/")[0])
         if entry is None:
             unknown.append(exp)
             continue
+        source = entry["source"]
+        totals[source] = totals.get(source, 0) + 1
         analysis = root / exp / "analysis"
         for arm in ARMS:
             if not arm_complete(analysis, arm, entry["modes"]):
                 missing[arm].append(exp)
+                miss_by_source[arm][source] = (
+                    miss_by_source[arm].get(source, 0) + 1)
 
     print(f"experiments checked: {len(exps)} "
           f"(modes verified per source: "
           f"{ {v['source']: len(v['modes']) for v in catalog.values()} })")
     for exp in unknown:
         print(f"UNKNOWN SWEEP PREFIX (skipped): {exp}")
+
+    per_source = pd.DataFrame([
+        {"source": source, "experiments": n_total,
+         **{arm: f"{n_total - miss_by_source[arm].get(source, 0)} ok / "
+                 f"{miss_by_source[arm].get(source, 0)} miss"
+            for arm in ARMS}}
+        for source, n_total in sorted(totals.items())
+    ])
+    print("\nper source:\n")
+    print(per_source.to_string(index=False))
+
+    print("\noverall:")
     for arm in ARMS:
         n = len(missing[arm])
         print(f"  {arm:<7s} complete: {len(exps) - n:>4d}   missing: {n}")
