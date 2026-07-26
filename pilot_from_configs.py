@@ -20,7 +20,55 @@ import argparse
 import os
 import pathlib
 
+import pandas as pd
+
 CODE_DIR = pathlib.Path(__file__).resolve().parent
+
+#: Eval mode -> dataset name as used in the clip_distances CSVs (Table 6).
+MODE_DATASET = {
+    "ood_sncs_c10": "cifar10", "ood_sncs_c100": "cifar100",
+    "ood_sncs_sc100": "supercifar100", "ood_nsncs_ti": "tinyimagenet",
+    "ood_nsncs_svhn": "svhn", "ood_nsncs_lsun_cropped": "lsun cropped",
+    "ood_nsncs_lsun_resize": "lsun resize", "ood_nsncs_isun": "isun",
+    "ood_nsncs_textures": "textures", "ood_nsncs_places365": "places365",
+}
+#: Manifest source key -> clip_distances file key.
+CLIP_SOURCE_NAME = {"supercifar": "supercifar100"}
+
+
+def paper_suite(source: str, clip_dir: pathlib.Path) -> set[str]:
+    """OOD dataset names in the paper's Table 6 grouping for one source."""
+    clip_name = CLIP_SOURCE_NAME.get(source, source)
+    df = pd.read_csv(clip_dir / f"clip_distances_{clip_name}.csv",
+                     header=[0, 1], index_col=0)
+    group_col = [c for c in df.columns if c[0] == "group"][0]
+    groups = df[group_col].astype(int)
+    return {ds for ds, g in groups.items() if g > 0}
+
+
+def filter_modes_to_paper(
+        modes: list[str], source: str, clip_dir: pathlib.Path
+) -> tuple[list[str], list[str], list[str]]:
+    """Reconcile manifest modes with the paper's Table 6 suite.
+
+    iid_test is always kept; an OOD mode is kept iff its dataset appears in
+    the source's CLIP-derived near/mid/far grouping.
+
+    Returns:
+        (kept, dropped, gaps): kept modes, manifest modes outside the suite,
+        and suite datasets covered by NO manifest mode (a gap means the
+        pilot cannot reproduce the paper's clique blocks for this source).
+    """
+    suite = paper_suite(source, clip_dir)
+    kept, dropped = [], []
+    for mode in modes:
+        if mode == "iid_test" or MODE_DATASET.get(mode) in suite:
+            kept.append(mode)
+        else:
+            dropped.append(mode)
+    covered = {MODE_DATASET[m] for m in kept if m in MODE_DATASET}
+    gaps = sorted(suite - covered)
+    return kept, dropped, gaps
 
 
 def read_manifest(path: pathlib.Path) -> list[list[str]]:
@@ -45,6 +93,10 @@ def main() -> None:
     ap.add_argument("--include-corruptions", action="store_true",
                     help="keep iid_test_corruptions (excluded by default; "
                          "not needed for the OOD pilot)")
+    ap.add_argument("--clip-dir", default=str(CODE_DIR / "clip_scores"))
+    ap.add_argument("--all-manifest-modes", action="store_true",
+                    help="keep every manifest mode instead of restricting to "
+                         "the paper's Table 6 OOD suite (clip_distances)")
     ap.add_argument("--out", default="pilot_experiments.txt")
     ap.add_argument("--check-dirs", action="store_true",
                     help="verify each experiment dir exists under "
@@ -69,6 +121,17 @@ def main() -> None:
                 continue
             if mode not in modes:
                 modes.append(mode)
+    if not args.all_manifest_modes:
+        modes, dropped, gaps = filter_modes_to_paper(
+            modes, args.source, pathlib.Path(args.clip_dir))
+        if dropped:
+            print(f"dropped (not in the paper's Table 6 suite for "
+                  f"{args.source}): {' '.join(dropped)}")
+        if gaps:
+            raise SystemExit(
+                f"GAP: Table 6 datasets for {args.source} with no manifest "
+                f"eval mode: {gaps}. The pilot cannot match the paper's "
+                "clique blocks; check configs_exp/ and MODE_DATASET.")
 
     missing = []
     if args.check_dirs:

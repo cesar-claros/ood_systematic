@@ -25,13 +25,17 @@ import pathlib
 
 import pandas as pd
 
+from pilot_from_configs import filter_modes_to_paper
+
 CODE_DIR = pathlib.Path(__file__).resolve().parent
 ARMS = ["newcsf", "ash", "react"]
 SOURCES = ["cifar10", "cifar100", "supercifar", "tinyimagenet"]
 
 
-def source_catalog(configs_dir: pathlib.Path) -> dict[str, dict]:
-    """Sweep-path prefix -> {source, modes} from the sweep manifests."""
+def source_catalog(configs_dir: pathlib.Path,
+                   clip_dir: pathlib.Path) -> dict[str, dict]:
+    """Sweep-path prefix -> {source, modes} from the sweep manifests,
+    restricted to the paper's Table 6 OOD suite (clip_distances grouping)."""
     catalog: dict[str, dict] = {}
     for source in SOURCES:
         train = configs_dir / f"configs_{source}_iid_train.txt"
@@ -47,6 +51,10 @@ def source_catalog(configs_dir: pathlib.Path) -> dict[str, dict]:
                 mode = rows[0].split()[-1]
                 if mode != "iid_test_corruptions" and mode not in modes:
                     modes.append(mode)
+        modes, _, gaps = filter_modes_to_paper(modes, source, clip_dir)
+        if gaps:
+            print(f"WARNING: {source} Table 6 datasets with no manifest "
+                  f"eval mode: {gaps}")
         catalog[prefix] = {"source": source, "modes": modes}
     return catalog
 
@@ -83,12 +91,14 @@ def main() -> None:
     ap.add_argument("--experiment-root",
                     default=os.environ.get("EXPERIMENT_ROOT_DIR", "."))
     ap.add_argument("--configs-dir", default=str(CODE_DIR / "configs_exp"))
+    ap.add_argument("--clip-dir", default=str(CODE_DIR / "clip_scores"))
     ap.add_argument("--detail", action="store_true",
                     help="also print, per (source, arm), how many "
                          "experiments are missing each mode")
     args = ap.parse_args()
 
-    catalog = source_catalog(pathlib.Path(args.configs_dir))
+    catalog = source_catalog(pathlib.Path(args.configs_dir),
+                             pathlib.Path(args.clip_dir))
     if not catalog:
         raise SystemExit(f"No sweep manifests found in {args.configs_dir}; "
                          "cannot derive per-source mode lists")
