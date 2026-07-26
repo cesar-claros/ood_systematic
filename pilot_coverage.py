@@ -101,6 +101,10 @@ def main() -> None:
     ap.add_argument("--detail", action="store_true",
                     help="also print, per (source, arm), how many "
                          "experiments are missing each mode")
+    ap.add_argument("--report-only", action="store_true",
+                    help="print complete/missing experiment names per arm "
+                         "(honoring --source) without writing rerun lists "
+                         "or printing launch commands")
     args = ap.parse_args()
 
     catalog = source_catalog(pathlib.Path(args.configs_dir),
@@ -125,6 +129,7 @@ def main() -> None:
         for arm in ARMS:
             mode_counts[(source, arm)] = {}
     unknown = []
+    checked: list[str] = []
     groups: dict[tuple[str, str, tuple[str, ...]], list[str]] = {}
     for exp in exps:
         entry = catalog.get(exp.split("/")[0])
@@ -134,6 +139,7 @@ def main() -> None:
         source = entry["source"]
         if args.source and source not in args.source:
             continue
+        checked.append(exp)
         totals[source] = totals.get(source, 0) + 1
         analysis = root / exp / "analysis"
         for arm in ARMS:
@@ -173,6 +179,22 @@ def main() -> None:
                                     sorted(counts.items(),
                                            key=lambda kv: -kv[1]))
                 print(f"  {source}/{arm}: {summary}")
+
+    if args.report_only:
+        for arm in ARMS:
+            missing_set = set(missing[arm])
+            complete = [e for e in checked if e not in missing_set]
+            print(f"\n{arm}: {len(complete)} complete, "
+                  f"{len(missing_set)} missing")
+            if complete:
+                print("  complete:")
+                for e in complete:
+                    print(f"    {e}")
+            if missing[arm]:
+                print("  missing:")
+                for e in missing[arm]:
+                    print(f"    {e}")
+        return
 
     n_checked = sum(totals.values())
     print("\noverall:")
