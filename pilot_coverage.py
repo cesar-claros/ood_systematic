@@ -59,19 +59,22 @@ def stats_index(path: pathlib.Path) -> set[str]:
         return set()
 
 
-def arm_complete(analysis: pathlib.Path, arm: str, modes: list[str]) -> bool:
+def arm_missing_modes(analysis: pathlib.Path, arm: str,
+                      modes: list[str]) -> list[str]:
+    """Modes whose stats are absent or incomplete for this arm."""
+    out = []
     for mode in modes:
         if arm == "newcsf":
             f = analysis / f"stats_RW0_RF0_ASHNone_{mode}.csv"
             if not f.exists() or not {"MahaPP", "NCI"} <= stats_index(f):
-                return False
+                out.append(mode)
         elif arm == "ash":
             if not any(analysis.glob(f"stats_RW0_RF0_ASHash*_{mode}.csv")):
-                return False
+                out.append(mode)
         elif arm == "react":
             if not any(analysis.glob(f"stats_RW0_RF0_ASHreact@*_{mode}.csv")):
-                return False
-    return True
+                out.append(mode)
+    return out
 
 
 def main() -> None:
@@ -80,6 +83,9 @@ def main() -> None:
     ap.add_argument("--experiment-root",
                     default=os.environ.get("EXPERIMENT_ROOT_DIR", "."))
     ap.add_argument("--configs-dir", default=str(CODE_DIR / "configs_exp"))
+    ap.add_argument("--detail", action="store_true",
+                    help="also print, per (source, arm), how many "
+                         "experiments are missing each mode")
     args = ap.parse_args()
 
     catalog = source_catalog(pathlib.Path(args.configs_dir))
@@ -98,6 +104,10 @@ def main() -> None:
     missing: dict[str, list[str]] = {arm: [] for arm in ARMS}
     totals: dict[str, int] = {}
     miss_by_source: dict[str, dict[str, int]] = {arm: {} for arm in ARMS}
+    mode_counts: dict[tuple[str, str], dict[str, int]] = {}
+    for source in SOURCES:
+        for arm in ARMS:
+            mode_counts[(source, arm)] = {}
     unknown = []
     for exp in exps:
         entry = catalog.get(exp.split("/")[0])
@@ -108,10 +118,14 @@ def main() -> None:
         totals[source] = totals.get(source, 0) + 1
         analysis = root / exp / "analysis"
         for arm in ARMS:
-            if not arm_complete(analysis, arm, entry["modes"]):
+            missing_modes = arm_missing_modes(analysis, arm, entry["modes"])
+            if missing_modes:
                 missing[arm].append(exp)
                 miss_by_source[arm][source] = (
                     miss_by_source[arm].get(source, 0) + 1)
+                for mode in missing_modes:
+                    mode_counts[(source, arm)][mode] = (
+                        mode_counts[(source, arm)].get(mode, 0) + 1)
 
     print(f"experiments checked: {len(exps)} "
           f"(modes verified per source: "
@@ -128,6 +142,15 @@ def main() -> None:
     ])
     print("\nper source:\n")
     print(per_source.to_string(index=False))
+
+    if args.detail:
+        print("\nmissing modes per (source, arm):")
+        for (source, arm), counts in mode_counts.items():
+            if counts:
+                summary = ", ".join(f"{m}: {n}" for m, n in
+                                    sorted(counts.items(),
+                                           key=lambda kv: -kv[1]))
+                print(f"  {source}/{arm}: {summary}")
 
     print("\noverall:")
     for arm in ARMS:
