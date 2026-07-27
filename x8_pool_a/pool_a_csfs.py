@@ -114,6 +114,40 @@ def conf_ctm(z_std: np.ndarray, w: np.ndarray) -> np.ndarray:
     return (zn @ wn.T).max(axis=1)
 
 
+def l2n(h: np.ndarray) -> np.ndarray:
+    """Row-wise L2 normalization (Mahalanobis++ preprocessing)."""
+    return h / (np.linalg.norm(h, axis=1, keepdims=True) + EPS)
+
+
+def fit_nci_alpha(h_val: np.ndarray, logits_val: np.ndarray,
+                  resid_val: np.ndarray, w_eff: np.ndarray,
+                  train_mean: np.ndarray, rc_metric_fn,
+                  alphas=(0.0, 1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2)) -> float:
+    """NCI alpha minimizing validation failure-AUGRC (pipeline convention)."""
+    best_alpha, best = alphas[0], np.inf
+    for alpha in alphas:
+        augrc, _ = rc_metric_fn(
+            conf_nci(h_val, logits_val, w_eff, train_mean, alpha), resid_val)
+        if augrc < best:
+            best_alpha, best = alpha, augrc
+    return best_alpha
+
+
+def conf_nci(h: np.ndarray, logits: np.ndarray, w_eff: np.ndarray,
+             train_mean: np.ndarray, alpha: float) -> np.ndarray:
+    """NCI (Liu & Qin, CVPR 2025): <w_pred, h-u>/||h-u|| + alpha*||h||_1.
+
+    Raw-feature-space form: w_eff are the probe weights mapped back to the
+    unstandardized feature space (W / sd), matching the pipeline's use of
+    raw penultimate activations with head weights.
+    """
+    centered = h - train_mean
+    pred = logits.argmax(axis=1)
+    align = (w_eff[pred] * centered).sum(axis=1)
+    align = align / (np.linalg.norm(centered, axis=1) + EPS)
+    return align + alpha * np.abs(h).sum(axis=1)
+
+
 class Mahalanobis:
     """Shared-covariance Mahalanobis distance to the nearest class centroid."""
 

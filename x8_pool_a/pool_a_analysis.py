@@ -64,6 +64,10 @@ HEAD_CSFS = ["MSR", "MLS", "Energy", "PE", "GEN", "REN", "GE", "PCE",
              "GradNorm", "pNML"]
 FEAT_CSFS = ["CTM", "Maha", "NNGuide", "fDBD", "PCA RecError global",
              "Residual", "ViM", "NeCo"]
+# Rebuttal additions, evaluated on the pool but excluded from the H2
+# predictor's candidate sides (the VGG-trained heads carry no labels for
+# them, so including them would inflate the oracle unfairly).
+NEW_CSFS = ["MahaPP", "NCI"]
 ALWAYS_BASELINES = ["MSR", "Energy", "MLS", "CTM", "fDBD", "NNGuide"]
 DESC_COLS = ["rho_res", "n_residue_spikes", "median_cos_own",
              "class_dep_residue", "common_mode_energy"]
@@ -155,6 +159,11 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
     lg_val = logits_of(h_val)
     resid_val = (lg_val.argmax(axis=1) != y_val).astype(float)
     maha = csf.Mahalanobis(h_val, y_val, n_cls)
+    maha_pp = csf.Mahalanobis(csf.l2n(h_val), y_val, n_cls)
+    w_eff = w / sd
+    train_mean_raw = h_fit.mean(axis=0)
+    nci_alpha = csf.fit_nci_alpha(h_val, lg_val, resid_val, w_eff,
+                                  train_mean_raw, rc_metrics)
     sub = csf.Subspace(h_val)
     pnml = csf.PNML(zf(h_val))
     bank_logits = lg_val
@@ -192,6 +201,8 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
             "GE": csf.conf_ge(p), "PCE": csf.conf_pce(p),
             "GradNorm": csf.conf_gradnorm(p, z), "pNML": pnml.conf(z, p),
             "CTM": csf.conf_ctm(z, w), "Maha": maha.conf(h),
+            "MahaPP": maha_pp.conf(csf.l2n(h)),
+            "NCI": csf.conf_nci(h, lg, w_eff, train_mean_raw, nci_alpha),
             "NNGuide": nng.conf(h, csf.conf_energy(lg, 1.0)),
             "fDBD": csf.conf_fdbd(z, lg, w, mu_std),
             "PCA RecError global": sub.conf_pca_recerror(h, d_pca),
@@ -221,7 +232,6 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
             rows.append({**base, "csf": name, "eval_dataset": ev,
                          "regime": None, "augrc": a, "aurc": u})
 
-    w_eff = w / sd
     desc = descriptors(h_fit, y_fit, n_cls)
     desc["common_mode_energy"] = desc.pop("common_mode")["energy_fraction"]
     model_row = {**base, "acc": float(correct.mean()), "temp": temp,
@@ -454,6 +464,15 @@ def main() -> None:
              .mean().round(3).to_string() + "\n```\n\n",
              "## Top cliques per (encoder, source, regime)\n\n",
              "```\n" + top.to_string(index=False) + "\n```\n\n",
+             "## New CSFs on the SSL pool (mean AUGRC per encoder x regime)\n\n",
+             "```\n" + (long_df[long_df["regime"].isin(["near", "mid", "far"])
+                        & long_df["csf"].isin(NEW_CSFS + ["Maha", "NeCo",
+                                                          "CTM", "Residual",
+                                                          "ViM", "Energy"])]
+                        .pivot_table(index="csf",
+                                     columns=["paradigm", "regime"],
+                                     values="augrc", aggfunc="mean")
+                        .round(2).to_string()) + "\n```\n\n",
              "## H1: Mantel, classical vs extended descriptors\n\n",
              "```\n" + h1.round(4).to_string(index=False) + "\n```\n\n",
              "## H2/H4: VGG-13-trained predictor on the probe pool\n\n",
