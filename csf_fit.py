@@ -1,4 +1,6 @@
 #%%
+import os
+
 import torch
 from fd_shifts.utils import exp_utils
 from fd_shifts.models import get_model
@@ -123,6 +125,17 @@ def main():
         logger.info(f'Changing the batch size from {cf.trainer.batch_size} to {new_batch_size}...')
         cf.trainer.batch_size = new_batch_size
 
+    # Optional overrides for large-memory GPUs: the divisions above are sized
+    # for the original 16 GB T4s and starve an 80 GB A100. Opt-in only, e.g.
+    # CSF_BATCH_SIZE=128. Deterministic outputs are batch-size invariant;
+    # MCD draws differ within their inherent sampling noise, as on any rerun.
+    if os.environ.get('CSF_BATCH_SIZE'):
+        logger.info(f"CSF_BATCH_SIZE override: {cf.trainer.batch_size} -> "
+                    f"{os.environ['CSF_BATCH_SIZE']}")
+        cf.trainer.batch_size = int(os.environ['CSF_BATCH_SIZE'])
+    if os.environ.get('CSF_NUM_WORKERS'):
+        logger.info(f"CSF_NUM_WORKERS override: {os.environ['CSF_NUM_WORKERS']}")
+        cf.data.num_workers = int(os.environ['CSF_NUM_WORKERS'])
     # Load datasets
     datamodule = FDShiftsDataLoader(cf)
     datamodule.setup()
