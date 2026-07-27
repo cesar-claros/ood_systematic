@@ -323,17 +323,50 @@ def h1_mantel(models_df: pd.DataFrame, long_df: pd.DataFrame,
     return pd.DataFrame(rows)
 
 
+def pool_cliques_for(train_archs: tuple, benchmark_long: pd.DataFrame
+                     ) -> pd.DataFrame:
+    """Clique labels for the requested training architectures.
+
+    VGG-13 CNN labels come from the published step-5 cliques; ViT labels are
+    computed inline with the same Friedman-Conover pipeline (cached to
+    cliques_vit.parquet) since that file is not tracked in the repo.
+    """
+    pieces = []
+    if "VGG13" in train_archs:
+        pieces.append(pd.read_parquet(
+            OUT_ROOT / "track1" / "cliques" / "cliques.parquet"))
+    if "ViT" in train_archs:
+        vit_path = OUT_ROOT / "track1" / "cliques" / "cliques_vit.parquet"
+        if vit_path.exists():
+            pieces.append(pd.read_parquet(vit_path))
+        else:
+            logger.info("Computing ViT clique labels inline...")
+            vit_rows = benchmark_long[
+                (benchmark_long["architecture"] == "ViT")
+                & (benchmark_long["paradigm"] == "modelvit")]
+            flat, _ = compute_track1_cliques(vit_rows)
+            flat.to_parquet(vit_path, index=False)
+            pieces.append(flat)
+    return pd.concat(pieces, ignore_index=True)
+
+
 def h2_predictor(models_df: pd.DataFrame, long_df: pd.DataFrame,
-                 n_perms: int) -> pd.DataFrame:
-    """VGG-13-trained clique predictor applied to the probe pool."""
+                 n_perms: int, train_archs: tuple = ("VGG13",)
+                 ) -> pd.DataFrame:
+    """Benchmark-trained clique predictor applied to the probe pool.
+
+    train_archs selects the training pool: the paper's VGG-13 CNNs, the
+    fine-tuned ViTs (the weak-collapse regime closest to frozen probes), or
+    both combined (the widest NC span).
+    """
     vgg_long = pd.read_parquet(
         OUT_ROOT / "track1" / "dataset" / "long_harmonized.parquet")
     vgg_long = add_model_id(vgg_long)
+    cliques = pool_cliques_for(train_archs, vgg_long)
     for arch, sub in vgg_long.groupby("architecture"):
         for c in NC_PRIMARY:
             vgg_long.loc[sub.index, c] = (
                 (sub[c] - sub[c].mean()) / (sub[c].std() + 1e-12))
-    cliques = pd.read_parquet(OUT_ROOT / "track1" / "cliques" / "cliques.parquet")
     label_wide = (cliques.assign(label=cliques["in_top_clique"].astype(int))
                   .pivot_table(index=["paradigm", "source", "dropout",
                                       "reward", "regime"],
@@ -341,7 +374,7 @@ def h2_predictor(models_df: pd.DataFrame, long_df: pd.DataFrame,
                   .reset_index().fillna(0))
     csf_cols = [c for c in label_wide.columns if c not in
                 ["paradigm", "source", "dropout", "reward", "regime"]]
-    vgg_models = (vgg_long[vgg_long["architecture"] == "VGG13"]
+    vgg_models = (vgg_long[vgg_long["architecture"].isin(train_archs)]
                   [["model_id", "paradigm", "source", "dropout", "reward"]
                    + NC_PRIMARY].drop_duplicates("model_id"))
     train_rows = []
@@ -377,6 +410,8 @@ def h2_predictor(models_df: pd.DataFrame, long_df: pd.DataFrame,
         pr["hit"] = pipe.predict_proba(te[feats_cols])[:, 1] >= 0.5
         preds.append(pr)
     preds = pd.concat(preds, ignore_index=True)
+    logger.info(f"H2[{'+'.join(train_archs)}]: "
+                f"{preds['csf'].nunique()} per-CSF heads trained")
 
     ood = long_df[long_df["regime"] != "test"].copy()
     sides = {"all": HEAD_CSFS + FEAT_CSFS, "head": HEAD_CSFS,
@@ -399,7 +434,8 @@ def h2_predictor(models_df: pd.DataFrame, long_df: pd.DataFrame,
                              "regime"])
         m["regret"] = (m["set_min"].fillna(m["wst"]) - m["o"]).clip(lower=0)
         for regime, g in m.groupby("regime"):
-            rec = {"side": side, "regime": regime,
+            rec = {"train_pool": "+".join(train_archs),
+                   "side": side, "regime": regime,
                    "predictor_regret": round(float(g["regret"].mean()), 2),
                    "empty_pct": round(100 * float(g["set_min"].isna().mean()), 1)}
             best_name, best_val = None, np.inf
@@ -515,9 +551,13 @@ def main() -> None:
 
     logger.info("H1: Mantel classical vs extended descriptors...")
     h1 = h1_mantel(models_df, long_df, args.n_perms)
-    logger.info("H2: VGG-13-trained predictor on the probe pool "
-                "(sklearn, CPU; the slowest stage)...")
-    h2 = h2_predictor(models_df, long_df, args.n_perms)
+    h2_parts = []
+    for pool in [("VGG13",), ("ViT",), ("VGG13", "ViT")]:
+        logger.info(f"H2[{'+'.join(pool)}]: benchmark-trained predictor on "
+                    "the probe pool (sklearn, CPU; the slowest stage)...")
+        h2_parts.append(h2_predictor(models_df, long_df, args.n_perms,
+                                     train_archs=pool))
+    h2 = pd.concat(h2_parts, ignore_index=True)
 
     lines = ["# Pool A pilot (X8): frozen DINOv2/CLIP probes\n\n",
              "**Source:** `x8_pool_a/pool_a_analysis.py`"
@@ -539,7 +579,9 @@ def main() -> None:
                         .round(2).to_string()) + "\n```\n\n",
              "## H1: Mantel, classical vs extended descriptors\n\n",
              "```\n" + h1.round(4).to_string(index=False) + "\n```\n\n",
-             "## H2/H4: VGG-13-trained predictor on the probe pool\n\n",
+             "## H2/H4: benchmark-trained predictors on the probe pool\n"
+             "(train pools: VGG-13 CNNs, fine-tuned ViTs, and both; the ViT "
+             "pool is the weak-collapse regime closest to frozen probes)\n\n",
              "```\n" + h2.to_string(index=False) + "\n```\n"]
     report = out_dir / ("27_pool_a_pilot_SYNTHETIC.md" if args.synthetic
                         else "27_pool_a_pilot.md")
