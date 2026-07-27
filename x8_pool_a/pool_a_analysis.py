@@ -174,7 +174,8 @@ def select_dim(score_fn, dims: list[int], conf_val_args: tuple,
 
 
 def run_model(enc: str, source: str, seed: int, feats: dict,
-              eval_names: list[str], device: str) -> tuple[list[dict], dict]:
+              eval_names: list[str], device: str,
+              include_new: bool = False) -> tuple[list[dict], dict]:
     """Probe + CSFs + per-eval-set metrics for one (encoder, source, seed)."""
     t0 = time.perf_counter()
     h_train, y_train = feats[(source, "train")]
@@ -205,11 +206,16 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
     lg_val = logits_of(h_val)
     resid_val = (lg_val.argmax(dim=1) != y_val).float().cpu().numpy()
     maha = csf.Mahalanobis(h_val, y_val, n_cls)
-    maha_pp = csf.Mahalanobis(csf.l2n(h_val), y_val, n_cls)
     w_eff = w / sd
     train_mean_raw = h_fit.mean(dim=0)
-    nci_alpha = csf.fit_nci_alpha(h_val, lg_val, resid_val, w_eff,
-                                  train_mean_raw, rc_metrics)
+    # MahaPP/NCI are deferred until the E-F sweep completes on the CNN/ViT
+    # benchmark, so the roster stays identical across pools; rerun with
+    # --include-new-csfs to add them.
+    maha_pp, nci_alpha = None, None
+    if include_new:
+        maha_pp = csf.Mahalanobis(csf.l2n(h_val), y_val, n_cls)
+        nci_alpha = csf.fit_nci_alpha(h_val, lg_val, resid_val, w_eff,
+                                      train_mean_raw, rc_metrics)
     sub = csf.Subspace(h_val)
     pnml = csf.PNML(zf(h_val))
     bank_scores = csf.conf_energy(lg_val, 1.0)
@@ -232,9 +238,9 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
         if a < best_a:
             best_a, k_nng = a, k
     nng = csf.NNGuide(h_val, bank_scores, k_nng)
+    nci_note = f", nci_alpha={nci_alpha:g}" if include_new else ""
     logger.info(f"{enc}/{source}/seed{seed}: CSFs fit (dims pca={d_pca} "
-                f"res={d_res} neco={d_neco}, nng_k={k_nng}, "
-                f"nci_alpha={nci_alpha:g}) "
+                f"res={d_res} neco={d_neco}, nng_k={k_nng}{nci_note}) "
                 f"({time.perf_counter() - t1:.1f}s)")
 
     def all_confs(h: torch.Tensor) -> dict[str, np.ndarray]:
@@ -249,8 +255,6 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
             "GE": csf.conf_ge(p), "PCE": csf.conf_pce(p),
             "GradNorm": csf.conf_gradnorm(p, z), "pNML": pnml.conf(z, p),
             "CTM": csf.conf_ctm(z, w), "Maha": maha.conf(h),
-            "MahaPP": maha_pp.conf(csf.l2n(h)),
-            "NCI": csf.conf_nci(h, lg, w_eff, train_mean_raw, nci_alpha),
             "NNGuide": nng.conf(h, csf.conf_energy(lg, 1.0)),
             "fDBD": csf.conf_fdbd(z, lg, w, mu_std),
             "PCA RecError global": sub.conf_pca_recerror(h, d_pca),
@@ -258,6 +262,10 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
             "ViM": sub.conf_vim(h, lg, d_vim, vim_alpha, 1.0),
             "NeCo": sub.conf_neco(h, d_neco),
         }
+        if include_new:
+            confs["MahaPP"] = maha_pp.conf(csf.l2n(h))
+            confs["NCI"] = csf.conf_nci(h, lg, w_eff, train_mean_raw,
+                                        nci_alpha)
         return {k: v.cpu().numpy() for k, v in confs.items()}
 
     conf_test = all_confs(h_test)
@@ -493,6 +501,11 @@ def main() -> None:
     ap.add_argument("--n-perms", type=int, default=9999)
     ap.add_argument("--device",
                     default="cuda" if torch.cuda.is_available() else "cpu")
+    ap.add_argument("--include-new-csfs", action="store_true",
+                    help="also evaluate MahaPP and NCI on the pool "
+                         "(deferred by default until the E-F sweep completes "
+                         "on the CNN/ViT benchmark, keeping rosters "
+                         "identical across pools)")
     ap.add_argument("--synthetic", action="store_true")
     args = ap.parse_args()
     logger.info(f"Pool A analysis on device={args.device} "
@@ -525,7 +538,8 @@ def main() -> None:
                     feats[(e, "eval")] = feats[(e, "test")]
             for seed in range(args.seeds):
                 rows, mrow = run_model(enc, source, seed, feats, eval_names,
-                                       args.device)
+                                       args.device,
+                                       include_new=args.include_new_csfs)
                 for r in rows:
                     if r["regime"] is None:
                         r["regime"] = rmap[r["eval_dataset"]]
@@ -568,15 +582,16 @@ def main() -> None:
              .mean().round(3).to_string() + "\n```\n\n",
              "## Top cliques per (encoder, source, regime)\n\n",
              "```\n" + top.to_string(index=False) + "\n```\n\n",
-             "## New CSFs on the SSL pool (mean AUGRC per encoder x regime)\n\n",
-             "```\n" + (long_df[long_df["regime"].isin(["near", "mid", "far"])
-                        & long_df["csf"].isin(NEW_CSFS + ["Maha", "NeCo",
-                                                          "CTM", "Residual",
-                                                          "ViM", "Energy"])]
-                        .pivot_table(index="csf",
-                                     columns=["paradigm", "regime"],
-                                     values="augrc", aggfunc="mean")
-                        .round(2).to_string()) + "\n```\n\n",
+             *(["## New CSFs on the SSL pool (mean AUGRC per encoder x regime)\n\n",
+                "```\n" + (long_df[long_df["regime"].isin(["near", "mid", "far"])
+                           & long_df["csf"].isin(NEW_CSFS + ["Maha", "NeCo",
+                                                             "CTM", "Residual",
+                                                             "ViM", "Energy"])]
+                           .pivot_table(index="csf",
+                                        columns=["paradigm", "regime"],
+                                        values="augrc", aggfunc="mean")
+                           .round(2).to_string()) + "\n```\n\n"]
+               if long_df["csf"].isin(NEW_CSFS).any() else []),
              "## H1: Mantel, classical vs extended descriptors\n\n",
              "```\n" + h1.round(4).to_string(index=False) + "\n```\n\n",
              "## H2/H4: benchmark-trained predictors on the probe pool\n"
