@@ -10,6 +10,8 @@ __pycache__/
 
 # Legacy scripts / configs excluded from the paper repo
 *.sh
+*.log
+*.txt
 neural_collapse_vis.py
 calibration_example.py
 calibration_hyperparameters.py
@@ -40,7 +42,7 @@ projection_analysis_outputs/
 projection_clique_outputs/
 mantel_outputs_papyan/
 mantel_partial_outputs/
-nc_csf_predictivity/outputs/
+# nc_csf_predictivity/outputs/
 
 # X8 Pool A caches (features come back from the HPC; synthetic dir is the self-test)
 pool_a_features/
