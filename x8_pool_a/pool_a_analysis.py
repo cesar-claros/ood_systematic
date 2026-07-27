@@ -36,7 +36,6 @@ import pandas as pd
 
 CODE_DIR = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(CODE_DIR))
-sys.path.insert(0, str(CODE_DIR / "archived"))
 sys.path.insert(0, str(CODE_DIR / "x8_pool_a"))
 sys.path.insert(0, str(CODE_DIR / "nc_csf_predictivity" / "data"))
 sys.path.insert(0, str(CODE_DIR / "nc_csf_predictivity" / "ablations"))
@@ -45,7 +44,6 @@ import pool_a_csfs as csf
 from probes_and_descriptors import descriptors, train_probe
 from src.rc_stats import RiskCoverageStats
 from cliques_track1 import compute_track1_cliques
-from mantel_analysis import mantel_test
 from calibration_features_clique import (
     NC_PRIMARY,
     add_model_id,
@@ -72,6 +70,41 @@ ALWAYS_BASELINES = ["MSR", "Energy", "MLS", "CTM", "fDBD", "NNGuide"]
 DESC_COLS = ["rho_res", "n_residue_spikes", "median_cos_own",
              "class_dep_residue", "common_mode_energy"]
 OUT_ROOT = CODE_DIR / "nc_csf_predictivity" / "outputs"
+
+
+def mantel_test(D1: np.ndarray, D2: np.ndarray, n_perms: int = 9999,
+                method: str = "spearman") -> dict:
+    """Permutation Mantel test (verbatim from mantel_analysis.py, which is
+    not importable on the cluster because it depends on the untracked
+    archived/ tree): Spearman correlation of upper-triangle distances,
+    fixed seed 42, one-sided count with the +1 convention."""
+    from scipy.stats import pearsonr, spearmanr
+    n = D1.shape[0]
+    idx = np.triu_indices(n, k=1)
+    d1, d2 = D1[idx], D2[idx]
+    corr = spearmanr if method == "spearman" else pearsonr
+    r_obs, _ = corr(d1, d2)
+    rng = np.random.default_rng(42)
+    count_ge = 0
+    for _ in range(n_perms):
+        perm = rng.permutation(n)
+        r_perm, _ = corr(d1, D2[np.ix_(perm, perm)][idx])
+        if r_perm >= r_obs:
+            count_ge += 1
+    return {"r_obs": r_obs, "p_value": (count_ge + 1) / (n_perms + 1),
+            "n_perms": n_perms}
+
+
+def method_rank_distance(rank_matrix: np.ndarray) -> np.ndarray:
+    """1 - Spearman correlation between per-model CSF rank vectors."""
+    from scipy.stats import spearmanr
+    n = rank_matrix.shape[0]
+    D = np.zeros((n, n))
+    for i in range(n):
+        for j in range(i + 1, n):
+            rho, _ = spearmanr(rank_matrix[i], rank_matrix[j])
+            D[i, j] = D[j, i] = 1.0 - rho
+    return D
 
 
 def regime_map(source: str, clip_dir: pathlib.Path) -> dict[str, str]:
@@ -256,7 +289,6 @@ def h1_mantel(models_df: pd.DataFrame, long_df: pd.DataFrame,
         from scipy.spatial.distance import pdist, squareform
         return squareform(pdist(x))
 
-    from mantel_analysis import method_rank_distance
     d_rank = method_rank_distance(ranks)
     rows = []
     for label, cols in [("classical NC (8)", NC_PRIMARY),

@@ -6,8 +6,7 @@ X8 descriptor vector per probe model. Self-test on synthetic features at bottom.
 import sys, pathlib
 import numpy as np
 
-sys.path.append(str(pathlib.Path(__file__).resolve().parents[1].parent
-                    / "documentation" / "x6_spectral_scripts"))
+sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 from spectral_diagnostics import spike_census, viability, common_mode_fraction  # noqa: E402
 
 
