@@ -29,10 +29,13 @@ from __future__ import annotations
 import argparse
 import pathlib
 import sys
+import time
 import warnings
 
 import numpy as np
 import pandas as pd
+import torch
+from loguru import logger
 
 CODE_DIR = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(CODE_DIR))
@@ -41,7 +44,7 @@ sys.path.insert(0, str(CODE_DIR / "nc_csf_predictivity" / "data"))
 sys.path.insert(0, str(CODE_DIR / "nc_csf_predictivity" / "ablations"))
 
 import pool_a_csfs as csf
-from probes_and_descriptors import descriptors, train_probe
+from probes_and_descriptors import descriptors
 from src.rc_stats import RiskCoverageStats
 from cliques_track1 import compute_track1_cliques
 from calibration_features_clique import (
@@ -164,44 +167,53 @@ def select_dim(score_fn, dims: list[int], conf_val_args: tuple,
     """Pick the hyperparameter minimizing validation failure-AUGRC."""
     best, best_a = dims[0], np.inf
     for d in dims:
-        a, _ = rc_metrics(score_fn(*conf_val_args, d), resid_val)
+        a, _ = rc_metrics(score_fn(*conf_val_args, d).cpu().numpy(), resid_val)
         if a < best_a:
             best, best_a = d, a
     return best
 
 
 def run_model(enc: str, source: str, seed: int, feats: dict,
-              eval_names: list[str]) -> tuple[list[dict], dict]:
+              eval_names: list[str], device: str) -> tuple[list[dict], dict]:
     """Probe + CSFs + per-eval-set metrics for one (encoder, source, seed)."""
+    t0 = time.perf_counter()
     h_train, y_train = feats[(source, "train")]
-    h_test, y_test = feats[(source, "test")]
+    h_test_np, y_test = feats[(source, "test")]
     n_cls = int(y_train.max()) + 1
     rng = np.random.default_rng(seed)
     perm = rng.permutation(len(h_train))
     val_n = min(VAL_N, len(h_train) // 5)
     fit_idx, val_idx = perm[:-val_n], perm[-val_n:]
-    h_fit, y_fit = h_train[fit_idx], y_train[fit_idx]
-    h_val, y_val = h_train[val_idx], y_train[val_idx]
+    h_fit_np, y_fit_np = h_train[fit_idx], y_train[fit_idx]
 
-    probe = train_probe(h_fit, y_fit, n_cls, seed=seed)
+    to_t = lambda a: torch.from_numpy(np.ascontiguousarray(a)).float().to(device)
+    h_fit = to_t(h_fit_np)
+    y_fit = torch.from_numpy(y_fit_np).long().to(device)
+    h_val = to_t(h_train[val_idx])
+    y_val = torch.from_numpy(y_train[val_idx]).long().to(device)
+    h_test = to_t(h_test_np)
+
+    probe = csf.train_probe(h_fit, y_fit, n_cls, seed=seed)
     w, b, mu, sd = probe["W"], probe["b"], probe["mu"], probe["sd"]
     zf = lambda h: (h - mu) / sd
     logits_of = lambda h: zf(h) @ w.T + b
     temp = csf.fit_temperature(logits_of(h_val), y_val)
+    logger.info(f"{enc}/{source}/seed{seed}: probe acc={probe['acc']:.3f} "
+                f"temp={temp:.2f} ({time.perf_counter() - t0:.1f}s)")
 
+    t1 = time.perf_counter()
     lg_val = logits_of(h_val)
-    resid_val = (lg_val.argmax(axis=1) != y_val).astype(float)
+    resid_val = (lg_val.argmax(dim=1) != y_val).float().cpu().numpy()
     maha = csf.Mahalanobis(h_val, y_val, n_cls)
     maha_pp = csf.Mahalanobis(csf.l2n(h_val), y_val, n_cls)
     w_eff = w / sd
-    train_mean_raw = h_fit.mean(axis=0)
+    train_mean_raw = h_fit.mean(dim=0)
     nci_alpha = csf.fit_nci_alpha(h_val, lg_val, resid_val, w_eff,
                                   train_mean_raw, rc_metrics)
     sub = csf.Subspace(h_val)
     pnml = csf.PNML(zf(h_val))
-    bank_logits = lg_val
-    bank_scores = csf.conf_energy(bank_logits, 1.0)
-    mu_std = zf(h_fit).mean(axis=0)
+    bank_scores = csf.conf_energy(lg_val, 1.0)
+    mu_std = zf(h_fit).mean(dim=0)
 
     d_pca = select_dim(lambda h, d: sub.conf_pca_recerror(h, d),
                        PCA_DIMS, (h_val,), resid_val)
@@ -215,19 +227,22 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
     best_a = np.inf
     for k in NNG_KS:
         nng = csf.NNGuide(h_val, bank_scores, k)
-        a, _ = rc_metrics(nng.conf(h_val, csf.conf_energy(lg_val, 1.0)),
-                          resid_val)
+        conf_k = nng.conf(h_val, csf.conf_energy(lg_val, 1.0))
+        a, _ = rc_metrics(conf_k.cpu().numpy(), resid_val)
         if a < best_a:
             best_a, k_nng = a, k
     nng = csf.NNGuide(h_val, bank_scores, k_nng)
+    logger.info(f"{enc}/{source}/seed{seed}: CSFs fit (dims pca={d_pca} "
+                f"res={d_res} neco={d_neco}, nng_k={k_nng}, "
+                f"nci_alpha={nci_alpha:g}) "
+                f"({time.perf_counter() - t1:.1f}s)")
 
-    def all_confs(h: np.ndarray) -> dict[str, np.ndarray]:
+    def all_confs(h: torch.Tensor) -> dict[str, np.ndarray]:
         z = zf(h)
         lg = z @ w.T + b
-        p = csf.softmax(lg / temp)
-        mls = lg.max(axis=1)
-        return {
-            "MSR": csf.conf_msr(p), "MLS": mls,
+        p = torch.softmax(lg / temp, dim=1)
+        confs = {
+            "MSR": csf.conf_msr(p), "MLS": csf.conf_mls(lg),
             "Energy": csf.conf_energy(lg, temp), "PE": csf.conf_pe(p),
             "GEN": csf.conf_gen(p, 0.1, min(100, n_cls)),
             "REN": csf.conf_ren(p, 0.5, n_cls),
@@ -243,9 +258,10 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
             "ViM": sub.conf_vim(h, lg, d_vim, vim_alpha, 1.0),
             "NeCo": sub.conf_neco(h, d_neco),
         }
+        return {k: v.cpu().numpy() for k, v in confs.items()}
 
     conf_test = all_confs(h_test)
-    correct = logits_of(h_test).argmax(axis=1) == y_test
+    correct = (logits_of(h_test).argmax(dim=1).cpu().numpy() == y_test)
     rows = []
     base = {"paradigm": f"probe_{enc}", "source": source, "run": seed,
             "dropout": False, "reward": 0.0}
@@ -254,22 +270,29 @@ def run_model(enc: str, source: str, seed: int, feats: dict,
         rows.append({**base, "csf": name, "eval_dataset": "iid",
                      "regime": "test", "augrc": a, "aurc": u})
     for ev in eval_names:
-        h_ood = feats[(ev, "eval")][0]
-        conf_ood = all_confs(h_ood)
+        t_ev = time.perf_counter()
+        h_ood_np = feats[(ev, "eval")][0]
+        conf_ood = all_confs(to_t(h_ood_np))
         for name in conf_test:
             confids = np.concatenate([conf_test[name][correct],
                                       conf_ood[name]])
             residuals = np.concatenate([np.zeros(int(correct.sum())),
-                                        np.ones(len(h_ood))])
+                                        np.ones(len(h_ood_np))])
             a, u = rc_metrics(confids, residuals)
             rows.append({**base, "csf": name, "eval_dataset": ev,
                          "regime": None, "augrc": a, "aurc": u})
+        logger.info(f"{enc}/{source}/seed{seed}: scored {ev} "
+                    f"(n={len(h_ood_np):,}, "
+                    f"{time.perf_counter() - t_ev:.1f}s)")
 
-    desc = descriptors(h_fit, y_fit, n_cls)
+    w_eff_np = w_eff.cpu().numpy()
+    desc = descriptors(h_fit_np, y_fit_np, n_cls)
     desc["common_mode_energy"] = desc.pop("common_mode")["energy_fraction"]
     model_row = {**base, "acc": float(correct.mean()), "temp": temp,
-                 **papyan_nc(h_fit, y_fit, w_eff, n_cls),
+                 **papyan_nc(h_fit_np, y_fit_np, w_eff_np, n_cls),
                  **{k: v for k, v in desc.items() if k in DESC_COLS}}
+    logger.info(f"{enc}/{source}/seed{seed}: done "
+                f"({time.perf_counter() - t0:.1f}s total)")
     return rows, model_row
 
 
@@ -432,8 +455,12 @@ def main() -> None:
     ap.add_argument("--clip-dir", default=str(CODE_DIR / "clip_scores"))
     ap.add_argument("--seeds", type=int, default=5)
     ap.add_argument("--n-perms", type=int, default=9999)
+    ap.add_argument("--device",
+                    default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--synthetic", action="store_true")
     args = ap.parse_args()
+    logger.info(f"Pool A analysis on device={args.device} "
+                f"(torch {torch.__version__})")
 
     fdir = pathlib.Path(args.features_dir)
     if args.synthetic:
@@ -461,14 +488,15 @@ def main() -> None:
                 if (e, "eval") not in feats:
                     feats[(e, "eval")] = feats[(e, "test")]
             for seed in range(args.seeds):
-                rows, mrow = run_model(enc, source, seed, feats, eval_names)
+                rows, mrow = run_model(enc, source, seed, feats, eval_names,
+                                       args.device)
                 for r in rows:
                     if r["regime"] is None:
                         r["regime"] = rmap[r["eval_dataset"]]
                 all_rows.extend(rows)
                 model_rows.append(mrow)
-            print(f"{enc}/{source}: {args.seeds} probes done "
-                  f"(acc {np.mean([m['acc'] for m in model_rows[-args.seeds:]]):.3f})")
+            logger.info(f"=== {enc}/{source}: {args.seeds} probes done "
+                        f"(mean acc {np.mean([m['acc'] for m in model_rows[-args.seeds:]]):.3f}) ===")
 
     long_df = pd.DataFrame(all_rows)
     models_df = pd.DataFrame(model_rows)
@@ -477,6 +505,7 @@ def main() -> None:
     long_df.to_parquet(out_dir / "long_pool_a.parquet", index=False)
     models_df.to_parquet(out_dir / "models_pool_a.parquet", index=False)
 
+    logger.info("Computing pool cliques (Friedman-Conover per cell)...")
     flat, _ = compute_track1_cliques(long_df)
     flat.to_parquet(out_dir / "cliques_pool_a.parquet", index=False)
     top = (flat[flat["in_top_clique"] & flat["regime"].isin(
@@ -484,7 +513,10 @@ def main() -> None:
         .groupby(["paradigm", "source", "regime"])["csf"]
         .apply(lambda s: ", ".join(sorted(s))).reset_index())
 
+    logger.info("H1: Mantel classical vs extended descriptors...")
     h1 = h1_mantel(models_df, long_df, args.n_perms)
+    logger.info("H2: VGG-13-trained predictor on the probe pool "
+                "(sklearn, CPU; the slowest stage)...")
     h2 = h2_predictor(models_df, long_df, args.n_perms)
 
     lines = ["# Pool A pilot (X8): frozen DINOv2/CLIP probes\n\n",

@@ -1,233 +1,252 @@
-"""Pool A CSF implementations on cached frozen features (numpy, CPU).
+"""Pool A CSF implementations on cached frozen features (torch, device-agnostic).
 
 Faithful to the paper's Appendix C definitions (see
 `paper/NeurIPS_2026_original/sections/appendix/methods_projections.tex`),
 adapted to a linear probe head: logits = Z @ W.T + b on standardized features
 Z = (h - mu) / sd. Head-coupled scores (CTM, fDBD, GradNorm, pNML, ViM's
 energy term) operate in the standardized space; feature-manifold scores
-(Maha, PCA RecError, Residual, NeCo, NNGuide bank) operate on raw features,
-matching the pipeline's use of raw penultimate activations.
+(Maha, MahaPP, NCI, PCA RecError, Residual, NeCo, NNGuide bank) operate on
+raw features, matching the pipeline's use of raw penultimate activations.
 
-Every function returns CONFIDENCE (higher = more ID-like); uncertainty-style
-definitions are negated here so downstream AUGRC code is uniform.
-`Confidence` (the trained auxiliary head) and KPCA RecError are not available
-for frozen probes and are documented as excluded from the pilot.
+All functions take and return torch tensors on the caller's device (CUDA on
+the cluster's V100, CPU otherwise); Mahalanobis uses the quadratic expansion
+instead of a per-class loop. Every function returns CONFIDENCE (higher =
+more ID-like). `Confidence` (trained auxiliary head) and KPCA RecError are
+excluded from the pilot.
 """
 from __future__ import annotations
 
-import numpy as np
+import torch
 
 EPS = 1e-12
 
 
-def softmax(logits: np.ndarray) -> np.ndarray:
-    """Row-wise softmax."""
-    z = logits - logits.max(axis=1, keepdims=True)
-    e = np.exp(z)
-    return e / e.sum(axis=1, keepdims=True)
+def train_probe(h_fit: torch.Tensor, y_fit: torch.Tensor, n_cls: int,
+                seed: int = 0, steps: int = 300, lr: float = 0.5,
+                weight_decay: float = 1e-4, momentum: float = 0.9) -> dict:
+    """Multinomial logistic probe via momentum GD on standardized features.
+
+    Torch port of `probes_and_descriptors.train_probe` (same hyperparameters
+    and algorithm; RNG stream differs from the numpy version).
+    """
+    device = h_fit.device
+    mu, sd = h_fit.mean(0), h_fit.std(0) + 1e-8
+    z = (h_fit - mu) / sd
+    gen = torch.Generator(device="cpu").manual_seed(seed)
+    w = (torch.randn(n_cls, z.shape[1], generator=gen) * 0.01).to(device)
+    b = torch.zeros(n_cls, device=device)
+    vel_w = torch.zeros_like(w)
+    vel_b = torch.zeros_like(b)
+    onehot = torch.nn.functional.one_hot(y_fit, n_cls).float()
+    n = float(len(y_fit))
+    for _ in range(steps):
+        logits = z @ w.T + b
+        p = torch.softmax(logits, dim=1)
+        g = (p - onehot) / n
+        gw = g.T @ z + weight_decay * w
+        vel_w = momentum * vel_w - lr * gw
+        vel_b = momentum * vel_b - lr * g.sum(0)
+        w = w + vel_w
+        b = b + vel_b
+    acc = ((z @ w.T + b).argmax(1) == y_fit).float().mean().item()
+    return {"W": w, "b": b, "mu": mu, "sd": sd, "acc": acc}
 
 
-def fit_temperature(logits_val: np.ndarray, y_val: np.ndarray) -> float:
+def fit_temperature(logits_val: torch.Tensor, y_val: torch.Tensor) -> float:
     """Temperature minimizing validation NLL over a log-spaced grid."""
-    grid = np.exp(np.linspace(np.log(0.25), np.log(8.0), 41))
-    nlls = []
-    for t in grid:
-        p = softmax(logits_val / t)
-        nlls.append(-np.log(p[np.arange(len(y_val)), y_val] + EPS).mean())
-    return float(grid[int(np.argmin(nlls))])
+    grid = torch.exp(torch.linspace(-1.3863, 2.0794, 41))
+    idx = torch.arange(len(y_val), device=logits_val.device)
+    best_t, best_nll = 1.0, float("inf")
+    for t in grid.tolist():
+        p = torch.softmax(logits_val / t, dim=1)
+        nll = -torch.log(p[idx, y_val] + EPS).mean().item()
+        if nll < best_nll:
+            best_t, best_nll = t, nll
+    return best_t
+
+
+def l2n(h: torch.Tensor) -> torch.Tensor:
+    """Row-wise L2 normalization (Mahalanobis++ preprocessing)."""
+    return h / (h.norm(dim=1, keepdim=True) + EPS)
 
 
 # ---- head-side ----
 
-def conf_msr(p: np.ndarray) -> np.ndarray:
-    return p.max(axis=1)
+def conf_msr(p: torch.Tensor) -> torch.Tensor:
+    return p.max(dim=1).values
 
 
-def conf_mls(logits: np.ndarray) -> np.ndarray:
-    return logits.max(axis=1)
+def conf_mls(logits: torch.Tensor) -> torch.Tensor:
+    return logits.max(dim=1).values
 
 
-def conf_energy(logits: np.ndarray, temp: float) -> np.ndarray:
-    z = logits / temp
-    m = z.max(axis=1)
-    return temp * (m + np.log(np.exp(z - m[:, None]).sum(axis=1)))
+def conf_energy(logits: torch.Tensor, temp: float) -> torch.Tensor:
+    return temp * torch.logsumexp(logits / temp, dim=1)
 
 
-def conf_pe(p: np.ndarray) -> np.ndarray:
-    return (p * np.log(p + EPS)).sum(axis=1)
+def conf_pe(p: torch.Tensor) -> torch.Tensor:
+    return (p * torch.log(p + EPS)).sum(dim=1)
 
 
-def conf_gen(p: np.ndarray, gamma: float, m_top: int) -> np.ndarray:
-    ps = np.sort(p, axis=1)[:, ::-1][:, :m_top]
-    return -np.power(ps, gamma).__mul__(np.power(1.0 - ps, gamma)).sum(axis=1)
+def conf_gen(p: torch.Tensor, gamma: float, m_top: int) -> torch.Tensor:
+    ps = torch.sort(p, dim=1, descending=True).values[:, :m_top]
+    return -(ps.pow(gamma) * (1.0 - ps).pow(gamma)).sum(dim=1)
 
 
-def conf_ren(p: np.ndarray, alpha: float, m_top: int) -> np.ndarray:
-    ps = np.sort(p, axis=1)[:, ::-1][:, :m_top]
-    return -(1.0 / (1.0 - alpha)) * np.log(np.power(ps, alpha).sum(axis=1) + EPS)
+def conf_ren(p: torch.Tensor, alpha: float, m_top: int) -> torch.Tensor:
+    ps = torch.sort(p, dim=1, descending=True).values[:, :m_top]
+    return -(1.0 / (1.0 - alpha)) * torch.log(ps.pow(alpha).sum(dim=1) + EPS)
 
 
-def conf_ge(p: np.ndarray) -> np.ndarray:
-    ps = np.sort(p, axis=1)[:, ::-1]
-    ranks = np.arange(1, ps.shape[1] + 1)
-    return -(ps * ranks).sum(axis=1)
+def conf_ge(p: torch.Tensor) -> torch.Tensor:
+    ps = torch.sort(p, dim=1, descending=True).values
+    ranks = torch.arange(1, ps.shape[1] + 1, device=p.device, dtype=p.dtype)
+    return -(ps * ranks).sum(dim=1)
 
 
-def conf_pce(p: np.ndarray) -> np.ndarray:
-    return np.log((p ** 2).sum(axis=1) + EPS)
+def conf_pce(p: torch.Tensor) -> torch.Tensor:
+    return torch.log(p.pow(2).sum(dim=1) + EPS)
 
 
-def conf_gradnorm(p: np.ndarray, z_std: np.ndarray) -> np.ndarray:
+def conf_gradnorm(p: torch.Tensor, z_std: torch.Tensor) -> torch.Tensor:
     """L1 norm of d KL(u || p) / dW for a linear head: ||p - u||_1 * ||Z||_1."""
     u = 1.0 / p.shape[1]
-    return np.abs(p - u).sum(axis=1) * np.abs(z_std).sum(axis=1)
+    return (p - u).abs().sum(dim=1) * z_std.abs().sum(dim=1)
 
 
 class PNML:
     """pNML regret via the kernel-range projection of the paper's Appendix C."""
 
-    def __init__(self, z_train: np.ndarray) -> None:
-        zn = z_train / (np.linalg.norm(z_train, axis=1, keepdims=True) + EPS)
-        u, s, vt = np.linalg.svd(zn, full_matrices=False)
+    def __init__(self, z_train: torch.Tensor) -> None:
+        zn = z_train / (z_train.norm(dim=1, keepdim=True) + EPS)
+        _, s, vt = torch.linalg.svd(zn, full_matrices=False)
         keep = s > 1e-8 * s[0]
         self.v = vt[keep].T
-        self.inv_s2 = 1.0 / (s[keep] ** 2)
+        self.inv_s2 = 1.0 / s[keep].pow(2)
 
-    def conf(self, z: np.ndarray, p: np.ndarray) -> np.ndarray:
+    def conf(self, z: torch.Tensor, p: torch.Tensor) -> torch.Tensor:
         proj = z @ self.v
-        in_span = proj @ self.v.T
-        h_perp = z - in_span
-        perp_sq = (h_perp ** 2).sum(axis=1)
-        quad = ((proj ** 2) * self.inv_s2).sum(axis=1)
-        hg = np.where(perp_sq > 1e-8, 1.0, quad / (1.0 + quad))
-        pk_hg = np.power(p + EPS, hg[:, None])
-        regret = np.log((p / (p + pk_hg * (1.0 - p) + EPS)).sum(axis=1) + EPS)
+        h_perp = z - proj @ self.v.T
+        perp_sq = h_perp.pow(2).sum(dim=1)
+        quad = (proj.pow(2) * self.inv_s2).sum(dim=1)
+        hg = torch.where(perp_sq > 1e-8,
+                         torch.ones_like(quad), quad / (1.0 + quad))
+        pk_hg = (p + EPS).pow(hg.unsqueeze(1))
+        regret = torch.log((p / (p + pk_hg * (1.0 - p) + EPS)).sum(dim=1) + EPS)
         return -regret
 
 
 # ---- feature-side ----
 
-def conf_ctm(z_std: np.ndarray, w: np.ndarray) -> np.ndarray:
+def conf_ctm(z_std: torch.Tensor, w: torch.Tensor) -> torch.Tensor:
     """Max cosine similarity to the classifier weight rows (paper's CTM)."""
-    zn = z_std / (np.linalg.norm(z_std, axis=1, keepdims=True) + EPS)
-    wn = w / (np.linalg.norm(w, axis=1, keepdims=True) + EPS)
-    return (zn @ wn.T).max(axis=1)
+    return (l2n(z_std) @ l2n(w).T).max(dim=1).values
 
 
-def l2n(h: np.ndarray) -> np.ndarray:
-    """Row-wise L2 normalization (Mahalanobis++ preprocessing)."""
-    return h / (np.linalg.norm(h, axis=1, keepdims=True) + EPS)
+class Mahalanobis:
+    """Shared-covariance Mahalanobis, quadratic expansion (no class loop)."""
+
+    def __init__(self, h_fit: torch.Tensor, y_fit: torch.Tensor, n_cls: int,
+                 ridge: float = 1e-3) -> None:
+        self.means = torch.stack([h_fit[y_fit == c].mean(dim=0)
+                                  for c in range(n_cls)])
+        centered = h_fit - self.means[y_fit]
+        cov = centered.T @ centered / len(h_fit)
+        cov = cov + ridge * torch.trace(cov) / cov.shape[0] * torch.eye(
+            cov.shape[0], device=h_fit.device)
+        self.prec = torch.linalg.inv(cov)
+        self.prec_means = self.prec @ self.means.T
+        self.const = (self.means * self.prec_means.T).sum(dim=1)
+
+    def conf(self, h: torch.Tensor) -> torch.Tensor:
+        rowquad = ((h @ self.prec) * h).sum(dim=1)
+        d = rowquad.unsqueeze(1) - 2.0 * (h @ self.prec_means) + self.const
+        return -d.min(dim=1).values
 
 
-def fit_nci_alpha(h_val: np.ndarray, logits_val: np.ndarray,
-                  resid_val: np.ndarray, w_eff: np.ndarray,
-                  train_mean: np.ndarray, rc_metric_fn,
+def fit_nci_alpha(h_val: torch.Tensor, logits_val: torch.Tensor,
+                  resid_val, w_eff: torch.Tensor, train_mean: torch.Tensor,
+                  rc_metric_fn,
                   alphas=(0.0, 1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2)) -> float:
     """NCI alpha minimizing validation failure-AUGRC (pipeline convention)."""
-    best_alpha, best = alphas[0], np.inf
+    best_alpha, best = alphas[0], float("inf")
     for alpha in alphas:
-        augrc, _ = rc_metric_fn(
-            conf_nci(h_val, logits_val, w_eff, train_mean, alpha), resid_val)
+        conf = conf_nci(h_val, logits_val, w_eff, train_mean, alpha)
+        augrc, _ = rc_metric_fn(conf.cpu().numpy(), resid_val)
         if augrc < best:
             best_alpha, best = alpha, augrc
     return best_alpha
 
 
-def conf_nci(h: np.ndarray, logits: np.ndarray, w_eff: np.ndarray,
-             train_mean: np.ndarray, alpha: float) -> np.ndarray:
-    """NCI (Liu & Qin, CVPR 2025): <w_pred, h-u>/||h-u|| + alpha*||h||_1.
-
-    Raw-feature-space form: w_eff are the probe weights mapped back to the
-    unstandardized feature space (W / sd), matching the pipeline's use of
-    raw penultimate activations with head weights.
-    """
+def conf_nci(h: torch.Tensor, logits: torch.Tensor, w_eff: torch.Tensor,
+             train_mean: torch.Tensor, alpha: float) -> torch.Tensor:
+    """NCI (Liu & Qin, CVPR 2025): <w_pred, h-u>/||h-u|| + alpha*||h||_1."""
     centered = h - train_mean
-    pred = logits.argmax(axis=1)
-    align = (w_eff[pred] * centered).sum(axis=1)
-    align = align / (np.linalg.norm(centered, axis=1) + EPS)
-    return align + alpha * np.abs(h).sum(axis=1)
-
-
-class Mahalanobis:
-    """Shared-covariance Mahalanobis distance to the nearest class centroid."""
-
-    def __init__(self, h_fit: np.ndarray, y_fit: np.ndarray, n_cls: int,
-                 ridge: float = 1e-3) -> None:
-        self.means = np.stack([h_fit[y_fit == c].mean(axis=0)
-                               for c in range(n_cls)])
-        centered = h_fit - self.means[y_fit]
-        cov = centered.T @ centered / len(h_fit)
-        cov += ridge * np.trace(cov) / cov.shape[0] * np.eye(cov.shape[0])
-        self.prec = np.linalg.inv(cov)
-
-    def conf(self, h: np.ndarray) -> np.ndarray:
-        d = np.stack([np.einsum("nd,dk,nk->n", h - m, self.prec, h - m)
-                      for m in self.means])
-        return -d.min(axis=0)
+    pred = logits.argmax(dim=1)
+    align = (w_eff[pred] * centered).sum(dim=1) / (centered.norm(dim=1) + EPS)
+    return align + alpha * h.abs().sum(dim=1)
 
 
 class NNGuide:
     """Energy score modulated by confidence-scaled cosine to an ID bank."""
 
-    def __init__(self, h_bank: np.ndarray, s_bank: np.ndarray, k: int) -> None:
-        self.bank = h_bank / (np.linalg.norm(h_bank, axis=1, keepdims=True) + EPS)
+    def __init__(self, h_bank: torch.Tensor, s_bank: torch.Tensor,
+                 k: int) -> None:
+        self.bank = l2n(h_bank)
         self.s_bank = s_bank
         self.k = min(k, len(s_bank))
 
-    def conf(self, h: np.ndarray, s_base: np.ndarray) -> np.ndarray:
-        hn = h / (np.linalg.norm(h, axis=1, keepdims=True) + EPS)
-        sims = (hn @ self.bank.T) * self.s_bank[None, :]
-        part = np.partition(sims, -self.k, axis=1)[:, -self.k:]
-        return s_base * part.mean(axis=1)
+    def conf(self, h: torch.Tensor, s_base: torch.Tensor) -> torch.Tensor:
+        sims = (l2n(h) @ self.bank.T) * self.s_bank.unsqueeze(0)
+        guide = torch.topk(sims, self.k, dim=1).values.mean(dim=1)
+        return s_base * guide
 
 
-def conf_fdbd(z_std: np.ndarray, logits: np.ndarray, w: np.ndarray,
-              mu_train_std: np.ndarray) -> np.ndarray:
+def conf_fdbd(z_std: torch.Tensor, logits: torch.Tensor, w: torch.Tensor,
+              mu_train_std: torch.Tensor) -> torch.Tensor:
     """Mean boundary distance regularized by deviation from the ID mean."""
     n, n_cls = logits.shape
-    pred = logits.argmax(axis=1)
-    w_diff_norm = np.linalg.norm(w[:, None, :] - w[None, :, :], axis=2) + EPS
-    logit_diff = np.abs(logits[:, :, None] - logits[:, None, :])
-    dists = logit_diff[np.arange(n), pred, :] / w_diff_norm[pred, :]
-    dists[np.arange(n), pred] = 0.0
-    dev = np.linalg.norm(z_std - mu_train_std, axis=1) + EPS
-    return dists.sum(axis=1) / (n_cls - 1) / dev
+    pred = logits.argmax(dim=1)
+    w_diff_norm = torch.cdist(w, w) + EPS
+    logit_diff = (logits.gather(1, pred.unsqueeze(1)) - logits).abs()
+    dists = logit_diff / w_diff_norm[pred]
+    dists.scatter_(1, pred.unsqueeze(1), 0.0)
+    dev = (z_std - mu_train_std).norm(dim=1) + EPS
+    return dists.sum(dim=1) / (n_cls - 1) / dev
 
 
 class Subspace:
     """Shared PCA machinery for PCA RecError, Residual, ViM, and NeCo."""
 
-    def __init__(self, h_fit: np.ndarray) -> None:
-        self.mu = h_fit.mean(axis=0)
-        _, s, vt = np.linalg.svd(h_fit - self.mu, full_matrices=False)
+    def __init__(self, h_fit: torch.Tensor) -> None:
+        self.mu = h_fit.mean(dim=0)
+        _, s, vt = torch.linalg.svd(h_fit - self.mu, full_matrices=False)
         self.vt = vt
         self.s = s
 
-    def conf_pca_recerror(self, h: np.ndarray, dim: int) -> np.ndarray:
+    def conf_pca_recerror(self, h: torch.Tensor, dim: int) -> torch.Tensor:
         c = h - self.mu
         recon = (c @ self.vt[:dim].T) @ self.vt[:dim] + self.mu
-        return -np.linalg.norm(h - recon, axis=1) / (
-            np.linalg.norm(h, axis=1) + EPS)
+        return -(h - recon).norm(dim=1) / (h.norm(dim=1) + EPS)
 
-    def residual_norm(self, h: np.ndarray, dim: int) -> np.ndarray:
+    def residual_norm(self, h: torch.Tensor, dim: int) -> torch.Tensor:
         c = h - self.mu
-        in_span = (c @ self.vt[:dim].T) @ self.vt[:dim]
-        return np.linalg.norm(c - in_span, axis=1)
+        return (c - (c @ self.vt[:dim].T) @ self.vt[:dim]).norm(dim=1)
 
-    def conf_residual(self, h: np.ndarray, dim: int) -> np.ndarray:
+    def conf_residual(self, h: torch.Tensor, dim: int) -> torch.Tensor:
         return -self.residual_norm(h, dim)
 
-    def conf_vim(self, h: np.ndarray, logits: np.ndarray, dim: int,
-                 alpha: float, temp: float) -> np.ndarray:
+    def conf_vim(self, h: torch.Tensor, logits: torch.Tensor, dim: int,
+                 alpha: float, temp: float) -> torch.Tensor:
         return conf_energy(logits, temp) - alpha * self.residual_norm(h, dim)
 
-    def vim_alpha(self, h_fit: np.ndarray, logits_fit: np.ndarray,
+    def vim_alpha(self, h_fit: torch.Tensor, logits_fit: torch.Tensor,
                   dim: int) -> float:
         res = self.residual_norm(h_fit, dim)
-        return float(logits_fit.max(axis=1).mean() / (res.mean() + EPS))
+        return float(logits_fit.max(dim=1).values.mean()
+                     / (res.mean() + EPS))
 
-    def conf_neco(self, h: np.ndarray, dim: int,
-                  mls: np.ndarray | None = None) -> np.ndarray:
-        num = np.linalg.norm(h @ self.vt[:dim].T, axis=1)
-        ratio = num / (np.linalg.norm(h, axis=1) + EPS)
+    def conf_neco(self, h: torch.Tensor, dim: int,
+                  mls: torch.Tensor | None = None) -> torch.Tensor:
+        ratio = (h @ self.vt[:dim].T).norm(dim=1) / (h.norm(dim=1) + EPS)
         return ratio * mls if mls is not None else ratio
