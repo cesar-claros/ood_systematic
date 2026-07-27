@@ -1812,6 +1812,11 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
         # Filter confids to active families only (the rest are preserved
         # from any existing CSV via the merge below).
         mcd_confids = filter_confids(mcd_confids, active, projections)
+        for _k, _v in mcd_confids.items():
+            if _v is not None and torch.is_tensor(_v) and not torch.isfinite(_v).all():
+                logger.warning(f"[stats] Non-finite confids in '{_k}'; "
+                               f"applying nan_to_num so metrics stay computable.")
+                mcd_confids[_k] = torch.nan_to_num(_v)
         mcd_confids_df = pd.DataFrame(mcd_confids)
         mcd_confids_df['residuals'] = residuals_distribution
         mcd_stats = {
@@ -1981,6 +1986,11 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
     # Filter confids to active families only (the rest are preserved
     # from any existing CSV via the merge below).
     confids = filter_confids(confids, active, projections)
+    for _k, _v in confids.items():
+        if _v is not None and torch.is_tensor(_v) and not torch.isfinite(_v).all():
+            logger.warning(f"[stats] Non-finite confids in '{_k}'; "
+                           f"applying nan_to_num so metrics stay computable.")
+            confids[_k] = torch.nan_to_num(_v)
     confids_df = pd.DataFrame(confids)
     confids_df['residuals'] = residuals
     stats = {

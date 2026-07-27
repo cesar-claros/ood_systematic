@@ -83,10 +83,22 @@ def main() -> None:
             act = hook(x.to(model.device))
             samples.append(act.flatten().cpu())
     values = torch.cat(samples).float()
+    # Percentile over POSITIVE activations only: post-ReLU conv maps are
+    # mostly zeros, and including them drives the percentile toward zero for
+    # sparse-activation models (clipping then destroys the representation).
+    # ReAct's convention targets the dense activation distribution.
+    positive = values[values > 0]
+    if positive.numel() == 0:
+        raise RuntimeError("No positive activations at the hook point; "
+                           "cannot calibrate a ReAct threshold.")
+    frac_pos = positive.numel() / values.numel()
     threshold = torch.quantile(
-        values[torch.randperm(len(values))[:2_000_000]], args.percentile / 100)
+        positive[torch.randperm(len(positive))[:2_000_000]],
+        args.percentile / 100)
     logger.info(f"ReAct threshold p{args.percentile:g} over "
-                f"{len(values):,} activations: {threshold:.6g}")
+                f"{positive.numel():,} positive activations "
+                f"({frac_pos:.1%} of {values.numel():,} total): "
+                f"{threshold:.6g}")
     print(f"{threshold:.6g}")
 
 
