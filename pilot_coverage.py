@@ -17,6 +17,14 @@ missing for that group). Use --source to audit a subset of sources.
 
   python pilot_coverage.py --experiments-file pilot_all.txt
   python pilot_coverage.py --experiments-file pilot_all.txt --source tinyimagenet
+
+ViT experiments (vit/<dataset>_modelvit_bbvit_lr..._runN_doD_rew0) are
+supported: the source is resolved from the dataset token in the name and the
+same per-source Table 6 mode list applies. Audit them with --arms newcsf,
+since ASH/ReAct are deliberately not run on ViT:
+
+  python pilot_coverage.py --experiments-file pilot_cifar10_vit.txt \
+      --source cifar10 --arms newcsf --report-only
 """
 
 from __future__ import annotations
@@ -32,6 +40,31 @@ from pilot_from_configs import filter_modes_to_paper
 CODE_DIR = pathlib.Path(__file__).resolve().parent
 ARMS = ["newcsf", "ash", "react"]
 SOURCES = ["cifar10", "cifar100", "supercifar", "tinyimagenet"]
+
+# dataset token of a vit/ experiment name -> audit source key
+VIT_DATASET_TO_SOURCE = {
+    "cifar10": "cifar10",
+    "cifar100": "cifar100",
+    "super_cifar100": "supercifar",
+    "supercifar100": "supercifar",
+    "tinyimagenet": "tinyimagenet",
+    "tiny-imagenet-200": "tinyimagenet",
+}
+
+
+def resolve_entry(exp: str, catalog: dict[str, dict]) -> dict | None:
+    """Catalog entry for a CNN sweep experiment or a vit/ experiment."""
+    prefix = exp.split("/")[0]
+    entry = catalog.get(prefix)
+    if entry is not None:
+        return entry
+    if prefix == "vit" and "/" in exp:
+        token = exp.split("/", 1)[1].split("_model")[0]
+        source = VIT_DATASET_TO_SOURCE.get(token)
+        if source is not None:
+            by_source = {v["source"]: v for v in catalog.values()}
+            return by_source.get(source)
+    return None
 
 
 def source_catalog(configs_dir: pathlib.Path,
@@ -96,6 +129,9 @@ def main() -> None:
     ap.add_argument("--clip-dir", default=str(CODE_DIR / "clip_scores"))
     ap.add_argument("--source", nargs="*", choices=SOURCES, default=None,
                     help="restrict the audit to these sources")
+    ap.add_argument("--arms", nargs="*", choices=ARMS, default=ARMS,
+                    help="restrict the audit to these arms (for ViT lists "
+                         "use --arms newcsf; ASH/ReAct are not run on ViT)")
     ap.add_argument("--sif", default="systematic_ood.sif",
                     help="container image used in the printed commands")
     ap.add_argument("--detail", action="store_true",
@@ -132,7 +168,7 @@ def main() -> None:
     checked: list[str] = []
     groups: dict[tuple[str, str, tuple[str, ...]], list[str]] = {}
     for exp in exps:
-        entry = catalog.get(exp.split("/")[0])
+        entry = resolve_entry(exp, catalog)
         if entry is None:
             unknown.append(exp)
             continue
@@ -142,7 +178,7 @@ def main() -> None:
         checked.append(exp)
         totals[source] = totals.get(source, 0) + 1
         analysis = root / exp / "analysis"
-        for arm in ARMS:
+        for arm in args.arms:
             missing_modes = arm_missing_modes(analysis, arm, entry["modes"])
             if missing_modes:
                 missing[arm].append(exp)
@@ -165,7 +201,7 @@ def main() -> None:
         {"source": source, "experiments": n_total,
          **{arm: f"{n_total - miss_by_source[arm].get(source, 0)} ok / "
                  f"{miss_by_source[arm].get(source, 0)} miss"
-            for arm in ARMS}}
+            for arm in args.arms}}
         for source, n_total in sorted(totals.items())
     ])
     print("\nper source:\n")
@@ -181,7 +217,7 @@ def main() -> None:
                 print(f"  {source}/{arm}: {summary}")
 
     if args.report_only:
-        for arm in ARMS:
+        for arm in args.arms:
             missing_set = set(missing[arm])
             complete = [e for e in checked if e not in missing_set]
             print(f"\n{arm}: {len(complete)} complete, "
@@ -198,7 +234,7 @@ def main() -> None:
 
     n_checked = sum(totals.values())
     print("\noverall:")
-    for arm in ARMS:
+    for arm in args.arms:
         n = len(missing[arm])
         print(f"  {arm:<7s} complete: {n_checked - n:>4d}   missing: {n}")
         out = pathlib.Path(f"rerun_{arm}.txt")
