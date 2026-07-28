@@ -8,6 +8,10 @@ __pycache__/
 .venv/
 /data/
 
+# Machine-local environment file (HPC paths; the required variables are
+# documented in README.md "Environment variables")
+.env
+
 # Legacy scripts / configs excluded from the paper repo
 *.sh
 *.log
@@ -47,6 +51,7 @@ mantel_partial_outputs/
 # X8 Pool A caches (features come back from the HPC; synthetic dir is the self-test)
 pool_a_features/
 x8_pool_a/_synthetic_features/
+nc_csf_predictivity/outputs/pool_a/*SYNTHETIC*
 
 # Generated scratch variants (sed copy of stats_eval.py, FPR@95-only metric branch)
 stats_eval_fpr_only.py
