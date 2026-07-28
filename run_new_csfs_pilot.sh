@@ -33,6 +33,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 set -a; source .env 2>/dev/null || true; set +a
 
+# ViT fits build the backbone with timm(pretrained=True), which downloads the
+# ImageNet-21k npz into $TORCH_HOME/hub/checkpoints at model-construction time.
+# The paper container bakes TORCH_HOME=/opt/torch, which is read-only under
+# Singularity, so fall back to a writable cache when needed (the download
+# happens once; every ViT checkpoint reuses the same backbone file).
+TORCH_HOME="${TORCH_HOME:-/opt/torch}"
+if ! { mkdir -p "$TORCH_HOME/hub/checkpoints" 2>/dev/null && [ -w "$TORCH_HOME/hub/checkpoints" ]; }; then
+    TORCH_HOME="$HOME/.cache/torch"
+    mkdir -p "$TORCH_HOME/hub/checkpoints"
+    echo "[runner] TORCH_HOME is read-only; using $TORCH_HOME for the timm backbone cache"
+fi
+export TORCH_HOME
+
 ARMS="${ARMS:-newcsf ash react}"
 TEST_MODES="${TEST_MODES:-iid_test ood_nsncs_svhn ood_nsncs_ti ood_nsncs_lsun_cropped ood_nsncs_lsun_resize ood_nsncs_isun ood_nsncs_textures ood_nsncs_places365}"
 HEAD_CSFS="${HEAD_CSFS:-MSR,MLS,Energy,PE,PCE,GE,GEN,REN,GradNorm}"
