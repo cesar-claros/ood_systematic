@@ -4,12 +4,12 @@ This repository contains the code and analysis pipeline for *A Systematic Analys
 
 The repository covers the full pipeline from FD-Shifts pretrained checkpoints through CSF fitting and evaluation, statistical analysis, Neural Collapse computation, CLIP-based OOD stratification, and the cross-architecture predictor used in Section 4.4. Reproducing every paper figure end to end takes one to two weeks of wall-clock time on a small GPU cluster (Appendix C). For reproducibility purposes, the heaviest intermediate artifacts are also published as zip archives (see [Quick reproduction with prebuilt archives](#quick-reproduction-with-prebuilt-archives)).
 
-### Note on shared artifacts with our AISTATS 2026 paper
+### Note on out-of-scope artifacts
 
-Two scripts in this repository are shared with our AISTATS 2026 Calibration Workshop companion paper *Bounding Worst-Case Calibration Error in OOD Detection Under Distribution Shift* ([OpenReview](https://openreview.net/forum?id=aZnAoyzssI)):
+A few artifacts in this repository belong to a separate companion project on calibration and are not used by any result in this paper:
 
-- **`calibration_ood.py`, `recompute_metric.py`, and the `scores_calibration/` directory.** These are AISTATS-only artifacts. They are listed in the repository layout for completeness, but the pipeline does not invoke them and does not read from `scores_calibration/`. You can ignore them entirely if you only want to reproduce this paper.
-- **`stats_eval.py`** is also used by the AISTATS paper (with `--metric-group CE` or `--metric-group CE_BOUND`) to compute calibration top cliques. The paper only uses `--metric-group RC` (AURC / AUGRC), which is the only mode whose outputs feed Figures 1 and 3.
+- **`calibration_ood.py`, `recompute_metric.py`, and the `scores_calibration/` directory.** They are listed in the repository layout for completeness, but the pipeline does not invoke them and does not read from `scores_calibration/`. You can ignore them entirely.
+- **`stats_eval.py`** also supports calibration metric groups (`--metric-group CE` / `--metric-group CE_BOUND`) for that project. This paper only uses `--metric-group RC` (AURC / AUGRC), which is the only mode whose outputs feed Figures 1 and 3.
 
 ---
 
@@ -52,13 +52,13 @@ ood_systematic/
 |-- clip_clustering_all_backbones.py  # Stage 5c: stratification across CLIP backbones
 |-- clip_robustness.py                # Stage 5d: clustering robustness analysis
 |-- generate_openood_grouping.py      # Stage 5e: OpenOOD-style binary grouping
-|-- stats_eval.py                     # Stage 6a: top-clique pipeline (Figures 1, 3) — also used by AISTATS 2026 with --metric-group CE / CE_BOUND
+|-- stats_eval.py                     # Stage 6a: top-clique pipeline (Figures 1, 3; only --metric-group RC feeds this paper)
 |-- stats_eval_demo.py                # Stage 6b: worked example for Appendix E
 |-- mantel_analysis.py                # Stage 6c: Mantel test (Appendix G)
 |-- projection_filtering_analysis.py  # Stage 6d: paired AUGRC tables (Appendix F)
 |-- projection_clique_analysis.py     # Stage 6e: clique substitution (Appendix F)
-|-- calibration_ood.py                # AISTATS 2026 only — not part of this pipeline
-|-- recompute_metric.py               # AISTATS 2026 only — not part of this pipeline
+|-- calibration_ood.py                # separate companion project; not part of this pipeline
+|-- recompute_metric.py               # separate companion project; not part of this pipeline
 `-- README.md
 ```
 
@@ -151,7 +151,7 @@ Five folders dominate the disk footprint and are expensive to regenerate (Stage 
 | `neural_collapse_metrics.zip` | `neural_collapse_metrics/` | 312 KB | several minutes (NC metric extraction over 376 checkpoints) |
 | `scores_risk.zip` | `scores_risk/` | 70 MB | one to two weeks (Stage 1, 2, 3 over the FD-Shifts pool) |
 | `scores_risk_resnet18.zip` | `scores_risk_resnet18/` | 18 MB | days (Stage 1, 2, 3 over the ResNet-18 pool) |
-| `scores_calibration.zip` | `scores_calibration/` | 114 MB | AISTATS 2026 companion paper only — not needed for this pipeline |
+| `scores_calibration.zip` | `scores_calibration/` | 114 MB | separate companion project; not needed for this pipeline |
 
 Download links (Google Drive):
 
@@ -160,7 +160,7 @@ Download links (Google Drive):
 - `neural_collapse_metrics.zip`: https://drive.google.com/file/d/1y8tmMrVqxYRer4x9vyEcuGelpX2VkNed/view?usp=sharing
 - `scores_risk.zip`: https://drive.google.com/file/d/13n8O49xMEQ4F6cOsQcyqC-estuBdPFSJ/view?usp=sharing
 - `scores_risk_resnet18.zip`: https://drive.google.com/file/d/1xrgOJ7UggZiAnAr_4ud6c7r2qbXpOBR0/view?usp=sharing
-- `scores_calibration.zip`: https://drive.google.com/file/d/1nCueWkz7BfbnF9DTtJzxoTl-8Q-C-bVB/view?usp=sharing (AISTATS 2026 companion paper only)
+- `scores_calibration.zip`: https://drive.google.com/file/d/1nCueWkz7BfbnF9DTtJzxoTl-8Q-C-bVB/view?usp=sharing (separate companion project; not needed for this pipeline)
 
 After unzipping, the Stage 6 and Stage 7 commands listed below regenerate every paper figure in under one hour on a single CPU machine.
 
@@ -415,7 +415,7 @@ ood_systematic/
 |-- scores_risk_resnet18/             # ResNet-18 pool, fix-config only (about 18 MB)
 |   `-- scores_*_MCD-*_Conv_<source>_fix-config.csv
 |
-|-- scores_calibration/               # AISTATS 2026 companion-paper artifact only.
+|-- scores_calibration/               # separate companion-project artifact only.
 |   |                                 # listed here for reference (about 114 MB).
 |   |-- calibration_results_<source>_<backbone>.csv      # per-checkpoint reliability data
 |   |-- scores_<ECE_*|MCE>_MCD-*_<backbone>_<source>.csv
@@ -480,11 +480,11 @@ Total disk footprint after the full pipeline: about 230 MB excluding any FD-Shif
 | Appendix G Tables 18, 19 (Mantel) | `mantel_analysis.py` | `mantel_outputs_papyan/` |
 | Appendix H coefficient heatmaps | `nc_csf_predictivity.evaluation.coefficients_heatmap_clique` | `nc_csf_predictivity/outputs/figures/clique_coefficients_heatmap_xarch_{source,n_classes,none}.pdf` |
 
-(1) `stats_eval.py` is shared with our AISTATS 2026 companion paper, which uses it with `--metric-group CE` or `--metric-group CE_BOUND` to compute calibration top cliques. Only the `--metric-group RC` invocations (AURC / AUGRC) feed this paper.
+(1) Only the `--metric-group RC` invocations (AURC / AUGRC) of `stats_eval.py` feed this paper; the `--metric-group CE` / `CE_BOUND` modes compute calibration top cliques for a separate companion project.
 
 ---
 
-## Citing FD-Shifts, our framework, and external datasets
+## Citing FD-Shifts and external datasets
 
 Please cite the FD-Shifts paper if you use their framework and the released checkpoints:
 
@@ -509,19 +509,5 @@ Please cite the FD-Shifts paper if you use their framework and the released chec
 ```
 
 Please refer to their github page for more information on the FD-Shifts framework: [https://github.com/fd-shifts/fd-shifts.pytorch](https://github.com/fd-shifts/fd-shifts.pytorch)
-
-Please cite our paper if you use our framework and/or released checkpoints for ResNet-18 models and TinyImageNet models
-
-```bibtex
-@misc{claros2026systematic,
-      title={A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training Paradigm Shifts}, 
-      author={Claudio César Claros Olivares and Austin J. Brockmeier},
-      year={2026},
-      eprint={2511.11934},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2511.11934}, 
-}
-```
 
 The image-classification benchmarks and OOD evaluation sets used here retain their original licenses; see the paper's "Licenses for existing assets" checklist entry for the full list of dataset citations (CIFAR-10/100, SuperCIFAR-100, TinyImageNet, iSUN, LSUN, SVHN, Places365, Textures/DTD).
