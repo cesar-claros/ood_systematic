@@ -27,6 +27,24 @@ regression_outputs/
 # Archived / exploratory code and outputs not used by the paper
 archived/
 
+# Development-ladder ablation outputs and reports whose generating scripts are
+# legacy (removed above); the retained calib_features/ outputs are read by
+# ablations/calibration_features_clique.py for its comparison section
+nc_csf_predictivity/outputs/ablations/calibration/
+nc_csf_predictivity/outputs/ablations/l1_per_csf/
+nc_csf_predictivity/outputs/ablations/l2_cs50/
+nc_csf_predictivity/outputs/ablations/l2_nclasses_cs50/
+nc_csf_predictivity/outputs/ablations/n_classes/
+nc_csf_predictivity/outputs/ablations/no_source/
+nc_csf_predictivity/outputs/ablations/random_forest/
+nc_csf_predictivity/outputs/15_ablation_no_source.md
+nc_csf_predictivity/outputs/16_ablation_n_classes.md
+nc_csf_predictivity/outputs/17_ablation_random_forest.md
+nc_csf_predictivity/outputs/18_ablation_l1.md
+nc_csf_predictivity/outputs/19_ablation_l2_cs50.md
+nc_csf_predictivity/outputs/20_ablation_l2_nclasses_cs50.md
+nc_csf_predictivity/outputs/21_ablation_calibration.md
+
 # Downloaded score/metric archives (Google Drive / Zenodo) and their unzipped folders
 *.zip
 scores/
