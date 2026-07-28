@@ -7,8 +7,12 @@ Stored convergence covariates per model block:
   - iid_msr : IID test-set metric (AUGRC) of the MSR baseline CSF, the
               closest stored proxy for achieved fit quality.
   - iid_mean: IID test-set metric averaged over the retained CSFs.
-  - lr      : learning rate (varies only in the ViT stratum; the CNN strata
-              share a single FD-Shifts schedule by design).
+  - lr      : learning rate (varies only in the ViT stratum, where FD-Shifts
+              uses per-configuration swept best values; each CNN stratum is a
+              single paradigm with one fixed recipe, common SGD base lr 0.1
+              and a paradigm-specific epoch budget of 470/250/300 for
+              ConfidNet/DeVries/DG, identical across the four sources, so lr
+              and epochs are within-stratum constants).
   - ds      : source-dataset identity (binary same/different distance), which
               subsumes epoch-budget and schedule differences across datasets.
 

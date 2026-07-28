@@ -21,9 +21,10 @@ Two scripts in this repository are shared with our AISTATS 2026 Calibration Work
 4. [Trained model checkpoints](#trained-model-checkpoints)
 5. [Quick reproduction with prebuilt archives](#quick-reproduction-with-prebuilt-archives)
 6. [Full pipeline reproduction](#full-pipeline-reproduction)
-7. [Expected folder structure after the full pipeline](#expected-folder-structure-after-the-full-pipeline)
-8. [Mapping paper figures and tables to scripts](#mapping-paper-figures-and-tables-to-scripts)
-9. [Citing FD-Shifts and external datasets](#citing-fd-shifts-and-external-datasets)
+7. [Reproducing the selector-transfer experiments](#reproducing-the-selector-transfer-experiments)
+8. [Expected folder structure after the full pipeline](#expected-folder-structure-after-the-full-pipeline)
+9. [Mapping paper figures and tables to scripts](#mapping-paper-figures-and-tables-to-scripts)
+10. [Citing FD-Shifts and external datasets](#citing-fd-shifts-and-external-datasets)
 
 ---
 
@@ -34,10 +35,13 @@ ood_systematic/
 |-- src/                              # supporting modules (CSF implementations, RC stats, calibration)
 |-- nc_csf_predictivity/              # NC-based predictor sub-package (Section 4.4 / Appendix H)
 |   |-- data/                         # build/harmonize/split the per-cell label matrices
-|   |-- evaluation/                   # baselines, regret, splits, and figure scripts
+|   |-- evaluation/                   # baselines, regret, splits, cross-family transfer, figure scripts
 |   |-- ablations/calibration_features_clique.py  # the headline predictor
+|   |-- ablations/calibration_regime_free.py      # regime-input ablation (author response)
 |   |-- stats/                        # Holm-Wilcoxon tests
-|   `-- outputs/                      # generated parquets and figures (regenerable)
+|   `-- outputs/                      # generated parquets and figures (committed where small)
+|-- x8_pool_a/                        # self-supervised probe pool: frozen DINOv2/CLIP features,
+|                                     # linear probes, CSF evaluation, selector transfer (author response)
 |
 |-- csf_fit.py                        # Stage 1: fit CSFs on the validation split
 |-- csf_eval.py                       # Stage 2: evaluate CSFs on each OOD dataset
@@ -331,6 +335,51 @@ python -m nc_csf_predictivity.evaluation.regret_by_side_clique_bc
 ```
 
 Wall-clock for Stage 7 is about thirty minutes to one hour on a single CPU machine: the bulk is the per-CSF L2 LogisticRegressionCV (Cs=50, cv=5, class-balanced) over twenty CSFs, three feature configurations (`source`, `n_classes`, `none`), and two splits (`xarch`, `lopo`).
+
+---
+
+## Reproducing the selector-transfer experiments
+
+The NC-based selector is evaluated on three target pools: the held-out ResNet-18 pool (Section 4.4 of the paper), the fine-tuned ViT pool, and a self-supervised pool of frozen DINOv2/CLIP linear probes (the latter two produced for the NeurIPS 2026 author response). All three follow the same protocol. Per-CSF L2 logistic heads are trained on the 280 VGG-13 models, with the eight NC metrics z-scored within each architecture, a source one-hot, and an OOD-regime one-hot as features, and Friedman-Conover top-clique membership per (paradigm, source, dropout, reward, regime) cell as labels. The heads are then applied without retraining to each target model individually (each seed is its own test model, with NC values z-scored by the target family's own statistics). Predicted shortlists (head probability >= 0.5) are scored by per-(model, OOD dataset) set-regret against the per-row oracle, with empty shortlists imputed by the worst CSF on the side; the reference baselines are the best fixed CSF among {MSR, Energy, MLS, CTM, fDBD, NNGuide} on the same rows.
+
+The intermediate parquets these steps read (`nc_csf_predictivity/outputs/track1/dataset/`, `track1/cliques/`, `splits/`, and the stored per-fold predictions under `outputs/ablations/calib_cliques/`) are committed, so each command below runs directly from a fresh clone of this repository on CPU; only the feature-extraction step of the third experiment needs a GPU.
+
+### VGG-13 to ResNet-18 (paper, Section 4.4 and Figure 2)
+
+```bash
+python -m nc_csf_predictivity.ablations.calibration_features_clique
+python -m nc_csf_predictivity.evaluation.regret_by_side_clique_bc
+```
+
+The first command fits the per-CSF heads and writes predictions and coefficients for both splits (`xarch` = the cross-architecture transfer; `lopo` = leave-one-paradigm-out); the second produces the regret figure. Expected joint-side mean set-regret on the ResNet-18 pool (near / mid / far): **1.02 / 1.18 / 0.39** against **2.07 / 3.52 / 2.40** for the strongest fixed baseline (Always-CTM), i.e. 51-84% reductions.
+
+### VGG-13 to ViT (cross-family transfer, author response)
+
+```bash
+python -m nc_csf_predictivity.evaluation.vit_cnn_transfer
+```
+
+This evaluates both cross-family directions with direction-matched baselines: the CNN-to-ViT direction reuses the stored `lopo_modelvit` predictions (trained on all 280 VGG-13 models, tested on the 40 ViT models), and the ViT-to-CNN direction fits the reverse heads (`vit_to_vgg13`, `vit_to_resnet18`). ViT clique labels are computed with the same Friedman-Conover pipeline and cached (`track1/cliques/cliques_vit.parquet`, committed). The report is written to `nc_csf_predictivity/outputs/26_vit_cnn_transfer.md`. Expected CNN-to-ViT joint-side regret: **1.90 / 3.66 / 2.07** against **6.25 / 12.20 / 10.62** for the best fixed baselines; the reverse direction fails (regret above every fixed baseline), which is the boundary condition documented in the author response.
+
+### VGG-13 to self-supervised probes (DINOv2/CLIP pool, author response)
+
+Step 1 (GPU, one to three hours): cache frozen features for both encoders over the four source datasets and their OOD suites:
+
+```bash
+bash x8_pool_a/run_pool_a_hpc.sh
+# or per (encoder, dataset):
+# python x8_pool_a/extract_features.py --encoder dinov2_vitb14 --dataset cifar10
+```
+
+Step 2 (CPU or GPU, minutes to about an hour): train linear probes (2 encoders x 4 sources x 5 seeds = 40 models), evaluate the paper's CSF roster on the cached features, compute cliques, NC metrics, the within-pool Mantel test, and the selector transfer:
+
+```bash
+python x8_pool_a/pool_a_analysis.py --features-dir pool_a_features
+```
+
+The report and result tables are written to `nc_csf_predictivity/outputs/pool_a/` (`27_pool_a_pilot.md` plus parquets; the versions produced for the author response are committed). Expected joint-side regret for the VGG-13-trained selector on the probe pool: **5.99 / 3.22 / 1.44** against **7.39 / 7.11 / 11.21** for the best fixed CSF (Always-fDBD), with the training-pool comparison (VGG-13, ViT, VGG-13+ViT) and the within-pool Mantel association (classical NC r = 0.73, extended descriptors r = 0.76) in the same report. The analysis path can be smoke-tested without features or a GPU via `python x8_pool_a/pool_a_analysis.py --synthetic`.
+
+The regime-input ablation reported in the author response (the selector with the regime indicator removed) is reproduced by `python -m nc_csf_predictivity.ablations.calibration_regime_free`, with its report in `nc_csf_predictivity/outputs/25_ablation_regime_free.md`.
 
 ---
 

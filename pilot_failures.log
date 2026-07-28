@@ -1,3 +1,0 @@
-FAIL [ash] eval iid_test: cifar10_paper_sweep/dg_bbvgg13_do1_run3_rew2.2
-FAIL [newcsf] fit: tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do1_run5_rew2.2
-FAIL [newcsf] fit: tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do1_run5_rew2.2
