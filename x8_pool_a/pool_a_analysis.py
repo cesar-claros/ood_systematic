@@ -506,6 +506,10 @@ def main() -> None:
                          "(deferred by default until the E-F sweep completes "
                          "on the CNN/ViT benchmark, keeping rosters "
                          "identical across pools)")
+    ap.add_argument("--out-suffix", default="",
+                    help="suffix for the output parquets and report (e.g. "
+                         "_newcsfs), so reruns do not overwrite the "
+                         "committed response-era artifacts")
     ap.add_argument("--synthetic", action="store_true")
     args = ap.parse_args()
     logger.info(f"Pool A analysis on device={args.device} "
@@ -552,12 +556,13 @@ def main() -> None:
     models_df = pd.DataFrame(model_rows)
     out_dir = OUT_ROOT / "pool_a"
     out_dir.mkdir(parents=True, exist_ok=True)
-    long_df.to_parquet(out_dir / "long_pool_a.parquet", index=False)
-    models_df.to_parquet(out_dir / "models_pool_a.parquet", index=False)
+    sfx = args.out_suffix
+    long_df.to_parquet(out_dir / f"long_pool_a{sfx}.parquet", index=False)
+    models_df.to_parquet(out_dir / f"models_pool_a{sfx}.parquet", index=False)
 
     logger.info("Computing pool cliques (Friedman-Conover per cell)...")
     flat, _ = compute_track1_cliques(long_df)
-    flat.to_parquet(out_dir / "cliques_pool_a.parquet", index=False)
+    flat.to_parquet(out_dir / f"cliques_pool_a{sfx}.parquet", index=False)
     top = (flat[flat["in_top_clique"] & flat["regime"].isin(
         ["near", "mid", "far"])]
         .groupby(["paradigm", "source", "regime"])["csf"]
@@ -598,8 +603,8 @@ def main() -> None:
              "(train pools: VGG-13 CNNs, fine-tuned ViTs, and both; the ViT "
              "pool is the weak-collapse regime closest to frozen probes)\n\n",
              "```\n" + h2.to_string(index=False) + "\n```\n"]
-    report = out_dir / ("27_pool_a_pilot_SYNTHETIC.md" if args.synthetic
-                        else "27_pool_a_pilot.md")
+    report = out_dir / (f"27_pool_a_pilot_SYNTHETIC{sfx}.md" if args.synthetic
+                        else f"27_pool_a_pilot{sfx}.md")
     report.write_text("".join(lines))
     print(f"wrote {report}")
 

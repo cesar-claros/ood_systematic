@@ -83,14 +83,17 @@ def main() -> None:
     ap.add_argument("--experiment-root",
                     default=os.environ.get("EXPERIMENT_ROOT_DIR", "."))
     ap.add_argument("--experiments", nargs="*", default=None)
-    ap.add_argument("--experiments-file", default=None)
+    ap.add_argument("--experiments-file", nargs="+", default=None)
     ap.add_argument("--out-prefix", default="new_csfs_pilot_summary")
     args = ap.parse_args()
 
     if args.experiments_file:
-        lines = pathlib.Path(args.experiments_file).read_text().splitlines()
-        exps = [ln.strip() for ln in lines
-                if ln.strip() and not ln.strip().startswith("#")]
+        exps = []
+        for ef in args.experiments_file:
+            for ln in pathlib.Path(ef).read_text().splitlines():
+                ln = ln.strip()
+                if ln and not ln.startswith("#") and ln not in exps:
+                    exps.append(ln)
     elif args.experiments:
         exps = args.experiments
     else:
