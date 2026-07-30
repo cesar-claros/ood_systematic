@@ -522,6 +522,12 @@ def main() -> None:
         make_synthetic(fdir, np.random.default_rng(0))
         args.seeds, args.n_perms = 2, 999
 
+    if not fdir.is_dir():
+        raise SystemExit(
+            f"Features dir not found: {fdir.resolve()}. Pass --features-dir "
+            "pointing at the extraction cache written by extract_features.py "
+            "(files named {encoder}_{dataset}_{split}.npz).")
+
     all_rows, model_rows = [], []
     for enc in ENCODERS:
         feats: dict = {}
@@ -531,8 +537,14 @@ def main() -> None:
             d = np.load(f)
             key = (ds, split if ds in SOURCES else "eval")
             feats[key] = (d["features"], d["labels"])
+        if not feats:
+            logger.warning(f"{enc}: no cached arrays matching {enc}_*.npz "
+                           f"under {fdir.resolve()}")
         for source in SOURCES:
             if (source, "train") not in feats:
+                if feats:
+                    logger.warning(f"{enc}/{source}: missing "
+                                   f"{enc}_{source}_train.npz; skipping")
                 continue
             rmap = regime_map(source, pathlib.Path(args.clip_dir))
             eval_names = [e for e in rmap
@@ -551,6 +563,13 @@ def main() -> None:
                 model_rows.append(mrow)
             logger.info(f"=== {enc}/{source}: {args.seeds} probes done "
                         f"(mean acc {np.mean([m['acc'] for m in model_rows[-args.seeds:]]):.3f}) ===")
+
+    if not model_rows:
+        raise SystemExit(
+            f"No probe models evaluated: no usable feature caches under "
+            f"{fdir.resolve()}. Point --features-dir at the directory "
+            "written by extract_features.py (the checkout where the "
+            "extraction ran), then rerun.")
 
     long_df = pd.DataFrame(all_rows)
     models_df = pd.DataFrame(model_rows)
