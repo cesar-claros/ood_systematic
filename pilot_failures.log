@@ -6,3 +6,4 @@ FAIL [ash] fit: vit/cifar10_modelvit_bbvit_lr0.0003_bs128_run0_do0_rew0
 FAIL [react] calibrate: vit/cifar10_modelvit_bbvit_lr0.0003_bs128_run0_do0_rew0
 FAIL [newcsf] fit: vit/cifar10_modelvit_bbvit_lr0.0003_bs128_run1_do0_rew0
 FAIL [ash] fit: vit/cifar10_modelvit_bbvit_lr0.0003_bs128_run1_do0_rew0
+FAIL [react] eval ood_sncs_c10: supercifar_paper_sweep/dg_bbvgg13_do1_run2_rew6
