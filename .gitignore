@@ -17,6 +17,7 @@ __pycache__/
 *.log
 *.txt
 neural_collapse_vis.py
+stats_eval_demo.py
 calibration_example.py
 calibration_hyperparameters.py
 calibration_plots.py
@@ -52,7 +53,6 @@ nc_csf_predictivity/outputs/33_ssl_expanded_table_log2.md
 nc_csf_predictivity/outputs/33_ssl_expanded_table.md
 nc_csf_predictivity/outputs/34_r4de_expanded_table.md
 nc_csf_predictivity/outputs/35_predictor_model_ablation.md
-nc_csf_predictivity/outputs/35_predictor_model_ablation.md
 nc_csf_predictivity/outputs/36_nclasses_log_check.md
 nc_csf_predictivity/outputs/37_regimefree_tables.md
 nc_csf_predictivity/outputs/38_shortlist_pick_policies.md
@@ -85,6 +85,14 @@ nc_csf_predictivity/outputs/pool_a/*SYNTHETIC*
 
 # Generated scratch variants (sed copy of stats_eval.py, FPR@95-only metric branch)
 stats_eval_fpr_only.py
+
+# Generated aggregation outputs of the new-CSF pilot (regenerable via
+# aggregate_new_csfs_pilot.py from the per-checkpoint stats on the HPC) and
+# the --include-new-csfs rerun artifacts of pool_a_analysis.py (regenerable
+# from the tracked feature-extraction pipeline; the committed pool_a outputs
+# are the reference the analyses read)
+new_csfs_pilot_summary*
+nc_csf_predictivity/outputs/pool_a/*_newcsfs*
 
 # Exception to the *.sh rule: the Pool A extraction runner must sync to the HPC
 !x8_pool_a/run_pool_a_hpc.sh
