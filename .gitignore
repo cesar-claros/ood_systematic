@@ -44,8 +44,20 @@ nc_csf_predictivity/outputs/18_ablation_l1.md
 nc_csf_predictivity/outputs/19_ablation_l2_cs50.md
 nc_csf_predictivity/outputs/20_ablation_l2_nclasses_cs50.md
 nc_csf_predictivity/outputs/21_ablation_calibration.md
-
+nc_csf_predictivity/outputs/22_ablation_calib_features.md
+nc_csf_predictivity/outputs/30_input_ablation_grid.md
+nc_csf_predictivity/outputs/31_loro_vit_grid.md
+nc_csf_predictivity/outputs/32_tj47_expanded_table.md
+nc_csf_predictivity/outputs/33_ssl_expanded_table_log2.md
+nc_csf_predictivity/outputs/33_ssl_expanded_table.md
+nc_csf_predictivity/outputs/34_r4de_expanded_table.md
+nc_csf_predictivity/outputs/35_predictor_model_ablation.md
+nc_csf_predictivity/outputs/35_predictor_model_ablation.md
+nc_csf_predictivity/outputs/36_nclasses_log_check.md
+nc_csf_predictivity/outputs/37_regimefree_tables.md
+nc_csf_predictivity/outputs/38_shortlist_pick_policies.md
 # Downloaded score/metric archives (Google Drive / Zenodo) and their unzipped folders
+
 *.zip
 scores/
 scores_final/
