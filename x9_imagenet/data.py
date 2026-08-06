@@ -31,9 +31,14 @@ from torch.utils.data import DataLoader, IterableDataset, get_worker_info
 
 def model_transform(model):
     """The exact eval transform for a timm model instance (per-checkpoint
-    mean/std/interpolation/crop_pct; the classic silent killer if wrong)."""
+    mean/std/interpolation/crop_pct; the classic silent killer if wrong).
+
+    use_test_size=True: models whose cfg defines a test_input_size (e.g.
+    tv2/a3 ResNets, trained at 176/160) are evaluated at that size (224),
+    matching timm's own validation convention; for every other model the
+    flag is a no-op."""
     import timm
-    cfg = timm.data.resolve_model_data_config(model)
+    cfg = timm.data.resolve_data_config(model=model, use_test_size=True)
     return timm.data.create_transform(**cfg, is_training=False)
 
 

@@ -52,9 +52,9 @@ def main() -> None:
     rows = []
     for family, tag, note in CANDIDATES:
         rec = {"family": family, "tag": tag, "note": note, "status": "ok",
-               "input_size": None, "crop_pct": None, "interpolation": None,
-               "mean": None, "std": None, "params_m": None,
-               "num_features": None}
+               "input_size": None, "eval_size": None, "crop_pct": None,
+               "interpolation": None, "mean": None, "std": None,
+               "params_m": None, "num_features": None}
         if tag not in registry:
             rec["status"] = "missing_from_registry"
             rows.append(rec)
@@ -67,12 +67,16 @@ def main() -> None:
             continue
         n_cls = getattr(cfg, "num_classes", None)
         in_size = tuple(getattr(cfg, "input_size", ()) or ())
+        # eval-time size: timm evaluates at test_input_size when a cfg
+        # defines one (e.g. tv2/a3 ResNets train at 176/160, eval at 224)
+        eval_size = tuple(getattr(cfg, "test_input_size", None) or in_size)
         if n_cls != 1000:
             rec["status"] = f"rejected_num_classes_{n_cls}"
-        elif len(in_size) != 3 or in_size[1] != 224 or in_size[2] != 224:
-            rec["status"] = f"rejected_input_size_{in_size}"
+        elif len(eval_size) != 3 or eval_size[1] != 224 or eval_size[2] != 224:
+            rec["status"] = f"rejected_eval_size_{eval_size}"
         rec.update({
             "input_size": "x".join(map(str, in_size)),
+            "eval_size": "x".join(map(str, eval_size)),
             "crop_pct": getattr(cfg, "crop_pct", None),
             "interpolation": getattr(cfg, "interpolation", None),
             "mean": ",".join(f"{v:g}" for v in getattr(cfg, "mean", ())),
