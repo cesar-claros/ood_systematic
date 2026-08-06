@@ -14,9 +14,14 @@ logits and weights):
     z-space weights W_z = W * sd (identical logits);
   - fitting protocol: class statistics on the FIT draw (100/class from the
     superset, --fit-seed selects the draw; G3 = rerun with another seed);
-    temperature, PCA dims, NNGuide k, NCI alpha, and the KPCA Bayesian
-    optimization all select on the SELECTION draw by failure-AUGRC
-    (the pipeline's Stage-1 convention);
+    everything tunable selects on the SELECTION draw by failure-AUGRC (the
+    pipeline's Stage-1 convention), with Bayesian optimization exactly
+    where the original pipeline used it (GEN and REN over (M, gamma),
+    NNGuide over (k_clusters, bank proportion), PCA RecError over explained
+    variance, KPCA over (variance, gamma, landmarks); 20+80 evals,
+    random_state=1) and the original fixed rules elsewhere (Residual/ViM
+    dimension ladder 1000/512/d//2; NeCo at 100 components with the
+    ViT-raw/standardized and resnet-no-mls conventions);
   - metrics per (csf, eval set): AUGRC/AURC via src.rc_stats (x1000 scale;
     OOD scored against correctly-classified ID test) plus AUROC and
     FPR@95TPR for the G1 OpenOOD comparison.
@@ -56,8 +61,15 @@ from kernel_pca_port import KernelPCAPort  # noqa: E402
 from nc_metrics import papyan_nc  # noqa: E402
 
 N_CLS = 1000
-PCA_DIMS = [64, 128, 256, 512]
-NNG_KS = [10, 50]
+
+
+def bo_max(f, pbounds: dict, n_init: int, n_iters: int) -> dict:
+    """The original pipeline's BO convention (verbose=0, random_state=1)."""
+    from bayes_opt import BayesianOptimization
+    bo = BayesianOptimization(f=f, pbounds=pbounds, verbose=0,
+                              random_state=1)
+    bo.maximize(init_points=n_init, n_iter=n_iters)
+    return bo.max["params"]
 DESC_COLS = ["rho_res", "n_residue_spikes", "median_cos_own",
              "class_dep_residue", "common_mode_energy"]
 
@@ -65,6 +77,24 @@ DESC_COLS = ["rho_res", "n_residue_spikes", "median_cos_own",
 def rc_metrics(confids: np.ndarray, residuals: np.ndarray) -> tuple[float, float]:
     rc = RiskCoverageStats(confids=confids, residuals=residuals.astype(float))
     return float(rc.augrc), float(rc.aurc)
+
+
+def fit_temperature_lbfgs(logits_val: torch.Tensor,
+                          y_val: torch.Tensor) -> float:
+    """Original convention (src/csfs/temperature_scaling.py): LBFGS on
+    validation cross-entropy, init T=1, lr=0.01, max_iter=2000 (pool_a's
+    41-point log grid was a pilot simplification of the same objective)."""
+    t = torch.ones(1, device=logits_val.device).requires_grad_(True)
+    opt = torch.optim.LBFGS([t], lr=0.01, max_iter=2000)
+
+    def _eval():
+        opt.zero_grad()
+        loss = torch.nn.functional.cross_entropy(logits_val / t, y_val)
+        loss.backward()
+        return loss
+
+    opt.step(_eval)
+    return float(t.detach().item())
 
 
 def det_metrics(conf_id: np.ndarray, conf_ood: np.ndarray) -> tuple[float, float]:
@@ -148,7 +178,7 @@ def process_model(tag: str, family: str, args, paths: dict,
 
     lg_sel = logits(h_sel_d)
     resid_sel = (lg_sel.argmax(1) != y_sel_t).float().cpu().numpy()
-    temp = csf.fit_temperature(lg_sel, y_sel_t)
+    temp = fit_temperature_lbfgs(lg_sel, y_sel_t)
 
     fitted, skipped = {}, []
 
@@ -159,32 +189,91 @@ def process_model(tag: str, family: str, args, paths: dict,
             skipped.append(name)
             logger.warning(f"{tag}: {name} fit failed: {e}")
 
-    def select_dim(score_fn):
-        best, best_a = PCA_DIMS[0], np.inf
-        for d in [d for d in PCA_DIMS if d < h_fit_d.shape[1]]:
-            a, _ = rc_metrics(score_fn(h_sel_d, d).cpu().numpy(), resid_sel)
-            if a < best_a:
-                best, best_a = d, a
-        return best
-
     try_fit("maha", lambda: csf.Mahalanobis(h_fit_d, y_fit_t, N_CLS))
     try_fit("maha_pp", lambda: csf.Mahalanobis(csf.l2n(h_fit_d), y_fit_t, N_CLS))
+
+    # Subspace family, original conventions (src/csfs/):
+    #  - Residual/ViM (residual.py, vim.py): centered RAW features, FIXED
+    #    dimension ladder d>=2048 -> 1000, d>=768 -> 512, else d//2.
+    #  - PCA RecError (projection_filtering.py): STANDARDIZED features,
+    #    components by explained variance, BO-tuned over (0.85, 0.99),
+    #    relative reconstruction error.
+    #  - NeCo (neco.py): standardized for non-ViT / raw for ViT-family,
+    #    fixed 100 components, ratio multiplied by max logit except on
+    #    resnet-named models.
+    d_feat = h_fit_d.shape[1]
+    d_lad = 1000 if d_feat >= 2048 else (512 if d_feat >= 768 else d_feat // 2)
     sub = csf.Subspace(h_fit_d)
-    d_pca = select_dim(lambda h, d: sub.conf_pca_recerror(h, d))
-    d_res = select_dim(lambda h, d: sub.conf_residual(h, d))
-    d_neco = select_dim(lambda h, d: sub.conf_neco(h, d))
-    d_vim = d_res
-    vim_alpha = sub.vim_alpha(h_fit_d, logits(h_fit_d), d_vim)
+    sub_z = csf.Subspace(zf(h_fit_d))
+    vim_alpha = sub.vim_alpha(h_fit_d, logits(h_fit_d), d_lad)
+
+    s2 = (sub_z.s ** 2)
+    cum_ratio = (s2.cumsum(0) / s2.sum()).cpu()
+    z_sel = zf(h_sel_d)
+
+    def pca_dim_of(v: float) -> int:
+        return int((cum_ratio <= v).sum().item()) + 1
+
+    pca_var = bo_max(
+        lambda explained_variance: -rc_metrics(
+            sub_z.conf_pca_recerror(z_sel, pca_dim_of(explained_variance))
+            .cpu().numpy(), resid_sel)[0],
+        {"explained_variance": (0.85, 0.99)}, args.bo_init, args.bo_iters
+    )["explained_variance"]
+    pca_dim = pca_dim_of(pca_var)
+
+    neco_raw = tag.startswith(("vit_", "deit"))
+    neco_mult = "resnet" not in tag
+    neco_sub = sub if neco_raw else sub_z
+    NECO_DIM = 100
+
+    def conf_neco_orig(hd: torch.Tensor, z: torch.Tensor,
+                       lg: torch.Tensor) -> torch.Tensor:
+        x = hd if neco_raw else z
+        c = x - neco_sub.mu
+        ratio = ((c @ neco_sub.vt[:NECO_DIM].T).norm(dim=1)
+                 / (x.norm(dim=1) + 1e-12))
+        return ratio * lg.max(dim=1).values if neco_mult else ratio
+
     try_fit("pnml", lambda: csf.PNML(zf(h_fit_d)))
+    # BO-tuned CSFs, mirroring the original pipeline (src/csfs/entropy.py,
+    # nnguide.py, kernel_pca.py): GEN and REN tune (M, gamma) with
+    # M in (1, num_classes), gamma in (1e-6, 0.999999); NNGuide tunes
+    # (k_clusters in (10, 500), per-class bank proportion in (0.1, 0.5));
+    # objective = selection-set failure-AUGRC throughout.
+    p_sel = torch.softmax(lg_sel / temp, dim=1)
+    ent_bounds = {"M": (1, N_CLS), "gamma": (1e-6, 0.999999)}
+    gen_p = bo_max(
+        lambda M, gamma: -rc_metrics(
+            csf.conf_gen(p_sel, gamma, int(M)).cpu().numpy(), resid_sel)[0],
+        ent_bounds, args.bo_init, args.bo_iters)
+    ren_p = bo_max(
+        lambda M, gamma: -rc_metrics(
+            csf.conf_ren(p_sel, gamma, int(M)).cpu().numpy(), resid_sel)[0],
+        ent_bounds, args.bo_init, args.bo_iters)
+
     bank_scores = csf.conf_energy(logits(h_fit_d), 1.0)
-    k_nng, best_a = NNG_KS[0], np.inf
-    for k in NNG_KS:
-        nng_k = csf.NNGuide(h_fit_d, bank_scores, k)
-        a, _ = rc_metrics(nng_k.conf(h_sel_d, csf.conf_energy(lg_sel, 1.0))
+
+    def build_nng(k_clusters, proportion):
+        rng = np.random.default_rng(0)  # fixed: keeps the BO objective
+        keep = []                       # deterministic in proportion
+        for c in range(N_CLS):
+            idx = np.flatnonzero(y_fit == c)
+            n = max(1, int(round(proportion * len(idx))))
+            keep.append(rng.choice(idx, n, replace=False))
+        keep = torch.from_numpy(np.concatenate(keep)).to(dev)
+        return csf.NNGuide(h_fit_d[keep], bank_scores[keep], int(k_clusters))
+
+    def nng_obj(k_clusters, proportion):
+        m = build_nng(k_clusters, proportion)
+        a, _ = rc_metrics(m.conf(h_sel_d, csf.conf_energy(lg_sel, 1.0))
                           .cpu().numpy(), resid_sel)
-        if a < best_a:
-            best_a, k_nng = a, k
-    nng = csf.NNGuide(h_fit_d, bank_scores, k_nng)
+        return -a
+
+    nng_p = bo_max(nng_obj, {"k_clusters": (10, 500),
+                             "proportion": (0.1, 0.5)},
+                   args.bo_init, args.bo_iters)
+    nng = build_nng(nng_p["k_clusters"], nng_p["proportion"])
     nci_alpha = csf.fit_nci_alpha(h_sel_d, lg_sel, resid_sel, W_d,
                                   h_fit_d.mean(dim=0), rc_metrics)
     kpca, kpca_params = None, {}
@@ -193,13 +282,20 @@ def process_model(tag: str, family: str, args, paths: dict,
             kpca = KernelPCAPort(W_d, b_d, N_CLS)
             kpca_params = kpca.tune_hyperparameters(
                 h_fit_d, h_sel_d, resid_sel, rc_metrics, temperature=1.0,
-                n_iters=args.kpca_iters, n_init=args.kpca_init)
+                n_iters=args.bo_iters, n_init=args.bo_init)
         except Exception as e:  # noqa: BLE001
             kpca, kpca_params = None, {}
             skipped.append("KPCA RecError global")
             logger.warning(f"{tag}: KPCA failed: {e}")
-    logger.info(f"{tag}: CSFs fit (pca={d_pca} res={d_res} neco={d_neco} "
-                f"k={k_nng}, temp={temp:.2f}, skipped={skipped or 'none'})")
+    logger.info(f"{tag}: CSFs fit (ladder D={d_lad}, "
+                f"pca var={pca_var:.3f} dim={pca_dim}, "
+                f"neco {'raw' if neco_raw else 'std'}"
+                f"{' x mls' if neco_mult else ''}; "
+                f"BO: gen M={int(gen_p['M'])} g={gen_p['gamma']:.3f}, "
+                f"ren M={int(ren_p['M'])} g={ren_p['gamma']:.3f}, "
+                f"nng k={int(nng_p['k_clusters'])} "
+                f"prop={nng_p['proportion']:.2f}; temp={temp:.2f}, "
+                f"skipped={skipped or 'none'})")
 
     def all_confs(h: torch.Tensor) -> dict[str, np.ndarray]:
         out: dict[str, torch.Tensor] = {}
@@ -211,17 +307,17 @@ def process_model(tag: str, family: str, args, paths: dict,
             confs = {
                 "MSR": csf.conf_msr(p), "MLS": csf.conf_mls(lg),
                 "Energy": csf.conf_energy(lg, temp), "PE": csf.conf_pe(p),
-                "GEN": csf.conf_gen(p, 0.1, min(100, N_CLS)),
-                "REN": csf.conf_ren(p, 0.5, N_CLS),
+                "GEN": csf.conf_gen(p, gen_p["gamma"], int(gen_p["M"])),
+                "REN": csf.conf_ren(p, ren_p["gamma"], int(ren_p["M"])),
                 "GE": csf.conf_ge(p), "PCE": csf.conf_pce(p),
                 "GradNorm": csf.conf_gradnorm(p, z),
                 "CTM": csf.conf_ctm(z, W_z),
                 "NNGuide": nng.conf(hd, csf.conf_energy(lg, 1.0)),
                 "fDBD": csf.conf_fdbd(z, lg, W_z, mu_std),
-                "PCA RecError global": sub.conf_pca_recerror(hd, d_pca),
-                "Residual": sub.conf_residual(hd, d_res),
-                "ViM": sub.conf_vim(hd, lg, d_vim, vim_alpha, 1.0),
-                "NeCo": sub.conf_neco(hd, d_neco),
+                "PCA RecError global": sub_z.conf_pca_recerror(z, pca_dim),
+                "Residual": sub.conf_residual(hd, d_lad),
+                "ViM": sub.conf_vim(hd, lg, d_lad, vim_alpha, 1.0),
+                "NeCo": conf_neco_orig(hd, z, lg),
             }
             if "maha" in fitted:
                 confs["Maha"] = fitted["maha"].conf(hd)
@@ -266,8 +362,13 @@ def process_model(tag: str, family: str, args, paths: dict,
     desc["common_mode_energy"] = desc.pop("common_mode")["energy_fraction"]
     model_row = {"tag": tag, "family": family, "acc": acc,
                  "temp": float(temp), "feature_dim": h_fit.shape[1],
-                 "fit_seed": args.fit_seed, "d_pca": d_pca, "d_res": d_res,
-                 "d_neco": d_neco, "k_nng": k_nng,
+                 "fit_seed": args.fit_seed, "d_ladder": d_lad,
+                 "pca_var": float(pca_var), "pca_dim": pca_dim,
+                 "neco_raw": neco_raw, "neco_mult": neco_mult,
+                 "gen_M": int(gen_p["M"]), "gen_gamma": float(gen_p["gamma"]),
+                 "ren_M": int(ren_p["M"]), "ren_gamma": float(ren_p["gamma"]),
+                 "nng_k": int(nng_p["k_clusters"]),
+                 "nng_proportion": float(nng_p["proportion"]),
                  "nci_alpha": float(nci_alpha),
                  "skipped_csfs": ",".join(skipped),
                  **{f"kpca_{k}": float(v) for k, v in kpca_params.items()},
@@ -294,8 +395,10 @@ def main() -> None:
                     default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--skip-existing", action="store_true")
     ap.add_argument("--no-kpca", action="store_true")
-    ap.add_argument("--kpca-init", type=int, default=20)
-    ap.add_argument("--kpca-iters", type=int, default=80)
+    ap.add_argument("--bo-init", type=int, default=20,
+                    help="BO init points for GEN/REN/NNGuide/KPCA (paper: 20)")
+    ap.add_argument("--bo-iters", type=int, default=80,
+                    help="BO iterations for GEN/REN/NNGuide/KPCA (paper: 80)")
     args = ap.parse_args()
 
     root = pathlib.Path(args.data_root)
