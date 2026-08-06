@@ -41,12 +41,22 @@ benchmark_imglist 1lI1j0_fDDvjIt9JlWAw09X8ks-yrR_H1
 
 echo "$OPENOOD_SETS" | while read -r name gid; do
     [ -z "${name:-}" ] && continue
-    if [ -d "$name" ]; then
+    # skip only if the directory exists AND contains files (an empty dir is a
+    # leftover from a failed attempt and must be retried)
+    if [ -d "$name" ] && [ -n "$(find "$name" -type f -print -quit 2>/dev/null)" ]; then
         echo "[skip] $name already present"
         continue
     fi
+    rm -rf "$name" "${name}.zip"
     echo "[gdown] $name"
     gdown "$gid" -O "${name}.zip"
+    # a Drive quota/confirm page saved as .zip fails this integrity test
+    if ! unzip -tq "${name}.zip" >/dev/null 2>&1; then
+        echo "ERROR: ${name}.zip is not a valid zip (Google Drive quota page?)."
+        echo "       Retry later or use the fallback URLs in the header."
+        rm -f "${name}.zip"
+        exit 1
+    fi
     mkdir -p "$name"
     unzip -q "${name}.zip" -d "$name"
     rm -f "${name}.zip"
@@ -84,5 +94,9 @@ for kv in $expected; do
 done
 echo
 echo "imglists (for the OpenOOD-suite sets, evaluation uses these, not raw folder contents):"
-find benchmark_imglist -name '*imagenet*' -name '*.txt' 2>/dev/null | head -20 || true
+# the zip carries its own top-level benchmark_imglist/ folder; OOD test lists
+# live in the imagenet/ subdir without 'imagenet' in their filenames
+if [ -d benchmark_imglist/benchmark_imglist/imagenet ]; then
+    wc -l benchmark_imglist/benchmark_imglist/imagenet/test_*.txt
+fi
 echo "done."
