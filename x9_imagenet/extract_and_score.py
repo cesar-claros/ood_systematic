@@ -18,7 +18,8 @@ logits and weights):
     pipeline's Stage-1 convention), with Bayesian optimization exactly
     where the original pipeline used it (GEN and REN over (M, gamma),
     NNGuide over (k_clusters, bank proportion), PCA RecError over explained
-    variance, KPCA over (variance, gamma, landmarks); 20+80 evals,
+    variance, NCI over alpha in (0, 3e-2) (x9 upgrade of the original's
+    7-point grid), KPCA over (variance, gamma, landmarks); 20+80 evals,
     random_state=1) and the original fixed rules elsewhere (Residual/ViM
     dimension ladder 1000/512/d//2; NeCo at 100 components with the
     ViT-raw/standardized and resnet-no-mls conventions);
@@ -274,8 +275,15 @@ def process_model(tag: str, family: str, args, paths: dict,
                              "proportion": (0.1, 0.5)},
                    args.bo_init, args.bo_iters)
     nng = build_nng(nng_p["k_clusters"], nng_p["proportion"])
-    nci_alpha = csf.fit_nci_alpha(h_sel_d, lg_sel, resid_sel, W_d,
-                                  h_fit_d.mean(dim=0), rc_metrics)
+    # NCI alpha: BO over the original grid's span (0, 3e-2), including the
+    # alpha=0 pure-alignment endpoint (x9 decision 2026-08-06; the original
+    # nci.py and the E-F benchmark runs used the fixed 7-point grid).
+    train_mean = h_fit_d.mean(dim=0)
+    nci_alpha = bo_max(
+        lambda alpha: -rc_metrics(
+            csf.conf_nci(h_sel_d, lg_sel, W_d, train_mean, alpha)
+            .cpu().numpy(), resid_sel)[0],
+        {"alpha": (0.0, 3e-2)}, args.bo_init, args.bo_iters)["alpha"]
     kpca, kpca_params = None, {}
     if not args.no_kpca:
         try:
@@ -325,7 +333,7 @@ def process_model(tag: str, family: str, args, paths: dict,
                 confs["MahaPP"] = fitted["maha_pp"].conf(csf.l2n(hd))
             if "pnml" in fitted:
                 confs["pNML"] = fitted["pnml"].conf(z, p)
-            confs["NCI"] = csf.conf_nci(hd, lg, W_d, h_fit_d.mean(dim=0),
+            confs["NCI"] = csf.conf_nci(hd, lg, W_d, train_mean,
                                         nci_alpha)
             if kpca is not None:
                 confs["KPCA RecError global"] = kpca.get_scores(hd)
