@@ -33,12 +33,16 @@ def model_transform(model):
     """The exact eval transform for a timm model instance (per-checkpoint
     mean/std/interpolation/crop_pct; the classic silent killer if wrong).
 
-    use_test_size=True: models whose cfg defines a test_input_size (e.g.
-    tv2/a3 ResNets, trained at 176/160) are evaluated at that size (224),
-    matching timm's own validation convention; for every other model the
-    flag is a no-op."""
+    Pool protocol: UNIFORM 224 evaluation (see verify_manifest.py). Default
+    to the train-size config (224 for most models, including those that
+    publish test_input_size 288, which we forgo); when the train size is not
+    224 (tv2/a3 ResNets: 176/160), switch to the test-size config, which is
+    224 for every pool member by construction. Hard assert either way."""
     import timm
-    cfg = timm.data.resolve_data_config(model=model, use_test_size=True)
+    cfg = timm.data.resolve_data_config(model=model)
+    if tuple(cfg["input_size"][1:]) != (224, 224):
+        cfg = timm.data.resolve_data_config(model=model, use_test_size=True)
+    assert tuple(cfg["input_size"][1:]) == (224, 224), cfg["input_size"]
     return timm.data.create_transform(**cfg, is_training=False)
 
 

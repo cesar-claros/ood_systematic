@@ -52,9 +52,9 @@ def main() -> None:
     rows = []
     for family, tag, note in CANDIDATES:
         rec = {"family": family, "tag": tag, "note": note, "status": "ok",
-               "input_size": None, "eval_size": None, "crop_pct": None,
-               "interpolation": None, "mean": None, "std": None,
-               "params_m": None, "num_features": None}
+               "input_size": None, "eval_size": None, "eval_src": None,
+               "crop_pct": None, "interpolation": None, "mean": None,
+               "std": None, "params_m": None, "num_features": None}
         if tag not in registry:
             rec["status"] = "missing_from_registry"
             rows.append(rec)
@@ -67,16 +67,27 @@ def main() -> None:
             continue
         n_cls = getattr(cfg, "num_classes", None)
         in_size = tuple(getattr(cfg, "input_size", ()) or ())
-        # eval-time size: timm evaluates at test_input_size when a cfg
-        # defines one (e.g. tv2/a3 ResNets train at 176/160, eval at 224)
-        eval_size = tuple(getattr(cfg, "test_input_size", None) or in_size)
+        test_size = tuple(getattr(cfg, "test_input_size", None) or ())
+        # Pool protocol: UNIFORM 224 evaluation. A model qualifies if 224 is
+        # one of its native operating modes: its train input_size (most
+        # models; some publish test_input_size 288 for an accuracy bump we
+        # forgo) or its published test_input_size (tv2/a3 ResNets train at
+        # 176/160, eval at 224). No 224 mode at all -> excluded.
+        if in_size[1:] == (224, 224):
+            eval_src = "train_size"
+        elif test_size[1:] == (224, 224):
+            eval_src = "test_size"
+        else:
+            eval_src = None
         if n_cls != 1000:
             rec["status"] = f"rejected_num_classes_{n_cls}"
-        elif len(eval_size) != 3 or eval_size[1] != 224 or eval_size[2] != 224:
-            rec["status"] = f"rejected_eval_size_{eval_size}"
+        elif eval_src is None:
+            rec["status"] = (f"rejected_no_224_mode_train{in_size}"
+                             f"_test{test_size or '-'}")
         rec.update({
             "input_size": "x".join(map(str, in_size)),
-            "eval_size": "x".join(map(str, eval_size)),
+            "eval_size": "3x224x224" if eval_src else None,
+            "eval_src": eval_src,
             "crop_pct": getattr(cfg, "crop_pct", None),
             "interpolation": getattr(cfg, "interpolation", None),
             "mean": ",".join(f"{v:g}" for v in getattr(cfg, "mean", ())),
