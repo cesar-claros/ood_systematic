@@ -78,14 +78,16 @@ def a_flip(lam: float, q: int, dim: int) -> float:
 
 
 def measure(h: np.ndarray, y: np.ndarray, w: np.ndarray, n_classes: int,
-            k_class: int = 12, standardize: bool = False) -> dict:
+            k_class: int = 12, standardize: bool = False,
+            het_splits: int = 3) -> dict:
     """ID-side diagnostics for one (checkpoint, source) cell."""
     n, dim = h.shape
     census = spike_census(h, standardize=standardize)
     via = viability(h, y, n_classes, standardize=standardize)
     k_stab = max(census["n_spikes"], n_classes - 1)
     stab_mean, stab_sd = split_half_stability(h, k_stab)
-    het = class_projector_heterogeneity(h, y, n_classes, k_class)
+    het = class_projector_heterogeneity(h, y, n_classes, k_class,
+                                        n_splits=het_splits)
     return {"census": census, "viability": via,
             "stability_k": k_stab, "stability": stab_mean,
             "stability_sd": stab_sd, "stability_null": k_stab / dim,

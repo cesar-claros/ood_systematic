@@ -14,9 +14,26 @@ Campaign code for the X6 projection-filtering study. Theory, verification append
 - Excluded from the campaign: DeVries and DG VGG pools (nonstandard heads: DG carries extra logits, DeVries a confidence branch). They remain available as an optional secondary held-out set, since frozen rules will not have seen them.
 - Held-out tier (validation only; do not inspect outcome tables before the freeze): ResNet18 checkpoints (`../scores_risk_resnet18`), CLIP/SSL probe pools (`../clip_scores`, extraction machinery in `../x8_pool_a`), held-out source datasets.
 
+## Running stage 1 (Tier-A measurement; safe before the freeze)
+
+Stage 1 reads checkpoints and datasets only, never outcome tables, so it can run before the rule freeze. Inside the campaign container (`container/Dockerfile`; `docker pull cesarclaros/systematic_ood:cuda11-7`), from the `code/` repo root on the HPC (`.env` provides `EXPERIMENT_ROOT_DIR` and `DATASET_ROOT_DIR`; the driver sources it):
+
+```bash
+# smoke test: one fast VGG cell, then one ViT cell
+python x6_spectral/measure_checkpoint.py \
+    --model_path=cifar10_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2 --use_cuda
+python x6_spectral/measure_checkpoint.py \
+    --model_path=vit/cifar100_modelvit_bbvit_lr0.01_bs128_run0_do0_rew0 --use_cuda
+
+# full development pool (85 cells: 40 ConfidNet VGG13 + 45 ViT), resumable
+CSF_NUM_WORKERS=12 nohup bash x6_spectral/run_x6_measure.sh > x6_measure.log 2>&1 &
+```
+
+Outputs land in `x6_spectral/outputs/`: `<cell>.json` (diagnostics in three arms: correct-only = implementation-faithful, all-sample, standardized robustness; Tier A predictions; alignments; runtimes) and `<cell>.npz` (means, top eigenvectors, eigenvalues, head weights: what Tier B needs without re-forwarding). The driver skips cells whose JSON exists and appends failures to `outputs/failures.log`. The forward pass dominates runtime (ViT at 384x384 over the train split); `CSF_BATCH_SIZE` overrides the batch size as in `csf_fit.py`. `--het_splits` (default 2) controls the class-heterogeneity splits; raise it for the final run on small-C sources.
+
 ## Kickoff gates (before freezing rules)
 
 1. Regenerate `projection_targets.csv` restricted to ConfidNet VGG13 + ViT cells (via `retrieve_scores.py` + `stats_eval.py` with a paradigm filter), and pin the Delta-baseline semantics per CSF family in writing.
 2. Adjudicate the ambiguous entries of `FAMILY_OPERATOR` in the harness (kept vs complement vs logit) with one-line justifications.
-3. Write the HPC extraction script (activations, labels, head weights, ID val accuracy per checkpoint; effective N after correct-only filtering), following the `x8_pool_a/extract_features.py` pattern.
+3. Done: `measure_checkpoint.py` + `run_x6_measure.sh` + `manifest_dev_pool.txt` are the extraction/measurement stage (stage 1 above); running it is gate-free.
 4. Freeze this directory (tag the code repo) before any held-out outcome table is opened.
