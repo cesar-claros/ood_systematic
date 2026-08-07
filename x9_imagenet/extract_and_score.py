@@ -60,17 +60,14 @@ from src.rc_stats import RiskCoverageStats  # noqa: E402
 from data import ParquetImageDataset, make_loader, model_transform  # noqa: E402
 from kernel_pca_port import KernelPCAPort  # noqa: E402
 from nc_metrics import papyan_nc  # noqa: E402
+from csf_protocol import (  # noqa: E402
+    bo_max, fit_temperature_lbfgs, ladder_dim, make_neco_conf,
+    neco_flags, tune_entropy_pair, tune_nci_alpha, tune_nnguide,
+    tune_pca_re)
 
 N_CLS = 1000
 
 
-def bo_max(f, pbounds: dict, n_init: int, n_iters: int) -> dict:
-    """The original pipeline's BO convention (verbose=0, random_state=1)."""
-    from bayes_opt import BayesianOptimization
-    bo = BayesianOptimization(f=f, pbounds=pbounds, verbose=0,
-                              random_state=1)
-    bo.maximize(init_points=n_init, n_iter=n_iters)
-    return bo.max["params"]
 DESC_COLS = ["rho_res", "n_residue_spikes", "median_cos_own",
              "class_dep_residue", "common_mode_energy"]
 
@@ -78,24 +75,6 @@ DESC_COLS = ["rho_res", "n_residue_spikes", "median_cos_own",
 def rc_metrics(confids: np.ndarray, residuals: np.ndarray) -> tuple[float, float]:
     rc = RiskCoverageStats(confids=confids, residuals=residuals.astype(float))
     return float(rc.augrc), float(rc.aurc)
-
-
-def fit_temperature_lbfgs(logits_val: torch.Tensor,
-                          y_val: torch.Tensor) -> float:
-    """Original convention (src/csfs/temperature_scaling.py): LBFGS on
-    validation cross-entropy, init T=1, lr=0.01, max_iter=2000 (pool_a's
-    41-point log grid was a pilot simplification of the same objective)."""
-    t = torch.ones(1, device=logits_val.device).requires_grad_(True)
-    opt = torch.optim.LBFGS([t], lr=0.01, max_iter=2000)
-
-    def _eval():
-        opt.zero_grad()
-        loss = torch.nn.functional.cross_entropy(logits_val / t, y_val)
-        loss.backward()
-        return loss
-
-    opt.step(_eval)
-    return float(t.detach().item())
 
 
 def det_metrics(conf_id: np.ndarray, conf_ood: np.ndarray) -> tuple[float, float]:
@@ -202,39 +181,14 @@ def process_model(tag: str, family: str, args, paths: dict,
     #  - NeCo (neco.py): standardized for non-ViT / raw for ViT-family,
     #    fixed 100 components, ratio multiplied by max logit except on
     #    resnet-named models.
-    d_feat = h_fit_d.shape[1]
-    d_lad = 1000 if d_feat >= 2048 else (512 if d_feat >= 768 else d_feat // 2)
+    d_lad = ladder_dim(h_fit_d.shape[1])
     sub = csf.Subspace(h_fit_d)
     sub_z = csf.Subspace(zf(h_fit_d))
     vim_alpha = sub.vim_alpha(h_fit_d, logits(h_fit_d), d_lad)
-
-    s2 = (sub_z.s ** 2)
-    cum_ratio = (s2.cumsum(0) / s2.sum()).cpu()
-    z_sel = zf(h_sel_d)
-
-    def pca_dim_of(v: float) -> int:
-        return int((cum_ratio <= v).sum().item()) + 1
-
-    pca_var = bo_max(
-        lambda explained_variance: -rc_metrics(
-            sub_z.conf_pca_recerror(z_sel, pca_dim_of(explained_variance))
-            .cpu().numpy(), resid_sel)[0],
-        {"explained_variance": (0.85, 0.99)}, args.bo_init, args.bo_iters
-    )["explained_variance"]
-    pca_dim = pca_dim_of(pca_var)
-
-    neco_raw = tag.startswith(("vit_", "deit"))
-    neco_mult = "resnet" not in tag
-    neco_sub = sub if neco_raw else sub_z
-    NECO_DIM = 100
-
-    def conf_neco_orig(hd: torch.Tensor, z: torch.Tensor,
-                       lg: torch.Tensor) -> torch.Tensor:
-        x = hd if neco_raw else z
-        c = x - neco_sub.mu
-        ratio = ((c @ neco_sub.vt[:NECO_DIM].T).norm(dim=1)
-                 / (x.norm(dim=1) + 1e-12))
-        return ratio * lg.max(dim=1).values if neco_mult else ratio
+    pca_var, pca_dim = tune_pca_re(sub_z, zf(h_sel_d), resid_sel,
+                                   rc_metrics, args.bo_init, args.bo_iters)
+    neco_raw, neco_mult = neco_flags(tag)
+    conf_neco_orig = make_neco_conf(sub, sub_z, neco_raw, neco_mult)
 
     try_fit("pnml", lambda: csf.PNML(zf(h_fit_d)))
     # BO-tuned CSFs, mirroring the original pipeline (src/csfs/entropy.py,
@@ -243,47 +197,20 @@ def process_model(tag: str, family: str, args, paths: dict,
     # (k_clusters in (10, 500), per-class bank proportion in (0.1, 0.5));
     # objective = selection-set failure-AUGRC throughout.
     p_sel = torch.softmax(lg_sel / temp, dim=1)
-    ent_bounds = {"M": (1, N_CLS), "gamma": (1e-6, 0.999999)}
-    gen_p = bo_max(
-        lambda M, gamma: -rc_metrics(
-            csf.conf_gen(p_sel, gamma, int(M)).cpu().numpy(), resid_sel)[0],
-        ent_bounds, args.bo_init, args.bo_iters)
-    ren_p = bo_max(
-        lambda M, gamma: -rc_metrics(
-            csf.conf_ren(p_sel, gamma, int(M)).cpu().numpy(), resid_sel)[0],
-        ent_bounds, args.bo_init, args.bo_iters)
+    gen_p, ren_p = tune_entropy_pair(csf, p_sel, resid_sel, N_CLS,
+                                     rc_metrics, args.bo_init, args.bo_iters)
 
     bank_scores = csf.conf_energy(logits(h_fit_d), 1.0)
-
-    def build_nng(k_clusters, proportion):
-        rng = np.random.default_rng(0)  # fixed: keeps the BO objective
-        keep = []                       # deterministic in proportion
-        for c in range(N_CLS):
-            idx = np.flatnonzero(y_fit == c)
-            n = max(1, int(round(proportion * len(idx))))
-            keep.append(rng.choice(idx, n, replace=False))
-        keep = torch.from_numpy(np.concatenate(keep)).to(dev)
-        return csf.NNGuide(h_fit_d[keep], bank_scores[keep], int(k_clusters))
-
-    def nng_obj(k_clusters, proportion):
-        m = build_nng(k_clusters, proportion)
-        a, _ = rc_metrics(m.conf(h_sel_d, csf.conf_energy(lg_sel, 1.0))
-                          .cpu().numpy(), resid_sel)
-        return -a
-
-    nng_p = bo_max(nng_obj, {"k_clusters": (10, 500),
-                             "proportion": (0.1, 0.5)},
-                   args.bo_init, args.bo_iters)
-    nng = build_nng(nng_p["k_clusters"], nng_p["proportion"])
+    nng, nng_p = tune_nnguide(csf, h_fit_d, y_fit, bank_scores, N_CLS,
+                              h_sel_d, lg_sel, resid_sel, rc_metrics,
+                              args.bo_init, args.bo_iters)
     # NCI alpha: BO over the original grid's span (0, 3e-2), including the
     # alpha=0 pure-alignment endpoint (x9 decision 2026-08-06; the original
     # nci.py and the E-F benchmark runs used the fixed 7-point grid).
     train_mean = h_fit_d.mean(dim=0)
-    nci_alpha = bo_max(
-        lambda alpha: -rc_metrics(
-            csf.conf_nci(h_sel_d, lg_sel, W_d, train_mean, alpha)
-            .cpu().numpy(), resid_sel)[0],
-        {"alpha": (0.0, 3e-2)}, args.bo_init, args.bo_iters)["alpha"]
+    nci_alpha = tune_nci_alpha(csf, h_sel_d, lg_sel, resid_sel, W_d,
+                               train_mean, rc_metrics,
+                               args.bo_init, args.bo_iters)
     kpca, kpca_params = None, {}
     if not args.no_kpca:
         try:
