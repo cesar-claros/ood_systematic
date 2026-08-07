@@ -1,51 +1,51 @@
 family,tag,note,status,input_size,eval_size,eval_src,crop_pct,interpolation,mean,std,params_m,num_features
-resnet50,resnet50.tv_in1k,torchvision v1 recipe,ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.tv2_in1k,torchvision v2 recipe,ok,3x176x176,3x224x224,test_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.a1_in1k,ResNet strikes back A1,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.a2_in1k,ResNet strikes back A2,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.a3_in1k,ResNet strikes back A3,ok,3x160x160,3x224x224,test_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.b1k_in1k,rsb B1k,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.b2k_in1k,rsb B2k,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.c1_in1k,rsb C1,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.c2_in1k,rsb C2,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.d_in1k,rsb D,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.ram_in1k,timm RandAug+mixup era,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.am_in1k,timm AugMix era,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.ra_in1k,timm RandAug era,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.gluon_in1k,GluonCV recipe,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.fb_ssl_yfcc100m_ft_in1k,"semi-supervised YFCC pretrain, in1k ft",ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",,
-resnet50,resnet50.fb_swsl_ig1b_ft_in1k,"weakly-supervised IG-1B pretrain, in1k ft",ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",,
-vit_b16,vit_base_patch16_224.augreg_in1k,"AugReg, in1k only",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",,
-vit_b16,vit_base_patch16_224.augreg_in21k_ft_in1k,"AugReg, in21k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",,
-vit_b16,vit_base_patch16_224.augreg2_in21k_ft_in1k,"AugReg2, in21k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",,
-vit_b16,vit_base_patch16_224.orig_in21k_ft_in1k,original JFT-era recipe,ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",,
-vit_b16,vit_base_patch16_224.sam_in1k,SAM optimizer,ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",,
-vit_b16,deit_base_patch16_224.fb_in1k,DeiT,ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-vit_b16,deit_base_distilled_patch16_224.fb_in1k,DeiT distilled,ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-vit_b16,deit3_base_patch16_224.fb_in1k,"DeiT3, in1k only",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-vit_b16,deit3_base_patch16_224.fb_in22k_ft_in1k,"DeiT3, in22k pretrain",ok,3x224x224,3x224x224,train_size,1.0,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-swin,swin_tiny_patch4_window7_224.ms_in1k,"Swin-T, in1k",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-swin,swin_tiny_patch4_window7_224.ms_in22k_ft_in1k,"Swin-T, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-swin,swin_small_patch4_window7_224.ms_in1k,"Swin-S, in1k",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-swin,swin_small_patch4_window7_224.ms_in22k_ft_in1k,"Swin-S, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-swin,swin_base_patch4_window7_224.ms_in1k,"Swin-B, in1k",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-swin,swin_base_patch4_window7_224.ms_in22k_ft_in1k,"Swin-B, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-convnext,convnext_tiny.fb_in1k,"ConvNeXt-T, in1k",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-convnext,convnext_tiny.fb_in22k_ft_in1k,"ConvNeXt-T, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-convnext,convnext_small.fb_in1k,"ConvNeXt-S, in1k",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-convnext,convnext_small.fb_in22k_ft_in1k,"ConvNeXt-S, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-convnext,convnext_base.fb_in1k,"ConvNeXt-B, in1k",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-convnext,convnext_base.fb_in22k_ft_in1k,"ConvNeXt-B, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,vgg13.tv_in1k,VGG-13 at ImageNet scale (training-pool architecture),ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,vgg16.tv_in1k,VGG-16,ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,densenet121.ra_in1k,DenseNet-121,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,densenet121.tv_in1k,DenseNet-121 torchvision,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,efficientnet_b0.ra_in1k,EfficientNet-B0,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
+resnet50,resnet50.tv_in1k,torchvision v1 recipe,ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.tv2_in1k,torchvision v2 recipe,ok,3x176x176,3x224x224,test_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.a1_in1k,ResNet strikes back A1,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.a2_in1k,ResNet strikes back A2,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.a3_in1k,ResNet strikes back A3,ok,3x160x160,3x224x224,test_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.b1k_in1k,rsb B1k,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.b2k_in1k,rsb B2k,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.c1_in1k,rsb C1,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.c2_in1k,rsb C2,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.d_in1k,rsb D,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.ram_in1k,timm RandAug+mixup era,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.am_in1k,timm AugMix era,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.ra_in1k,timm RandAug era,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.gluon_in1k,GluonCV recipe,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.fb_ssl_yfcc100m_ft_in1k,"semi-supervised YFCC pretrain, in1k ft",ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+resnet50,resnet50.fb_swsl_ig1b_ft_in1k,"weakly-supervised IG-1B pretrain, in1k ft",ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",25.6,2048
+vit_b16,vit_base_patch16_224.augreg_in1k,"AugReg, in1k only",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",86.6,768
+vit_b16,vit_base_patch16_224.augreg_in21k_ft_in1k,"AugReg, in21k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",86.6,768
+vit_b16,vit_base_patch16_224.augreg2_in21k_ft_in1k,"AugReg2, in21k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",86.6,768
+vit_b16,vit_base_patch16_224.orig_in21k_ft_in1k,original JFT-era recipe,ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",86.6,768
+vit_b16,vit_base_patch16_224.sam_in1k,SAM optimizer,ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",86.6,768
+vit_b16,deit_base_patch16_224.fb_in1k,DeiT,ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",86.6,768
+vit_b16,deit_base_distilled_patch16_224.fb_in1k,DeiT distilled,ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",87.3,768
+vit_b16,deit3_base_patch16_224.fb_in1k,"DeiT3, in1k only",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",86.6,768
+vit_b16,deit3_base_patch16_224.fb_in22k_ft_in1k,"DeiT3, in22k pretrain",ok,3x224x224,3x224x224,train_size,1.0,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",86.6,768
+swin,swin_tiny_patch4_window7_224.ms_in1k,"Swin-T, in1k",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",28.3,768
+swin,swin_tiny_patch4_window7_224.ms_in22k_ft_in1k,"Swin-T, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",28.3,768
+swin,swin_small_patch4_window7_224.ms_in1k,"Swin-S, in1k",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",49.6,768
+swin,swin_small_patch4_window7_224.ms_in22k_ft_in1k,"Swin-S, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",49.6,768
+swin,swin_base_patch4_window7_224.ms_in1k,"Swin-B, in1k",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",87.8,1024
+swin,swin_base_patch4_window7_224.ms_in22k_ft_in1k,"Swin-B, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.9,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",87.8,1024
+convnext,convnext_tiny.fb_in1k,"ConvNeXt-T, in1k",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",28.6,768
+convnext,convnext_tiny.fb_in22k_ft_in1k,"ConvNeXt-T, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",28.6,768
+convnext,convnext_small.fb_in1k,"ConvNeXt-S, in1k",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",50.2,768
+convnext,convnext_small.fb_in22k_ft_in1k,"ConvNeXt-S, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",50.2,768
+convnext,convnext_base.fb_in1k,"ConvNeXt-B, in1k",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",88.6,1024
+convnext,convnext_base.fb_in22k_ft_in1k,"ConvNeXt-B, in22k pretrain",ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",88.6,1024
+breadth,vgg13.tv_in1k,VGG-13 at ImageNet scale (training-pool architecture),ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",133.0,512
+breadth,vgg16.tv_in1k,VGG-16,ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",138.4,512
+breadth,densenet121.ra_in1k,DenseNet-121,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",8.0,1024
+breadth,densenet121.tv_in1k,DenseNet-121 torchvision,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",8.0,1024
+breadth,efficientnet_b0.ra_in1k,EfficientNet-B0,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",5.3,1280
 breadth,efficientnet_b3.ra2_in1k,EfficientNet-B3,"rejected_no_224_mode_train(3, 288, 288)_test(3, 320, 320)",3x288x288,,,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,mobilenetv3_large_100.ra_in1k,MobileNetV3-L,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,regnety_032.ra_in1k,RegNetY-3.2GF,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,resnext50_32x4d.a1_in1k,ResNeXt-50 rsb A1,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,resnext50_32x4d.tv_in1k,ResNeXt-50 torchvision,ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,wide_resnet50_2.tv_in1k,WideResNet-50-2,ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",,
-breadth,maxvit_tiny_tf_224.in1k,MaxViT-T,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",,
+breadth,mobilenetv3_large_100.ra_in1k,MobileNetV3-L,ok,3x224x224,3x224x224,train_size,0.875,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",5.5,960
+breadth,regnety_032.ra_in1k,RegNetY-3.2GF,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",19.4,1512
+breadth,resnext50_32x4d.a1_in1k,ResNeXt-50 rsb A1,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",25.0,2048
+breadth,resnext50_32x4d.tv_in1k,ResNeXt-50 torchvision,ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",25.0,2048
+breadth,wide_resnet50_2.tv_in1k,WideResNet-50-2,ok,3x224x224,3x224x224,train_size,0.875,bilinear,"0.485,0.456,0.406","0.229,0.224,0.225",68.9,2048
+breadth,maxvit_tiny_tf_224.in1k,MaxViT-T,ok,3x224x224,3x224x224,train_size,0.95,bicubic,"0.485,0.456,0.406","0.229,0.224,0.225",30.9,512
 breadth,inception_v3.tv_in1k,Inception-v3,"rejected_no_224_mode_train(3, 299, 299)_test-",3x299x299,,,0.875,bicubic,"0.5,0.5,0.5","0.5,0.5,0.5",,
