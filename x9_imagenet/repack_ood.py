@@ -35,15 +35,18 @@ SCHEMA = pa.schema([("image_bytes", pa.binary()), ("label", pa.int64()),
 
 
 def disk_index(root: pathlib.Path) -> dict[str, list[pathlib.Path]]:
+    """Keyed by LOWERCASED basename: imglist entries and zip contents differ
+    in case for some sets (.jpg vs .JPG etc.), which silently dropped ~10%
+    of openimage_o/texture on the first pass."""
     idx: dict[str, list[pathlib.Path]] = {}
     for p in root.rglob("*"):
         if p.is_file() and p.suffix.lower() in IMG_EXTS:
-            idx.setdefault(p.name, []).append(p)
+            idx.setdefault(p.name.lower(), []).append(p)
     return idx
 
 
 def resolve(list_path: str, idx: dict[str, list[pathlib.Path]]) -> pathlib.Path | None:
-    cands = idx.get(pathlib.PurePosixPath(list_path).name)
+    cands = idx.get(pathlib.PurePosixPath(list_path).name.lower())
     if not cands:
         return None
     if len(cands) == 1:

@@ -96,7 +96,10 @@ class KernelPCAPort:
         if verbose:
             logger.info(f"n_components={n_components}, "
                         f"variance ratio={ratio[n_components - 1]:.4f}")
-        return X_ref.cpu(), K_c.cpu(), normalization.cpu(), u_q.cpu()
+        # Unlike the original (which round-trips through save/load), params
+        # stay on self.device: <=100 MB at 5000 landmarks, and it avoids a
+        # device mismatch against CUDA eval tensors in the BO loop.
+        return X_ref, K_c, normalization, u_q
 
     def compute_params(self, activations_train, temperature=None,
                        n_landmarks=None, explained_variance=None,
@@ -116,7 +119,8 @@ class KernelPCAPort:
             activations_train, ref_indices=ref_idx, verbose=verbose)
 
     def get_scores(self, activations_eval):
-        X = self._feat_normalization(activations_eval.clone())
+        X = self._feat_normalization(activations_eval.clone()).to(
+            self.X_ref.device)
         K_nm = self._kernel(X, self.X_ref) @ self.normalization.T
         K_nm_c = K_nm - self.K_c
         back = (self.u_q @ self.u_q.T @ K_nm_c.T).T
