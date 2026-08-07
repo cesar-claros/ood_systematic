@@ -1,0 +1,115 @@
+arch,base_csf,variant,delta_augrc,significant_improvement
+VGG13,PCA RecError,class pred,38.6,True
+VGG13,PCA RecError,class,37.4,True
+VGG13,PCA RecError,class avg,-116.1,False
+VGG13,Maha,global,24.1,True
+VGG13,Maha,class pred,18.7,True
+VGG13,Maha,class avg,5.22,False
+VGG13,pNML,class pred,6.73,True
+VGG13,pNML,global,-18.3,False
+VGG13,pNML,class avg,-67.9,False
+VGG13,GradNorm,class pred,1.13,True
+VGG13,GradNorm,global,0.61,True
+VGG13,GradNorm,class avg,-8.12,False
+VGG13,CTM,class avg,0.36,False
+VGG13,CTM,global,0.34,True
+VGG13,CTM,class pred,-0.67,False
+VGG13,CTM,class,-0.71,False
+VGG13,fDBD,global,0.2,True
+VGG13,fDBD,class avg,-0.63,False
+VGG13,fDBD,class pred,-0.69,False
+VGG13,NNGuide,global,0.16,True
+VGG13,NNGuide,class pred,-0.69,False
+VGG13,NNGuide,class avg,-2.35,False
+VGG13,REN,global,0.16,True
+VGG13,REN,class,-0.2,False
+VGG13,REN,class pred,-0.81,False
+VGG13,REN,class avg,-1.85,False
+VGG13,PCE,class,0.1,True
+VGG13,PCE,global,0.06,True
+VGG13,PCE,class pred,-1.23,False
+VGG13,PCE,class avg,-2.21,False
+VGG13,MSR,global,0.07,True
+VGG13,MSR,class,0.07,False
+VGG13,MSR,class pred,-1.33,False
+VGG13,MSR,class avg,-2.3,False
+VGG13,GEN,global,0.07,True
+VGG13,GEN,class,0.06,True
+VGG13,GEN,class pred,-1.36,False
+VGG13,GEN,class avg,-1.93,False
+VGG13,PE,global,0.06,True
+VGG13,PE,class,-0.35,False
+VGG13,PE,class pred,-1.05,False
+VGG13,PE,class avg,-2.62,False
+VGG13,GE,global,0.05,True
+VGG13,GE,class,-0.89,False
+VGG13,GE,class pred,-0.26,False
+VGG13,GE,class avg,-3.8,False
+VGG13,Energy,global,0.01,False
+VGG13,Energy,class pred,-0.21,False
+VGG13,Energy,class,-1.4,False
+VGG13,Energy,class avg,-5.51,False
+VGG13,MLS,global,0.01,False
+VGG13,MLS,class,-0.8,False
+VGG13,MLS,class pred,-0.78,False
+VGG13,MLS,class avg,-4.23,False
+VGG13,KPCA RecError,class pred,0.74,False
+VGG13,KPCA RecError,class,-0.51,False
+VGG13,KPCA RecError,class avg,-161.9,False
+ViT,PCA RecError,class pred,11.6,True
+ViT,PCA RecError,class,10.4,True
+ViT,PCA RecError,class avg,-41.5,False
+ViT,GradNorm,class pred,5.91,True
+ViT,GradNorm,global,4.92,True
+ViT,GradNorm,class avg,-40.7,False
+ViT,REN,class pred,4.74,True
+ViT,REN,global,-3.59,False
+ViT,REN,class,-0.66,False
+ViT,REN,class avg,-3.11,False
+ViT,MLS,global,0.65,True
+ViT,MLS,class,-0.03,False
+ViT,MLS,class pred,-0.01,False
+ViT,MLS,class avg,-10.4,False
+ViT,GE,global,0.64,True
+ViT,GE,class pred,-0.14,False
+ViT,GE,class,-1.12,False
+ViT,GE,class avg,-7.35,False
+ViT,Energy,global,0.63,True
+ViT,Energy,class,0.04,False
+ViT,Energy,class pred,0.03,False
+ViT,Energy,class avg,-12.3,False
+ViT,PE,global,0.55,True
+ViT,PE,class pred,0.09,False
+ViT,PE,class,-1.11,False
+ViT,PE,class avg,-5.72,False
+ViT,MSR,global,0.55,True
+ViT,MSR,class pred,0.22,False
+ViT,MSR,class,-0.98,False
+ViT,MSR,class avg,-5.58,False
+ViT,PCE,global,0.54,True
+ViT,PCE,class pred,0.16,False
+ViT,PCE,class,-1.0,False
+ViT,PCE,class avg,-5.48,False
+ViT,GEN,global,0.5,True
+ViT,GEN,class pred,0.13,False
+ViT,GEN,class,-1.03,False
+ViT,GEN,class avg,-4.65,False
+ViT,fDBD,global,0.16,False
+ViT,fDBD,class avg,0.67,False
+ViT,fDBD,class pred,-3.46,False
+ViT,CTM,global,-0.28,False
+ViT,CTM,class,-3.16,False
+ViT,CTM,class pred,-3.04,False
+ViT,CTM,class avg,-4.69,False
+ViT,NNGuide,global,-0.08,False
+ViT,NNGuide,class pred,-0.87,False
+ViT,NNGuide,class avg,-9.56,False
+ViT,Maha,global,-3.56,False
+ViT,Maha,class avg,-1.58,False
+ViT,Maha,class pred,-20.0,False
+ViT,pNML,class pred,1.39,False
+ViT,pNML,global,-20.2,False
+ViT,pNML,class avg,-20.2,False
+ViT,KPCA RecError,class pred,-5.35,False
+ViT,KPCA RecError,class,-9.2,False
+ViT,KPCA RecError,class avg,-108.1,False
