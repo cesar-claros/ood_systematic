@@ -435,7 +435,11 @@ class RiskCoverageStatsMixin:
             # Linear interpolation
             if cov_max != 1 or cov_min != 0:
                 raise NotImplementedError()
-            return -np.trapz(risks, coverages) * self.AUC_DISPLAY_SCALE
+            # np.trapz was removed in NumPy 2.0 (renamed trapezoid); this
+            # module is shared between the paper env (numpy<=1.26) and the
+            # x9 container (numpy 2.x), so resolve at call time.
+            _trapz = getattr(np, "trapezoid", None) or np.trapz
+            return -_trapz(risks, coverages) * self.AUC_DISPLAY_SCALE
 
         # Removing the cov=0 point, this curve segment is handled separately
         if coverages[-1] == 0:
@@ -602,7 +606,7 @@ class RiskCoverageStatsMixin:
         working_point_mask = curve_stats["working_point_mask"]
         coverages = curve_stats["coverages"][working_point_mask]
         risks = curve_stats["risks"][working_point_mask]
-        thresholds = np.r_[curve_stats["thresholds"], -np.infty][working_point_mask]
+        thresholds = np.r_[curve_stats["thresholds"], -np.inf][working_point_mask]
 
         if self.contains_nan:
             return np.nan, np.nan, np.nan
