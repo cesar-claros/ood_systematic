@@ -318,12 +318,13 @@ def main() -> None:
 
     long_df["model_id"] = (long_df["paradigm"] + "|" + long_df["source"]
                            + "|" + long_df["run"].astype(str))
-    rows18 = long_df[long_df["csf"].isin(sorted(ref_long["csf"].unique()))]
-    rows18 = rows18[~rows18["csf"].isin(["KPCA RecError global"])]
+    from pool_a_analysis import FEAT_CSFS, HEAD_CSFS
+    legacy18 = sorted(set(HEAD_CSFS + FEAT_CSFS))
+    rows18 = long_df[long_df["csf"].isin(legacy18)]
     rows21 = long_df
     sel_lines = ["| roster | config | near | mid | far | submitted |\n",
                  "|---|---|---|---|---|---|\n"]
-    for roster_name, rows_r in [("18 (submitted)", rows18),
+    for roster_name, rows_r in [("18 legacy (submitted-comparable)", rows18),
                                 ("21 (revision)", rows21)]:
         fam = sorted(rows_r["csf"].unique())
         ood = rows_r[rows_r["regime"].isin(REGIMES)][

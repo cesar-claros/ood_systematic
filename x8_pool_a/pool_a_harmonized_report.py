@@ -29,7 +29,8 @@ for p in (CODE_DIR, CODE_DIR / "x8_pool_a",
           CODE_DIR / "nc_csf_predictivity" / "evaluation"):
     sys.path.insert(0, str(p))
 
-from pool_a_analysis import OUT_ROOT, pool_cliques_for  # noqa: E402
+from pool_a_analysis import (  # noqa: E402
+    FEAT_CSFS, HEAD_CSFS, OUT_ROOT, pool_cliques_for)
 from calibration_features_clique import NC_PRIMARY, add_model_id  # noqa: E402
 from input_ablation_grid import REGIMES, evaluate, ssl_shortlists  # noqa: E402
 
@@ -73,10 +74,20 @@ def main() -> None:
 
     long_df["model_id"] = (long_df["paradigm"] + "|" + long_df["source"]
                            + "|" + long_df["run"].astype(str))
-    roster18 = sorted(set(ref_long["csf"].unique()))
-    rosters = {"18 (submitted-comparable)":
-               long_df[long_df["csf"].isin(roster18)],
-               "21 (revision)": long_df}
+    # Roster decomposition: the submitted GLiC-2 table used the ORIGINAL 18
+    # CSFs (no MahaPP/NCI/KPCA on either side). Adding the new CSFs to the
+    # rows changes the oracle and the best-fixed family while the
+    # VGG-trained heads carry no labels for them (they can never be
+    # shortlisted), so 18-vs-20 isolates that roster asymmetry and
+    # 18-vs-submitted isolates the pure protocol effect.
+    legacy18 = sorted(set(HEAD_CSFS + FEAT_CSFS))
+    rosters = {
+        "18 legacy (submitted-comparable)":
+            long_df[long_df["csf"].isin(legacy18)],
+        "20 (+MahaPP/NCI in rows, no heads for them)":
+            long_df[long_df["csf"] != "KPCA RecError global"],
+        "21 (revision, no heads for new CSFs yet)": long_df,
+    }
 
     lines = ["# Harmonized SSL selector vs best fixed (addendum to 41)\n\n",
              "**Source:** `x8_pool_a/pool_a_harmonized_report.py`. "
