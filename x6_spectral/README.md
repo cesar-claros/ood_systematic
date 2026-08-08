@@ -39,6 +39,22 @@ python x6_spectral/aggregate_tier_a.py            # add --arm all / all_standard
 
 writes `outputs/tier_a_summary.csv` (one row per cell) and `outputs/tier_a_report.md` (grouped mean +- sd across runs: recovery margins, stability vs null, heterogeneity, dials; Tier-A prediction tallies with the one-sided no-benefit claims to score post-freeze; arm-consistency deltas; manifest coverage; flagged cells; headline ViT-vs-VGG contrasts over structurally trustworthy cells).
 
+## Running stage 2 (Tier-B orientation; dev pool = calibration)
+
+Stage 2 needs the stage-1 NPZs and reads evaluation images only (no outcome tables). Protocol constants and rules are pre-registered in `FREEZE.md` (r2-tierB). From `code/` inside the container:
+
+```bash
+# smoke test one cell, then the pool
+python x6_spectral/measure_orientation.py \
+    --model_path=cifar10_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2 --use_cuda
+CSF_NUM_WORKERS=12 nohup bash x6_spectral/run_x6_orientation.sh > x6_orientation.log 2>&1 &
+
+# after the sweep: score rules + batch-trial against cell-level dev deltas
+python x6_spectral/score_tier_b.py
+```
+
+Outputs: `outputs/orientation/<cell>.json` (per OOD dataset: a_hat/lam_hat per draw, r2-tierB signs, batch-trial AUROCs), then `outputs/tier_b_dev_scoring.csv` + `outputs/tier_b_dev_report.md` (cell-level accuracy per operator class vs the three nulls, material-cells cut, coverage). Runtime is dominated by the one validation forward pass per checkpoint; OOD batches are 640 samples each.
+
 ## Freeze gates (status in `FREEZE.md`)
 
 1. Done: Delta-baseline semantics pinned in `FREEZE.md`; `make_projection_targets.py` builds `projection_targets_dev.csv` (ConfidNet VGG13 + ViT, 120 rows) by importing the paper's own generator. One open flag: confirm the plain (not `_fix-config`) score files are the source of record.

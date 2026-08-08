@@ -44,6 +44,20 @@ Adjudicated against the implementations in `code/src/csfs/`; the map itself live
 | Confidence | logit | external confidence heads (ConfidNet/DeVries branches) |
 | MahalanobisPP, NCI | out of scope | pilot families; adjudicate if and when they appear in an outcome table |
 
+## Tier-B protocol addendum (r2-tierB, pre-registered 2026-08-08 before any orientation measurement)
+
+Stage 2 (`measure_orientation.py` + `run_x6_orientation.sh`) reads evaluation IMAGES only, never outcome tables; dev-pool stage 2 is Tier-B calibration, held-out stage 2 runs only after the tag.
+
+**Constants.** Batch per draw 128; 5 draws taken as disjoint consecutive blocks of the first 640 samples in deterministic loader order; ID reference = validation features (first 4000; also supplies delta_hat, the bulk variance for lam_hat, and the val-estimated class means for the NCC trial, all flagged as val-side).
+
+**Projector convention.** Primary rank q = min(q90, k_save), where q90 is the smallest rank reaching 90 percent explained variance on the stage-1 correct-only spectrum (the pipeline's documented default threshold) and k_save = C-1+64 is what the stage-1 NPZ stores; when capped, the flag and the actually reached coverage are recorded. Secondary rank q = C-1 (class-mean scale) is recorded alongside.
+
+**Rules (one per operator class).** Undetermined (all signs 0) when lam_hat < sqrt(D): below that even the oracle raw detector is weak. Kept: +1 iff a_hat > a*(lam_hat, q, D). Complement: +1 iff a_hat < a_flip(lam_hat, q, D). Logit: +1 iff |W P delta_hat| >= 0.8 |W delta_hat| (tolerance for estimation shrinkage of the kept response), undetermined when the displacement is classifier-invisible (|W delta_hat| below 5 percent of its maximum attainable value); row-space alignment is a diagnostic, not a rule. Variant mapping: `global` rows take the operator sign; `class` and `class pred` rows of raw-baselined families reuse the operator sign (the Tier-A class conditions hold across the dev pool); `class avg` rows are always -1 (Tier-A theory claim); PCA/KPCA RecError rows (variant-vs-global baseline) are DEFERRED to stage 2b, which requires per-class projector artifacts not extracted in stage 1.
+
+**Trial arm (deployment-batch trial, scored alongside the rules).** Registered score set computable from stage-1 artifacts: MLS, Energy, MSR raw vs globally projected; NCC (Euclidean nearest class centroid, a labeled proxy for the deployed tied-covariance Mahalanobis); global reconstruction error in deployed-normalized and unnormalized forms (no raw counterpart). Trial signs = sign of the projected-minus-raw AUROC delta against the val reference; mapped to families {MLS, Energy, MSR, Maha(proxy)}, global variant only.
+
+**Aggregation and scoring.** Signs aggregate by majority across draws within a checkpoint, then across the runs of a (backbone, source, dropout) group, with agreement fractions recorded. Scoring granularity is the cell: (arch, source, dropout-slice, OOD dataset, family, variant), with the cell delta rebuilt under the frozen gate-1 semantics (`score_tier_b.py`). Reported against three nulls (always +1, always -1, per-(arch, family, variant) majority), on all cells and on material cells (|delta| > 1.0 AUGRC x1000), with undetermined and deferred counts as coverage. MSR note: MSR is provably immune to common-mode logit shifts, so the shared logit rule is expected to be weakest there; per-family refinements are allowed only as a new rule version after dev calibration.
+
 ## Status
 
 - Gate 1: done (this document + `make_projection_targets.py` + `projection_targets_dev.csv`); the fix-config flag is resolved above with empirical evidence.

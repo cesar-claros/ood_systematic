@@ -187,23 +187,115 @@ def estimate_orientation(h_id: np.ndarray, ood_batch: np.ndarray,
 
 
 def tier_b(diag: dict, orientation: dict, w: np.ndarray, q: int,
-           delta: np.ndarray | None = None) -> dict:
-    """Deployment-batch sign predictions, one rule per operator class."""
+           delta: np.ndarray | None = None,
+           projector: np.ndarray | None = None) -> dict:
+    """Deployment-batch sign predictions, one rule per operator class.
+
+    Rule version r2-tierB (pre-registered in FREEZE.md before any real
+    orientation was measured): kept-space +1 iff a_hat > a*(lam_hat, q, D);
+    complement +1 iff a_hat < a_flip; logit +1 iff the projection preserves
+    the classifier-visible displacement, |W P delta| >= |W delta| (the
+    complement part of the displacement can cancel kept-space logit
+    response, so removal can help or hurt; row_align stays as a diagnostic
+    only). When lam_hat < sqrt(D) the displacement is too weak for reliable
+    sign calls (even the oracle raw detector is barely better than chance)
+    and every sign is 0 = undetermined.
+    """
     dim = diag["dim"]
     lam, a_hat = orientation["lam_hat"], orientation["a_hat"]
+    lam_min = float(np.sqrt(dim))
+    if lam < lam_min:
+        signs = {"kept": 0, "complement": 0, "logit": 0}
+        signs.update({"a_hat": a_hat, "a_star": float("nan"),
+                      "a_flip": float("nan"), "lam_hat": lam,
+                      "lam_min": lam_min, "undetermined": True,
+                      "mode": "deployment-batch adaptation (not ID-only)"})
+        return signs
     thr_kept = a_star(lam, q, dim)
     thr_flip = a_flip(lam, q, dim)
     signs = {"kept": +1 if a_hat > thr_kept else -1,
-             "complement": +1 if a_hat < thr_flip else -1}
+             "complement": +1 if a_hat < thr_flip else -1,
+             "undetermined": False}
     if delta is not None:
         w_row = np.linalg.qr(w.T, mode="reduced")[0]
-        row_align = float(np.linalg.norm(w_row.T @ delta) ** 2
-                          / (delta @ delta + 1e-12))
-        signs["logit"] = +1 if row_align > 0.5 else -1
-        signs["logit_row_align"] = row_align
+        signs["logit_row_align"] = float(np.linalg.norm(w_row.T @ delta) ** 2
+                                         / (delta @ delta + 1e-12))
+        if projector is not None:
+            raw_resp = float(np.linalg.norm(w @ delta))
+            kept_resp = float(np.linalg.norm(
+                w @ (projector @ (projector.T @ delta))))
+            sigma_top = float(np.linalg.svd(w, compute_uv=False)[0])
+            visibility = raw_resp / (sigma_top * np.linalg.norm(delta)
+                                     + 1e-12)
+            ratio = kept_resp / (raw_resp + 1e-12)
+            if visibility < 0.05:
+                signs["logit"] = 0
+            else:
+                signs["logit"] = +1 if ratio >= 0.8 else -1
+            signs["logit_response_ratio"] = ratio
+            signs["logit_visibility"] = visibility
     signs.update({"a_hat": a_hat, "a_star": thr_kept, "a_flip": thr_flip,
+                  "lam_hat": lam, "lam_min": lam_min,
                   "mode": "deployment-batch adaptation (not ID-only)"})
     return signs
+
+
+def batch_trial(h_id_ref: np.ndarray, batch: np.ndarray, mean_vec: np.ndarray,
+                projector: np.ndarray, w: np.ndarray, b: np.ndarray,
+                class_means: np.ndarray) -> dict:
+    """Direct deployment-batch trial: AUROC of registered scores, raw vs
+    globally projected, using an ID reference sample (validation features).
+
+    The registered score set (FREEZE.md, r2-tierB) is computable from the
+    stage-1 artifacts alone: MLS / Energy / MSR logit scores, NCC (nearest
+    class centroid, Euclidean; a labeled proxy for the deployed tied-
+    covariance Mahalanobis), and global reconstruction error in the deployed
+    normalized form and the unnormalized form (no raw counterpart exists
+    for reconstruction scores). Returns AUROCs and the projected-minus-raw
+    deltas; positive delta means projection helps that score on this batch.
+    """
+    from scipy.stats import rankdata
+
+    def auroc(s_id: np.ndarray, s_ood: np.ndarray) -> float:
+        joint = np.concatenate([s_ood, s_id])
+        ranks = rankdata(joint)
+        n_o, n_i = len(s_ood), len(s_id)
+        return float((ranks[n_o:].sum() - n_i * (n_i + 1) / 2)
+                     / (n_o * n_i))
+
+    def project(z: np.ndarray) -> np.ndarray:
+        centered = z - mean_vec
+        return mean_vec + (centered @ projector) @ projector.T
+
+    def logit_scores(z: np.ndarray) -> dict[str, np.ndarray]:
+        logits = z @ w.T + b
+        peak = logits.max(1, keepdims=True)
+        lse = np.log(np.exp(logits - peak).sum(1)) + peak[:, 0]
+        return {"mls": peak[:, 0], "energy": lse,
+                "msr": np.exp(peak[:, 0] - lse)}
+
+    def min_sq_dist(z: np.ndarray) -> np.ndarray:
+        d2 = ((z ** 2).sum(1, keepdims=True) - 2 * z @ class_means.T
+              + (class_means ** 2).sum(1)[None, :])
+        return d2.min(1)
+
+    out: dict[str, float] = {}
+    for tag, id_z, ood_z in (("raw", h_id_ref, batch),
+                             ("global", project(h_id_ref), project(batch))):
+        for name, s_id in logit_scores(id_z).items():
+            s_ood = logit_scores(ood_z)[name]
+            out[f"{name}_{tag}"] = auroc(s_id, s_ood)
+        out[f"ncc_{tag}"] = auroc(-min_sq_dist(id_z), -min_sq_dist(ood_z))
+    for name in ("mls", "energy", "msr", "ncc"):
+        out[f"{name}_delta"] = out[f"{name}_global"] - out[f"{name}_raw"]
+    res_id = h_id_ref - project(h_id_ref)
+    res_ood = batch - project(batch)
+    out["rec_unnorm_global"] = auroc(-np.linalg.norm(res_id, axis=1),
+                                     -np.linalg.norm(res_ood, axis=1))
+    out["rec_norm_global"] = auroc(
+        -np.linalg.norm(res_id, axis=1) / np.linalg.norm(h_id_ref, axis=1),
+        -np.linalg.norm(res_ood, axis=1) / np.linalg.norm(batch, axis=1))
+    return out
 
 
 def predictions_for_families(tier_a_out: dict, tier_b_out: dict | None
@@ -284,8 +376,23 @@ if __name__ == "__main__":
                              ("out-of-span", perp)):
         batch = h[:200] + 12.0 * direction
         ori = estimate_orientation(h, batch, proj)
-        tb = tier_b(diag, ori, mu, q, delta=direction)
+        tb = tier_b(diag, ori, mu, q, delta=direction, projector=proj)
         print(f"    {label}: a_hat={ori['a_hat']:.2f} "
               f"(a*={tb['a_star']:.2f}, flip={tb['a_flip']:.2f}) -> "
               f"kept={tb['kept']:+d} complement={tb['complement']:+d} "
-              f"logit={tb['logit']:+d}")
+              f"logit={tb['logit']:+d} "
+              f"(resp ratio {tb['logit_response_ratio']:.2f})")
+
+    print("[self-test 4] weak displacement -> undetermined; batch trial "
+          "runs on stage-1-style artifacts")
+    weak = h[:200] + 0.5 * perp
+    tb_weak = tier_b(diag, estimate_orientation(h, weak, proj), mu, q,
+                     delta=perp, projector=proj)
+    class_means = np.stack([h[y == c].mean(0) for c in range(n_cls)])
+    trial = batch_trial(h[:2000], h[:200] + 12.0 * perp, h.mean(0), proj,
+                        mu, np.zeros(n_cls), class_means)
+    print(f"    weak batch: undetermined={tb_weak['undetermined']} "
+          f"(lam_hat={tb_weak['lam_hat']:.1f} < {tb_weak['lam_min']:.1f}); "
+          f"trial: mls_delta={trial['mls_delta']:+.3f} "
+          f"ncc_delta={trial['ncc_delta']:+.3f} "
+          f"rec_norm_global={trial['rec_norm_global']:.3f}")
