@@ -55,23 +55,47 @@ class NCI:
                            activations_val: ArrayType | None = None,
                            logits_val: ArrayType | None = None,
                            correct_val: ArrayType | None = None,
-                           alphas: tuple = _DEFAULT_ALPHAS) -> None:
-        logger.info("NCI: Fitting parameters...")
+                           alphas: tuple = _DEFAULT_ALPHAS,
+                           method: str = "bo",
+                           n_init: int = 20, n_iters: int = 80) -> None:
+        """alpha selection on validation failure-AUGRC. method='bo' (the
+        harmonized protocol, 2026-08-08): Bayesian optimization over the
+        grid's span (0, 3e-2), alpha=0 (pure alignment) reachable, same BO
+        convention as the pipeline's other tuned CSFs (20+80,
+        random_state=1). method='grid': the original 7-point search, which
+        produced the first E-F benchmark scores."""
+        logger.info(f"NCI: Fitting parameters (alpha via {method})...")
         self.train_mean = activations_train.mean(dim=0)
         if activations_val is None or logits_val is None or correct_val is None:
             self.alpha = alphas[len(alphas) // 2]
             logger.info(f"NCI: No validation data given; alpha={self.alpha}")
             return
         residuals = (1 - correct_val).float()
-        best_alpha, best_augrc = alphas[0], float("inf")
-        for alpha in alphas:
+
+        def val_augrc(alpha: float) -> float:
             confids = self._score(activations_val, logits_val, alpha)
-            augrc = RiskCoverageStats(confids=confids,
-                                      residuals=residuals).augrc
-            if augrc < best_augrc:
-                best_alpha, best_augrc = alpha, augrc
-        self.alpha = best_alpha
-        logger.info(f"NCI: Selected alpha={self.alpha} "
+            return RiskCoverageStats(confids=confids,
+                                     residuals=residuals).augrc
+
+        if method == "bo":
+            from bayes_opt import BayesianOptimization
+            bo = BayesianOptimization(
+                f=lambda alpha: -val_augrc(alpha),
+                pbounds={"alpha": (0.0, max(alphas))},
+                verbose=0, random_state=1)
+            bo.maximize(init_points=n_init, n_iter=n_iters)
+            self.alpha = float(bo.max["params"]["alpha"])
+            best_augrc = -bo.max["target"]
+        elif method == "grid":
+            best_alpha, best_augrc = alphas[0], float("inf")
+            for alpha in alphas:
+                augrc = val_augrc(alpha)
+                if augrc < best_augrc:
+                    best_alpha, best_augrc = alpha, augrc
+            self.alpha = best_alpha
+        else:
+            raise ValueError(f"unknown alpha selection method: {method}")
+        logger.info(f"NCI: Selected alpha={self.alpha:.6g} "
                     f"(val failure-AUGRC={best_augrc:.4f})")
 
     def save_params(self, path: str | None = None,
