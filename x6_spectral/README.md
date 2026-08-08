@@ -39,9 +39,9 @@ python x6_spectral/aggregate_tier_a.py            # add --arm all / all_standard
 
 writes `outputs/tier_a_summary.csv` (one row per cell) and `outputs/tier_a_report.md` (grouped mean +- sd across runs: recovery margins, stability vs null, heterogeneity, dials; Tier-A prediction tallies with the one-sided no-benefit claims to score post-freeze; arm-consistency deltas; manifest coverage; flagged cells; headline ViT-vs-VGG contrasts over structurally trustworthy cells).
 
-## Kickoff gates (before freezing rules)
+## Freeze gates (status in `FREEZE.md`)
 
-1. Regenerate `projection_targets.csv` restricted to ConfidNet VGG13 + ViT cells (via `retrieve_scores.py` + `stats_eval.py` with a paradigm filter), and pin the Delta-baseline semantics per CSF family in writing.
-2. Adjudicate the ambiguous entries of `FAMILY_OPERATOR` in the harness (kept vs complement vs logit) with one-line justifications.
-3. Done: `measure_checkpoint.py` + `run_x6_measure.sh` + `manifest_dev_pool.txt` are the extraction/measurement stage (stage 1 above); running it is gate-free.
-4. Freeze this directory (tag the code repo) before any held-out outcome table is opened.
+1. Done: Delta-baseline semantics pinned in `FREEZE.md`; `make_projection_targets.py` builds `projection_targets_dev.csv` (ConfidNet VGG13 + ViT, 120 rows) by importing the paper's own generator. One open flag: confirm the plain (not `_fix-config`) score files are the source of record.
+2. Done: `FAMILY_OPERATOR` adjudicated with one-line justifications in `FREEZE.md` (fDBD re-adjudicated kept -> logit; hybrids assigned to their dominant operator).
+3. Done: stage-1 measurement executed 2026-08-08 (80/80 dev cells; Tier-A rule r2 calibrated on dev measurements only).
+4. Tag the code repo once the fix-config flag is resolved; only then open held-out outcome tables.

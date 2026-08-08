@@ -219,7 +219,7 @@ ood_nsncs_places365
 
 ### Stage 3: Aggregate scores into per-cell CSVs
 
-`retrieve_scores.py` is run twice per (dataset, backbone) combination: once to produce the default per-cell aggregates (read by Stage 6 statistical analyses), and once with `--fix-config` to produce the per-cell hyperparameter-locked variants (read by the projection-filtering analyses and the NC-predictor data prep).
+`retrieve_scores.py` is run twice per (dataset, backbone) combination: once to produce the default per-cell aggregates (read by the Stage 6 statistical analyses and by `projection_filtering_analysis.py`; the `scores_all_*` per-run companions feed `projection_clique_analysis.py`), and once with `--fix-config` to produce the per-cell hyperparameter-locked variants (read by `nc_csf_predictivity/data/build_dataset.py` Track 1 and the intervention dose-response protocol). Verified 2026-08-08: the paper's projection-filtering deltas reproduce from the default aggregates, not from the fix-config variants (evidence in `x6_spectral/FREEZE.md`).
 
 VGG-13 and ViT (FD-Shifts pool):
 
@@ -230,8 +230,8 @@ for src in cifar10 cifar100 supercifar100 tinyimagenet; do
   python retrieve_scores.py --dataset $src --vit --scores-dir scores_risk
 done
 
-# Hyperparameter-locked _fix-config variants (consumed by projection_*_analysis.py
-# and nc_csf_predictivity/data/build_dataset.py)
+# Hyperparameter-locked _fix-config variants (consumed by
+# nc_csf_predictivity/data/build_dataset.py Track 1 and the intervention protocol)
 for src in cifar10 cifar100 supercifar100 tinyimagenet; do
   python retrieve_scores.py --dataset $src --fix-config --scores-dir scores_risk
   python retrieve_scores.py --dataset $src --vit --fix-config --scores-dir scores_risk

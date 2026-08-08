@@ -1,0 +1,121 @@
+arch,base_csf,variant,delta_augrc,significant_improvement,p_value,median_diff,n_total
+VGG13,PCA RecError,class pred,23.44,True,3.052e-05,17.69,16
+VGG13,PCA RecError,class,22.431,True,3.052e-05,17.116,16
+VGG13,Maha,global,14.894,True,7.812e-03,15.202,8
+VGG13,Maha,class pred,6.665,True,7.812e-03,5.682,8
+VGG13,pNML,class pred,4.994,True,4.811e-03,3.162,24
+VGG13,KPCA RecError,class pred,1.777,True,4.568e-02,1.996,24
+VGG13,GradNorm,class pred,1.744,True,1.059e-03,0.083,32
+VGG13,CTM,class avg,0.55,False,4.211e-01,0.526,32
+VGG13,REN,global,0.465,True,1.119e-05,0.384,32
+VGG13,GEN,class,0.385,True,1.400e-03,0.462,24
+VGG13,PE,class,0.245,False,5.955e-02,0.242,32
+VGG13,PCE,class,0.226,False,7.705e-02,0.085,32
+VGG13,MSR,class,0.22,False,9.082e-02,0.084,32
+VGG13,GradNorm,global,0.2,False,8.320e-01,0.085,32
+VGG13,NNGuide,global,0.189,True,4.718e-04,0.144,32
+VGG13,fDBD,global,0.159,True,1.400e-02,0.092,32
+VGG13,CTM,global,0.157,True,9.476e-07,0.151,32
+VGG13,KPCA RecError,class,0.143,False,8.603e-01,2.043,16
+VGG13,CTMmean,global,0.116,False,2.292e-01,0.1,24
+VGG13,Maha,class avg,0.115,True,7.812e-03,0.096,8
+VGG13,GEN,global,0.102,True,4.021e-06,0.087,32
+VGG13,GE,class pred,0.075,False,5.457e-01,0.137,24
+VGG13,REN,class,0.048,False,3.896e-01,0.219,32
+VGG13,CTMmean,class avg,0.046,False,8.553e-01,-0.108,24
+VGG13,MSR,global,0.045,True,2.051e-02,0.031,32
+VGG13,fDBD,class pred,0.04,False,7.190e-01,0.12,32
+VGG13,PCE,global,0.036,True,4.754e-02,0.021,32
+VGG13,GE,global,0.027,True,3.943e-02,0.018,32
+VGG13,PE,global,0.024,False,6.785e-02,0.023,32
+VGG13,MLS,global,0.008,False,7.609e-01,-0.005,32
+VGG13,Energy,global,-0.013,False,3.794e-01,-0.013,32
+VGG13,fDBD,class avg,-0.098,False,9.779e-01,0.524,32
+VGG13,Energy,class pred,-0.191,False,4.653e-01,-0.049,32
+VGG13,GE,class,-0.368,False,2.539e-01,-0.061,32
+VGG13,REN,class pred,-0.446,False,2.073e-03,-1.094,32
+VGG13,MLS,class pred,-0.727,False,1.106e-06,-0.469,32
+VGG13,NNGuide,class pred,-0.729,False,1.178e-07,-0.392,32
+VGG13,MLS,class,-0.754,False,8.098e-07,-0.477,32
+VGG13,PE,class pred,-0.882,False,1.288e-06,-0.599,32
+VGG13,CTM,class pred,-1.114,False,5.872e-07,-0.672,32
+VGG13,CTM,class,-1.149,False,1.288e-06,-0.651,32
+VGG13,CTMmean,class,-1.16,False,9.313e-10,-0.898,32
+VGG13,CTMmean,class pred,-1.171,False,4.657e-10,-0.923,32
+VGG13,Energy,class,-1.231,False,2.980e-07,-0.885,32
+VGG13,PCE,class pred,-1.328,False,1.728e-07,-1.111,32
+VGG13,MSR,class pred,-1.425,False,2.082e-07,-1.33,32
+VGG13,REN,class avg,-1.506,False,3.038e-01,-0.084,32
+VGG13,NNGuide,class avg,-1.627,False,1.144e-03,-2.007,32
+VGG13,GEN,class avg,-1.798,False,3.759e-02,-0.31,32
+VGG13,GEN,class pred,-1.904,False,3.576e-07,-1.984,24
+VGG13,PCE,class avg,-2.005,False,6.465e-02,-1.045,24
+VGG13,PE,class avg,-2.049,False,7.873e-02,-1.067,24
+VGG13,MSR,class avg,-2.132,False,5.643e-02,-1.141,24
+VGG13,MLS,class avg,-3.608,False,8.748e-06,-2.726,32
+VGG13,GE,class avg,-3.781,False,1.496e-04,-3.051,24
+VGG13,Energy,class avg,-5.046,False,1.669e-06,-3.978,24
+VGG13,GradNorm,class avg,-5.969,False,2.082e-07,-4.141,32
+VGG13,pNML,global,-14.766,False,3.906e-02,-18.46,8
+VGG13,KPCA RecError,class avg,-152.985,False,3.052e-05,-140.109,16
+ViT,PCA RecError,class pred,11.606,True,1.619e-04,3.073,32
+ViT,PCA RecError,class,10.417,True,1.778e-04,2.966,32
+ViT,GradNorm,class pred,5.906,True,4.597e-06,5.679,32
+ViT,GradNorm,global,4.919,True,1.235e-03,3.756,32
+ViT,REN,class pred,4.74,True,1.437e-03,2.099,32
+ViT,pNML,class pred,1.391,False,3.896e-01,-1.235,32
+ViT,fDBD,class avg,0.671,False,9.441e-01,-0.404,24
+ViT,MLS,global,0.653,True,3.543e-05,0.354,32
+ViT,GE,global,0.635,True,1.778e-04,0.338,32
+ViT,Energy,global,0.633,True,6.030e-05,0.455,32
+ViT,PE,global,0.555,True,3.979e-04,0.312,32
+ViT,MSR,global,0.548,True,8.372e-04,0.329,32
+ViT,PCE,global,0.536,True,1.548e-03,0.314,32
+ViT,GEN,global,0.499,True,1.778e-04,0.282,32
+ViT,MSR,class pred,0.223,False,5.119e-01,-0.006,32
+ViT,PCE,class pred,0.16,False,6.379e-01,-0.017,32
+ViT,fDBD,global,0.158,False,6.916e-01,-0.172,32
+ViT,GEN,class pred,0.134,False,5.988e-01,0.032,32
+ViT,PE,class pred,0.086,False,8.177e-01,-0.03,32
+ViT,Energy,class,0.042,False,5.860e-01,0.026,32
+ViT,Energy,class pred,0.03,False,3.794e-01,0.056,32
+ViT,MLS,class pred,-0.009,False,5.988e-01,0.024,32
+ViT,MLS,class,-0.034,False,6.511e-01,0.025,32
+ViT,NNGuide,global,-0.077,False,6.780e-01,-0.068,32
+ViT,GE,class pred,-0.136,False,5.608e-01,-0.035,32
+ViT,CTM,global,-0.284,False,2.951e-01,-0.33,32
+ViT,CTMmean,global,-0.472,False,1.776e-01,-0.439,32
+ViT,REN,class,-0.658,False,1.438e-01,-1.134,32
+ViT,NNGuide,class pred,-0.866,False,1.250e-02,-0.437,32
+ViT,MSR,class,-0.977,False,7.870e-08,-0.518,32
+ViT,PCE,class,-1.004,False,5.122e-08,-0.545,32
+ViT,GEN,class,-1.032,False,2.842e-05,-0.435,32
+ViT,PE,class,-1.111,False,2.328e-09,-0.645,32
+ViT,GE,class,-1.117,False,4.657e-10,-0.717,32
+ViT,Maha,class avg,-1.581,False,6.222e-02,-0.444,32
+ViT,CTM,class pred,-3.041,False,1.537e-08,-2.143,32
+ViT,REN,class avg,-3.111,False,2.798e-02,-4.954,32
+ViT,CTM,class,-3.158,False,6.380e-08,-2.133,32
+ViT,fDBD,class pred,-3.458,False,4.657e-10,-3.276,32
+ViT,Maha,global,-3.559,False,9.839e-02,-2.014,32
+ViT,REN,global,-3.59,False,5.697e-02,-0.312,32
+ViT,GEN,class avg,-4.654,False,2.496e-07,-4.301,32
+ViT,CTM,class avg,-4.689,False,1.430e-07,-3.033,32
+ViT,CTMmean,class pred,-5.098,False,8.098e-07,-2.579,32
+ViT,KPCA RecError,class pred,-5.345,False,5.483e-01,0.542,32
+ViT,PCE,class avg,-5.482,False,1.178e-07,-5.044,32
+ViT,MSR,class avg,-5.581,False,1.178e-07,-5.142,32
+ViT,PE,class avg,-5.716,False,2.561e-08,-4.954,32
+ViT,GE,class avg,-7.353,False,2.561e-08,-6.281,32
+ViT,KPCA RecError,class,-9.205,False,2.032e-01,0.076,32
+ViT,NNGuide,class avg,-9.556,False,1.537e-08,-9.069,32
+ViT,MLS,class avg,-10.395,False,6.380e-08,-10.593,32
+ViT,CTMmean,class,-10.71,False,6.906e-07,-2.955,32
+ViT,Energy,class avg,-12.265,False,7.870e-08,-12.074,32
+ViT,Maha,class pred,-19.996,False,2.328e-09,-9.916,32
+ViT,pNML,class avg,-20.156,False,2.328e-09,-18.8,32
+ViT,pNML,global,-20.198,False,2.496e-07,-21.77,32
+ViT,CTMmean,class avg,-22.145,False,1.951e-04,-4.677,32
+ViT,GradNorm,class avg,-40.682,False,3.650e-04,-28.613,32
+ViT,PCA RecError,class avg,-41.541,False,1.192e-07,-28.645,24
+ViT,KPCA RecError,class avg,-108.087,False,6.519e-09,-122.663,32

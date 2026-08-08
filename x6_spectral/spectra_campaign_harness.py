@@ -41,18 +41,23 @@ from spectral_diagnostics import (class_projector_heterogeneity,
                                   split_half_stability, viability,
                                   weight_top_class_alignment, weight_top_gap)
 
-#: Operator classes; "kept" = distance in retained coordinates, "complement"
-#: = reconstruction/residual energy in rejected coordinates, "logit" =
-#: scores of backprojected logits. Ambiguous families are flagged for
-#: pre-freeze adjudication in the campaign notes.
+#: Operator classes; "kept" = distance/similarity in retained coordinates,
+#: "complement" = reconstruction/residual energy in rejected coordinates,
+#: "logit" = scores of backprojected logits. Adjudicated against the actual
+#: implementations in code/src/csfs/ with one-line justifications in
+#: x6_spectral/FREEZE.md (gate 2; fDBD moved kept -> logit there). Hybrids
+#: are assigned to their dominant operator (NNGuide kept-dominant, ViM
+#: complement-dominant). Pilot-only families (MahalanobisPP, NCI) are out of
+#: scope until they appear in an outcome table.
 FAMILY_OPERATOR: dict[str, str] = {
-    "Maha": "kept", "CTM": "kept", "fDBD": "kept", "NNGuide": "kept",
+    "Maha": "kept", "CTM": "kept", "CTMmean": "kept", "NNGuide": "kept",
     "NeCo": "kept",
     "PCA RecError": "complement", "KPCA RecError": "complement",
     "Residual": "complement", "ViM": "complement",
     "MLS": "logit", "Energy": "logit", "MSR": "logit", "GEN": "logit",
     "GE": "logit", "PE": "logit", "PCE": "logit", "REN": "logit",
     "pNML": "logit", "GradNorm": "logit", "Confidence": "logit",
+    "fDBD": "logit",
 }
 VARIANTS = ("global", "class pred", "class avg")
 
