@@ -32,6 +32,8 @@ from pathlib import Path
 
 import numpy as np
 
+from spectra_campaign_harness import adjusted_stability, tier_a
+
 SOURCE_NORMALIZATION = {
     "supercifar": "supercifar100",
     "super_cifar100": "supercifar100",
@@ -79,7 +81,7 @@ def cell_row(record: dict, arm_name: str) -> dict:
     mean_span = aligns.get("align_mean_span", [])
     row_space = aligns.get("align_w_rowspace", [])
     omegas = census.get("spike_omegas", [])
-    tier = record["tier_a"]
+    tier = tier_a(arm, id_val_accuracy=record["id_val_accuracy"])
 
     row = {
         "model_path": record["model_path"], **factors,
@@ -111,6 +113,8 @@ def cell_row(record: dict, arm_name: str) -> dict:
         "stability_null": arm["stability_null"],
         "stability_ratio": safe_ratio(arm["stability"],
                                       arm["stability_null"]),
+        "adj_stability": adjusted_stability(arm["stability"],
+                                            arm["stability_null"]),
         "heterogeneity": het["heterogeneity"],
         "het_within": het["within"], "het_within_sd": het["within_sd"],
         "het_evidence": bool(het["heterogeneity"]
@@ -135,9 +139,10 @@ def cell_row(record: dict, arm_name: str) -> dict:
             row[f"d_stability_{tag}"] = float("nan")
             row[f"d_nspikes_{tag}"] = float("nan")
             continue
-        row[f"d_omega_aligned_{tag}"] = (
+        row[f"d_omega_aligned_{tag}"] = safe_ratio(
             other_arm["viability"]["omega_mean_aligned"]
-            - via["omega_mean_aligned"])
+            - via["omega_mean_aligned"],
+            max(abs(via["omega_mean_aligned"]), 1e-12))
         row[f"d_stability_{tag}"] = other_arm["stability"] - arm["stability"]
         row[f"d_nspikes_{tag}"] = (other_arm["census"]["n_spikes"]
                                    - census["n_spikes"])
@@ -164,6 +169,15 @@ def mean_sd(values: list[float], precision: int = 2) -> str:
         return "n/a"
     sd = float(np.std(vals, ddof=1)) if len(vals) > 1 else 0.0
     return f"{vals.mean():.{precision}f}+-{sd:.{precision}f}"
+
+
+def mean_sd_sci(values: list[float]) -> str:
+    """mean +- sd in compact scientific-ish form for wide-range quantities."""
+    vals = np.asarray([v for v in values if not math.isnan(v)], dtype=float)
+    if len(vals) == 0:
+        return "n/a"
+    sd = float(np.std(vals, ddof=1)) if len(vals) > 1 else 0.0
+    return f"{vals.mean():.3g}+-{sd:.2g}"
 
 
 def count_true(rows: list[dict], field: str) -> str:
@@ -215,9 +229,9 @@ def recovery_section(groups: dict[tuple, list[dict]]) -> str:
     for key, rows in groups.items():
         body.append([
             group_label(key, rows), str(len(rows)),
-            mean_sd([r["omega_mean_aligned"] for r in rows]),
+            mean_sd_sci([r["omega_mean_aligned"] for r in rows]),
             f"{rows[0]['thr_global']:.3f}",
-            mean_sd([r["global_margin"] for r in rows], 1),
+            mean_sd_sci([r["global_margin"] for r in rows]),
             count_true(rows, "global_viable"),
             mean_sd([r["omega_class_median"] for r in rows]),
             f"{np.median([r['thr_class_median'] for r in rows]):.2f}",
@@ -238,7 +252,7 @@ def structure_section(groups: dict[tuple, list[dict]]) -> str:
             group_label(key, rows),
             mean_sd([r["stability"] for r in rows]),
             f"{np.mean([r['stability_null'] for r in rows]):.3f}",
-            mean_sd([r["stability_ratio"] for r in rows], 1),
+            mean_sd([r["adj_stability"] for r in rows]),
             mean_sd([float(r["n_spikes"]) for r in rows], 1),
             mean_sd([float(r["n_residue_spikes"]) for r in rows], 1),
             mean_sd([r["heterogeneity"] for r in rows], 3),
@@ -248,7 +262,7 @@ def structure_section(groups: dict[tuple, list[dict]]) -> str:
             mean_sd([r["w_top_align"] for r in rows]),
             mean_sd([r["id_val_accuracy"] for r in rows], 3),
         ])
-    headers = ["group", "stability", "null", "stab/null", "n_spikes",
+    headers = ["group", "stability", "null", "adj stab", "n_spikes",
                "n_residue", "heterogeneity", "het evid", "common-mode",
                "w_gap", "w_align", "val acc"]
     return md_table(headers, body)
@@ -285,7 +299,7 @@ def consistency_section(rows: list[dict]) -> str:
         for backbone in sorted({r["backbone"] for r in rows}):
             sub = [r for r in rows if r["backbone"] == backbone]
             deltas = {
-                "omega_aligned": [r[f"d_omega_aligned_{tag}"] for r in sub],
+                "omega_rel": [r[f"d_omega_aligned_{tag}"] for r in sub],
                 "stability": [r[f"d_stability_{tag}"] for r in sub],
                 "n_spikes": [r[f"d_nspikes_{tag}"] for r in sub],
             }
@@ -309,9 +323,11 @@ def flags_section(rows: list[dict], errors: list[str]) -> str:
         if not r["class_viable"]:
             flags.append(f"{cell}: class-level recovery fails "
                          f"(frac {r['frac_classes_viable']:.2f})")
-        if r["stability_ratio"] < 2:
-            flags.append(f"{cell}: stability {r['stability']:.2f} under 2x "
-                         f"null {r['stability_null']:.2f}")
+        if r["adj_stability"] < 0.5:
+            flags.append(f"{cell}: adjusted stability "
+                         f"{r['adj_stability']:.2f} below 0.5 "
+                         f"(raw {r['stability']:.2f}, null "
+                         f"{r['stability_null']:.2f})")
         if r["routing_note"]:
             flags.append(f"{cell}: routing warning "
                          f"(val acc {r['id_val_accuracy']:.2f})")
@@ -325,7 +341,7 @@ def flags_section(rows: list[dict], errors: list[str]) -> str:
 
 def headline_section(rows: list[dict]) -> str:
     trusted = [r for r in rows
-               if r["global_viable"] and r["stability_ratio"] >= 2]
+               if r["global_viable"] and r["adj_stability"] >= 0.5]
 
     def pick(backbone: str, field: str) -> list[float]:
         return [float(r[field]) for r in trusted
@@ -336,7 +352,7 @@ def headline_section(rows: list[dict]) -> str:
         bullets.append(
             f"Backbone contrasts below use the {len(trusted)}/{len(rows)} "
             "structurally trustworthy cells (global recovery holds and "
-            "stability is at least twice its null); the rest are in Flags.")
+            "adjusted stability is at least 0.5); the rest are in Flags.")
     if pick("ViT", "heterogeneity") and pick("VGG13", "heterogeneity"):
         n_vit = len(pick("ViT", "heterogeneity"))
         n_vgg = len(pick("VGG13", "heterogeneity"))
@@ -412,7 +428,10 @@ def main() -> None:
         f"Arm: `{args.arm}` (correct_only = implementation-faithful). "
         "Uncertainty: mean +- sd across independently trained runs within "
         "each (backbone, source, dropout) group, sd with ddof=1. "
-        "Aggregation reads measurement JSONs only; no outcome tables.",
+        "Aggregation reads measurement JSONs only; no outcome tables. "
+        "Tier-A predictions are recomputed with the current rule version "
+        "(r2, adjusted-stability gate; omega deltas in section 5 are "
+        "relative); the measurement-time snapshots remain in the JSONs.",
         "## 1. Coverage", coverage_section(records, out_dir),
         "## 2. Recovery (P6.1''): global and class-level margins",
         recovery_section(groups),

@@ -98,6 +98,18 @@ def measure(h: np.ndarray, y: np.ndarray, w: np.ndarray, n_classes: int,
             "n": n, "dim": dim}
 
 
+def adjusted_stability(stability: float, null: float) -> float:
+    """Above-chance projector agreement, (stability - null) / (1 - null).
+
+    The raw ratio stability/null is unusable when the census saturates on
+    real anisotropic spectra (hundreds of above-edge components make the
+    random-subspace null k/D approach 1, so no fixed multiple of the null
+    is reachable); the dev-pool stage-1 run showed exactly this. The
+    normalized form is chance-corrected at any k.
+    """
+    return float((stability - null) / max(1.0 - null, 1e-9))
+
+
 def tier_a(diag: dict, id_val_accuracy: float | None = None) -> dict:
     """ID-only statements: recovery, stability, and one-sided predictions.
 
@@ -105,13 +117,17 @@ def tier_a(diag: dict, id_val_accuracy: float | None = None) -> dict:
     {"no-benefit", "undetermined"}. "no-benefit" is the falsifiable claim
     (projection should not significantly help when the target subspace is
     not recoverable/stable); benefit signs are never emitted here. The
+    stability gate uses adjusted (above-chance) agreement > 0.5, calibrated
+    on the dev-pool stage-1 run (rule version r2, 2026-08-08; the earlier
+    2x-null gate was unsatisfiable in the saturated-census regime). The
     routing screen for class-predicted variants is a conservative heuristic
     pending real-data calibration: pass4b shows naturally structured routing
     errors are far cheaper than uniform corruption, so low accuracy warns
     rather than vetoes.
     """
     via = diag["viability"]
-    stab_ok = diag["stability"] > 2 * diag["stability_null"]
+    adj_stab = adjusted_stability(diag["stability"], diag["stability_null"])
+    stab_ok = adj_stab > 0.5
     het = diag["class_heterogeneity"]
     het_ok = het["heterogeneity"] > 2 * het.get("within_sd", 0.0)
     out = {}
@@ -119,6 +135,7 @@ def tier_a(diag: dict, id_val_accuracy: float | None = None) -> dict:
     out["global"] = {
         "recoverable": global_rec,
         "stability": diag["stability"],
+        "adjusted_stability": adj_stab,
         "prediction": "undetermined" if global_rec else "no-benefit",
     }
     class_rec = bool(via["class_viable"] and het_ok)
