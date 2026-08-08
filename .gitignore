@@ -100,4 +100,8 @@ nc_csf_predictivity/outputs/pool_a/*_newcsfs*
 !run_new_csfs_vit_all.sh
 # x9 ImageNet-scale experiments are tracked from the start (plan decision 5)
 !x9_imagenet/*.sh
+# X6 campaign stage-1 runner (*.sh) and its dev-pool manifest (*.txt) must
+# sync to the HPC
+!x6_spectral/run_x6_measure.sh
+!x6_spectral/manifest_dev_pool.txt
 nc_csf_predictivity/outputs/pool_a/*_harmonized*
