@@ -1,3 +1,7 @@
+# Dev pool: ConfidNet VGG13 (40) + ViT (40). The five cifar10 lr0.001 do1 ViT
+# rows were removed 2026-08-08: stale configs_cifar10_iid_test_2.txt entries,
+# checkpoints do not exist (confirmed by stage-1 failures; canonical cifar10
+# ViT pool per configs_cifar10_iid_train.txt is lr0.0003 do0 + lr0.01 do1).
 cifar100_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2
 cifar100_paper_sweep/confidnet_bbvgg13_do0_run2_rew2.2
 cifar100_paper_sweep/confidnet_bbvgg13_do0_run3_rew2.2
@@ -53,11 +57,6 @@ vit/cifar10_modelvit_bbvit_lr0.0003_bs128_run1_do0_rew0
 vit/cifar10_modelvit_bbvit_lr0.0003_bs128_run2_do0_rew0
 vit/cifar10_modelvit_bbvit_lr0.0003_bs128_run3_do0_rew0
 vit/cifar10_modelvit_bbvit_lr0.0003_bs128_run4_do0_rew0
-vit/cifar10_modelvit_bbvit_lr0.001_bs128_run0_do1_rew0
-vit/cifar10_modelvit_bbvit_lr0.001_bs128_run1_do1_rew0
-vit/cifar10_modelvit_bbvit_lr0.001_bs128_run2_do1_rew0
-vit/cifar10_modelvit_bbvit_lr0.001_bs128_run3_do1_rew0
-vit/cifar10_modelvit_bbvit_lr0.001_bs128_run4_do1_rew0
 vit/cifar10_modelvit_bbvit_lr0.01_bs128_run0_do1_rew0
 vit/cifar10_modelvit_bbvit_lr0.01_bs128_run1_do1_rew0
 vit/cifar10_modelvit_bbvit_lr0.01_bs128_run2_do1_rew0

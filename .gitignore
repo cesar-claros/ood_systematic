@@ -104,4 +104,6 @@ nc_csf_predictivity/outputs/pool_a/*_newcsfs*
 # sync to the HPC
 !x6_spectral/run_x6_measure.sh
 !x6_spectral/manifest_dev_pool.txt
+# X6 measurement outputs stay on the HPC (analysis happens there; JSON/NPZ/logs)
+x6_spectral/outputs/
 nc_csf_predictivity/outputs/pool_a/*_harmonized*
