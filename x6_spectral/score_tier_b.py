@@ -89,15 +89,22 @@ def build_cells() -> list[dict]:
     return cells
 
 
-def record_signs(rec: dict, entry: dict) -> tuple[int, int, int, bool]:
+def record_signs(rec: dict, entry: dict) -> tuple[int, int, int, int, float,
+                                                  bool]:
     """Per-record majority signs, recomputed with the CURRENT rule version
     from the stored per-draw scalars (a_hat, lam_hat, logit ratio and
     visibility) whenever they are present, so rule patches such as
     r2-tierB.2 apply uniformly without re-forwarding; falls back to the
-    measurement-time summary signs otherwise."""
+    measurement-time summary signs otherwise. Also recomputes the kept sign
+    at the secondary mean-span rank q = C-1 from the stored per-draw
+    tier_b_meanspan a_hat (the q90 rank saturates on real features: dev
+    calibration found a_hat ~0.9 everywhere, degenerating both rules into
+    constant +1 predictors)."""
     if "draws" in entry and "dim" in rec and "q_used" in rec:
         votes: dict[str, list[int]] = {"kept": [], "complement": [],
-                                       "logit": []}
+                                       "logit": [], "kept_ms": []}
+        a_ms_vals: list[float] = []
+        q_ms = int(rec.get("n_classes", 2)) - 1
         for draw in entry["draws"]:
             ori = draw["orientation"]
             stored = draw.get("tier_b", {})
@@ -107,13 +114,23 @@ def record_signs(rec: dict, entry: dict) -> tuple[int, int, int, bool]:
                                logit_visibility=stored.get(
                                    "logit_visibility"))
             if not signs["undetermined"]:
-                for op in votes:
+                for op in ("kept", "complement", "logit"):
                     votes[op].append(signs[op])
+            ms = draw.get("tier_b_meanspan")
+            if ms is not None and "a_hat" in ms:
+                a_ms_vals.append(ms["a_hat"])
+                signs_ms = rule_signs(ms["a_hat"], ori["lam_hat"],
+                                      rec["dim"], q_ms)
+                if not signs_ms["undetermined"]:
+                    votes["kept_ms"].append(signs_ms["kept"])
         maj = {op: int(np.sign(sum(v))) if v else 0
                for op, v in votes.items()}
-        return maj["kept"], maj["complement"], maj["logit"], True
+        a_ms = float(np.mean(a_ms_vals)) if a_ms_vals else float("nan")
+        return (maj["kept"], maj["complement"], maj["logit"],
+                maj["kept_ms"], a_ms, True)
     s = entry["summary"]
-    return s["sign_kept"], s["sign_complement"], s["sign_logit"], False
+    return (s["sign_kept"], s["sign_complement"], s["sign_logit"], 0,
+            float("nan"), False)
 
 
 def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
@@ -130,18 +147,22 @@ def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
             if "summary" not in entry:
                 continue
             s = entry["summary"]
-            kept, comp, logit, recomputed = record_signs(rec, entry)
+            kept, comp, logit, kept_ms, a_ms, recomputed = \
+                record_signs(rec, entry)
             n_recomputed += recomputed
             n_fallback += not recomputed
             key = (factors["backbone"], factors["source"],
                    factors["dropout"], ood)
             g = groups.setdefault(key, {"kept": [], "complement": [],
-                                        "logit": [], "a_hat": [],
+                                        "logit": [], "kept_ms": [],
+                                        "a_hat": [], "a_hat_ms": [],
                                         "trial": []})
             g["kept"].append(kept)
             g["complement"].append(comp)
             g["logit"].append(logit)
+            g["kept_ms"].append(kept_ms)
             g["a_hat"].append(s["a_hat_mean"])
+            g["a_hat_ms"].append(a_ms)
             g["trial"].append(s["trial_mean"])
     out = {}
     for key, g in groups.items():
@@ -152,7 +173,9 @@ def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
             trial_means[name] = float(np.mean(vals)) if vals else None
         out[key] = {
             "sign": {op: int(np.sign(sum(g[op]))) for op in
-                     ("kept", "complement", "logit")},
+                     ("kept", "complement", "logit", "kept_ms")},
+            "a_hat_ms": float(np.nanmean(g["a_hat_ms"]))
+            if g["a_hat_ms"] else float("nan"),
             "agreement": {op: float(np.mean([v == np.sign(sum(g[op]))
                                              for v in g[op] if v != 0]))
                           if any(v != 0 for v in g[op]) else 0.0
@@ -205,9 +228,17 @@ def main() -> None:
             if fam == cell["family"] and cell["variant"] == "global":
                 tv = group["trial"].get(short)
                 trial_pred = int(np.sign(tv)) if tv is not None else None
+        ms_sign = group["sign"].get("kept_ms", 0)
+        ms_pred = None
+        if (pred is not None and reason == "rule"
+                and FAMILY_OPERATOR.get(cell["family"]) == "kept"
+                and ms_sign != 0):
+            ms_pred = ms_sign
         joined.append({**cell, "sign_true": sign_true, "rule_pred": pred,
                        "rule_basis": reason, "trial_pred": trial_pred,
+                       "rule_ms_pred": ms_pred,
                        "a_hat": group["a_hat"],
+                       "a_hat_ms": group.get("a_hat_ms", float("nan")),
                        "operator": FAMILY_OPERATOR.get(cell["family"], "?"),
                        "material": abs(cell["delta"]) > MATERIAL_DELTA})
     if not joined:
@@ -255,6 +286,10 @@ def main() -> None:
             sub = [r for r in rows if r["operator"] == op
                    and r["rule_basis"] == "rule"]
             lines.append(f"- {op}: rule {accuracy(sub, 'rule_pred')}")
+        kept_rows = [r for r in rows if r["operator"] == "kept"
+                     and r["rule_basis"] == "rule"]
+        lines.append(f"- kept at mean-span rank (q = C-1): "
+                     f"{accuracy(kept_rows, 'rule_ms_pred')}")
         deferred = sum(1 for r in rows
                        if r["rule_basis"].startswith("deferred"))
         undet = sum(1 for r in rows
