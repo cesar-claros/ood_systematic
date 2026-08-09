@@ -1,0 +1,62 @@
+arch,base_csf,variant,delta_augrc,significant_improvement,p_value,median_diff,n_total
+ResNet18,PCA RecError,class pred,34.457,True,7.487e-12,26.448,64
+ResNet18,PCA RecError,class,33.275,True,1.308e-11,25.774,64
+ResNet18,Maha,class pred,23.732,True,2.072e-09,14.139,64
+ResNet18,Maha,global,22.293,True,5.276e-09,10.137,64
+ResNet18,pNML,class pred,19.758,True,4.515e-05,4.855,64
+ResNet18,Maha,class avg,14.661,True,4.869e-09,6.768,64
+ResNet18,GradNorm,class pred,3.98,True,3.724e-07,1.45,64
+ResNet18,NNGuide,global,0.286,True,2.171e-04,0.137,64
+ResNet18,CTMmean,global,0.283,True,2.735e-03,0.124,64
+ResNet18,CTMmean,class avg,0.246,False,1.307e-01,0.05,64
+ResNet18,Energy,class pred,0.159,True,1.597e-03,0.034,64
+ResNet18,GE,class pred,0.107,True,5.515e-03,0.05,64
+ResNet18,GEN,global,-0.012,False,7.526e-02,-0.044,64
+ResNet18,MSR,class,-0.037,False,2.339e-01,-0.002,64
+ResNet18,PCE,class,-0.037,False,2.111e-01,-0.005,64
+ResNet18,MSR,global,-0.062,False,8.830e-01,0.008,64
+ResNet18,PCE,global,-0.062,False,8.725e-01,0.009,64
+ResNet18,PE,class,-0.063,False,1.285e-02,-0.059,64
+ResNet18,MLS,global,-0.069,False,6.160e-01,-0.001,64
+ResNet18,PE,global,-0.072,False,8.253e-01,0.006,64
+ResNet18,Energy,global,-0.075,False,5.473e-01,-0.003,64
+ResNet18,MLS,class pred,-0.076,False,3.797e-05,-0.063,64
+ResNet18,MLS,class,-0.077,False,4.141e-05,-0.065,64
+ResNet18,GE,global,-0.085,False,9.148e-01,0.003,64
+ResNet18,Energy,class,-0.105,False,1.267e-03,-0.104,64
+ResNet18,GE,class,-0.125,False,2.921e-03,-0.17,64
+ResNet18,PE,class pred,-0.131,False,5.865e-07,-0.096,64
+ResNet18,CTM,global,-0.133,False,1.636e-02,0.089,64
+ResNet18,NNGuide,class pred,-0.145,False,2.031e-02,-0.05,64
+ResNet18,GEN,class,-0.182,False,3.693e-02,-0.068,64
+ResNet18,MSR,class pred,-0.225,False,1.050e-04,-0.139,64
+ResNet18,fDBD,global,-0.246,False,1.543e-01,-0.011,64
+ResNet18,PCE,class pred,-0.247,False,1.019e-07,-0.161,64
+ResNet18,REN,class,-0.248,False,9.787e-01,0.024,64
+ResNet18,CTM,class,-0.254,False,1.170e-02,-0.096,64
+ResNet18,CTM,class pred,-0.268,False,6.625e-03,-0.127,64
+ResNet18,GEN,class pred,-0.31,False,2.747e-04,-0.162,64
+ResNet18,GradNorm,global,-0.391,False,3.957e-01,-0.564,64
+ResNet18,CTMmean,class,-0.642,False,7.958e-05,-0.266,64
+ResNet18,CTMmean,class pred,-0.649,False,5.517e-05,-0.273,64
+ResNet18,fDBD,class avg,-1.116,False,9.733e-01,0.87,64
+ResNet18,REN,class pred,-1.154,False,9.410e-10,-0.761,64
+ResNet18,CTM,class avg,-1.181,False,2.053e-06,-0.97,64
+ResNet18,REN,global,-1.585,False,8.895e-05,-0.043,64
+ResNet18,fDBD,class pred,-1.729,False,1.487e-10,-1.055,64
+ResNet18,NNGuide,class avg,-3.394,False,2.957e-08,-1.916,64
+ResNet18,PCE,class avg,-4.043,False,4.030e-10,-3.186,64
+ResNet18,MSR,class avg,-4.132,False,3.251e-10,-3.335,64
+ResNet18,PE,class avg,-4.148,False,5.434e-10,-2.961,64
+ResNet18,GEN,class avg,-4.372,False,1.046e-10,-4.256,64
+ResNet18,GE,class avg,-4.649,False,4.390e-10,-3.145,64
+ResNet18,MLS,class avg,-5.151,False,3.699e-10,-3.136,64
+ResNet18,KPCA RecError,class pred,-5.212,False,1.505e-01,-0.535,64
+ResNet18,REN,class avg,-5.496,False,7.668e-11,-5.418,64
+ResNet18,Energy,class avg,-5.585,False,3.251e-10,-3.544,64
+ResNet18,GradNorm,class avg,-8.067,False,1.113e-09,-5.279,64
+ResNet18,KPCA RecError,class,-13.499,False,2.876e-02,-2.143,64
+ResNet18,pNML,global,-40.654,False,1.001e-10,-22.9,64
+ResNet18,pNML,class avg,-47.898,False,3.716e-08,-28.612,64
+ResNet18,PCA RecError,class avg,-97.237,False,3.525e-12,-108.742,64
+ResNet18,KPCA RecError,class avg,-150.696,False,3.525e-12,-155.91,64

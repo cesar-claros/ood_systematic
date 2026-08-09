@@ -24,7 +24,7 @@ from src.rc_stats import RiskCoverageStats
 
 ArrayType = torch.Tensor
 _EPS = 1e-10
-_DEFAULT_ALPHAS = (0.0, 1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2)
+_DEFAULT_ALPHAS = (1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2, 1e-1)
 
 
 class NCI:
@@ -81,7 +81,7 @@ class NCI:
             from bayes_opt import BayesianOptimization
             bo = BayesianOptimization(
                 f=lambda alpha: -val_augrc(alpha),
-                pbounds={"alpha": (0.0, max(alphas))},
+                pbounds={"alpha": (min(alphas), max(alphas))},
                 verbose=0, random_state=1)
             bo.maximize(init_points=n_init, n_iter=n_iters)
             self.alpha = float(bo.max["params"]["alpha"])
