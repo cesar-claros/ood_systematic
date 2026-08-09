@@ -289,17 +289,22 @@ def tier_b(diag: dict, orientation: dict, w: np.ndarray, q: int,
 
 def batch_trial(h_id_ref: np.ndarray, batch: np.ndarray, mean_vec: np.ndarray,
                 projector: np.ndarray, w: np.ndarray, b: np.ndarray,
-                class_means: np.ndarray) -> dict:
+                class_means: np.ndarray,
+                precision: np.ndarray | None = None) -> dict:
     """Direct deployment-batch trial: AUROC of registered scores, raw vs
     globally projected, using an ID reference sample (validation features).
 
-    The registered score set (FREEZE.md, r2-tierB) is computable from the
-    stage-1 artifacts alone: MLS / Energy / MSR logit scores, NCC (nearest
-    class centroid, Euclidean; a labeled proxy for the deployed tied-
-    covariance Mahalanobis), and global reconstruction error in the deployed
-    normalized form and the unnormalized form (no raw counterpart exists
-    for reconstruction scores). Returns AUROCs and the projected-minus-raw
-    deltas; positive delta means projection helps that score on this batch.
+    Registered score set: MLS / Energy / MSR logit scores, NCC (Euclidean
+    nearest class centroid), global reconstruction error in the deployed
+    normalized and unnormalized forms, and, when `precision` is given, the
+    actual tied-covariance min-over-class Mahalanobis (rule version r4:
+    the ResNet18 held-out round showed the NCC proxy diverging from true
+    Maha exactly where Maha's projection benefit was largest, so NCC is
+    demoted to a diagnostic and the deployed score is trialed directly;
+    precision is the pseudo-inverse of the val-estimated within-class
+    covariance, flagged val-side like the class means). Returns AUROCs and
+    projected-minus-raw deltas; positive delta means projection helps that
+    score on this batch.
     """
     from scipy.stats import rankdata
 
@@ -326,14 +331,26 @@ def batch_trial(h_id_ref: np.ndarray, batch: np.ndarray, mean_vec: np.ndarray,
               + (class_means ** 2).sum(1)[None, :])
         return d2.min(1)
 
+    def min_maha(z: np.ndarray) -> np.ndarray:
+        zp = z @ precision
+        term = (zp * z).sum(1, keepdims=True)
+        cross = zp @ class_means.T
+        mc = ((class_means @ precision) * class_means).sum(1)
+        return (term - 2 * cross + mc[None, :]).min(1)
+
     out: dict[str, float] = {}
+    trialed = ["mls", "energy", "msr", "ncc"]
     for tag, id_z, ood_z in (("raw", h_id_ref, batch),
                              ("global", project(h_id_ref), project(batch))):
         for name, s_id in logit_scores(id_z).items():
             s_ood = logit_scores(ood_z)[name]
             out[f"{name}_{tag}"] = auroc(s_id, s_ood)
         out[f"ncc_{tag}"] = auroc(-min_sq_dist(id_z), -min_sq_dist(ood_z))
-    for name in ("mls", "energy", "msr", "ncc"):
+        if precision is not None:
+            out[f"maha_{tag}"] = auroc(-min_maha(id_z), -min_maha(ood_z))
+    if precision is not None:
+        trialed.append("maha")
+    for name in trialed:
         out[f"{name}_delta"] = out[f"{name}_global"] - out[f"{name}_raw"]
     res_id = h_id_ref - project(h_id_ref)
     res_ood = batch - project(batch)
@@ -437,9 +454,12 @@ if __name__ == "__main__":
                      delta=perp, projector=proj)
     class_means = np.stack([h[y == c].mean(0) for c in range(n_cls)])
     trial = batch_trial(h[:2000], h[:200] + 12.0 * perp, h.mean(0), proj,
-                        mu, np.zeros(n_cls), class_means)
+                        mu, np.zeros(n_cls), class_means,
+                        precision=np.eye(dim))
     print(f"    weak batch: undetermined={tb_weak['undetermined']} "
           f"(lam_hat={tb_weak['lam_hat']:.1f} < {tb_weak['lam_min']:.1f}); "
           f"trial: mls_delta={trial['mls_delta']:+.3f} "
           f"ncc_delta={trial['ncc_delta']:+.3f} "
-          f"rec_norm_global={trial['rec_norm_global']:.3f}")
+          f"rec_norm_global={trial['rec_norm_global']:.3f}; "
+          f"maha==ncc at identity precision: "
+          f"{abs(trial['maha_delta'] - trial['ncc_delta']) < 1e-12}")

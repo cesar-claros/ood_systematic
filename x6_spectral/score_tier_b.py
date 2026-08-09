@@ -45,8 +45,12 @@ from aggregate_tier_a import parse_model_path
 from spectra_campaign_harness import FAMILY_OPERATOR, rule_signs
 
 RECERROR_FAMILIES = {"PCA RecError", "KPCA RecError"}
+#: r4: the Maha trial uses the actual tied-covariance min-over-class score
+#: (maha_delta, present in orientation JSONs measured under r4); the NCC
+#: proxy diverged from true Maha on the ResNet18 round and is diagnostic
+#: only. Cells from pre-r4 JSONs simply get no Maha trial prediction.
 TRIAL_FAMILY = {"mls": "MLS", "energy": "Energy", "msr": "MSR",
-                "ncc": "Maha"}
+                "maha": "Maha"}
 MATERIAL_DELTA = 1.0
 
 #: Per-pool loading configuration, mirroring make_projection_targets.py:

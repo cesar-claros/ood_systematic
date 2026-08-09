@@ -141,6 +141,11 @@ def main() -> None:
     class_means_val = np.stack([
         feats_val[y_val == c].mean(0) if (y_val == c).any()
         else art["mean_correct"] for c in range(n_classes)])
+    centered_cls = np.concatenate([
+        feats_val[y_val == c] - class_means_val[c]
+        for c in range(n_classes) if (y_val == c).any()])
+    cov_within = centered_cls.T @ centered_cls / max(len(centered_cls), 1)
+    precision_val = np.linalg.pinv(cov_within, hermitian=True)
     id_ref = feats_val[:ID_REF_MAX]
 
     if study_name == "vit":
@@ -195,7 +200,8 @@ def main() -> None:
             tb_mean = tier_b({"dim": dim}, ori_mean, w, n_classes - 1,
                              delta=delta, projector=proj_mean)
             trial = batch_trial(id_ref, block, art["mean_correct"],
-                                projector, w, b, class_means_val)
+                                projector, w, b, class_means_val,
+                                precision=precision_val)
             draws.append({"orientation": ori, "tier_b": tb,
                           "tier_b_meanspan": {k: tb_mean[k] for k in
                                               ("kept", "complement",
