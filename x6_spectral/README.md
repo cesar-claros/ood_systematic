@@ -55,6 +55,24 @@ python x6_spectral/score_tier_b.py
 
 Outputs: `outputs/orientation/<cell>.json` (per OOD dataset: a_hat/lam_hat per draw, r2-tierB signs, batch-trial AUROCs), then `outputs/tier_b_dev_scoring.csv` + `outputs/tier_b_dev_report.md` (cell-level accuracy per operator class vs the three nulls, material-cells cut, coverage). Runtime is dominated by the one validation forward pass per checkpoint; OOD batches are 640 samples each.
 
+## Running the held-out tier (ResNet18; frozen r3 protocol)
+
+Strict order: measurement first (outcome-free), scoring second (opens the held-out outcome tables for the first time). From `code/` inside the container:
+
+```bash
+# 1. measurement (outcome-free): smoke-test one cell, then the 8-cell pool
+python x6_spectral/measure_checkpoint.py \
+    --model_path=cifar10_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2 --use_cuda
+bash x6_spectral/run_x6_measure.sh x6_spectral/manifest_heldout_resnet18.txt
+bash x6_spectral/run_x6_orientation.sh x6_spectral/manifest_heldout_resnet18.txt
+
+# 2. scoring (opens held-out outcomes; only after step 1 completes)
+python x6_spectral/make_projection_targets.py --pool resnet18
+python x6_spectral/score_tier_b.py --pool resnet18
+```
+
+Outputs: `projection_targets_heldout_resnet18.csv` (pooled Wilcoxon table under the pinned within-slice semantics) and `outputs/tier_b_heldout_resnet18_{scoring.csv,report.md}` (cell-level trial-arm verdict; rule arms ride along as the pre-registered negative control). Single run per cell: no run averaging or checkpoint-level uncertainty, as pinned in `FREEZE.md`. The `--pool dev` paths of both scripts regenerate the frozen dev artifacts byte-identically (regression-checked), so the generalization does not touch gate-1 semantics. Tier-A one-sided claims for ResNet18, if stage 1 emits any, are checked against the pooled held-out table.
+
 ## Freeze gates (status in `FREEZE.md`)
 
 1. Done: Delta-baseline semantics pinned in `FREEZE.md`; `make_projection_targets.py` builds `projection_targets_dev.csv` (ConfidNet VGG13 + ViT, 120 rows) by importing the paper's own generator. One open flag: confirm the plain (not `_fix-config`) score files are the source of record.

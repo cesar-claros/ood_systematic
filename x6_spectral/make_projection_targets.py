@@ -19,6 +19,7 @@ Usage (from anywhere):
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import os
 import sys
@@ -28,10 +29,44 @@ CODE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(CODE_DIR))
 os.chdir(CODE_DIR)
 
+import pandas as pd
+
 import projection_filtering_analysis as pfa
 
-ARCH_NAME = {"Conv": "VGG13", "ViT": "ViT"}
-PARADIGM_FILTER = {"Conv": "confidnet", "ViT": None}
+#: Per-pool loading configuration: (scores_dir, file backbone tag, filename
+#: suffix, paradigm filter, arch label). The dev pool reproduces the frozen
+#: gate-1 semantics exactly; the resnet18 pool implements the pinned
+#: held-out protocol (fix-config exports, model == confidnet, and pairing
+#: within each dropout slice, which the merge on MERGE_KEYS yields
+#: naturally because fix-config retains both slices per method).
+POOLS: dict[str, dict] = {
+    "dev": {
+        "out": "projection_targets_dev.csv",
+        "sets": [("scores_risk", "Conv", "", "confidnet", "VGG13"),
+                 ("scores_risk", "ViT", "", None, "ViT")],
+    },
+    "resnet18": {
+        "out": "projection_targets_heldout_resnet18.csv",
+        "sets": [("scores_risk_resnet18", "Conv", "_fix-config",
+                  "confidnet", "ResNet18")],
+    },
+}
+
+
+def load_pool_scores(scores_dir: str, backbone_tag: str,
+                     suffix: str) -> pd.DataFrame:
+    """Load per-source AUGRC tables for one pool configuration."""
+    frames = []
+    for src in pfa.SOURCES:
+        path = Path(scores_dir) \
+            / f"scores_AUGRC_MCD-False_{backbone_tag}_{src}{suffix}.csv"
+        if not path.exists():
+            print(f"  warning: {path} not found, skipping")
+            continue
+        df = pd.read_csv(path)
+        df["source"] = src
+        frames.append(df)
+    return pd.concat(frames, ignore_index=True)
 
 
 def family_and_variant(base_method: str, variant_method: str
@@ -45,14 +80,19 @@ def family_and_variant(base_method: str, variant_method: str
 
 
 def main() -> None:
-    out_path = CODE_DIR / "x6_spectral" / "projection_targets_dev.csv"
+    parser = argparse.ArgumentParser(
+        description="Build projection targets for one campaign pool")
+    parser.add_argument("--pool", type=str, default="dev",
+                        choices=sorted(POOLS))
+    args = parser.parse_args()
+    pool = POOLS[args.pool]
+    out_path = CODE_DIR / "x6_spectral" / pool["out"]
     rows = []
-    for backbone in ("Conv", "ViT"):
-        all_df = pfa.load_scores(backbone)
-        paradigm = PARADIGM_FILTER[backbone]
+    for scores_dir, tag, suffix, paradigm, arch in pool["sets"]:
+        all_df = load_pool_scores(scores_dir, tag, suffix)
         if paradigm is not None:
             all_df = all_df[all_df["model"] == paradigm]
-        print(f"{backbone}: {len(all_df)} rows"
+        print(f"{arch}: {len(all_df)} rows"
               + (f" (paradigm {paradigm})" if paradigm else ""))
         for base_method, variants in pfa.METHODS_OF_INTEREST.items():
             for variant_method in variants:
@@ -63,7 +103,7 @@ def main() -> None:
                 family, variant = family_and_variant(base_method,
                                                      variant_method)
                 rows.append({
-                    "arch": ARCH_NAME[backbone],
+                    "arch": arch,
                     "base_csf": family,
                     "variant": variant,
                     "delta_augrc": round(result["mean_diff"], 3),

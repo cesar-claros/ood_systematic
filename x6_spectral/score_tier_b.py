@@ -38,24 +38,66 @@ sys.path.insert(0, str(CODE_DIR))
 sys.path.insert(0, str(CODE_DIR / "x6_spectral"))
 os.chdir(CODE_DIR)
 
+import pandas as pd
+
 import projection_filtering_analysis as pfa
 from aggregate_tier_a import parse_model_path
 from spectra_campaign_harness import FAMILY_OPERATOR, rule_signs
 
-ARCH_NAME = {"Conv": "VGG13", "ViT": "ViT"}
-PARADIGM_FILTER = {"Conv": "confidnet", "ViT": None}
 RECERROR_FAMILIES = {"PCA RecError", "KPCA RecError"}
 TRIAL_FAMILY = {"mls": "MLS", "energy": "Energy", "msr": "MSR",
                 "ncc": "Maha"}
 MATERIAL_DELTA = 1.0
 
+#: Per-pool loading configuration, mirroring make_projection_targets.py:
+#: (scores_dir, file backbone tag, filename suffix, paradigm filter, arch).
+#: The resnet18 pool implements the pinned held-out protocol: fix-config
+#: exports, model == confidnet, within-dropout-slice pairing (which the
+#: merge yields naturally since fix-config retains both slices), single run
+#: per cell, trial arm primary per decision r3.
+POOLS: dict[str, dict] = {
+    "dev": {
+        "sets": [("scores_risk", "Conv", "", "confidnet", "VGG13"),
+                 ("scores_risk", "ViT", "", None, "ViT")],
+        "scoring_csv": "tier_b_dev_scoring.csv",
+        "report_md": "tier_b_dev_report.md",
+        "note": ("Dev pool: calibration only (outcome tables open by "
+                 "design); held-out scoring reuses this frozen code."),
+    },
+    "resnet18": {
+        "sets": [("scores_risk_resnet18", "Conv", "_fix-config",
+                  "confidnet", "ResNet18")],
+        "scoring_csv": "tier_b_heldout_resnet18_scoring.csv",
+        "report_md": "tier_b_heldout_resnet18_report.md",
+        "note": ("HELD-OUT pool under the frozen r3 protocol: fix-config "
+                 "exports, within-dropout-slice pairing, single run per "
+                 "cell (no run averaging, no checkpoint-level "
+                 "uncertainty). Trial arm is primary; rule arms are the "
+                 "pre-registered negative control."),
+    },
+}
 
-def build_cells() -> list[dict]:
+
+def load_pool_scores(scores_dir: str, backbone_tag: str,
+                     suffix: str) -> pd.DataFrame:
+    frames = []
+    for src in pfa.SOURCES:
+        path = Path(scores_dir) \
+            / f"scores_AUGRC_MCD-False_{backbone_tag}_{src}{suffix}.csv"
+        if not path.exists():
+            print(f"  warning: {path} not found, skipping")
+            continue
+        df = pd.read_csv(path)
+        df["source"] = src
+        frames.append(df)
+    return pd.concat(frames, ignore_index=True)
+
+
+def build_cells(pool: dict) -> list[dict]:
     """Per-cell paired deltas under the frozen gate-1 semantics."""
     cells = []
-    for backbone in ("Conv", "ViT"):
-        all_df = pfa.load_scores(backbone)
-        paradigm = PARADIGM_FILTER[backbone]
+    for scores_dir, tag, suffix, paradigm, arch in pool["sets"]:
+        all_df = load_pool_scores(scores_dir, tag, suffix)
         if paradigm is not None:
             all_df = all_df[all_df["model"] == paradigm]
         for base_method, variants in pfa.METHODS_OF_INTEREST.items():
@@ -80,7 +122,7 @@ def build_cells() -> list[dict]:
                             if np.isnan(delta):
                                 continue
                             cells.append({
-                                "arch": ARCH_NAME[backbone],
+                                "arch": arch,
                                 "family": family, "variant": variant,
                                 "source": src, "ood": ood,
                                 "dropout": int(row["drop out"] == "do1"),
@@ -206,13 +248,16 @@ def predict(cell: dict, group: dict) -> tuple[int | None, str]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Score Tier-B predictions")
     parser.add_argument("--out_dir", type=str, default="x6_spectral/outputs")
+    parser.add_argument("--pool", type=str, default="dev",
+                        choices=sorted(POOLS))
     args = parser.parse_args()
+    pool = POOLS[args.pool]
     out_dir = Path(args.out_dir)
     ori_dir = out_dir / "orientation"
     groups, n_recomputed, n_fallback = load_orientation_groups(ori_dir)
     if not groups:
         sys.exit(f"No orientation JSONs under {ori_dir}")
-    cells = build_cells()
+    cells = build_cells(pool)
 
     joined = []
     for cell in cells:
@@ -244,7 +289,7 @@ def main() -> None:
     if not joined:
         sys.exit("Orientation groups and cells did not join; check labels")
 
-    csv_path = out_dir / "tier_b_dev_scoring.csv"
+    csv_path = out_dir / pool["scoring_csv"]
     with open(csv_path, "w", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=list(joined[0].keys()))
         writer.writeheader()
@@ -266,10 +311,9 @@ def main() -> None:
         return (f"always+1 {pos:.3f}, always-1 {1 - pos:.3f}, "
                 f"majority {max(pos, 1 - pos):.3f}")
 
-    lines = ["# X6 Tier-B dev-calibration scoring", "",
+    lines = [f"# X6 Tier-B scoring ({args.pool} pool)", "",
              f"Cells joined: {len(joined)}; orientation groups: "
-             f"{len(groups)}. Dev pool: calibration only (outcome tables "
-             "open by design); held-out scoring reuses this frozen code. "
+             f"{len(groups)}. {pool['note']} "
              f"Signs recomputed with the current rule version for "
              f"{n_recomputed} records ({n_fallback} fallback to stored "
              "summary signs).",
@@ -297,7 +341,7 @@ def main() -> None:
         lines.append(f"- deferred (stage 2b): {deferred}; "
                      f"undetermined orientation: {undet}")
         lines.append("")
-    report_path = out_dir / "tier_b_dev_report.md"
+    report_path = out_dir / pool["report_md"]
     report_path.write_text("\n".join(lines))
     print(f"{len(joined)} cells -> {csv_path} and {report_path}")
 

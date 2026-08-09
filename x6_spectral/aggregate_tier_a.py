@@ -43,6 +43,9 @@ SOURCE_ORDER = ["cifar10", "cifar100", "supercifar100", "tinyimagenet"]
 VGG_PATTERN = re.compile(
     r"(?P<source>[a-z0-9\-]+)_paper_sweep/confidnet_bbvgg13_"
     r"do(?P<do>[01])_run(?P<run>\d+)_rew")
+RESNET_PATTERN = re.compile(
+    r"(?P<source>[a-z0-9\-]+)_paper_sweep/confidnet_bbresnet18_"
+    r"do(?P<do>[01])_run(?P<run>\d+)_rew")
 VIT_PATTERN = re.compile(
     r"vit/(?P<source>[a-z0-9_\-]+)_modelvit_bbvit_lr(?P<lr>[0-9.]+)_"
     r"bs\d+_run(?P<run>\d+)_do(?P<do>[01])_rew")
@@ -56,12 +59,15 @@ def parse_model_path(model_path: str) -> dict | None:
         return {"backbone": "ViT", "source": source,
                 "dropout": int(match["do"]), "run": int(match["run"]),
                 "lr": match["lr"]}
-    match = VGG_PATTERN.search(model_path)
-    if match:
-        source = SOURCE_NORMALIZATION.get(match["source"], match["source"])
-        return {"backbone": "VGG13", "source": source,
-                "dropout": int(match["do"]), "run": int(match["run"]),
-                "lr": ""}
+    for pattern, backbone in ((VGG_PATTERN, "VGG13"),
+                              (RESNET_PATTERN, "ResNet18")):
+        match = pattern.search(model_path)
+        if match:
+            source = SOURCE_NORMALIZATION.get(match["source"],
+                                              match["source"])
+            return {"backbone": backbone, "source": source,
+                    "dropout": int(match["do"]), "run": int(match["run"]),
+                    "lr": ""}
     return None
 
 
