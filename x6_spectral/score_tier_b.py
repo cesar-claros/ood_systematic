@@ -40,7 +40,7 @@ os.chdir(CODE_DIR)
 
 import projection_filtering_analysis as pfa
 from aggregate_tier_a import parse_model_path
-from spectra_campaign_harness import FAMILY_OPERATOR
+from spectra_campaign_harness import FAMILY_OPERATOR, rule_signs
 
 ARCH_NAME = {"Conv": "VGG13", "ViT": "ViT"}
 PARADIGM_FILTER = {"Conv": "confidnet", "ViT": None}
@@ -89,9 +89,37 @@ def build_cells() -> list[dict]:
     return cells
 
 
-def load_orientation_groups(ori_dir: Path) -> dict:
+def record_signs(rec: dict, entry: dict) -> tuple[int, int, int, bool]:
+    """Per-record majority signs, recomputed with the CURRENT rule version
+    from the stored per-draw scalars (a_hat, lam_hat, logit ratio and
+    visibility) whenever they are present, so rule patches such as
+    r2-tierB.2 apply uniformly without re-forwarding; falls back to the
+    measurement-time summary signs otherwise."""
+    if "draws" in entry and "dim" in rec and "q_used" in rec:
+        votes: dict[str, list[int]] = {"kept": [], "complement": [],
+                                       "logit": []}
+        for draw in entry["draws"]:
+            ori = draw["orientation"]
+            stored = draw.get("tier_b", {})
+            signs = rule_signs(ori["a_hat"], ori["lam_hat"], rec["dim"],
+                               rec["q_used"],
+                               logit_ratio=stored.get("logit_response_ratio"),
+                               logit_visibility=stored.get(
+                                   "logit_visibility"))
+            if not signs["undetermined"]:
+                for op in votes:
+                    votes[op].append(signs[op])
+        maj = {op: int(np.sign(sum(v))) if v else 0
+               for op, v in votes.items()}
+        return maj["kept"], maj["complement"], maj["logit"], True
+    s = entry["summary"]
+    return s["sign_kept"], s["sign_complement"], s["sign_logit"], False
+
+
+def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
     """Aggregate orientation signs per (arch, source, dropout, ood)."""
     groups: dict[tuple, dict[str, list]] = {}
+    n_recomputed, n_fallback = 0, 0
     for path in sorted(ori_dir.glob("*.json")):
         with open(path) as fh:
             rec = json.load(fh)
@@ -102,14 +130,17 @@ def load_orientation_groups(ori_dir: Path) -> dict:
             if "summary" not in entry:
                 continue
             s = entry["summary"]
+            kept, comp, logit, recomputed = record_signs(rec, entry)
+            n_recomputed += recomputed
+            n_fallback += not recomputed
             key = (factors["backbone"], factors["source"],
                    factors["dropout"], ood)
             g = groups.setdefault(key, {"kept": [], "complement": [],
                                         "logit": [], "a_hat": [],
                                         "trial": []})
-            g["kept"].append(s["sign_kept"])
-            g["complement"].append(s["sign_complement"])
-            g["logit"].append(s["sign_logit"])
+            g["kept"].append(kept)
+            g["complement"].append(comp)
+            g["logit"].append(logit)
             g["a_hat"].append(s["a_hat_mean"])
             g["trial"].append(s["trial_mean"])
     out = {}
@@ -130,7 +161,7 @@ def load_orientation_groups(ori_dir: Path) -> dict:
             "n_runs": len(g["kept"]),
             "trial": trial_means,
         }
-    return out
+    return out, n_recomputed, n_fallback
 
 
 def predict(cell: dict, group: dict) -> tuple[int | None, str]:
@@ -155,7 +186,7 @@ def main() -> None:
     args = parser.parse_args()
     out_dir = Path(args.out_dir)
     ori_dir = out_dir / "orientation"
-    groups = load_orientation_groups(ori_dir)
+    groups, n_recomputed, n_fallback = load_orientation_groups(ori_dir)
     if not groups:
         sys.exit(f"No orientation JSONs under {ori_dir}")
     cells = build_cells()
@@ -207,7 +238,10 @@ def main() -> None:
     lines = ["# X6 Tier-B dev-calibration scoring", "",
              f"Cells joined: {len(joined)}; orientation groups: "
              f"{len(groups)}. Dev pool: calibration only (outcome tables "
-             "open by design); held-out scoring reuses this frozen code.",
+             "open by design); held-out scoring reuses this frozen code. "
+             f"Signs recomputed with the current rule version for "
+             f"{n_recomputed} records ({n_fallback} fallback to stored "
+             "summary signs).",
              ""]
     for scope_name, rows in (
             ("all cells", joined),

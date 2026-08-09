@@ -77,9 +77,14 @@ def load_model(path: str, use_cuda: bool) -> tuple:
     ckpt_path = exp_utils._get_path_to_best_ckpt(
         cf.exp.dir, "last", cf.test.selection_mode)
     if "super" in path:
-        cf.eval.query_studies.noise_study = ["corrupt_cifar100"]
-        cf.eval.query_studies.new_class_study = [
-            "cifar10", "svhn", "tinyimagenet_resize"]
+        if "vit" in path:
+            cf.eval.query_studies.noise_study = ["corrupt_cifar100_384"]
+            cf.eval.query_studies.new_class_study = [
+                "cifar10_384", "svhn_384", "tinyimagenet_384"]
+        else:
+            cf.eval.query_studies.noise_study = ["corrupt_cifar100"]
+            cf.eval.query_studies.new_class_study = [
+                "cifar10", "svhn", "tinyimagenet_resize"]
         if do_enabled and "vgg" in path:
             logger.info("Disabling average pooling for VGG-13 supercifar "
                         "with dropout enabled (matches csf_fit.py)")

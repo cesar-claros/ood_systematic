@@ -32,9 +32,11 @@ held-out outcome table is inspected.
 """
 from __future__ import annotations
 
+from functools import lru_cache
+
 import numpy as np
 from scipy.optimize import brentq
-from scipy.stats import ncf
+from scipy.stats import ncf, norm
 
 from spectral_diagnostics import (class_projector_heterogeneity,
                                   common_mode_fraction, spike_census,
@@ -63,10 +65,22 @@ VARIANTS = ("global", "class pred", "class avg")
 
 
 def auc_exact(q: float, lam: float) -> float:
-    """Exact AUROC of ncx2_q(lam) against chi2_q (see pass3_common)."""
+    """Exact AUROC of ncx2_q(lam) against chi2_q (see pass3_common).
+
+    r2-tierB.1 numerics patch: scipy's noncentral-F CDF has version- and
+    parameter-dependent NaN holes at large degrees/noncentrality (observed
+    on the HPC at real VGG displacement scales and reproduced locally at
+    d=2048). Where the CDF is not finite, fall back to the large-degree
+    Gaussian approximation, which is numerically indistinguishable from the
+    exact value precisely in those saturated regimes. Every return value is
+    finite, so the brentq crossings are always well-posed.
+    """
     if lam <= 0:
         return 0.5
-    return float(1 - ncf.cdf(1.0, q, q, lam))
+    value = float(1 - ncf.cdf(1.0, q, q, lam))
+    if np.isfinite(value):
+        return value
+    return float(norm.cdf(lam / (2 * np.sqrt(q + lam))))
 
 
 def a_star(lam: float, q: int, dim: int) -> float:
@@ -80,6 +94,51 @@ def a_flip(lam: float, q: int, dim: int) -> float:
     return float(brentq(
         lambda a: auc_exact(q, lam * a) - auc_exact(dim - q, lam * (1 - a)),
         1e-9, 1 - 1e-9))
+
+
+@lru_cache(maxsize=64)
+def lam_ceiling(dim: int, auc: float = 0.99) -> float:
+    """Noncentrality where the oracle raw D-dim detector reaches `auc`.
+
+    r2-tierB.2: lam_hat is trusted only up to this ceiling. On real
+    anisotropic features the isotropic estimate (displacement over median
+    coordinate variance) inflates by orders of magnitude, and beyond the
+    ceiling the exact crossings degenerate (a* -> 1: no projection can beat
+    an already-perfect oracle detector), contradicting observed detection
+    performance. Freezing thresholds at the 0.99 ceiling keeps them in the
+    discriminative regime the synthetic suite validated.
+    """
+    return float(brentq(lambda lam: auc_exact(dim, lam) - auc, 1e-3,
+                        8.0 * dim))
+
+
+def rule_signs(a_hat: float, lam_hat: float, dim: int, q: int,
+               logit_ratio: float | None = None,
+               logit_visibility: float | None = None) -> dict:
+    """r2-tierB.2 sign computation from stored scalars.
+
+    Single source of truth shared by tier_b (measurement time) and
+    score_tier_b (which recomputes signs from stored orientation scalars so
+    rule-version patches apply uniformly without re-forwarding).
+    """
+    lam_min = float(np.sqrt(dim))
+    if lam_hat < lam_min:
+        return {"kept": 0, "complement": 0, "logit": 0, "undetermined": True,
+                "a_star": float("nan"), "a_flip": float("nan"),
+                "lam_used": lam_hat, "lam_capped": False, "lam_min": lam_min}
+    lam_used = min(lam_hat, lam_ceiling(dim))
+    thr_kept = a_star(lam_used, q, dim)
+    thr_flip = a_flip(lam_used, q, dim)
+    if logit_ratio is None or (logit_visibility is not None
+                               and logit_visibility < 0.05):
+        logit = 0
+    else:
+        logit = +1 if logit_ratio >= 0.8 else -1
+    return {"kept": +1 if a_hat > thr_kept else -1,
+            "complement": +1 if a_hat < thr_flip else -1,
+            "logit": logit, "undetermined": False,
+            "a_star": thr_kept, "a_flip": thr_flip, "lam_used": lam_used,
+            "lam_capped": bool(lam_hat > lam_used), "lam_min": lam_min}
 
 
 def measure(h: np.ndarray, y: np.ndarray, w: np.ndarray, n_classes: int,
@@ -203,23 +262,11 @@ def tier_b(diag: dict, orientation: dict, w: np.ndarray, q: int,
     """
     dim = diag["dim"]
     lam, a_hat = orientation["lam_hat"], orientation["a_hat"]
-    lam_min = float(np.sqrt(dim))
-    if lam < lam_min:
-        signs = {"kept": 0, "complement": 0, "logit": 0}
-        signs.update({"a_hat": a_hat, "a_star": float("nan"),
-                      "a_flip": float("nan"), "lam_hat": lam,
-                      "lam_min": lam_min, "undetermined": True,
-                      "mode": "deployment-batch adaptation (not ID-only)"})
-        return signs
-    thr_kept = a_star(lam, q, dim)
-    thr_flip = a_flip(lam, q, dim)
-    signs = {"kept": +1 if a_hat > thr_kept else -1,
-             "complement": +1 if a_hat < thr_flip else -1,
-             "undetermined": False}
+    ratio, visibility, row_align = None, None, None
     if delta is not None:
         w_row = np.linalg.qr(w.T, mode="reduced")[0]
-        signs["logit_row_align"] = float(np.linalg.norm(w_row.T @ delta) ** 2
-                                         / (delta @ delta + 1e-12))
+        row_align = float(np.linalg.norm(w_row.T @ delta) ** 2
+                          / (delta @ delta + 1e-12))
         if projector is not None:
             raw_resp = float(np.linalg.norm(w @ delta))
             kept_resp = float(np.linalg.norm(
@@ -228,15 +275,15 @@ def tier_b(diag: dict, orientation: dict, w: np.ndarray, q: int,
             visibility = raw_resp / (sigma_top * np.linalg.norm(delta)
                                      + 1e-12)
             ratio = kept_resp / (raw_resp + 1e-12)
-            if visibility < 0.05:
-                signs["logit"] = 0
-            else:
-                signs["logit"] = +1 if ratio >= 0.8 else -1
-            signs["logit_response_ratio"] = ratio
-            signs["logit_visibility"] = visibility
-    signs.update({"a_hat": a_hat, "a_star": thr_kept, "a_flip": thr_flip,
-                  "lam_hat": lam, "lam_min": lam_min,
+    signs = rule_signs(a_hat, lam, dim, q, logit_ratio=ratio,
+                       logit_visibility=visibility)
+    signs.update({"a_hat": a_hat, "lam_hat": lam,
                   "mode": "deployment-batch adaptation (not ID-only)"})
+    if row_align is not None:
+        signs["logit_row_align"] = row_align
+    if ratio is not None:
+        signs["logit_response_ratio"] = ratio
+        signs["logit_visibility"] = visibility
     return signs
 
 
