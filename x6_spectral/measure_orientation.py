@@ -146,6 +146,16 @@ def main() -> None:
         for c in range(n_classes) if (y_val == c).any()])
     cov_within = centered_cls.T @ centered_cls / max(len(centered_cls), 1)
     precision_val = np.linalg.pinv(cov_within, hermitian=True)
+    proj_val = art["mean_correct"] \
+        + ((feats_val - art["mean_correct"]) @ projector) @ projector.T
+    class_means_proj = np.stack([
+        proj_val[y_val == c].mean(0) if (y_val == c).any()
+        else art["mean_correct"] for c in range(n_classes)])
+    centered_proj = np.concatenate([
+        proj_val[y_val == c] - class_means_proj[c]
+        for c in range(n_classes) if (y_val == c).any()])
+    cov_proj = centered_proj.T @ centered_proj / max(len(centered_proj), 1)
+    precision_proj = np.linalg.pinv(cov_proj, hermitian=True)
     id_ref = feats_val[:ID_REF_MAX]
 
     if study_name == "vit":
@@ -201,7 +211,9 @@ def main() -> None:
                              delta=delta, projector=proj_mean)
             trial = batch_trial(id_ref, block, art["mean_correct"],
                                 projector, w, b, class_means_val,
-                                precision=precision_val)
+                                precision=precision_val,
+                                projected_class_means=class_means_proj,
+                                projected_precision=precision_proj)
             draws.append({"orientation": ori, "tier_b": tb,
                           "tier_b_meanspan": {k: tb_mean[k] for k in
                                               ("kept", "complement",

@@ -290,19 +290,24 @@ def tier_b(diag: dict, orientation: dict, w: np.ndarray, q: int,
 def batch_trial(h_id_ref: np.ndarray, batch: np.ndarray, mean_vec: np.ndarray,
                 projector: np.ndarray, w: np.ndarray, b: np.ndarray,
                 class_means: np.ndarray,
-                precision: np.ndarray | None = None) -> dict:
+                precision: np.ndarray | None = None,
+                projected_class_means: np.ndarray | None = None,
+                projected_precision: np.ndarray | None = None) -> dict:
     """Direct deployment-batch trial: AUROC of registered scores, raw vs
     globally projected, using an ID reference sample (validation features).
 
-    Registered score set: MLS / Energy / MSR logit scores, NCC (Euclidean
+    Registered score set: MLS / Energy / MSR logit scores (backprojected
+    logits match the deployed PF.get_logits exactly), NCC (Euclidean
     nearest class centroid), global reconstruction error in the deployed
-    normalized and unnormalized forms, and, when `precision` is given, the
-    actual tied-covariance min-over-class Mahalanobis (rule version r4:
-    the ResNet18 held-out round showed the NCC proxy diverging from true
-    Maha exactly where Maha's projection benefit was largest, so NCC is
-    demoted to a diagnostic and the deployed score is trialed directly;
-    precision is the pseudo-inverse of the val-estimated within-class
-    covariance, flagged val-side like the class means). Returns AUROCs and
+    normalized and unnormalized forms, and the tied-covariance min-over-
+    class Mahalanobis when precisions are given. Rule version r5: the
+    deployed pipeline REFITS distance-family parameters on back-projected
+    features, so the projected arm must use projected-fit statistics
+    (projected class means, precision of the projected within-class
+    covariance); r4 applied raw-space statistics to projected inputs, which
+    collapses the projected arm through the class means' complement offsets
+    and made the Maha trial a constant-negative predictor. All reference
+    statistics are val-estimated and flagged as such. Returns AUROCs and
     projected-minus-raw deltas; positive delta means projection helps that
     score on this batch.
     """
@@ -326,29 +331,39 @@ def batch_trial(h_id_ref: np.ndarray, batch: np.ndarray, mean_vec: np.ndarray,
         return {"mls": peak[:, 0], "energy": lse,
                 "msr": np.exp(peak[:, 0] - lse)}
 
-    def min_sq_dist(z: np.ndarray) -> np.ndarray:
-        d2 = ((z ** 2).sum(1, keepdims=True) - 2 * z @ class_means.T
-              + (class_means ** 2).sum(1)[None, :])
+    def min_sq_dist(z: np.ndarray, means: np.ndarray) -> np.ndarray:
+        d2 = ((z ** 2).sum(1, keepdims=True) - 2 * z @ means.T
+              + (means ** 2).sum(1)[None, :])
         return d2.min(1)
 
-    def min_maha(z: np.ndarray) -> np.ndarray:
-        zp = z @ precision
+    def min_maha(z: np.ndarray, means: np.ndarray,
+                 prec: np.ndarray) -> np.ndarray:
+        zp = z @ prec
         term = (zp * z).sum(1, keepdims=True)
-        cross = zp @ class_means.T
-        mc = ((class_means @ precision) * class_means).sum(1)
+        cross = zp @ means.T
+        mc = ((means @ prec) * means).sum(1)
         return (term - 2 * cross + mc[None, :]).min(1)
 
+    means_proj = projected_class_means if projected_class_means is not None \
+        else class_means
+    prec_proj = projected_precision if projected_precision is not None \
+        else precision
+    arms = {
+        "raw": (h_id_ref, batch, class_means, precision),
+        "global": (project(h_id_ref), project(batch), means_proj, prec_proj),
+    }
     out: dict[str, float] = {}
     trialed = ["mls", "energy", "msr", "ncc"]
-    for tag, id_z, ood_z in (("raw", h_id_ref, batch),
-                             ("global", project(h_id_ref), project(batch))):
+    for tag, (id_z, ood_z, means_arm, prec_arm) in arms.items():
         for name, s_id in logit_scores(id_z).items():
             s_ood = logit_scores(ood_z)[name]
             out[f"{name}_{tag}"] = auroc(s_id, s_ood)
-        out[f"ncc_{tag}"] = auroc(-min_sq_dist(id_z), -min_sq_dist(ood_z))
-        if precision is not None:
-            out[f"maha_{tag}"] = auroc(-min_maha(id_z), -min_maha(ood_z))
-    if precision is not None:
+        out[f"ncc_{tag}"] = auroc(-min_sq_dist(id_z, means_arm),
+                                  -min_sq_dist(ood_z, means_arm))
+        if prec_arm is not None:
+            out[f"maha_{tag}"] = auroc(-min_maha(id_z, means_arm, prec_arm),
+                                       -min_maha(ood_z, means_arm, prec_arm))
+    if "maha_raw" in out and "maha_global" in out:
         trialed.append("maha")
     for name in trialed:
         out[f"{name}_delta"] = out[f"{name}_global"] - out[f"{name}_raw"]
@@ -453,9 +468,13 @@ if __name__ == "__main__":
     tb_weak = tier_b(diag, estimate_orientation(h, weak, proj), mu, q,
                      delta=perp, projector=proj)
     class_means = np.stack([h[y == c].mean(0) for c in range(n_cls)])
+    proj_h = h.mean(0) + ((h - h.mean(0)) @ proj) @ proj.T
+    class_means_p = np.stack([proj_h[y == c].mean(0) for c in range(n_cls)])
     trial = batch_trial(h[:2000], h[:200] + 12.0 * perp, h.mean(0), proj,
                         mu, np.zeros(n_cls), class_means,
-                        precision=np.eye(dim))
+                        precision=np.eye(dim),
+                        projected_class_means=class_means_p,
+                        projected_precision=np.eye(dim))
     print(f"    weak batch: undetermined={tb_weak['undetermined']} "
           f"(lam_hat={tb_weak['lam_hat']:.1f} < {tb_weak['lam_min']:.1f}); "
           f"trial: mls_delta={trial['mls_delta']:+.3f} "
@@ -463,3 +482,33 @@ if __name__ == "__main__":
           f"rec_norm_global={trial['rec_norm_global']:.3f}; "
           f"maha==ncc at identity precision: "
           f"{abs(trial['maha_delta'] - trial['ncc_delta']) < 1e-12}")
+
+    print("[self-test 5] r5 per-arm refit vs the unfaithful r4 mode "
+          "(anisotropic noise: raw precision has huge complement weights, "
+          "so raw stats on the projected arm degenerate the ranking)")
+    rng5 = np.random.default_rng(9)
+    noise_scale = np.ones(dim)
+    noise_scale[dim // 2:] = 0.05
+    y5 = rng5.integers(0, n_cls, 4000)
+    h5 = mu[y5] + rng5.standard_normal((4000, dim)) * noise_scale
+    means5 = np.stack([h5[y5 == c].mean(0) for c in range(n_cls)])
+    cen5 = np.concatenate([h5[y5 == c] - means5[c] for c in range(n_cls)])
+    prec5 = np.linalg.pinv(cen5.T @ cen5 / len(cen5), hermitian=True)
+    total5 = h5 - h5.mean(0)
+    proj5 = np.linalg.eigh(total5.T @ total5 / len(h5))[1][:, -(n_cls - 1):]
+    projected5 = h5.mean(0) + ((h5 - h5.mean(0)) @ proj5) @ proj5.T
+    means5p = np.stack([projected5[y5 == c].mean(0) for c in range(n_cls)])
+    cen5p = np.concatenate([projected5[y5 == c] - means5p[c]
+                            for c in range(n_cls)])
+    prec5p = np.linalg.pinv(cen5p.T @ cen5p / len(cen5p), hermitian=True)
+    batch5 = h5[:200] + 12.0 * (mu[0] / np.linalg.norm(mu[0]))
+    faithful = batch_trial(h5[:2000], batch5, h5.mean(0), proj5, mu,
+                           np.zeros(n_cls), means5, precision=prec5,
+                           projected_class_means=means5p,
+                           projected_precision=prec5p)
+    unfaithful = batch_trial(h5[:2000], batch5, h5.mean(0), proj5, mu,
+                             np.zeros(n_cls), means5, precision=prec5)
+    print(f"    maha_global faithful={faithful['maha_global']:.3f} vs "
+          f"unfaithful (raw stats on projected arm)="
+          f"{unfaithful['maha_global']:.3f}; deltas "
+          f"{faithful['maha_delta']:+.3f} vs {unfaithful['maha_delta']:+.3f}")
