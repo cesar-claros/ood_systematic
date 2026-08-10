@@ -213,10 +213,19 @@ def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
     out = {}
     for key, g in groups.items():
         trial_means = {}
+        trial_aux = {}
         for name in TRIAL_FAMILY:
             vals = [t.get(f"{name}_delta") for t in g["trial"]
                     if t.get(f"{name}_delta") is not None]
             trial_means[name] = float(np.mean(vals)) if vals else None
+            raws = [t.get(f"{name}_raw") for t in g["trial"]
+                    if t.get(f"{name}_raw") is not None]
+            globs = [t.get(f"{name}_global") for t in g["trial"]
+                     if t.get(f"{name}_global") is not None]
+            trial_aux[name] = {
+                "raw": float(np.mean(raws)) if raws else None,
+                "global": float(np.mean(globs)) if globs else None,
+            }
         out[key] = {
             "sign": {op: int(np.sign(sum(g[op]))) for op in
                      ("kept", "complement", "logit", "kept_ms")},
@@ -229,6 +238,7 @@ def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
             "a_hat": float(np.mean(g["a_hat"])),
             "n_runs": len(g["kept"]),
             "trial": trial_means,
+            "trial_aux": trial_aux,
         }
     return out, n_recomputed, n_fallback
 
@@ -273,10 +283,15 @@ def main() -> None:
         sign_true = int(np.sign(cell["delta"]))
         pred, reason = predict(cell, group)
         trial_pred = None
+        trial_raw_auc, trial_global_auc, trial_delta_mean = None, None, None
         for short, fam in TRIAL_FAMILY.items():
             if fam == cell["family"] and cell["variant"] == "global":
                 tv = group["trial"].get(short)
                 trial_pred = int(np.sign(tv)) if tv is not None else None
+                trial_delta_mean = tv
+                aux = group.get("trial_aux", {}).get(short, {})
+                trial_raw_auc = aux.get("raw")
+                trial_global_auc = aux.get("global")
         ms_sign = group["sign"].get("kept_ms", 0)
         ms_pred = None
         if (pred is not None and reason == "rule"
@@ -285,6 +300,9 @@ def main() -> None:
             ms_pred = ms_sign
         joined.append({**cell, "sign_true": sign_true, "rule_pred": pred,
                        "rule_basis": reason, "trial_pred": trial_pred,
+                       "trial_raw_auc": trial_raw_auc,
+                       "trial_global_auc": trial_global_auc,
+                       "trial_delta_mean": trial_delta_mean,
                        "rule_ms_pred": ms_pred,
                        "a_hat": group["a_hat"],
                        "a_hat_ms": group.get("a_hat_ms", float("nan")),
@@ -344,6 +362,19 @@ def main() -> None:
                     if r["rule_basis"] == "orientation undetermined")
         lines.append(f"- deferred (stage 2b): {deferred}; "
                      f"undetermined orientation: {undet}")
+        for short, fam in sorted(TRIAL_FAMILY.items()):
+            sub = [r for r in rows if r["trial_pred"] is not None
+                   and r["family"] == fam]
+            raws = [r["trial_raw_auc"] for r in sub
+                    if r["trial_raw_auc"] is not None]
+            globs = [r["trial_global_auc"] for r in sub
+                     if r["trial_global_auc"] is not None]
+            if raws:
+                ceiling = " CEILING" if np.mean(raws) > 0.98 else ""
+                lines.append(
+                    f"- trial magnitudes {fam}: raw AUC "
+                    f"{np.mean(raws):.3f}, global {np.mean(globs):.3f}"
+                    f"{ceiling}")
         lines.append("")
     report_path = out_dir / pool["report_md"]
     report_path.write_text("\n".join(lines))
