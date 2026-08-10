@@ -287,6 +287,178 @@ def tier_b(diag: dict, orientation: dict, w: np.ndarray, q: int,
     return signs
 
 
+def batch_augrc(confidence: np.ndarray, failure: np.ndarray) -> float:
+    """Empirical AUGRC (lower is better) on a mixed batch, as in the paper."""
+    order = np.argsort(-confidence, kind="stable")
+    cum_fail = np.cumsum(failure[order])
+    return float(cum_fail.mean() / len(failure))
+
+
+#: r7 trial keys: key -> (base arm, variant arm). Deltas are
+#: metric(base) - metric(variant) so positive means the variant helps,
+#: matching the projection-targets sign convention (AUGRC lower-better; the
+#: AUROC diagnostics are negated accordingly inside deployed_trial).
+DEPLOYED_TRIAL_KEYS: dict[str, tuple[str, str]] = {
+    "mls": ("raw", "global"), "energy": ("raw", "global"),
+    "msr": ("raw", "global"), "gradnorm": ("raw", "global"),
+    "maha": ("raw", "global"),
+    "gradnorm_cp": ("raw", "cp"), "maha_cp": ("raw", "cp"),
+    "recerr_cp": ("recerr_global", "recerr_cp"),
+    "recerr_class": ("recerr_global", "recerr_class"),
+}
+
+
+def make_backprojector(mean: np.ndarray, components: np.ndarray, n: int):
+    """Deployed PF back-projection: center, project on top-n, un-center."""
+    comps = components[:n]
+
+    def back_project(z: np.ndarray) -> np.ndarray:
+        return mean + ((z - mean) @ comps.T) @ comps
+
+    return back_project
+
+
+def deployed_pf_rank(explained_variance_ratio: np.ndarray,
+                     variance_explained: float) -> int:
+    """Replicates the deployed component-count rule exactly."""
+    n = int((np.cumsum(explained_variance_ratio)
+             <= variance_explained).sum()) + 1
+    return min(n, len(explained_variance_ratio))
+
+
+def deployed_scores(z: np.ndarray, w: np.ndarray, b: np.ndarray,
+                    bp_global, class_bp: list | None,
+                    maha_sets: dict | None) -> dict[str, np.ndarray]:
+    """Per-sample scores of the r7 registered set, all arms, higher = ID.
+
+    Faithful to the deployed pipeline: logits of back-projections
+    (PF.get_logits), class-pred routing by raw-logit argmax, normalized
+    reconstruction error -|z - bp(z)|/|z| with per-class max for the
+    `class` variant and predicted-class gather for `class pred`, GradNorm
+    in closed form |C softmax - 1|_1 x |z|_1, and tied-covariance
+    min-over-class Mahalanobis with per-arm refit statistics (maha_sets =
+    {"raw"|"global"|"cp": (class_means, precision)}).
+    """
+    out: dict[str, np.ndarray] = {}
+    z_norm = np.linalg.norm(z, axis=1) + 1e-12
+    l1_z = np.abs(z).sum(1)
+
+    def logit_block(logits: np.ndarray, tag: str, l1_feats: np.ndarray
+                    ) -> None:
+        peak = logits.max(1, keepdims=True)
+        lse = np.log(np.exp(logits - peak).sum(1)) + peak[:, 0]
+        p = np.exp(logits - peak)
+        p /= p.sum(1, keepdims=True)
+        n_cls = logits.shape[1]
+        out[f"mls_{tag}"] = peak[:, 0]
+        out[f"energy_{tag}"] = lse
+        out[f"msr_{tag}"] = np.exp(peak[:, 0] - lse)
+        out[f"gradnorm_{tag}"] = np.abs(n_cls * p - 1).sum(1) * l1_feats
+
+    def min_maha(zz: np.ndarray, means: np.ndarray,
+                 prec: np.ndarray) -> np.ndarray:
+        zp = zz @ prec
+        term = (zp * zz).sum(1, keepdims=True)
+        cross = zp @ means.T
+        mc = ((means @ prec) * means).sum(1)
+        return (term - 2 * cross + mc[None, :]).min(1)
+
+    logits_raw = z @ w.T + b
+    logit_block(logits_raw, "raw", l1_z)
+    preds = logits_raw.argmax(1)
+
+    z_g = bp_global(z)
+    logit_block(z_g @ w.T + b, "global", np.abs(z_g).sum(1))
+    out["recerr_global"] = -np.linalg.norm(z - z_g, axis=1) / z_norm
+
+    if class_bp is not None:
+        z_cp = np.empty_like(z)
+        best = np.full(len(z), -np.inf)
+        for c, (mean_c, comps_c, n_c) in enumerate(class_bp):
+            bp_c = make_backprojector(mean_c, comps_c, n_c)(z)
+            score_c = -np.linalg.norm(z - bp_c, axis=1) / z_norm
+            best = np.maximum(best, score_c)
+            mask = preds == c
+            if mask.any():
+                z_cp[mask] = bp_c[mask]
+        out["recerr_class"] = best
+        out["recerr_cp"] = np.empty(len(z))
+        for c in range(len(class_bp)):
+            mask = preds == c
+            if mask.any():
+                out["recerr_cp"][mask] = \
+                    -np.linalg.norm(z[mask] - z_cp[mask], axis=1) \
+                    / z_norm[mask]
+        logit_block(z_cp @ w.T + b, "cp", np.abs(z_cp).sum(1))
+        out["z_cp"] = z_cp
+
+    if maha_sets is not None:
+        for arm, zz in (("raw", z), ("global", z_g),
+                        ("cp", out.get("z_cp"))):
+            params = maha_sets.get(arm)
+            if params is None or zz is None:
+                continue
+            means, prec = params
+            out[f"maha_{arm}"] = -min_maha(zz, means, prec)
+    out.pop("z_cp", None)
+    return out
+
+
+def deployed_trial(id_block: np.ndarray, id_block_fail: np.ndarray,
+                   batch: np.ndarray, w: np.ndarray, b: np.ndarray,
+                   bp_global, class_bp: list | None,
+                   maha_sets: dict | None) -> dict[str, float]:
+    """r7 deployment-batch trial: batch-level AUGRC as the primary metric.
+
+    The mixed evaluation batch is id_block (1:1 with the OOD batch, val
+    correctness supplying the ID failure labels) plus the OOD batch (all
+    failures), mirroring the paper's failure definition. Deltas are
+    AUGRC(base arm) - AUGRC(variant arm): positive = variant helps. AUROC
+    deltas ride along as diagnostics (the r5 rounds showed batch AUROC
+    saturates for near-ceiling detectors and can disagree in sign with the
+    deployed metric).
+    """
+    from scipy.stats import rankdata
+
+    def auroc(s_id: np.ndarray, s_ood: np.ndarray) -> float:
+        joint = np.concatenate([s_ood, s_id])
+        ranks = rankdata(joint)
+        n_o, n_i = len(s_ood), len(s_id)
+        return float((ranks[n_o:].sum() - n_i * (n_i + 1) / 2)
+                     / (n_o * n_i))
+
+    id_scores = deployed_scores(id_block, w, b, bp_global, class_bp,
+                                maha_sets)
+    ood_scores = deployed_scores(batch, w, b, bp_global, class_bp,
+                                 maha_sets)
+    failure = np.concatenate([id_block_fail.astype(float),
+                              np.ones(len(batch))])
+
+    def arm_key(key: str, arm: str) -> str:
+        if key.startswith("recerr"):
+            return arm
+        base = key[:-len("_cp")] if key.endswith("_cp") else key
+        return f"{base}_{arm}"
+
+    out: dict[str, float] = {}
+    for key, (base_arm, var_arm) in DEPLOYED_TRIAL_KEYS.items():
+        bk, vk = arm_key(key, base_arm), arm_key(key, var_arm)
+        if bk not in id_scores or vk not in id_scores:
+            continue
+        vals = {}
+        for tag, sk in (("base", bk), ("var", vk)):
+            conf = np.concatenate([id_scores[sk], ood_scores[sk]])
+            vals[f"augrc_{tag}"] = batch_augrc(conf, failure)
+            vals[f"auroc_{tag}"] = auroc(id_scores[sk], ood_scores[sk])
+        out[f"{key}_augrc_raw"] = vals["augrc_base"]
+        out[f"{key}_augrc_var"] = vals["augrc_var"]
+        out[f"{key}_augrc_delta"] = vals["augrc_base"] - vals["augrc_var"]
+        out[f"{key}_auroc_raw"] = vals["auroc_base"]
+        out[f"{key}_auroc_var"] = vals["auroc_var"]
+        out[f"{key}_auroc_delta"] = vals["auroc_var"] - vals["auroc_base"]
+    return out
+
+
 def batch_trial(h_id_ref: np.ndarray, batch: np.ndarray, mean_vec: np.ndarray,
                 projector: np.ndarray, w: np.ndarray, b: np.ndarray,
                 class_means: np.ndarray,
@@ -512,3 +684,41 @@ if __name__ == "__main__":
           f"unfaithful (raw stats on projected arm)="
           f"{unfaithful['maha_global']:.3f}; deltas "
           f"{faithful['maha_delta']:+.3f} vs {unfaithful['maha_delta']:+.3f}")
+
+    print("[self-test 6] r7 deployed trial: keys, invariants, batch AUGRC")
+    rng6 = np.random.default_rng(11)
+    total = h - h.mean(0)
+    eigv6 = np.linalg.eigh(total.T @ total / len(h))[1]
+    bp_g6 = make_backprojector(h.mean(0), eigv6.T[::-1], n_cls - 1 + 4)
+    class_bp6 = []
+    for c in range(n_cls):
+        block = h[y == c]
+        e_c = np.linalg.eigh(np.cov(block.T))[1]
+        class_bp6.append((block.mean(0), e_c.T[::-1], 6))
+    same_bp6 = [(h.mean(0), eigv6.T[::-1], n_cls - 1 + 4)] * n_cls
+    id_blk = h[:128]
+    id_fail = rng6.random(128) < 0.1
+    batch6 = h[200:328] + 10.0 * perp
+    cm6 = np.stack([h[y == c].mean(0) for c in range(n_cls)])
+    cen6 = np.concatenate([h[y == c] - cm6[c] for c in range(n_cls)])
+    prec6 = np.linalg.pinv(cen6.T @ cen6 / len(cen6), hermitian=True,
+                           rcond=1e-6)
+    sets6 = {"raw": (cm6, prec6), "global": (cm6, prec6),
+             "cp": (cm6, prec6)}
+    t7 = deployed_trial(id_blk, id_fail, batch6, mu, np.zeros(n_cls),
+                        bp_g6, class_bp6, sets6)
+    sc = deployed_scores(h[:64], mu, np.zeros(n_cls), bp_g6, class_bp6,
+                         sets6)
+    class_geq_cp = bool(np.all(sc["recerr_class"] >= sc["recerr_cp"] - 1e-12))
+    sc_same = deployed_scores(h[:64], mu, np.zeros(n_cls), bp_g6, same_bp6,
+                              sets6)
+    cp_eq_glob = bool(np.allclose(sc_same["recerr_cp"],
+                                  sc_same["recerr_global"]))
+    g_uniform = deployed_scores(np.zeros((4, dim)), np.zeros((n_cls, dim)),
+                                np.zeros(n_cls), bp_g6, None, None)
+    print(f"    keys={len(t7)} (expect 54); recerr_class>=recerr_cp: "
+          f"{class_geq_cp}; cp==global when class bps identical: "
+          f"{cp_eq_glob}; gradnorm at uniform logits = "
+          f"{g_uniform['gradnorm_raw'].max():.1e}; "
+          f"recerr_cp_augrc_delta={t7['recerr_cp_augrc_delta']:+.3f}, "
+          f"maha_augrc_delta={t7['maha_augrc_delta']:+.3f}")

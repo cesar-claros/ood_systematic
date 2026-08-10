@@ -45,12 +45,23 @@ from aggregate_tier_a import parse_model_path
 from spectra_campaign_harness import FAMILY_OPERATOR, rule_signs
 
 RECERROR_FAMILIES = {"PCA RecError", "KPCA RecError"}
-#: r4: the Maha trial uses the actual tied-covariance min-over-class score
-#: (maha_delta, present in orientation JSONs measured under r4); the NCC
-#: proxy diverged from true Maha on the ResNet18 round and is diagnostic
-#: only. Cells from pre-r4 JSONs simply get no Maha trial prediction.
+#: Legacy (r4/r5) trial mapping: AUROC deltas of our reconstructed
+#: projector, global variant only. Used as fallback for pre-r7 JSONs.
 TRIAL_FAMILY = {"mls": "MLS", "energy": "Energy", "msr": "MSR",
                 "maha": "Maha"}
+#: r7 deployed-trial mapping: batch-AUGRC deltas computed with the
+#: deployed PF params (exact components, tuned k, per-class estimators),
+#: variant-aware. Preferred whenever trial_deployed_mean is present.
+TRIAL_FAMILY7 = {
+    "mls": ("MLS", "global"), "energy": ("Energy", "global"),
+    "msr": ("MSR", "global"), "maha": ("Maha", "global"),
+    "gradnorm": ("GradNorm", "global"),
+    "maha_cp": ("Maha", "class pred"),
+    "gradnorm_cp": ("GradNorm", "class pred"),
+    "recerr_cp": ("PCA RecError", "class pred"),
+    "recerr_class": ("PCA RecError", "class"),
+}
+TRIAL7_LOOKUP = {fv: key for key, fv in TRIAL_FAMILY7.items()}
 MATERIAL_DELTA = 1.0
 
 #: Per-pool loading configuration, mirroring make_projection_targets.py:
@@ -202,7 +213,7 @@ def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
             g = groups.setdefault(key, {"kept": [], "complement": [],
                                         "logit": [], "kept_ms": [],
                                         "a_hat": [], "a_hat_ms": [],
-                                        "trial": []})
+                                        "trial": [], "trial7": []})
             g["kept"].append(kept)
             g["complement"].append(comp)
             g["logit"].append(logit)
@@ -210,6 +221,7 @@ def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
             g["a_hat"].append(s["a_hat_mean"])
             g["a_hat_ms"].append(a_ms)
             g["trial"].append(s["trial_mean"])
+            g["trial7"].append(s.get("trial_deployed_mean", {}))
     out = {}
     for key, g in groups.items():
         trial_means = {}
@@ -226,6 +238,16 @@ def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
                 "raw": float(np.mean(raws)) if raws else None,
                 "global": float(np.mean(globs)) if globs else None,
             }
+        trial7 = {}
+        for name in TRIAL_FAMILY7:
+            entry = {}
+            for suffix in ("augrc_delta", "augrc_raw", "augrc_var",
+                           "auroc_raw", "auroc_var"):
+                vals = [t.get(f"{name}_{suffix}") for t in g["trial7"]
+                        if t.get(f"{name}_{suffix}") is not None]
+                entry[suffix] = float(np.mean(vals)) if vals else None
+            if entry["augrc_delta"] is not None:
+                trial7[name] = entry
         out[key] = {
             "sign": {op: int(np.sign(sum(g[op]))) for op in
                      ("kept", "complement", "logit", "kept_ms")},
@@ -239,6 +261,7 @@ def load_orientation_groups(ori_dir: Path) -> tuple[dict, int, int]:
             "n_runs": len(g["kept"]),
             "trial": trial_means,
             "trial_aux": trial_aux,
+            "trial7": trial7,
         }
     return out, n_recomputed, n_fallback
 
@@ -283,15 +306,30 @@ def main() -> None:
         sign_true = int(np.sign(cell["delta"]))
         pred, reason = predict(cell, group)
         trial_pred = None
+        trial_source = None
         trial_raw_auc, trial_global_auc, trial_delta_mean = None, None, None
-        for short, fam in TRIAL_FAMILY.items():
-            if fam == cell["family"] and cell["variant"] == "global":
-                tv = group["trial"].get(short)
-                trial_pred = int(np.sign(tv)) if tv is not None else None
-                trial_delta_mean = tv
-                aux = group.get("trial_aux", {}).get(short, {})
-                trial_raw_auc = aux.get("raw")
-                trial_global_auc = aux.get("global")
+        trial_base_augrc, trial_var_augrc = None, None
+        key7 = TRIAL7_LOOKUP.get((cell["family"], cell["variant"]))
+        entry7 = group.get("trial7", {}).get(key7) if key7 else None
+        if entry7 is not None:
+            trial_pred = int(np.sign(entry7["augrc_delta"]))
+            trial_delta_mean = entry7["augrc_delta"]
+            trial_base_augrc = entry7["augrc_raw"]
+            trial_var_augrc = entry7["augrc_var"]
+            trial_raw_auc = entry7["auroc_raw"]
+            trial_global_auc = entry7["auroc_var"]
+            trial_source = "deployed"
+        else:
+            for short, fam in TRIAL_FAMILY.items():
+                if fam == cell["family"] and cell["variant"] == "global":
+                    tv = group["trial"].get(short)
+                    trial_pred = int(np.sign(tv)) if tv is not None else None
+                    trial_delta_mean = tv
+                    aux = group.get("trial_aux", {}).get(short, {})
+                    trial_raw_auc = aux.get("raw")
+                    trial_global_auc = aux.get("global")
+                    if trial_pred is not None:
+                        trial_source = "legacy"
         ms_sign = group["sign"].get("kept_ms", 0)
         ms_pred = None
         if (pred is not None and reason == "rule"
@@ -300,9 +338,12 @@ def main() -> None:
             ms_pred = ms_sign
         joined.append({**cell, "sign_true": sign_true, "rule_pred": pred,
                        "rule_basis": reason, "trial_pred": trial_pred,
+                       "trial_source": trial_source,
                        "trial_raw_auc": trial_raw_auc,
                        "trial_global_auc": trial_global_auc,
                        "trial_delta_mean": trial_delta_mean,
+                       "trial_base_augrc": trial_base_augrc,
+                       "trial_var_augrc": trial_var_augrc,
                        "rule_ms_pred": ms_pred,
                        "a_hat": group["a_hat"],
                        "a_hat_ms": group.get("a_hat_ms", float("nan")),
@@ -347,6 +388,11 @@ def main() -> None:
         lines.append(f"## {scope_name}")
         lines.append(f"- rule arm: {accuracy(rows, 'rule_pred')}; "
                      f"trial arm: {accuracy(rows, 'trial_pred')}")
+        dep = [r for r in rows if r["trial_source"] == "deployed"]
+        leg = [r for r in rows if r["trial_source"] == "legacy"]
+        lines.append(f"- trial arm by source: deployed "
+                     f"{accuracy(dep, 'trial_pred')}; legacy "
+                     f"{accuracy(leg, 'trial_pred')}")
         lines.append(f"- nulls: {null_line(rows)}")
         for op in ("kept", "complement", "logit"):
             sub = [r for r in rows if r["operator"] == op
@@ -362,19 +408,31 @@ def main() -> None:
                     if r["rule_basis"] == "orientation undetermined")
         lines.append(f"- deferred (stage 2b): {deferred}; "
                      f"undetermined orientation: {undet}")
-        for short, fam in sorted(TRIAL_FAMILY.items()):
-            sub = [r for r in rows if r["trial_pred"] is not None
-                   and r["family"] == fam]
-            raws = [r["trial_raw_auc"] for r in sub
-                    if r["trial_raw_auc"] is not None]
-            globs = [r["trial_global_auc"] for r in sub
-                     if r["trial_global_auc"] is not None]
-            if raws:
-                ceiling = " CEILING" if np.mean(raws) > 0.98 else ""
-                lines.append(
-                    f"- trial magnitudes {fam}: raw AUC "
-                    f"{np.mean(raws):.3f}, global {np.mean(globs):.3f}"
-                    f"{ceiling}")
+        combos = sorted({(r["family"], r["variant"]) for r in rows
+                         if r["trial_pred"] is not None})
+        for fam, var in combos:
+            sub = [r for r in rows if r["family"] == fam
+                   and r["variant"] == var and r["trial_pred"] is not None]
+
+            def mean_of(field: str) -> float | None:
+                vals = [r[field] for r in sub if r[field] is not None]
+                return float(np.mean(vals)) if vals else None
+
+            parts = []
+            base_a, var_a = mean_of("trial_base_augrc"), \
+                mean_of("trial_var_augrc")
+            if base_a is not None:
+                parts.append(f"AUGRC base {base_a:.4f} var {var_a:.4f}")
+            raw_r, var_r = mean_of("trial_raw_auc"), \
+                mean_of("trial_global_auc")
+            if raw_r is not None:
+                ceiling = " CEILING" if raw_r > 0.98 else ""
+                parts.append(f"AUROC base {raw_r:.3f} var {var_r:.3f}"
+                             f"{ceiling}")
+            n_dep = sum(r["trial_source"] == "deployed" for r in sub)
+            lines.append(f"- trial magnitudes {fam} / {var}: "
+                         + "; ".join(parts)
+                         + f" (deployed {n_dep}/{len(sub)})")
         lines.append("")
     report_path = out_dir / pool["report_md"]
     report_path.write_text("\n".join(lines))

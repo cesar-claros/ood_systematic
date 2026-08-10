@@ -43,13 +43,68 @@ from fd_shifts.loaders.data_loader import FDShiftsDataLoader
 from src import utils
 from src.trained_module import TrainedModule
 
+from src.csfs._utils import TorchStandardScaler  # noqa: F401 (unpickling)
+from torch_pca import PCA  # noqa: F401 (unpickling of saved PF params)
+
 from measure_checkpoint import jsonable, load_model, to_f64
-from spectra_campaign_harness import batch_trial, estimate_orientation, tier_b
+from spectra_campaign_harness import (batch_trial, deployed_pf_rank,
+                                      deployed_trial, estimate_orientation,
+                                      make_backprojector, tier_b)
 
 BATCH_PER_DRAW = 128
 N_DRAWS = 5
 Q_COVERAGE = 0.90
 ID_REF_MAX = 4000
+MODEL_OPTS = "_RW0_RF0_ASHNone"
+
+
+def load_deployed_pf(cf) -> dict:
+    """Load the deployed ProjectionFiltering params saved by csf_fit (r7).
+
+    Returns numpy back-projection ingredients for the global and per-class
+    estimators: exact fitted components, the tuned variance_explained, and
+    the deployed component-count rule, so the trial replicates
+    get_backprojection verbatim instead of reconstructing a projector.
+    """
+    base = Path(cf.exp.dir) / "params"
+    out: dict = {"found_global": False, "found_class": False}
+    g_path = base / f"ProjectionFiltering_global_params{MODEL_OPTS}.pt"
+    if g_path.exists():
+        params = torch.load(g_path, map_location="cpu")
+        mean = params["tss"].mean_.numpy().astype(np.float64)[0]
+        pca = params["pca_estimator"]
+        comps = pca.components_.numpy().astype(np.float64)
+        n_g = deployed_pf_rank(pca.explained_variance_ratio_.numpy(),
+                               float(params["variance_explained"]))
+        out.update(found_global=True, global_mean=mean, global_comps=comps,
+                   n_global=int(n_g),
+                   variance_explained=float(params["variance_explained"]))
+    c_path = base / f"ProjectionFiltering_class_params{MODEL_OPTS}.pt"
+    if c_path.exists():
+        params = torch.load(c_path, map_location="cpu")
+        v = float(params["variance_explained"])
+        class_bp = []
+        for tss_c, pca_c in zip(params["tss"], params["pca_estimator"]):
+            mean_c = tss_c.mean_.numpy().astype(np.float64)[0]
+            comps_c = pca_c.components_.numpy().astype(np.float64)
+            n_c = deployed_pf_rank(
+                pca_c.explained_variance_ratio_.numpy(), v)
+            class_bp.append((mean_c, comps_c, int(n_c)))
+        out.update(found_class=True, class_bp=class_bp,
+                   variance_explained_class=v)
+    return out
+
+
+def refit_maha(z: np.ndarray, labels: np.ndarray, n_classes: int,
+               fallback_mean: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Val-side tied-covariance Mahalanobis refit (rcond as deployed)."""
+    means = np.stack([z[labels == c].mean(0) if (labels == c).any()
+                      else fallback_mean for c in range(n_classes)])
+    centered = np.concatenate([z[labels == c] - means[c]
+                               for c in range(n_classes)
+                               if (labels == c).any()])
+    cov = centered.T @ centered / max(len(centered), 1)
+    return means, np.linalg.pinv(cov, hermitian=True, rcond=1e-6)
 NAME_NORMALIZATION = {
     "tinyimagenet_resize": "tinyimagenet", "tinyimagenet_384": "tinyimagenet",
     "cifar10_384": "cifar10", "cifar100_384": "cifar100",
@@ -158,6 +213,43 @@ def main() -> None:
     precision_proj = np.linalg.pinv(cov_proj, hermitian=True)
     id_ref = feats_val[:ID_REF_MAX]
 
+    pf = load_deployed_pf(cf)
+    if pf["found_global"]:
+        bp_global = make_backprojector(pf["global_mean"],
+                                       pf["global_comps"], pf["n_global"])
+    else:
+        logger.warning("Deployed global PF params missing; r7 trial falls "
+                       "back to the stage-1 projector")
+        bp_global = make_backprojector(art["mean_correct"], projector.T,
+                                       q_used)
+    class_bp = pf.get("class_bp") if pf["found_class"] else None
+
+    logits_val = feats_val @ w.T + b
+    correct_val = logits_val.argmax(1) == y_val
+    n_id_blocks = max(1, min(N_DRAWS, len(feats_val) // BATCH_PER_DRAW))
+    id_blocks = [feats_val[d * BATCH_PER_DRAW:(d + 1) * BATCH_PER_DRAW]
+                 for d in range(n_id_blocks)]
+    id_fail_blocks = [~correct_val[d * BATCH_PER_DRAW:
+                                   (d + 1) * BATCH_PER_DRAW]
+                      for d in range(n_id_blocks)]
+
+    logger.info("r7 precompute: per-arm Mahalanobis refits on val")
+    z_g_val = bp_global(feats_val)
+    maha_sets = {"raw": refit_maha(feats_val, y_val, n_classes,
+                                   art["mean_correct"]),
+                 "global": refit_maha(z_g_val, y_val, n_classes,
+                                      art["mean_correct"])}
+    if class_bp is not None:
+        preds_val = logits_val.argmax(1)
+        z_cp_val = np.empty_like(feats_val)
+        for c, (mean_c, comps_c, n_c) in enumerate(class_bp):
+            mask = preds_val == c
+            if mask.any():
+                z_cp_val[mask] = make_backprojector(mean_c, comps_c,
+                                                    n_c)(feats_val[mask])
+        maha_sets["cp"] = refit_maha(z_cp_val, y_val, n_classes,
+                                     art["mean_correct"])
+
     if study_name == "vit":
         resize_img = (384, 384)
     elif str(cf.data.dataset) == "tiny-imagenet-200":
@@ -187,7 +279,14 @@ def main() -> None:
         "coverage_at_q": coverage_at_q, "k_save": int(k_save),
         "n_val": int(len(feats_val)), "id_ref_n": int(len(id_ref)),
         "constants": {"batch_per_draw": BATCH_PER_DRAW, "n_draws": N_DRAWS,
-                      "q_coverage": Q_COVERAGE},
+                      "q_coverage": Q_COVERAGE,
+                      "augrc_prevalence": "1:1 per-draw val blocks"},
+        "pf_params": {"found_global": pf["found_global"],
+                      "found_class": pf["found_class"],
+                      "n_global": pf.get("n_global"),
+                      "variance_explained": pf.get("variance_explained"),
+                      "class_ranks": [n for _, _, n in class_bp]
+                      if class_bp else None},
         "datasets": {},
     }
 
@@ -214,11 +313,15 @@ def main() -> None:
                                 precision=precision_val,
                                 projected_class_means=class_means_proj,
                                 projected_precision=precision_proj)
+            trial7 = deployed_trial(id_blocks[d % n_id_blocks],
+                                    id_fail_blocks[d % n_id_blocks],
+                                    block, w, b, bp_global, class_bp,
+                                    maha_sets)
             draws.append({"orientation": ori, "tier_b": tb,
                           "tier_b_meanspan": {k: tb_mean[k] for k in
                                               ("kept", "complement",
                                                "undetermined", "a_hat")},
-                          "trial": trial})
+                          "trial": trial, "trial_deployed": trial7})
 
         def majority(key: str) -> int:
             votes = [d["tier_b"][key] for d in draws
@@ -243,6 +346,9 @@ def main() -> None:
                                   for d in draws),
             "trial_mean": {k: float(np.mean([d["trial"][k] for d in draws]))
                            for k in draws[0]["trial"]},
+            "trial_deployed_mean": {
+                k: float(np.mean([d["trial_deployed"][k] for d in draws]))
+                for k in draws[0]["trial_deployed"]},
             "runtime_sec": round(time.time() - t1, 1),
         }
         record["datasets"][label] = {"summary": summary, "draws": draws}

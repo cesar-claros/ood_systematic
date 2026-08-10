@@ -73,15 +73,17 @@ python x6_spectral/score_tier_b.py --pool resnet18
 
 Outputs: `projection_targets_heldout_resnet18.csv` (pooled Wilcoxon table under the pinned within-slice semantics) and `outputs/tier_b_heldout_resnet18_{scoring.csv,report.md}` (cell-level trial-arm verdict; rule arms ride along as the pre-registered negative control). Single run per cell: no run averaging or checkpoint-level uncertainty, as pinned in `FREEZE.md`. The `--pool dev` paths of both scripts regenerate the frozen dev artifacts byte-identically (regression-checked), so the generalization does not touch gate-1 semantics. Tier-A one-sided claims for ResNet18, if stage 1 emits any, are checked against the pooled held-out table.
 
-**r5 re-measurement (see FREEZE: decision r4 and patch r5).** The trial arm measures the actual tied-covariance Mahalanobis with per-arm refit statistics (r4's raw-stats-on-projected-inputs execution was unfaithful and collapsed the Maha trial; mechanism and synthetic reproduction in FREEZE.md). Dev + ResNet18 are the calibration set; CLIP/SSL is the pristine tier. To re-measure under r5:
+**r7 re-measurement (see FREEZE: rule version r7).** The trial now loads the DEPLOYED PF estimators per checkpoint (exact components, tuned k, per-class projectors; no stage-1b train re-forward needed), uses batch-level AUGRC as the primary statistic (AUROC demoted to a CEILING-flagged diagnostic), and covers the r6 families (GradNorm closed-form, Maha class-pred, PCA RecError class-pred and class). Dev + ResNet18 are the calibration set; CLIP/SSL is the pristine tier. To re-measure under r7:
 
 ```bash
-mv x6_spectral/outputs/orientation x6_spectral/outputs/orientation_r4   # keep the r4 record
+mv x6_spectral/outputs/orientation x6_spectral/outputs/orientation_r5   # keep the r5 record
 bash x6_spectral/run_x6_orientation.sh                                  # dev pool
 bash x6_spectral/run_x6_orientation.sh x6_spectral/manifest_heldout_resnet18.txt
 python x6_spectral/score_tier_b.py --pool dev
 python x6_spectral/score_tier_b.py --pool resnet18
 ```
+
+Per-checkpoint runtime grows somewhat (per-class back-projections and three tied-covariance refits, the largest a D=2048 pinv) but stays forward-dominated. If a checkpoint logs "Deployed global PF params missing", its `pf_params` flag records the stage-1 fallback; treat those cells as reduced-fidelity.
 
 ## Freeze gates (status in `FREEZE.md`)
 
