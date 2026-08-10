@@ -193,25 +193,36 @@ def main() -> None:
     eval_val = utils.compute_model_evaluations(model, datamodule, "val")
     feats_val = to_f64(eval_val["encoded"])
     y_val = to_f64(eval_val["labels"]).astype(np.int64)
+
+    # r8: out-of-sample ID reference. All val-side REFIT statistics use the
+    # second half of val; all ID reference blocks come from the first half,
+    # so no reference sample is in-sample for any refit. The r7 round showed
+    # the in-sample bias hits refit-based scores asymmetrically (the D-dim
+    # raw refit overfits the shared reference more than the k-dim projected
+    # refit, biasing base-minus-variant negative for Maha).
+    split_at = len(feats_val) // 2
+    ref_feats, ref_y = feats_val[:split_at], y_val[:split_at]
+    fit_feats, fit_y = feats_val[split_at:], y_val[split_at:]
+
     class_means_val = np.stack([
-        feats_val[y_val == c].mean(0) if (y_val == c).any()
+        fit_feats[fit_y == c].mean(0) if (fit_y == c).any()
         else art["mean_correct"] for c in range(n_classes)])
     centered_cls = np.concatenate([
-        feats_val[y_val == c] - class_means_val[c]
-        for c in range(n_classes) if (y_val == c).any()])
+        fit_feats[fit_y == c] - class_means_val[c]
+        for c in range(n_classes) if (fit_y == c).any()])
     cov_within = centered_cls.T @ centered_cls / max(len(centered_cls), 1)
     precision_val = np.linalg.pinv(cov_within, hermitian=True)
-    proj_val = art["mean_correct"] \
-        + ((feats_val - art["mean_correct"]) @ projector) @ projector.T
+    proj_fit = art["mean_correct"] \
+        + ((fit_feats - art["mean_correct"]) @ projector) @ projector.T
     class_means_proj = np.stack([
-        proj_val[y_val == c].mean(0) if (y_val == c).any()
+        proj_fit[fit_y == c].mean(0) if (fit_y == c).any()
         else art["mean_correct"] for c in range(n_classes)])
     centered_proj = np.concatenate([
-        proj_val[y_val == c] - class_means_proj[c]
-        for c in range(n_classes) if (y_val == c).any()])
+        proj_fit[fit_y == c] - class_means_proj[c]
+        for c in range(n_classes) if (fit_y == c).any()])
     cov_proj = centered_proj.T @ centered_proj / max(len(centered_proj), 1)
     precision_proj = np.linalg.pinv(cov_proj, hermitian=True)
-    id_ref = feats_val[:ID_REF_MAX]
+    id_ref = ref_feats[:ID_REF_MAX]
 
     pf = load_deployed_pf(cf)
     if pf["found_global"]:
@@ -224,30 +235,31 @@ def main() -> None:
                                        q_used)
     class_bp = pf.get("class_bp") if pf["found_class"] else None
 
-    logits_val = feats_val @ w.T + b
-    correct_val = logits_val.argmax(1) == y_val
-    n_id_blocks = max(1, min(N_DRAWS, len(feats_val) // BATCH_PER_DRAW))
-    id_blocks = [feats_val[d * BATCH_PER_DRAW:(d + 1) * BATCH_PER_DRAW]
+    logits_ref = ref_feats @ w.T + b
+    correct_ref = logits_ref.argmax(1) == ref_y
+    n_id_blocks = max(1, min(N_DRAWS, len(ref_feats) // BATCH_PER_DRAW))
+    id_blocks = [ref_feats[d * BATCH_PER_DRAW:(d + 1) * BATCH_PER_DRAW]
                  for d in range(n_id_blocks)]
-    id_fail_blocks = [~correct_val[d * BATCH_PER_DRAW:
+    id_fail_blocks = [~correct_ref[d * BATCH_PER_DRAW:
                                    (d + 1) * BATCH_PER_DRAW]
                       for d in range(n_id_blocks)]
 
-    logger.info("r7 precompute: per-arm Mahalanobis refits on val")
-    z_g_val = bp_global(feats_val)
-    maha_sets = {"raw": refit_maha(feats_val, y_val, n_classes,
+    logger.info("r7/r8 precompute: per-arm Mahalanobis refits on the val "
+                "fit half")
+    z_g_fit = bp_global(fit_feats)
+    maha_sets = {"raw": refit_maha(fit_feats, fit_y, n_classes,
                                    art["mean_correct"]),
-                 "global": refit_maha(z_g_val, y_val, n_classes,
+                 "global": refit_maha(z_g_fit, fit_y, n_classes,
                                       art["mean_correct"])}
     if class_bp is not None:
-        preds_val = logits_val.argmax(1)
-        z_cp_val = np.empty_like(feats_val)
+        preds_fit = (fit_feats @ w.T + b).argmax(1)
+        z_cp_fit = np.empty_like(fit_feats)
         for c, (mean_c, comps_c, n_c) in enumerate(class_bp):
-            mask = preds_val == c
+            mask = preds_fit == c
             if mask.any():
-                z_cp_val[mask] = make_backprojector(mean_c, comps_c,
-                                                    n_c)(feats_val[mask])
-        maha_sets["cp"] = refit_maha(z_cp_val, y_val, n_classes,
+                z_cp_fit[mask] = make_backprojector(mean_c, comps_c,
+                                                    n_c)(fit_feats[mask])
+        maha_sets["cp"] = refit_maha(z_cp_fit, fit_y, n_classes,
                                      art["mean_correct"])
 
     if study_name == "vit":
@@ -280,7 +292,9 @@ def main() -> None:
         "n_val": int(len(feats_val)), "id_ref_n": int(len(id_ref)),
         "constants": {"batch_per_draw": BATCH_PER_DRAW, "n_draws": N_DRAWS,
                       "q_coverage": Q_COVERAGE,
-                      "augrc_prevalence": "1:1 per-draw val blocks"},
+                      "augrc_prevalence": "1:1 per-draw val blocks",
+                      "r8_split": {"n_ref": int(split_at),
+                                   "n_fit": int(len(feats_val) - split_at)}},
         "pf_params": {"found_global": pf["found_global"],
                       "found_class": pf["found_class"],
                       "n_global": pf.get("n_global"),

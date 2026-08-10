@@ -73,6 +73,8 @@ python x6_spectral/score_tier_b.py --pool resnet18
 
 Outputs: `projection_targets_heldout_resnet18.csv` (pooled Wilcoxon table under the pinned within-slice semantics) and `outputs/tier_b_heldout_resnet18_{scoring.csv,report.md}` (cell-level trial-arm verdict; rule arms ride along as the pre-registered negative control). Single run per cell: no run averaging or checkpoint-level uncertainty, as pinned in `FREEZE.md`. The `--pool dev` paths of both scripts regenerate the frozen dev artifacts byte-identically (regression-checked), so the generalization does not touch gate-1 semantics. Tier-A one-sided claims for ResNet18, if stage 1 emits any, are checked against the pooled held-out table.
 
+**r8 re-measurement (see FREEZE: rule version r8).** Out-of-sample ID reference: refit statistics use the second val half, ID blocks the first; targets the r7 Maha residual. To re-measure under r8: `mv x6_spectral/outputs/orientation x6_spectral/outputs/orientation_r7`, then rerun both orientation sweeps and rescore both pools (same commands as below with the new archive name).
+
 **r7 re-measurement (see FREEZE: rule version r7).** The trial now loads the DEPLOYED PF estimators per checkpoint (exact components, tuned k, per-class projectors; no stage-1b train re-forward needed), uses batch-level AUGRC as the primary statistic (AUROC demoted to a CEILING-flagged diagnostic), and covers the r6 families (GradNorm closed-form, Maha class-pred, PCA RecError class-pred and class). Dev + ResNet18 are the calibration set; CLIP/SSL is the pristine tier. To re-measure under r7:
 
 ```bash
