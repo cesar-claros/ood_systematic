@@ -87,6 +87,18 @@ python x6_spectral/score_tier_b.py --pool resnet18
 
 Per-checkpoint runtime grows somewhat (per-class back-projections and three tied-covariance refits, the largest a D=2048 pinv) but stays forward-dominated. If a checkpoint logs "Deployed global PF params missing", its `pf_params` flag records the stage-1 fallback; treat those cells as reduced-fidelity.
 
+## Pristine tier: Pool A probe pool (design pinned in `FREEZE.md`)
+
+Calibration is closed at r8 (dev 0.869 / ResNet18 0.879 material vs 0.685/0.670 nulls). The confirmation tier runs on the X8 Pool A cached features; crucially, no projection-variant outcome tables exist for this pool yet, so predictions lock before outcomes are ever computed. Feature-space only (no forwards; minutes per cell):
+
+```bash
+# stage P1: measurement + prediction lock (108 cells: 3 encoders x 4 sources x 3 sizes x 3 seeds)
+python x6_spectral/poola_measure.py --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features
+python x6_spectral/poola_measure.py --synthetic     # local self-test
+```
+
+Outputs land in `outputs/poola/*.json` (Tier-A diagnostics with the small-n one-sided claims, r8 deployed-stack trials per gate-1 OOD list). Committing those JSONs IS the prediction lock. Only afterwards: `poola_outcomes.py` (generates the pool's projection-variant AUGRC tables from the same cached features) and `poola_score.py` (cell-level scoring) — the final two scripts of the campaign, to be built before the lock so nothing is designed after seeing outcomes.
+
 ## Freeze gates (status in `FREEZE.md`)
 
 1. Done: Delta-baseline semantics pinned in `FREEZE.md`; `make_projection_targets.py` builds `projection_targets_dev.csv` (ConfidNet VGG13 + ViT, 120 rows) by importing the paper's own generator. One open flag: confirm the plain (not `_fix-config`) score files are the source of record.
