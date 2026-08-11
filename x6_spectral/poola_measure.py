@@ -40,8 +40,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import projection_filtering_analysis as pfa
 from pool_a_csfs import train_probe
-from spectra_campaign_harness import (deployed_pf_rank, deployed_trial,
-                                      make_backprojector, measure, tier_a)
+from spectra_campaign_harness import (a_star, batch_augrc, deployed_pf_rank,
+                                      deployed_trial, make_backprojector,
+                                      measure, tier_a)
 
 
 def jsonable(obj):
@@ -68,6 +69,10 @@ def prune_census(diag: dict) -> dict:
 #: registered grid; clip_vitl14 dropped by pre-lock scope amendment
 #: (features never extracted; normative record in FREEZE.md, 2026-08-10)
 ENCODERS = ["dinov2_vitb14", "clip_vitb16"]
+#: pool -> (encoders, output subdir). "main" is the original (historical)
+#: Pool A grid; "l14" is the pass-5.1 confirmatory rerun pool (clip_vitl14,
+#: untouched at registration; protocol in FREEZE.md).
+POOLS = {"main": (ENCODERS, "poola"), "l14": (["clip_vitl14"], "poola_l14")}
 ID_SOURCES = ["cifar10", "cifar100", "supercifar100", "tinyimagenet"]
 N_PER_CLASS = [25, 100, 0]  # 0 = full probe-train
 SEEDS = [0, 1, 2]
@@ -182,8 +187,108 @@ def setup_cell(features_dir: Path, encoder: str, source: str, n_pc: int,
             "dim": int(h_train.shape[1]), "w_eff": w_eff, "b_eff": b_eff,
             "val_acc": val_acc, "correct_frac": float(correct.mean()),
             "n_correct": int(correct.sum()), "g_mean": g_mean,
-            "bp_global": bp_global, "n_global": int(n_g),
-            "class_bp": class_bp}
+            "g_comps": g_comps, "bp_global": bp_global,
+            "n_global": int(n_g), "class_bp": class_bp}
+
+
+def projector_residuals(w: np.ndarray, comps: np.ndarray, n: int) -> dict:
+    """B5 head-in-span residuals r_W (Frobenius) and r_{W,inf} (worst row)."""
+    kept = (w @ comps[:n].T) @ comps[:n]
+    resid = w - kept
+    row_norm = np.linalg.norm(w, axis=1) + 1e-12
+    return {"r_fro": float((resid ** 2).sum() / max((w ** 2).sum(), 1e-30)),
+            "r_inf": float(np.max(np.linalg.norm(resid, axis=1) / row_norm))}
+
+
+def head_span_block(w_eff: np.ndarray, g_comps: np.ndarray, n_g: int,
+                    class_bp: list) -> dict:
+    """Pass-5.1 (re-review 4.6): the actual B5 hypothesis, measured."""
+    per_class = [projector_residuals(w_eff, comps, n)
+                 for _, comps, n in class_bp]
+    return {"global": projector_residuals(w_eff, g_comps, n_g),
+            "class_max": {"r_fro": max(p["r_fro"] for p in per_class),
+                          "r_inf": max(p["r_inf"] for p in per_class)}}
+
+
+def b8_null_block(q: int, dim: int) -> dict:
+    """Theorem B8 random-orientation null probabilities at the deployed
+    global rank (replaces the retired deterministic Tier-A rule)."""
+    from scipy.stats import beta as beta_law
+    bl = beta_law(q / 2.0, (dim - q) / 2.0)
+    out = {}
+    for lam in (5.0, 25.0, 100.0):
+        a = float(a_star(lam, q, dim))
+        out[f"lam{lam:g}"] = {"a_star": a, "p_kept": float(bl.sf(a)),
+                              "p_norm": float(bl.cdf(a))}
+    return out
+
+
+def norm_channel_block(id_blocks: list, id_fail: list, feats: np.ndarray,
+                       w: np.ndarray, b: np.ndarray, bp_global) -> dict:
+    """Pass-5.1 prospective B5/B6 diagnostics for one OOD adaptation set.
+
+    Pure norm channels (l1 and l2, raw vs globally projected) with
+    ID-positive AUCs, margin-factor invariance, composite-vs-pure rank
+    correlation, orientation summaries, and the pre-registered prediction
+    quantities: per-draw batch-AUGRC deltas of the PURE channels under the
+    r8 failure convention (delta = raw - projected; positive = projection
+    helps the channel).
+    """
+    from scipy.stats import rankdata, spearmanr
+
+    def auc_id_pos(s_id: np.ndarray, s_ood: np.ndarray) -> float:
+        joint = np.concatenate([s_id, s_ood])
+        r = rankdata(joint)
+        n_i, n_o = len(s_id), len(s_ood)
+        return float((r[:n_i].sum() - n_i * (n_i + 1) / 2) / (n_i * n_o))
+
+    def margin(x: np.ndarray) -> np.ndarray:
+        logits = x @ w.T + b
+        peak = logits.max(1, keepdims=True)
+        p = np.exp(logits - peak)
+        p /= p.sum(1, keepdims=True)
+        return np.abs(logits.shape[1] * p - 1).sum(1)
+
+    l1 = lambda x: np.abs(x).sum(1)
+    l2 = lambda x: np.linalg.norm(x, axis=1)
+    id_ref = np.concatenate(id_blocks)
+    z_id, z_ood = bp_global(id_ref), bp_global(feats)
+    out: dict = {}
+    for name, f in (("l1", l1), ("l2", l2)):
+        out[f"{name}_raw_auc"] = auc_id_pos(f(id_ref), f(feats))
+        out[f"{name}_proj_auc"] = auc_id_pos(f(z_id), f(z_ood))
+    m_id, m_ood = margin(id_ref), margin(feats)
+    m_id_p, m_ood_p = margin(z_id), margin(z_ood)
+    out["margin_raw_auc"] = auc_id_pos(m_id, m_ood)
+    out["margin_proj_auc"] = auc_id_pos(m_id_p, m_ood_p)
+    out["margin_max_abs_delta"] = float(max(np.abs(m_id_p - m_id).max(),
+                                            np.abs(m_ood_p - m_ood).max()))
+    comp_raw = np.concatenate([m_id * l1(id_ref), m_ood * l1(feats)])
+    comp_proj = np.concatenate([m_id_p * l1(z_id), m_ood_p * l1(z_ood)])
+    out["composite_pure_spearman_raw"] = float(spearmanr(
+        comp_raw, np.concatenate([l1(id_ref), l1(feats)])).statistic)
+    out["composite_pure_spearman_proj"] = float(spearmanr(
+        comp_proj, np.concatenate([l1(z_id), l1(z_ood)])).statistic)
+    out["l1_norm_ratio"] = float(l1(feats).mean() / max(l1(id_ref).mean(),
+                                                        1e-12))
+    out["mean_shift"] = float(np.linalg.norm(feats.mean(0) - id_ref.mean(0)))
+    out["anti_aligned_l1"] = bool(out["l1_raw_auc"] < 0.5)
+    n_blocks = len(id_blocks)
+    n_draws = max(1, len(feats) // BATCH_PER_DRAW)
+    deltas: dict[str, list] = {"l1": [], "l2": []}
+    for d in range(n_draws):
+        block = feats[d * BATCH_PER_DRAW:(d + 1) * BATCH_PER_DRAW]
+        idb = id_blocks[d % n_blocks]
+        fail = np.concatenate([id_fail[d % n_blocks].astype(float),
+                               np.ones(len(block))])
+        zb_id, zb_ood = bp_global(idb), bp_global(block)
+        for name, f in (("l1", l1), ("l2", l2)):
+            raw = batch_augrc(np.concatenate([f(idb), f(block)]), fail)
+            proj = batch_augrc(np.concatenate([f(zb_id), f(zb_ood)]), fail)
+            deltas[name].append(raw - proj)
+    out["l1_augrc_delta"] = float(np.mean(deltas["l1"]))
+    out["l2_augrc_delta"] = float(np.mean(deltas["l2"]))
+    return out
 
 
 def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
@@ -203,6 +308,7 @@ def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
     val_acc = cell["val_acc"]
     g_mean, bp_global = cell["g_mean"], cell["bp_global"]
     n_g, class_bp = cell["n_global"], cell["class_bp"]
+    g_comps = cell["g_comps"]
 
     diag_correct = measure(h_cor, y_cor, w_eff, n_classes,
                            k_class=min(K_CLASS, max(2, len(h_cor)
@@ -247,6 +353,8 @@ def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
         "tier_a": tier_a_out,
         "r8_split": {"n_ref": int(split_at),
                      "n_fit": int(len(h_val) - split_at)},
+        "head_span": head_span_block(w_eff, g_comps, n_g, class_bp),
+        "b8_null": b8_null_block(n_g, cell["dim"]),
         "datasets": {},
     }
 
@@ -271,7 +379,9 @@ def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
             "n_draws": n_draws,
             "trial_deployed_mean": {k: float(np.mean([dr[k] for dr in draws]))
                                     for k in draws[0]},
-        }, "draws": draws}
+        }, "draws": draws,
+            "norm_channel": norm_channel_block(id_blocks, id_fail, feats,
+                                               w_eff, b_eff, bp_global)}
     record["runtime_sec"] = round(time.time() - t0, 1)
     with open(out_path, "w") as fh:
         json.dump(jsonable(record), fh, indent=1)
@@ -303,8 +413,10 @@ def main() -> None:
         description="X6 Pool A pristine-tier measurement")
     parser.add_argument("--features-dir", type=str, default="pool_a_features")
     parser.add_argument("--out_dir", type=str, default="x6_spectral/outputs")
-    parser.add_argument("--encoder", type=str, default=None,
-                        choices=ENCODERS)
+    parser.add_argument("--pool", choices=list(POOLS), default="main",
+                        help="main = historical Pool A grid; l14 = the "
+                             "pass-5.1 confirmatory rerun (clip_vitl14)")
+    parser.add_argument("--encoder", type=str, default=None)
     parser.add_argument("--synthetic", action="store_true")
     args = parser.parse_args()
 
@@ -323,10 +435,14 @@ def main() -> None:
               f"sample trial keys {len(next(iter(rec['datasets'].values()))['summary']['trial_deployed_mean'])}")
         return
 
+    pool_encoders, subdir = POOLS[args.pool]
+    if args.encoder and args.encoder not in pool_encoders:
+        sys.exit(f"--encoder {args.encoder} not in pool '{args.pool}' "
+                 f"({pool_encoders})")
     features_dir = Path(args.features_dir)
-    out_dir = Path(args.out_dir) / "poola"
+    out_dir = Path(args.out_dir) / subdir
     out_dir.mkdir(parents=True, exist_ok=True)
-    encoders = [args.encoder] if args.encoder else ENCODERS
+    encoders = [args.encoder] if args.encoder else pool_encoders
     counts: dict[str, int] = {}
     for encoder in encoders:
         for source in ID_SOURCES:

@@ -19,12 +19,21 @@ here before any outcome is inspected:
   AUGRC(base score) - AUGRC(variant score); positive = variant helps.
   Class-avg variants are out of trial scope and not generated.
 
-The --locked flag is required: predictions (outputs/poola JSONs) must be
-committed to the record before this script runs.
+Pass-5.1 protocol (pool "l14", the confirmatory rerun): the lock is a
+TRACKED, TAGGED manifest of prediction, feature, and script hashes
+(poola_lock.py), verified here before any outcome is computed; a boolean
+flag is no longer accepted for this pool. Evaluation is SAMPLE-DISJOINT
+from adaptation: the first BATCH_PER_DRAW x N_DRAWS = 640 rows of every
+OOD feature file (consumed by the batch trials) are excluded from the
+outcome mixture (re-review 5.2). The historical "main" pool keeps its
+original semantics (--locked attestation, full OOD files) and is labeled
+exploratory per the pass-5 re-review.
 
 Usage (HPC, from code/):
-    python x6_spectral/poola_outcomes.py --locked \
+    python x6_spectral/poola_outcomes.py --pool l14 \
         --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features
+    python x6_spectral/poola_outcomes.py --pool main --locked \
+        --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features   # historical
 """
 from __future__ import annotations
 
@@ -42,11 +51,15 @@ sys.path.insert(0, str(CODE_DIR / "x8_pool_a"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import projection_filtering_analysis as pfa
-from poola_measure import (ENCODERS, ID_SOURCES, N_PER_CLASS, NPZ_NAME,
-                           SEEDS, load_npz, refit_maha, setup_cell)
+from poola_lock import DEFAULT_TAG, pred_dir_for, verify_lock
+from poola_measure import (BATCH_PER_DRAW, ID_SOURCES, N_DRAWS, N_PER_CLASS,
+                           NPZ_NAME, POOLS, SEEDS, load_npz, refit_maha,
+                           setup_cell)
 from spectra_campaign_harness import (DEPLOYED_TRIAL_KEYS, batch_augrc,
                                       deployed_scores, make_backprojector,
                                       trial_arm_key)
+
+ADAPT_ROWS = BATCH_PER_DRAW * N_DRAWS
 
 #: Trial key -> (family, variant); mirror of score_tier_b.TRIAL_FAMILY7
 #: (duplicated here so outcome generation stays import-light; score_tier_b
@@ -63,8 +76,11 @@ FAMILY_VARIANT = {
 
 
 def outcome_cell(features_dir: Path, encoder: str, source: str, n_pc: int,
-                 seed: int) -> list[dict] | None:
-    """All outcome rows for one cell, or None when features are missing."""
+                 seed: int, skip_rows: int = 0) -> list[dict] | None:
+    """All outcome rows for one cell, or None when features are missing.
+
+    skip_rows > 0 excludes the leading adaptation rows of every OOD feature
+    file from the evaluation mixture (disjoint protocol)."""
     cell = setup_cell(features_dir, encoder, source, n_pc, seed)
     if cell is None:
         return None
@@ -98,9 +114,12 @@ def outcome_cell(features_dir: Path, encoder: str, source: str, n_pc: int,
         loaded = load_npz(features_dir, encoder, NPZ_NAME[ood], "test")
         if loaded is None:
             continue
-        scores_ood = deployed_scores(loaded[0], w, b, bp_global, class_bp,
+        ood_feats = loaded[0][skip_rows:]
+        if len(ood_feats) == 0:
+            continue
+        scores_ood = deployed_scores(ood_feats, w, b, bp_global, class_bp,
                                      maha_sets)
-        failure = np.concatenate([fail_id, np.ones(len(loaded[0]))])
+        failure = np.concatenate([fail_id, np.ones(len(ood_feats))])
         for key, (base_arm, var_arm) in DEPLOYED_TRIAL_KEYS.items():
             family, variant = FAMILY_VARIANT[key]
             bk = trial_arm_key(key, base_arm)
@@ -126,22 +145,45 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="X6 Pool A outcome generation (post-lock only)")
     parser.add_argument("--features-dir", type=str, default="pool_a_features")
-    parser.add_argument("--out", type=str,
-                        default="x6_spectral/outputs/poola/outcomes.csv")
-    parser.add_argument("--encoder", type=str, default=None,
-                        choices=ENCODERS)
+    parser.add_argument("--pool", choices=list(POOLS), default="l14",
+                        help="l14 = pass-5.1 confirmatory rerun (manifest-"
+                             "verified lock, disjoint evaluation); main = "
+                             "historical pool (legacy --locked, full files)")
+    parser.add_argument("--out", type=str, default=None,
+                        help="override the per-pool outcomes.csv path")
+    parser.add_argument("--encoder", type=str, default=None)
+    parser.add_argument("--expect-tag", type=str, default=None)
     parser.add_argument("--locked", action="store_true",
-                        help="Assert that the prediction JSONs are "
-                             "committed; required to run")
+                        help="legacy attestation, accepted for --pool main "
+                             "only (superseded by the manifest protocol)")
+    parser.add_argument("--no-git-checks", action="store_true",
+                        help="hash-only lock verification; synthetic "
+                             "self-test only")
     args = parser.parse_args()
-    if not args.locked:
-        sys.exit("Refusing to run: outcomes may only be generated after "
-                 "the prediction lock. Commit outputs/poola/*.json, then "
-                 "rerun with --locked.")
     features_dir = Path(args.features_dir)
-    out_path = Path(args.out)
+    if args.pool == "main":
+        if not args.locked:
+            sys.exit("main pool: refusing without --locked (historical "
+                     "protocol; the l14 pool uses manifest verification)")
+        skip_rows = 0
+    else:
+        tag = args.expect_tag or DEFAULT_TAG[args.pool]
+        problems = verify_lock(args.pool, features_dir, tag,
+                               git_checks=not args.no_git_checks)
+        if problems:
+            sys.exit("LOCK VERIFICATION FAILED (no outcomes generated):\n"
+                     + "\n".join(f"  - {p}" for p in problems))
+        print(f"lock verified (manifest + tag {tag} + feature hashes); "
+              f"evaluation excludes the first {ADAPT_ROWS} adaptation rows "
+              "of every OOD file")
+        skip_rows = ADAPT_ROWS
+    pool_encoders, _ = POOLS[args.pool]
+    if args.encoder and args.encoder not in pool_encoders:
+        sys.exit(f"--encoder {args.encoder} not in pool '{args.pool}'")
+    out_path = Path(args.out) if args.out \
+        else pred_dir_for(args.pool) / "outcomes.csv"
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    encoders = [args.encoder] if args.encoder else ENCODERS
+    encoders = [args.encoder] if args.encoder else pool_encoders
     all_rows: list[dict] = []
     for encoder in encoders:
         for source in ID_SOURCES:
@@ -149,7 +191,7 @@ def main() -> None:
                 for seed in SEEDS:
                     t0 = time.time()
                     rows = outcome_cell(features_dir, encoder, source,
-                                        n_pc, seed)
+                                        n_pc, seed, skip_rows=skip_rows)
                     if rows is None:
                         print(f"[missing ] {encoder} {source} n{n_pc} "
                               f"s{seed}")

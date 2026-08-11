@@ -111,7 +111,38 @@ python x6_spectral/poola_score.py
 python x6_spectral/poola_score.py --synthetic
 ```
 
-`poola_outcomes.py` reconstructs every cell via the shared `setup_cell` (verified to reproduce the measurement release exactly, modulo wall-clock) and writes `outputs/poola/outcomes.csv`: full-test AUGRC x1000 per (cell, trial key, OOD set) under the paper's new-class failure convention (probe misclassifications plus OOD membership, the r8 trial's exact failure definition). `poola_score.py` joins predictions with outcomes and writes `poola_scoring.csv` plus `poola_report.md`: trial-arm sign accuracy against always+1 / always-1 / majority / family-majority nulls on all and material (|delta| > 1) rows, split by family x variant, encoder, probe-train size, and source, plus one-sided Tier-A no-benefit scoring (a claim is falsified by a material positive outcome; class-avg claims are registered as unscoreable in this pool). All conventions frozen pre-lock in `FREEZE.md`.
+`poola_outcomes.py` reconstructs every cell via the shared `setup_cell` (verified to reproduce the measurement release exactly, modulo wall-clock) and writes the pool's `outcomes.csv`: full-test AUGRC x1000 per (cell, trial key, OOD set) under the paper's new-class failure convention (probe misclassifications plus OOD membership, the r8 trial's exact failure definition). `poola_score.py` joins predictions with outcomes and writes `poola_scoring.csv` plus `poola_report.md`. All conventions frozen pre-lock in `FREEZE.md`. **Status per the pass-5 re-review: this original pool is EXPLORATORY** (self-attested lock, adaptation rows inside the outcome sets); the confirmatory protocol below supersedes it.
+
+## Confirmatory rerun: clip_vitl14 (pass-5.1 protocol, pre-registered in `FREEZE.md`)
+
+The untouched pool: clip_vitl14 was dropped pre-lock with features never extracted, so no measurement or outcome exists. The rerun adds an auditable hash-manifest lock, sample-disjoint evaluation (the 640 adaptation rows per OOD file are excluded from outcomes), Theorem-B8 null probabilities instead of deterministic Tier-A claims, the prospective B5/B6 norm-channel test, and preregistered endpoints (cell-clustered selector regret primary, material sign accuracy secondary, two-level bootstrap CIs). Full protocol and prediction rules: `FREEZE.md`. Order is binding:
+
+```bash
+# R0: extract the untouched features (~1-3h GPU)
+python x8_pool_a/extract_features.py --encoder clip_vitl14 --dataset all
+
+# R1: measurement + diagnostics (36 cells; writes outputs/poola_l14/*.json)
+python x6_spectral/poola_measure.py --pool l14 --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features
+
+# R2: THE LOCK = manifest + commit + tag (manifest is tracked; JSONs stay HPC-side, hashes tracked)
+python x6_spectral/poola_lock.py generate --pool l14 --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features
+git add x6_spectral/outputs/poola_l14/manifest.json
+git commit -m "x6: clip_vitl14 prediction lock (pass-5.1 protocol)"
+git tag x6-l14-lock && git push && git push --tags
+
+# R3: outcomes (verifies manifest + tag + feature hashes; disjoint evaluation; refuses otherwise)
+python x6_spectral/poola_outcomes.py --pool l14 --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features
+
+# R4: the verdict (regret-primary scorecard + prospective norm-channel test)
+python x6_spectral/poola_score.py --pool l14
+
+# R5: commit the tracked audit trail
+git add x6_spectral/outputs/poola_l14/{outcomes.csv,poola_scoring.csv,poola_report.md}
+git commit -m "x6: clip_vitl14 confirmatory outcomes and scorecard"
+
+# local end-to-end self-test of the whole protocol (lock, tamper, disjoint, regret, bootstrap)
+python x6_spectral/poola_score.py --synthetic
+```
 
 ## Freeze gates (status in `FREEZE.md`)
 

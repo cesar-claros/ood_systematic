@@ -104,6 +104,16 @@ nc_csf_predictivity/outputs/pool_a/*_newcsfs*
 # sync to the HPC
 !x6_spectral/run_x6_measure.sh
 !x6_spectral/manifest_dev_pool.txt
-# X6 measurement outputs stay on the HPC (analysis happens there; JSON/NPZ/logs)
-x6_spectral/outputs/
+# X6 measurement outputs stay on the HPC (analysis happens there; JSON/NPZ/logs).
+# Contents-level pattern (not `outputs/`) so git can descend for the exceptions.
+x6_spectral/outputs/*
+# EXCEPT the pass-5.1 l14 confirmatory-rerun audit trail (re-review 5.1):
+# the lock manifest and the final outcome/scoring tables are TRACKED so the
+# prediction-before-outcome sequencing is externally auditable
+!x6_spectral/outputs/poola_l14/
+x6_spectral/outputs/poola_l14/*
+!x6_spectral/outputs/poola_l14/manifest.json
+!x6_spectral/outputs/poola_l14/outcomes.csv
+!x6_spectral/outputs/poola_l14/poola_scoring.csv
+!x6_spectral/outputs/poola_l14/poola_report.md
 nc_csf_predictivity/outputs/pool_a/*_harmonized*
