@@ -92,12 +92,26 @@ Per-checkpoint runtime grows somewhat (per-class back-projections and three tied
 Calibration is closed at r8 (dev 0.869 / ResNet18 0.879 material vs 0.685/0.670 nulls). The confirmation tier runs on the X8 Pool A cached features; crucially, no projection-variant outcome tables exist for this pool yet, so predictions lock before outcomes are ever computed. Feature-space only (no forwards; minutes per cell):
 
 ```bash
-# stage P1: measurement + prediction lock (108 cells: 3 encoders x 4 sources x 3 sizes x 3 seeds)
+# stage P1: measurement + prediction lock (72 cells: 2 encoders x 4 sources x 3 sizes x 3 seeds;
+# clip_vitl14 dropped by pre-lock scope amendment, see FREEZE.md)
 python x6_spectral/poola_measure.py --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features
 python x6_spectral/poola_measure.py --synthetic     # local self-test
 ```
 
-Outputs land in `outputs/poola/*.json` (Tier-A diagnostics with the small-n one-sided claims, r8 deployed-stack trials per gate-1 OOD list). Committing those JSONs IS the prediction lock. Only afterwards: `poola_outcomes.py` (generates the pool's projection-variant AUGRC tables from the same cached features) and `poola_score.py` (cell-level scoring) — the final two scripts of the campaign, to be built before the lock so nothing is designed after seeing outcomes.
+Outputs land in `outputs/poola/*.json` (Tier-A diagnostics with the small-n one-sided claims, r8 deployed-stack trials per gate-1 OOD list). Committing those JSONs IS the prediction lock.
+
+```bash
+# stage P2: outcome generation (post-lock ONLY; refuses to run without --locked)
+python x6_spectral/poola_outcomes.py --locked --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features
+
+# stage P3: the verdict
+python x6_spectral/poola_score.py
+
+# local end-to-end self-test (measure -> outcomes -> score on fabricated features)
+python x6_spectral/poola_score.py --synthetic
+```
+
+`poola_outcomes.py` reconstructs every cell via the shared `setup_cell` (verified to reproduce the measurement release exactly, modulo wall-clock) and writes `outputs/poola/outcomes.csv`: full-test AUGRC x1000 per (cell, trial key, OOD set) under the paper's new-class failure convention (probe misclassifications plus OOD membership, the r8 trial's exact failure definition). `poola_score.py` joins predictions with outcomes and writes `poola_scoring.csv` plus `poola_report.md`: trial-arm sign accuracy against always+1 / always-1 / majority / family-majority nulls on all and material (|delta| > 1) rows, split by family x variant, encoder, probe-train size, and source, plus one-sided Tier-A no-benefit scoring (a claim is falsified by a material positive outcome; class-avg claims are registered as unscoreable in this pool). All conventions frozen pre-lock in `FREEZE.md`.
 
 ## Freeze gates (status in `FREEZE.md`)
 

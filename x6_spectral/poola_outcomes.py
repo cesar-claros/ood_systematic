@@ -1,0 +1,170 @@
+"""Pool A outcome generation (X6 pristine tier; run ONLY after the lock).
+
+Computes this pool's projection-variant AUGRC tables for the first time,
+from the same cached features the predictions used. Each cell's probe and
+projectors are reconstructed via poola_measure.setup_cell, whose
+determinism against the measurement release is verified (records identical
+modulo wall-clock). Deployed evaluation convention for the pool, frozen
+here before any outcome is inspected:
+
+- Mahalanobis statistics fit on probe-train (all samples, matching
+  mahalanobis.py, which takes no correct-only flag), per arm: raw features,
+  global back-projections, and class-pred back-projections routed by the
+  probe's raw-logit argmax; pseudo-inverse at rcond 1e-6.
+- AUGRC per (score, OOD set): mixture = the full ID test set plus the full
+  OOD set; failures = ID samples the probe misclassifies plus every OOD
+  sample (the paper's new-class convention, identical to the r8 trial's
+  failure labels); values reported x1000 as in the paper tables.
+- One row per (cell, trial key, OOD set) with delta_augrc =
+  AUGRC(base score) - AUGRC(variant score); positive = variant helps.
+  Class-avg variants are out of trial scope and not generated.
+
+The --locked flag is required: predictions (outputs/poola JSONs) must be
+committed to the record before this script runs.
+
+Usage (HPC, from code/):
+    python x6_spectral/poola_outcomes.py --locked \
+        --features-dir $EXPERIMENT_ROOT_DIR/pool_a/features
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+
+CODE_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(CODE_DIR))
+sys.path.insert(0, str(CODE_DIR / "x8_pool_a"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import projection_filtering_analysis as pfa
+from poola_measure import (ENCODERS, ID_SOURCES, N_PER_CLASS, NPZ_NAME,
+                           SEEDS, load_npz, refit_maha, setup_cell)
+from spectra_campaign_harness import (DEPLOYED_TRIAL_KEYS, batch_augrc,
+                                      deployed_scores, make_backprojector,
+                                      trial_arm_key)
+
+#: Trial key -> (family, variant); mirror of score_tier_b.TRIAL_FAMILY7
+#: (duplicated here so outcome generation stays import-light; score_tier_b
+#: remains the master copy for the checkpoint pools).
+FAMILY_VARIANT = {
+    "mls": ("MLS", "global"), "energy": ("Energy", "global"),
+    "msr": ("MSR", "global"), "maha": ("Maha", "global"),
+    "gradnorm": ("GradNorm", "global"),
+    "maha_cp": ("Maha", "class pred"),
+    "gradnorm_cp": ("GradNorm", "class pred"),
+    "recerr_cp": ("PCA RecError", "class pred"),
+    "recerr_class": ("PCA RecError", "class"),
+}
+
+
+def outcome_cell(features_dir: Path, encoder: str, source: str, n_pc: int,
+                 seed: int) -> list[dict] | None:
+    """All outcome rows for one cell, or None when features are missing."""
+    cell = setup_cell(features_dir, encoder, source, n_pc, seed)
+    if cell is None:
+        return None
+    id_test = load_npz(features_dir, encoder, source, "test")
+    if id_test is None:
+        return None
+    h_test, y_test = id_test
+    w, b = cell["w_eff"], cell["b_eff"]
+    n_classes = cell["n_classes"]
+    bp_global, class_bp = cell["bp_global"], cell["class_bp"]
+    h_sub, y_sub, g_mean = cell["h_sub"], cell["y_sub"], cell["g_mean"]
+
+    preds_sub = (h_sub @ w.T + b).argmax(1)
+    z_cp_sub = np.empty_like(h_sub)
+    for c, (mean_c, comps_c, n_c) in enumerate(class_bp):
+        mask = preds_sub == c
+        if mask.any():
+            z_cp_sub[mask] = make_backprojector(mean_c, comps_c,
+                                                n_c)(h_sub[mask])
+    maha_sets = {"raw": refit_maha(h_sub, y_sub, n_classes, g_mean),
+                 "global": refit_maha(bp_global(h_sub), y_sub, n_classes,
+                                      g_mean),
+                 "cp": refit_maha(z_cp_sub, y_sub, n_classes, g_mean)}
+
+    scores_id = deployed_scores(h_test, w, b, bp_global, class_bp,
+                                maha_sets)
+    fail_id = ((h_test @ w.T + b).argmax(1) != y_test).astype(float)
+
+    rows = []
+    for ood in pfa.OOD_DATASETS[source]:
+        loaded = load_npz(features_dir, encoder, NPZ_NAME[ood], "test")
+        if loaded is None:
+            continue
+        scores_ood = deployed_scores(loaded[0], w, b, bp_global, class_bp,
+                                     maha_sets)
+        failure = np.concatenate([fail_id, np.ones(len(loaded[0]))])
+        for key, (base_arm, var_arm) in DEPLOYED_TRIAL_KEYS.items():
+            family, variant = FAMILY_VARIANT[key]
+            bk = trial_arm_key(key, base_arm)
+            vk = trial_arm_key(key, var_arm)
+            if bk not in scores_id or vk not in scores_id:
+                continue
+            vals = {}
+            for tag, sk in (("base", bk), ("var", vk)):
+                conf = np.concatenate([scores_id[sk], scores_ood[sk]])
+                vals[tag] = 1000.0 * batch_augrc(conf, failure)
+            rows.append({"encoder": encoder, "source": source,
+                         "n_per_class": n_pc, "seed": seed,
+                         "family": family, "variant": variant, "ood": ood,
+                         "trial_key": key,
+                         "augrc_base": round(vals["base"], 4),
+                         "augrc_var": round(vals["var"], 4),
+                         "delta_augrc": round(vals["base"] - vals["var"],
+                                              4)})
+    return rows
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="X6 Pool A outcome generation (post-lock only)")
+    parser.add_argument("--features-dir", type=str, default="pool_a_features")
+    parser.add_argument("--out", type=str,
+                        default="x6_spectral/outputs/poola/outcomes.csv")
+    parser.add_argument("--encoder", type=str, default=None,
+                        choices=ENCODERS)
+    parser.add_argument("--locked", action="store_true",
+                        help="Assert that the prediction JSONs are "
+                             "committed; required to run")
+    args = parser.parse_args()
+    if not args.locked:
+        sys.exit("Refusing to run: outcomes may only be generated after "
+                 "the prediction lock. Commit outputs/poola/*.json, then "
+                 "rerun with --locked.")
+    features_dir = Path(args.features_dir)
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    encoders = [args.encoder] if args.encoder else ENCODERS
+    all_rows: list[dict] = []
+    for encoder in encoders:
+        for source in ID_SOURCES:
+            for n_pc in N_PER_CLASS:
+                for seed in SEEDS:
+                    t0 = time.time()
+                    rows = outcome_cell(features_dir, encoder, source,
+                                        n_pc, seed)
+                    if rows is None:
+                        print(f"[missing ] {encoder} {source} n{n_pc} "
+                              f"s{seed}")
+                        continue
+                    all_rows.extend(rows)
+                    print(f"[outcomes] {encoder} {source} n{n_pc} s{seed} "
+                          f"({len(rows)} rows, {time.time()-t0:.0f}s)")
+    if not all_rows:
+        sys.exit("No outcome rows generated")
+    with open(out_path, "w", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=list(all_rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(all_rows)
+    print(f"{len(all_rows)} rows -> {out_path}")
+
+
+if __name__ == "__main__":
+    main()

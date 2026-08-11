@@ -65,7 +65,9 @@ def prune_census(diag: dict) -> dict:
     out["census"] = census
     return out
 
-ENCODERS = ["dinov2_vitb14", "clip_vitb16", "clip_vitl14"]
+#: registered grid; clip_vitl14 dropped by pre-lock scope amendment
+#: (features never extracted; normative record in FREEZE.md, 2026-08-10)
+ENCODERS = ["dinov2_vitb14", "clip_vitb16"]
 ID_SOURCES = ["cifar10", "cifar100", "supercifar100", "tinyimagenet"]
 N_PER_CLASS = [25, 100, 0]  # 0 = full probe-train
 SEEDS = [0, 1, 2]
@@ -124,15 +126,18 @@ def refit_maha(z: np.ndarray, labels: np.ndarray, n_classes: int,
     return means, np.linalg.pinv(cov, hermitian=True, rcond=1e-6)
 
 
-def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
-                 source: str, n_pc: int, seed: int) -> str:
-    slug = f"{encoder}__{source}__n{n_pc}__s{seed}"
-    out_path = out_dir / f"{slug}.json"
-    if out_path.exists():
-        return "skip"
+def setup_cell(features_dir: Path, encoder: str, source: str, n_pc: int,
+               seed: int) -> dict | None:
+    """Deterministic cell construction shared by measurement and outcomes.
+
+    The probe subset, validation carve-out, probe training, and PF fitting
+    consume the SAME seeded random stream in the same order here as in the
+    original measurement release, so poola_outcomes.py provably evaluates
+    the identical probe and projectors that the locked predictions used.
+    """
     loaded = load_npz(features_dir, encoder, source, "train")
     if loaded is None:
-        return "missing-features"
+        return None
     h_train, y_train = loaded
     n_classes = int(y_train.max()) + 1
     rng = np.random.default_rng(1000 * seed + 7)
@@ -150,7 +155,6 @@ def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
     h_sub, y_sub = h_train[sub_idx], y_train[sub_idx]
     h_val, y_val = h_train[val_idx], y_train[val_idx]
 
-    t0 = time.time()
     probe = train_probe(torch.from_numpy(h_sub).float(),
                         torch.from_numpy(y_sub), n_classes, seed=seed)
     w_eff, b_eff = fold_head(probe)
@@ -173,6 +177,32 @@ def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
             class_bp.append((g_mean, g_comps, n_g))
             continue
         class_bp.append(svd_pf(block))
+    return {"h_sub": h_sub, "y_sub": y_sub, "h_val": h_val, "y_val": y_val,
+            "h_cor": h_cor, "y_cor": y_cor, "n_classes": n_classes,
+            "dim": int(h_train.shape[1]), "w_eff": w_eff, "b_eff": b_eff,
+            "val_acc": val_acc, "correct_frac": float(correct.mean()),
+            "n_correct": int(correct.sum()), "g_mean": g_mean,
+            "bp_global": bp_global, "n_global": int(n_g),
+            "class_bp": class_bp}
+
+
+def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
+                 source: str, n_pc: int, seed: int) -> str:
+    slug = f"{encoder}__{source}__n{n_pc}__s{seed}"
+    out_path = out_dir / f"{slug}.json"
+    if out_path.exists():
+        return "skip"
+    t0 = time.time()
+    cell = setup_cell(features_dir, encoder, source, n_pc, seed)
+    if cell is None:
+        return "missing-features"
+    h_sub, y_sub = cell["h_sub"], cell["y_sub"]
+    h_val, y_val = cell["h_val"], cell["y_val"]
+    h_cor, y_cor = cell["h_cor"], cell["y_cor"]
+    n_classes, w_eff, b_eff = cell["n_classes"], cell["w_eff"], cell["b_eff"]
+    val_acc = cell["val_acc"]
+    g_mean, bp_global = cell["g_mean"], cell["bp_global"]
+    n_g, class_bp = cell["n_global"], cell["class_bp"]
 
     diag_correct = measure(h_cor, y_cor, w_eff, n_classes,
                            k_class=min(K_CLASS, max(2, len(h_cor)
@@ -206,10 +236,10 @@ def measure_cell(features_dir: Path, out_dir: Path, encoder: str,
     record = {
         "cell": {"encoder": encoder, "source": source, "n_per_class": n_pc,
                  "seed": seed},
-        "n_classes": n_classes, "dim": int(h_train.shape[1]),
+        "n_classes": n_classes, "dim": cell["dim"],
         "n_probe_train": int(len(h_sub)),
-        "n_probe_correct": int(correct.sum()),
-        "probe_train_acc": float(correct.mean()),
+        "n_probe_correct": cell["n_correct"],
+        "probe_train_acc": cell["correct_frac"],
         "probe_val_acc": val_acc, "n_global": int(n_g),
         "class_ranks": [n for _, _, n in class_bp],
         "arms": {"correct_only": prune_census(diag_correct),

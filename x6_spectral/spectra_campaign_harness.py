@@ -308,6 +308,14 @@ DEPLOYED_TRIAL_KEYS: dict[str, tuple[str, str]] = {
 }
 
 
+def trial_arm_key(key: str, arm: str) -> str:
+    """Score-dict key for a trial key's arm (shared by trial and outcomes)."""
+    if key.startswith("recerr"):
+        return arm
+    base = key[:-len("_cp")] if key.endswith("_cp") else key
+    return f"{base}_{arm}"
+
+
 def make_backprojector(mean: np.ndarray, components: np.ndarray, n: int):
     """Deployed PF back-projection: center, project on top-n, un-center."""
     comps = components[:n]
@@ -434,15 +442,9 @@ def deployed_trial(id_block: np.ndarray, id_block_fail: np.ndarray,
     failure = np.concatenate([id_block_fail.astype(float),
                               np.ones(len(batch))])
 
-    def arm_key(key: str, arm: str) -> str:
-        if key.startswith("recerr"):
-            return arm
-        base = key[:-len("_cp")] if key.endswith("_cp") else key
-        return f"{base}_{arm}"
-
     out: dict[str, float] = {}
     for key, (base_arm, var_arm) in DEPLOYED_TRIAL_KEYS.items():
-        bk, vk = arm_key(key, base_arm), arm_key(key, var_arm)
+        bk, vk = trial_arm_key(key, base_arm), trial_arm_key(key, var_arm)
         if bk not in id_scores or vk not in id_scores:
             continue
         vals = {}
