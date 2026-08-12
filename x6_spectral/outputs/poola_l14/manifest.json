@@ -1,0 +1,561 @@
+{
+ "pool": "l14",
+ "rule_version": "r8+pass5.1",
+ "generated_utc": "2026-08-12T02:03:07Z",
+ "git_head_at_generation": "3412eb3227662f2028c8b31f9dd12e5060b2b019",
+ "n_predictions": 36,
+ "predictions": [
+  {
+   "file": "clip_vitl14__cifar100__n0__s0.json",
+   "sha256": "31b58e8eae1c6efaad67fe8b5af9db2526a4633f6edab3f23ed2b8d954cd0e47",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 0,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar100__n0__s1.json",
+   "sha256": "ce2a8c03d3dbfa9f93969222fc72c9b9f9f540cb72ca0b33b9d2ad9c7d3b5174",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 0,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar100__n0__s2.json",
+   "sha256": "3c70a184936dff81af41b6a0f96aa882f3968a6353b6f6e79974e3242ce27e82",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 0,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar100__n100__s0.json",
+   "sha256": "f52afbe88f5ece5f499f3b095a37bfb19936fc77c35f2f5b69213c43226aace5",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 100,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar100__n100__s1.json",
+   "sha256": "3a1cf655ff29e7580fa113ea1e1918a2f45bdec093030fef1b91bfc6605240ba",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 100,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar100__n100__s2.json",
+   "sha256": "1cbe7382127c5a60da82c90b770ff5af66f535eed64967d29f987a6d0ade4941",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 100,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar100__n25__s0.json",
+   "sha256": "f7e7a6eefa48cbca18d4bb95c18267ab3f5b8b811e3fecaae11fa016ad41bbf5",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 25,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar100__n25__s1.json",
+   "sha256": "dde81b53cd8e573992160cebac5d898a595c75e751b652237ec161854dc3f418",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 25,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar100__n25__s2.json",
+   "sha256": "902cb48a0d547b6bada8a4b7224d085d76406c17c5c617acc95c5113f28c00a4",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar100",
+    "n_per_class": 25,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n0__s0.json",
+   "sha256": "3c9df583de2e81e5837b6729755d6afb9ee6fc4490573fd932fb6959e15a785b",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 0,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n0__s1.json",
+   "sha256": "5026df30dff6dd169d6e0ab6e08480c2e001f9360ad8ae8b8b8f9c315967a72c",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 0,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n0__s2.json",
+   "sha256": "67a0dbbc29c1e65eefd809961dc3850a02aa8efbecc8279b765a55b5b5e7d6a4",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 0,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n100__s0.json",
+   "sha256": "0566e2897443d28223b0e577dc6b43b3e53a6eeec26c264c86bcbe0dd4ca46b1",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 100,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n100__s1.json",
+   "sha256": "e402d2e7b54c5356b32bbe5f1718181cf57ba28b5651b1a27758df68a8e29940",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 100,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n100__s2.json",
+   "sha256": "327b17d7ccc4a25c59d9839e2a32d2789bfbe9e723221c4c734632e92f998f30",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 100,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n25__s0.json",
+   "sha256": "2227d6fd3fb0c1183a55a0a1650a917dd7682259afdfefdeab564adafc8cff23",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 25,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n25__s1.json",
+   "sha256": "5cdfa55137e1c8b146650c45b2f9d66d4b5ee75cb9b1dfaaf0c0ac4d573a5347",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 25,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__cifar10__n25__s2.json",
+   "sha256": "503352d897e7c46dd649094d279a69a094200699ab42a4202c0cb091014caf5e",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "cifar10",
+    "n_per_class": 25,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n0__s0.json",
+   "sha256": "45f7c030e642828e142623c736263394adf9518a5a75765d3a7e612f8ed2bee2",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 0,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n0__s1.json",
+   "sha256": "4394e0c55143576734a4f858bce8797ec272fad3e839c33f64386bd6a1163f86",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 0,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n0__s2.json",
+   "sha256": "ea5a79dd7dfb885945a07c784e2e3e83362697da7afe542eabad11619fc95d5a",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 0,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n100__s0.json",
+   "sha256": "4dd1064b6a62f7c30457bc525c9006ce8cbeabaf66697c683e2645f8c281a505",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 100,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n100__s1.json",
+   "sha256": "34e460a9aa4e2a048fc0591e0f16c712f22120f58a472db77bf06549aebb9870",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 100,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n100__s2.json",
+   "sha256": "23a88c229b04e204abdb928c03c854947bae8209705f8535f1f997958c947012",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 100,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n25__s0.json",
+   "sha256": "4ba28588cb88bd247e924f3d25b40f1a4382b8efb32bab2a6c8d072a9011a282",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 25,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n25__s1.json",
+   "sha256": "c52bcda32d0fe7d971f97570f6b526c221bd3b6eabbf9f699b39c08831b280e9",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 25,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__supercifar100__n25__s2.json",
+   "sha256": "f2c2d168469a3cff8cb6577a3e85749ef7ccbf26d702aa50422b66c840758aee",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "supercifar100",
+    "n_per_class": 25,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n0__s0.json",
+   "sha256": "998644b849f0bc3417c8bbe5d62d213a29bf80e2913b8d6485bbdf30c1bca145",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 0,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n0__s1.json",
+   "sha256": "4984cc118b584b6f01c636de3e946cecd02d29ba6637faae25b76373bf99029f",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 0,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n0__s2.json",
+   "sha256": "52ea9a7be8c8f54ed494d9126338484e3ae795aa2f436eee60b90cf8c721a0bf",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 0,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n100__s0.json",
+   "sha256": "8f87815401ddcc5a2e7679440b1d3c865a82ed15fa24eebb6eeaa36619d7ac83",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 100,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n100__s1.json",
+   "sha256": "cf10b7902fb6bf359f9ed8a6f3860b006ff8b9e8c7ca3f26e0e4c6f556b20795",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 100,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n100__s2.json",
+   "sha256": "438672af9bfacfcf5099ec1018a8fb31f2e7b5ed38da896987d84c37d10b80c5",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 100,
+    "seed": 2
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n25__s0.json",
+   "sha256": "993db303f8a829e8e71231a4f2b78968415a60aee9339a582f8e77979bcea814",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 25,
+    "seed": 0
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n25__s1.json",
+   "sha256": "5a0f45178d77243539f0442f1e2071a8a49694cbe0671dbcac2f5ba1d2664ef9",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 25,
+    "seed": 1
+   }
+  },
+  {
+   "file": "clip_vitl14__tinyimagenet__n25__s2.json",
+   "sha256": "b8522316c569701fe923de10dc1e80ca351313a1622b52b54b8d102c6a6bb74c",
+   "cell": {
+    "encoder": "clip_vitl14",
+    "source": "tinyimagenet",
+    "n_per_class": 25,
+    "seed": 2
+   }
+  }
+ ],
+ "features": [
+  {
+   "file": "clip_vitb16_cifar100_test.npz",
+   "sha256": "672e91529ea7154fad32ec8aee6942804372aaa7f4e5b0405dac91739b2c8c67"
+  },
+  {
+   "file": "clip_vitb16_cifar100_train.npz",
+   "sha256": "13b626c7a9312a531573635b1bdd7d691549e18dfcdfa7a62d1f3729c9a40a33"
+  },
+  {
+   "file": "clip_vitb16_cifar10_test.npz",
+   "sha256": "b9383980fb889953f0342999f32f7105898f6aa58675d3be52df6af9ae63dd82"
+  },
+  {
+   "file": "clip_vitb16_cifar10_train.npz",
+   "sha256": "5947f89eb2a6142b2264e51a7477d06d25adb05683af7c823a7ec89f2666324a"
+  },
+  {
+   "file": "clip_vitb16_isun_test.npz",
+   "sha256": "461e5caba5dfd724e7b9f6b6416c7b73d2d54345fcd0e02ce322cb05801d6552"
+  },
+  {
+   "file": "clip_vitb16_lsun_cropped_test.npz",
+   "sha256": "0d0f888a97e5d424ffbad48d73a269b0961d98fce8c95b3ea183129d4afb6aa8"
+  },
+  {
+   "file": "clip_vitb16_lsun_resize_test.npz",
+   "sha256": "0db4f52b1dd35b5645325e8be7ed4a7b209984b8d79e9bacdd98a247ddc8a332"
+  },
+  {
+   "file": "clip_vitb16_places365_test.npz",
+   "sha256": "c13164362f230e617265a2bf74b9e432a11de33f694156ca2ea34fcf7aa5dd60"
+  },
+  {
+   "file": "clip_vitb16_supercifar100_test.npz",
+   "sha256": "e796b5eba0d6b2b15ba7e78f69bbf7fb5a189e4a54b61c0e3e8b8efb3b41edab"
+  },
+  {
+   "file": "clip_vitb16_supercifar100_train.npz",
+   "sha256": "63724e1351269985ab79cad2aba803078912be3680081b9d9810ab145be17449"
+  },
+  {
+   "file": "clip_vitb16_svhn_test.npz",
+   "sha256": "5def0c0992820cee5993534cd0072be5e1f325bc984d26a67706fd59c58966ce"
+  },
+  {
+   "file": "clip_vitb16_textures_test.npz",
+   "sha256": "b90c6456ba414a2c2d4635aa1115f03f10596730580c1860f7e7a34c9b58a628"
+  },
+  {
+   "file": "clip_vitb16_tinyimagenet_test.npz",
+   "sha256": "dac579cada021ea876eda1fd98065ca2c053a8202fa7ee92521092e20f2572b5"
+  },
+  {
+   "file": "clip_vitb16_tinyimagenet_train.npz",
+   "sha256": "2e971d9a47bbf538f407ed7d4afc59b10dd3909e61d3245e0e00a7576041905c"
+  },
+  {
+   "file": "clip_vitl14_cifar100_test.npz",
+   "sha256": "b7a3ef3b322cb0d3d5320d4300847675e440a44b49fd12ec0df217c6cb517086"
+  },
+  {
+   "file": "clip_vitl14_cifar100_train.npz",
+   "sha256": "d438cbfdb215668e11b745443785e195fedc52d9b53042234c988ca67b5f55e0"
+  },
+  {
+   "file": "clip_vitl14_cifar10_test.npz",
+   "sha256": "9d3569848e504a122f5746aef29582057d9299031bd76b6f150b94e48b9bce29"
+  },
+  {
+   "file": "clip_vitl14_cifar10_train.npz",
+   "sha256": "f67934d3ee0ba6c2b053f4136c87e7fb768e17f076932afac399af4f21651503"
+  },
+  {
+   "file": "clip_vitl14_isun_test.npz",
+   "sha256": "4761d5ed00d684131aaacd9c0edc05e10fc69c7d18afd5b60301889be1528367"
+  },
+  {
+   "file": "clip_vitl14_lsun_cropped_test.npz",
+   "sha256": "db5f8dda3062887148e838d83ab4364752ce8d40442fcd74965f74928230e95f"
+  },
+  {
+   "file": "clip_vitl14_lsun_resize_test.npz",
+   "sha256": "b9de64dc5f4847fb5d4468c4f7465d56356eb15a339f4244035da8bbb4ca30f4"
+  },
+  {
+   "file": "clip_vitl14_places365_test.npz",
+   "sha256": "f801344e215dfebb2d7d9afba92c186a9f8f39a990629a9d08f4d2f4b80c3fb1"
+  },
+  {
+   "file": "clip_vitl14_supercifar100_test.npz",
+   "sha256": "14e4e463819a2ce7a8e70aaed72fd1e1787a2d36ada3e71b35ca1a2081efe5d9"
+  },
+  {
+   "file": "clip_vitl14_supercifar100_train.npz",
+   "sha256": "769a495b886233cb3b3dfec03fe3844423d94a31643a48a00fbfe93737b5eb07"
+  },
+  {
+   "file": "clip_vitl14_svhn_test.npz",
+   "sha256": "0d1f33693646475a28a45240d6c88c441591b5bae3dfe40146d5be32562ab204"
+  },
+  {
+   "file": "clip_vitl14_textures_test.npz",
+   "sha256": "f051d968dae05c9f6f25fa515b2462d1cba26ebad5766275a44b53e928d91c8a"
+  },
+  {
+   "file": "clip_vitl14_tinyimagenet_test.npz",
+   "sha256": "62bc294bb1c32eb27fa3ab1300fe56038e0f02b267744bf67b9a52b18fdb746b"
+  },
+  {
+   "file": "clip_vitl14_tinyimagenet_train.npz",
+   "sha256": "0d7cf1b0bbc4349835d87ef59ccc788d798cb75b4449ec42d6ea1f13174d1901"
+  },
+  {
+   "file": "dinov2_vitb14_cifar100_test.npz",
+   "sha256": "6fca3d7ddc5a24243e2b9d4a5a27e3a951c586843d17e07f33a6c6cec16eb03d"
+  },
+  {
+   "file": "dinov2_vitb14_cifar100_train.npz",
+   "sha256": "18aeab50d6e249d66c271fc4c8a9b9180ab2f778a32686e205f7e1ec200aedd1"
+  },
+  {
+   "file": "dinov2_vitb14_cifar10_test.npz",
+   "sha256": "c914645127f129abbfc44fa3c91c2da873c750185966d757f02e5e5e7adf1ada"
+  },
+  {
+   "file": "dinov2_vitb14_cifar10_train.npz",
+   "sha256": "e962e05f7f63dad522d1fd4459b68087190478e0089022bf9c1442d2f131affc"
+  },
+  {
+   "file": "dinov2_vitb14_isun_test.npz",
+   "sha256": "90dbea7d98e8e4e17f0b47b5f5d91c4f4e117ead540d9922f2e0c6ec488d3c3f"
+  },
+  {
+   "file": "dinov2_vitb14_lsun_cropped_test.npz",
+   "sha256": "2c37e71f0e62575fe90ea7bd34dee66ada752444ca2f146e8eb466f8a322592f"
+  },
+  {
+   "file": "dinov2_vitb14_lsun_resize_test.npz",
+   "sha256": "bb0fac2ac3b2fa9509b38d9346d62328345c097aecbba61f30aea3669e251298"
+  },
+  {
+   "file": "dinov2_vitb14_places365_test.npz",
+   "sha256": "928a34a60c9f8eaa13974883120686b03ba9a5189cc5d3b32412fae6e1eb2b57"
+  },
+  {
+   "file": "dinov2_vitb14_supercifar100_test.npz",
+   "sha256": "6aadc6c0a3d9ede2e69f2a9494f075f859adbdd778740749003f6e2f826d9d83"
+  },
+  {
+   "file": "dinov2_vitb14_supercifar100_train.npz",
+   "sha256": "68387fee877c96d4a3af6691e754545e0f5275bfb5d6192a92a18ce533528631"
+  },
+  {
+   "file": "dinov2_vitb14_svhn_test.npz",
+   "sha256": "4f5966641395f3003693fcb9f386136ac968e4fe6d9ca1de7709913322151cc3"
+  },
+  {
+   "file": "dinov2_vitb14_textures_test.npz",
+   "sha256": "c0cd95b4f69078bf3d1faa336b21a7c56464de6242833a2b174a90ea46493f86"
+  },
+  {
+   "file": "dinov2_vitb14_tinyimagenet_test.npz",
+   "sha256": "d42285ebf9fdd0f6674c561329d75fd309d63251ad67396a6acc0d0f101cbd16"
+  },
+  {
+   "file": "dinov2_vitb14_tinyimagenet_train.npz",
+   "sha256": "306f2641c8afa50e36bc179f2c660a618abb76ba5862bf1b46cb0810f3ef4fcc"
+  }
+ ],
+ "scripts": [
+  {
+   "file": "poola_measure.py",
+   "sha256": "31a0aaf50dbc9f8cf6ef36de621fc8b4124a18573a4c1fe86cb918c5921e5dd9"
+  },
+  {
+   "file": "poola_outcomes.py",
+   "sha256": "af3164b05b381d3343e29ee47aeb402ca17b3bfaec264ba76538c9b363af453f"
+  },
+  {
+   "file": "poola_score.py",
+   "sha256": "146c14e53b5d0c37fc907922d05b6319d71d9f6d859cec7b96251c5c41a13d90"
+  },
+  {
+   "file": "poola_lock.py",
+   "sha256": "d312fd046f9e3e620c99d4d91534237ebc7d92740115c29abcd215aa51ec6eb8"
+  },
+  {
+   "file": "spectra_campaign_harness.py",
+   "sha256": "b4e8009288c680d3c50425fbb56d4f5d64e5bba01b7cc578557c61aebdcfefcc"
+  }
+ ]
+}
