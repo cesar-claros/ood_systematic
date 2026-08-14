@@ -13,7 +13,9 @@
 # Scope via environment:
 #   EXPERIMENTS       space-separated fd-shifts experiment names, or
 #   EXPERIMENTS_FILE  file with one experiment name per line ('#' comments ok)
-#   ARMS              default "newcsf ash react"
+#   ARMS              default "newcsf ash react"; also available: "gradpca"
+#                     (GradPCA head variants + ActPCA_cmeans, plain mode;
+#                     verify afterwards with tests/check_gradpca_e1_confids.py)
 #   TEST_MODES        default: iid_test + the six nsncs OOD modes; append the
 #                     cross-source modes configured for your source (e.g. the
 #                     new-class study modes) to cover near-OOD
@@ -90,6 +92,12 @@ for exp in "${EXPS[@]}"; do
         case "$arm" in
             newcsf)
                 run_fit_eval "$exp" None "MahalanobisPP,NCI" newcsf || true
+                ;;
+            gradpca)
+                # GradPCA head variants + class-means activation PCA (X6
+                # E-series). Plain-mode only; after the run, verify Theorem E1
+                # with tests/check_gradpca_e1_confids.py.
+                run_fit_eval "$exp" None "GradPCA_head_sum,GradPCA_head_max,ActPCA_cmeans" gradpca || true
                 ;;
             ash)
                 run_fit_eval "$exp" "$ASH_METHOD" "$HEAD_CSFS" ash || true
