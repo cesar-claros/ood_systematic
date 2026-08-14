@@ -16,6 +16,7 @@ from src.csfs.entropy import EntropyScores
 from src.csfs.fdbd import fDBD
 from src.csfs.geometric_complexity import GeometricComplexity
 from src.csfs.gradnorm import GradNorm
+from src.csfs.gradpca import GradPCA
 from src.csfs.kernel_pca import KernelPCA
 from src.csfs.kl_matching import KLMatching
 from src.csfs.mahalanobis import MahalanobisDistance
@@ -35,6 +36,7 @@ __all__ = [
     "fDBD",
     "GeometricComplexity",
     "GradNorm",
+    "GradPCA",
     "KernelPCA",
     "KLMatching",
     "MahalanobisDistance",

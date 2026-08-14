@@ -36,6 +36,7 @@ from src.csfs import (
     EntropyScores,
     fDBD,
     GradNorm,
+    GradPCA,
     KernelPCA,
     MahalanobisDistance,
     MahalanobisPP,
@@ -88,6 +89,12 @@ ALL_FAMILIES: frozenset[str] = frozenset({
     "Residual",
     "NeCo",
     "NeuralCollapse",
+    # GradPCA head variants + matched class-means activation PCA (X6 E-series;
+    # plain-mode only, no PF interaction). NOTE: 'ActPCA_cmeans' deliberately
+    # avoids the substring '_class' — _detect_mode() would misparse it.
+    "GradPCA_head_sum",
+    "GradPCA_head_max",
+    "ActPCA_cmeans",
     # Base detectors (no fit; eval only):
     "MSR",
     "MLS",
@@ -135,6 +142,7 @@ _ALIASES.update({
     "neuralcollapsemetrics":    "NeuralCollapse",
     "vimscore":                 "ViM",
     "residualscore":            "Residual",
+    "actpca_classmeans":        "ActPCA_cmeans",
 })
 
 #: Canonical family → confids-key prefix (None means no confids keys of its
@@ -155,6 +163,9 @@ _FAMILY_TO_PREFIX: dict[str, str | None] = {
     "ViM":                 "ViM",
     "Residual":            "Residual",
     "NeCo":                "NeCo",
+    "GradPCA_head_sum":    "GradPCA_head_sum",
+    "GradPCA_head_max":    "GradPCA_head_max",
+    "ActPCA_cmeans":       "ActPCA_cmeans",
     "MSR":                 "MSR",
     "MLS":                 "MLS",
     "PE":                  "PE",
@@ -891,12 +902,28 @@ def run_score_methods(cf, module, study_name, model_evaluations, do_enabled:bool
         residual.compute_Residual_params(encoded_train)
         residual.save_params(filename='Residual_params'+model_opts)
         del residual
-    # NeCo Score 
+    # NeCo Score
     if gate("plain", "NeCo"):
         neco = NeCo(module,study_name,cf)
         neco.compute_NeCo_params(encoded_train)
         neco.save_params(filename='NeCo_params'+model_opts)
         del neco
+    # GradPCA head variants + class-means activation PCA (X6 E-series)
+    if gate("plain", "GradPCA_head_sum"):
+        gradpca_head_sum = GradPCA(module, study_name, cf, variant='head_sum')
+        gradpca_head_sum.compute_GradPCA_params(encoded_train, labels_train)
+        gradpca_head_sum.save_params(filename='GradPCA_head_sum_params'+model_opts)
+        del gradpca_head_sum
+    if gate("plain", "GradPCA_head_max"):
+        gradpca_head_max = GradPCA(module, study_name, cf, variant='head_max')
+        gradpca_head_max.compute_GradPCA_params(encoded_train, labels_train)
+        gradpca_head_max.save_params(filename='GradPCA_head_max_params'+model_opts)
+        del gradpca_head_max
+    if gate("plain", "ActPCA_cmeans"):
+        actpca_cmeans = GradPCA(module, study_name, cf, variant='act_cmeans')
+        actpca_cmeans.compute_GradPCA_params(encoded_train, labels_train)
+        actpca_cmeans.save_params(filename='ActPCA_cmeans_params'+model_opts)
+        del actpca_cmeans
     del encoded_train
 
     if do_enabled:
@@ -1207,6 +1234,7 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
     generalized_entropy_global = generalized_entropy_class_pred = generalized_entropy_class = generalized_entropy = _MISSING_CSF
     renyi_entropy_global = renyi_entropy_class_pred = renyi_entropy_class = renyi_entropy = _MISSING_CSF
     vim = residual = neco = _MISSING_CSF
+    gradpca_head_sum = gradpca_head_max = actpca_cmeans = _MISSING_CSF
     # Temperature
     temperature_scale = TemperatureScaling(cf)
     temperature_scale.load_params(filename='Temperature_params'+model_opts)
@@ -1370,10 +1398,20 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
     if gate("plain", "Residual"):
         residual = ResidualScore(module,study_name,cf)
         residual.load_params(filename='Residual_params'+model_opts)
-    # NeCo Score 
+    # NeCo Score
     if gate("plain", "NeCo"):
         neco = NeCo(module,study_name,cf)
         neco.load_params(filename='NeCo_params'+model_opts)
+    # GradPCA head variants + class-means activation PCA (X6 E-series)
+    if gate("plain", "GradPCA_head_sum"):
+        gradpca_head_sum = GradPCA(module, study_name, cf, variant='head_sum')
+        gradpca_head_sum.load_params(filename='GradPCA_head_sum_params'+model_opts)
+    if gate("plain", "GradPCA_head_max"):
+        gradpca_head_max = GradPCA(module, study_name, cf, variant='head_max')
+        gradpca_head_max.load_params(filename='GradPCA_head_max_params'+model_opts)
+    if gate("plain", "ActPCA_cmeans"):
+        actpca_cmeans = GradPCA(module, study_name, cf, variant='act_cmeans')
+        actpca_cmeans.load_params(filename='ActPCA_cmeans_params'+model_opts)
 
     funcs = {
             'temperature_scale':temperature_scale,
@@ -1414,6 +1452,9 @@ def load_score_methods(cf, module, study_name, do_enabled:bool, model_opts:str='
             'vim':vim,
             'residual':residual,
             'neco':neco,
+            'gradpca_head_sum':gradpca_head_sum,
+            'gradpca_head_max':gradpca_head_max,
+            'actpca_cmeans':actpca_cmeans,
             }
 
     if do_enabled:
@@ -1949,7 +1990,13 @@ def stats(module, study_name, cf, model_evaluations, eval_name:str, do_enabled:b
                 # Residual
                 'Residual':             score_methods['residual'].get_scores(encoded),
                 # NeCo
-                'NeCo':                 score_methods['neco'].get_scores(encoded),  
+                'NeCo':                 score_methods['neco'].get_scores(encoded),
+                # GradPCA head variants + class-means activation PCA (X6 E-series).
+                # Theorem E1: head_sum == cmeans exactly; both are computed as a
+                # deployed cross-check of that equality.
+                'GradPCA_head_sum':     score_methods['gradpca_head_sum'].get_scores(encoded),
+                'GradPCA_head_max':     score_methods['gradpca_head_max'].get_scores(encoded),
+                'ActPCA_cmeans':        score_methods['actpca_cmeans'].get_scores(encoded),
                 # Scores that do not requiere preprocessing
                 'MSR' :                 scores_funcs.maximum_softmax_response(softmax),
                 'PE' :                  scores_funcs.predictive_entropy(softmax),
