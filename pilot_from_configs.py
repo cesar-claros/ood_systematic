@@ -149,7 +149,7 @@ def main() -> None:
           else f"wrote {args.out}: {len(exps)} experiments")
     print(f"modes ({len(modes)}): {' '.join(modes)}")
     print("\nlaunch:")
-    print(f"  CUDA_VISIBLE_DEVICES=1 VENV=/nonexistent "
+    print(f"CSF_BATCH_SIZE=128 CSF_NUM_WORKERS=12 CUDA_VISIBLE_DEVICES=1 VENV=/nonexistent "
           f"EXPERIMENTS_FILE={args.out} \\")
     print(f"    TEST_MODES=\"{' '.join(modes)}\" \\")
     print("    nohup singularity exec --nv systematic_ood.sif "
