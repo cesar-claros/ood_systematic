@@ -29,9 +29,17 @@ resolved parameter names/shapes, k*, runtimes, peak memory, per-mode metric
 rows for all five variants + matched deep-minus-head deltas) and
 <slug>_scores.npz (per-set per-variant scores for later aggregation).
 
-Runtime self-check: on the first batch, the hook-trick gradients are compared
-against a per-sample autograd loop on the real architecture; the stage aborts
-on disagreement.
+Runtime self-check (two tiers, run before fitting):
+  structural (FATAL): the hook trick is compared against a per-sample
+      autograd loop on a CPU float64 copy of the real model (tolerance
+      1e-9). This proves the machinery on the actual architecture with no
+      float noise.
+  numerical (recorded): the same comparison on the GPU float32 path. Batch
+      -size-dependent cuDNN kernel selection plus cancellation in the
+      sum-of-logits channel makes 1e-2 relative differences here normal;
+      the value is written to the JSON and only warned about above 5e-2.
+TF32 is disabled in this stage (cuDNN conv TF32 defaults to ON and injects
+~1e-3 per-element noise on A100s).
 
 Usage (from code/, inside the paper container on the HPC):
     python x6_gradpca/deep_gradpca.py --model_path=<experiment> [--use_cuda]
@@ -133,6 +141,63 @@ def make_forward(T: TrainedModule, study_name: str, ext_confid_name: str):
     return forward
 
 
+def run_selfcheck(module, study_name, cf, x0, forward, cap, layer, device, n, record):
+    """Two-tier hook-trick verification on the real architecture.
+
+    Numerical tier (recorded, warn-only): hook vs per-sample autograd loop on
+    the GPU fp32 production path. Batch-size-dependent cuDNN kernel selection
+    plus cancellation in the sum channel makes ~1e-2 differences normal here.
+    Structural tier (FATAL, tol 1e-9): the same comparison on a CPU float64
+    copy of the model, which removes float noise entirely; a failure here is
+    a real bug in the machinery or the layer wiring.
+    """
+    n_classes = int(cf.data.num_classes)
+    if study_name == "vit":
+        n = min(n, 4)  # float64 CPU ViT forwards are slow; 4 samples suffice
+    n = min(n, x0.shape[0])
+    errs = {}
+    # numerical tier: GPU/fp32, the exact production path
+    xg = x0[:n].to(device)
+    _, logits = forward(xg)
+    aggregation_scalar(logits, n_classes, "sum").backward(retain_graph=True)
+    g_sum = cap.per_sample_grads()
+    aggregation_scalar(logits, n_classes, "max").backward()
+    g_max = cap.per_sample_grads()
+    for p in layer.parameters():
+        p.grad = None
+    for agg, g in (("sum", g_sum), ("max", g_max)):
+        ref = reference_per_sample_grads(lambda xi: forward(xi)[1], layer, xg, n_classes, agg)
+        errs[f"fp32_{agg}"] = float((g - ref).abs().max() / ref.abs().max().clamp(min=1e-30))
+    # structural tier: CPU/float64 copy, no float noise
+    T64 = TrainedModule(module, study_name, cf, rank_weight=False, rank_feat=False,
+                        ash_method=None, use_cuda=False)
+    T64.module.double()
+    for p in T64.module.parameters():
+        p.requires_grad_(False)
+    layer64, _ = resolve_target_layer(T64, study_name)
+    for p in layer64.parameters():
+        p.requires_grad_(True)
+    cap64 = LayerGradCapture(layer64)
+    forward64 = make_forward(T64, study_name, str(cf.eval.ext_confid_name))
+    x64 = x0[:n].double()
+    _, logits64 = forward64(x64)
+    aggregation_scalar(logits64, n_classes, "sum").backward(retain_graph=True)
+    g64_sum = cap64.per_sample_grads()
+    aggregation_scalar(logits64, n_classes, "max").backward()
+    g64_max = cap64.per_sample_grads()
+    for agg, g in (("sum", g64_sum), ("max", g64_max)):
+        ref = reference_per_sample_grads(lambda xi: forward64(xi)[1], layer64, x64, n_classes, agg)
+        errs[f"f64_{agg}"] = float((g - ref).abs().max() / ref.abs().max().clamp(min=1e-30))
+    cap64.remove()
+    del T64
+    record["selfcheck"] = errs
+    logger.info(f"Self-check: {errs}")
+    assert max(errs["f64_sum"], errs["f64_max"]) < 1e-9, \
+        f"structural self-check FAILED (real bug, not float noise): {errs}"
+    if max(errs["fp32_sum"], errs["fp32_max"]) > 5e-2:
+        logger.warning(f"fp32 hook-vs-loop gap above 5e-2 (unusually large float noise): {errs}")
+
+
 def get_dataloader(datamodule, set_name: str, study_name: str, dataset_name: str):
     """Mirror utils.compute_model_evaluations' loader dispatch (shuffle=False
     everywhere; ImageFolder OOD sets 6-10 with the ImageNet normalization)."""
@@ -198,6 +263,10 @@ def main():
     args = parse_args()
     use_cuda = bool(args.use_cuda and torch.cuda.is_available())
     device = torch.device("cuda" if use_cuda else "cpu")
+    # TF32 (cuDNN default ON) injects ~1e-3 per-element noise on Ampere GPUs;
+    # gradients of the summed logits are cancellation-heavy, so keep fp32 exact.
+    torch.backends.cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     slug = args.model_path.replace("/", "__")
@@ -253,7 +322,7 @@ def main():
         "modes": {}, "deltas": {},
     }
 
-    def run_split(set_name, fit=False, selfcheck=False):
+    def run_split(set_name, fit=False):
         """One pass over a split; returns dict of collected arrays (and, when
         fit=True, the per-class gradient sums)."""
         loader = get_dataloader(datamodule, set_name, study_name, str(cf.data.dataset))
@@ -274,17 +343,6 @@ def main():
             g_max = cap.per_sample_grads()
             for p in layer.parameters():
                 p.grad = None
-            if selfcheck and n_seen == 0 and args.selfcheck_n > 0:
-                nn_ = min(args.selfcheck_n, x.shape[0])
-                errs = {}
-                for agg, g in (("sum", g_sum), ("max", g_max)):
-                    ref = reference_per_sample_grads(
-                        lambda xi: forward(xi)[1], layer, x[:nn_], n_classes, agg)
-                    denom = ref.abs().max().clamp(min=1e-30)
-                    errs[agg] = float((g[:nn_] - ref).abs().max() / denom)
-                record["selfcheck"] = errs
-                assert max(errs.values()) < 1e-3, f"hook-trick self-check failed: {errs}"
-                logger.info(f"Self-check passed: {errs}")
             if fit:
                 sums["sum"].index_add_(0, y, g_sum.double())
                 sums["max"].index_add_(0, y, g_max.double())
@@ -307,9 +365,15 @@ def main():
         out.update({v: torch.cat(deep_scores[v]) for v in DEEP_VARIANTS})
         return out
 
+    # ---- self-check (before any fitting) --------------------------------
+    if args.selfcheck_n > 0:
+        x0, _ = next(iter(get_dataloader(datamodule, "train", study_name, str(cf.data.dataset))))
+        run_selfcheck(module, study_name, cf, x0, forward, cap, layer, device,
+                      args.selfcheck_n, record)
+
     # ---- fit pass -------------------------------------------------------
     t0 = time.time()
-    train_out, sums, counts = run_split("train", fit=True, selfcheck=True)
+    train_out, sums, counts = run_split("train", fit=True)
     assert (counts > 0).all(), f"empty classes in train split: {(counts == 0).nonzero().flatten().tolist()}"
     deep_fits = {}
     for name, agg in (("GradPCA_lastlayer_sum", "sum"), ("GradPCA_lastlayer_max", "max")):
