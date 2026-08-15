@@ -104,6 +104,9 @@ nc_csf_predictivity/outputs/pool_a/*_newcsfs*
 # sync to the HPC
 !x6_spectral/run_x6_measure.sh
 !x6_spectral/manifest_dev_pool.txt
+# X6-GradPCA Pilot 1 runner and roster must sync to the HPC
+!x6_gradpca/run_pilot1_deep.sh
+!pilot1_gradpca_experiments.txt
 # X6 measurement outputs stay on the HPC (analysis happens there; JSON/NPZ/logs).
 # Contents-level pattern (not `outputs/`) so git can descend for the exceptions.
 x6_spectral/outputs/*
@@ -117,3 +120,5 @@ x6_spectral/outputs/poola_l14/*
 !x6_spectral/outputs/poola_l14/poola_scoring.csv
 !x6_spectral/outputs/poola_l14/poola_report.md
 nc_csf_predictivity/outputs/pool_a/*_harmonized*
+# X6-GradPCA Pilot 1 deep-gradient stage outputs stay on the HPC (JSON/NPZ)
+x6_gradpca/outputs/

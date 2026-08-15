@@ -1,0 +1,10 @@
+# X6-GradPCA Pilot 1 checkpoint roster (pre-declared in
+# documentation/X6_gradpca_pilot1_protocol.md before any deep-gradient
+# outcome existed). Three from-scratch VGG-13 seeds + three fine-tuned ViT
+# seeds, CIFAR-100, all do0 (no MCD arm in this pilot).
+cifar100_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2
+cifar100_paper_sweep/confidnet_bbvgg13_do0_run2_rew2.2
+cifar100_paper_sweep/confidnet_bbvgg13_do0_run3_rew2.2
+vit/cifar100_modelvit_bbvit_lr0.01_bs128_run0_do0_rew0
+vit/cifar100_modelvit_bbvit_lr0.01_bs128_run1_do0_rew0
+vit/cifar100_modelvit_bbvit_lr0.01_bs128_run2_do0_rew0
