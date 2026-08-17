@@ -122,3 +122,5 @@ x6_spectral/outputs/poola_l14/*
 nc_csf_predictivity/outputs/pool_a/*_harmonized*
 # X6-GradPCA Pilot 1 deep-gradient stage outputs stay on the HPC (JSON/NPZ)
 x6_gradpca/outputs/
+pilot0/caches/
+pilot0/outputs/
