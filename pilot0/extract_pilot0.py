@@ -22,7 +22,11 @@ from pathlib import Path
 import numpy as np
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+_CODE_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_CODE_ROOT))
+# measure_checkpoint.py resolves its x6 siblings via bare imports, which
+# only work with x6_spectral/ itself on sys.path (script-style execution).
+sys.path.insert(1, str(_CODE_ROOT / "x6_spectral"))
 
 from fd_shifts import logger
 from fd_shifts.loaders.data_loader import FDShiftsDataLoader
