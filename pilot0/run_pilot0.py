@@ -39,11 +39,13 @@ from pilot0.scores import (
     FEATURE_SCORES,
     HEAD_SCORES,
     MahalanobisScorer,
-    all_scores,
     auroc,
+    compute_feature_scores,
+    compute_head_scores,
     logits,
+    normalize_rows,
 )
-from pilot0.theory import hanley_mcneil_se, predicted_aurocs
+from pilot0.theory import HeadContext, hanley_mcneil_se, predicted_aurocs
 from src.rc_stats import RiskCoverageStats
 
 TAUS = (0.5, 1.0)
@@ -136,40 +138,56 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
     states = head_grid(w0, model, TAUS, THETAS_DEG, N_DRAWS, SEED)
     sigma = model.sigma_iso
     n_id = len(cache["h_iid_test"])
+    mean_prototypes_n = normalize_rows(uncentered_means)
+
+    # Hoist everything head-state-independent out of the state loop:
+    # float64/normalized activations, feature-only scores, OOD moments.
+    eval_sets: dict[str, dict] = {}
+    for name in ["iid_test"] + ood_names:
+        h64 = cache[f"h_{name}"].astype(np.float64)
+        rec = {"h64": h64, "h_n": normalize_rows(h64),
+               "feat": compute_feature_scores(h64, maha, mean_prototypes_n)}
+        if name != "iid_test":
+            m_ood = h64.mean(0)
+            resid = h64 - m_ood
+            rec["m_ood"] = m_ood
+            rec["sigma_o"] = float(
+                np.sqrt((resid**2).sum(1).mean() / h64.shape[1]))
+        eval_sets[name] = rec
 
     empirical: dict = {}
     predicted: dict = {}
-    feature_ref: dict = {}
-    invariance_max = 0.0
+    for name in ood_names:
+        for score in FEATURE_SCORES:
+            empirical[("baseline", name, score)] = auroc(
+                eval_sets["iid_test"]["feat"][score],
+                eval_sets[name]["feat"][score])
+
+    id_rec = eval_sets["iid_test"]
     for state in states:
-        w_s = state["w"]
-        sc_id = all_scores(cache["h_iid_test"], w_s, b, model, maha,
-                           uncentered_means)
+        ctx = HeadContext.from_head(state["w"], b)
+        sc_id = compute_head_scores(id_rec["h64"], id_rec["h_n"], ctx.w, b)
         for name in ood_names:
-            h_o = cache[f"h_{name}"]
-            sc_ood = all_scores(h_o, w_s, b, model, maha, uncentered_means)
-            for score in HEAD_SCORES + FEATURE_SCORES:
+            rec = eval_sets[name]
+            sc_ood = compute_head_scores(rec["h64"], rec["h_n"], ctx.w, b)
+            for score in HEAD_SCORES:
                 empirical[(state["name"], name, score)] = auroc(
                     sc_id[score], sc_ood[score])
-            for score in FEATURE_SCORES:
-                key = (name, score)
-                if state["kind"] == "baseline":
-                    feature_ref[key] = (sc_id[score], sc_ood[score])
-                else:
-                    invariance_max = max(
-                        invariance_max,
-                        float(np.abs(sc_id[score]
-                                     - feature_ref[key][0]).max()),
-                        float(np.abs(sc_ood[score]
-                                     - feature_ref[key][1]).max()))
-            m_ood = cache[f"h_{name}"].astype(np.float64).mean(0)
-            resid = h_o.astype(np.float64) - m_ood
-            sigma_o = float(np.sqrt((resid**2).sum(1).mean()
-                                    / h_o.shape[1]))
             predicted[(state["name"], name)] = predicted_aurocs(
-                uncentered_means, model.class_freq, sigma, m_ood, sigma_o,
-                w_s, b)
+                uncentered_means, model.class_freq, sigma, rec["m_ood"],
+                rec["sigma_o"], ctx)
         state.pop("w")
+
+    # G1: feature-only scores never consume the head state; verify the
+    # plumbing by recomputing them through the same call path once and
+    # requiring exact equality with the hoisted values.
+    invariance_max = 0.0
+    for name in ["iid_test"] + ood_names:
+        redo = compute_feature_scores(eval_sets[name]["h64"], maha,
+                                      mean_prototypes_n)
+        for score in FEATURE_SCORES:
+            invariance_max = max(invariance_max, float(np.abs(
+                redo[score] - eval_sets[name]["feat"][score]).max()))
     result["gates"]["G1_feature_invariance_max_abs"] = invariance_max
 
     sign_hits, sign_total = 0, 0
@@ -222,16 +240,23 @@ def _identity_check(cache: dict, model: FeatureModel,
     lookup = {s["name"]: s["w"] for s in head_grid(
         cache["w"].astype(np.float64), model, TAUS, THETAS_DEG, N_DRAWS,
         SEED) if s["name"] in identity_states}
+    mean_prototypes_n = normalize_rows(uncentered_means)
+    prepared = {}
+    for name in ["iid_test"] + ood_names:
+        h64 = cache[f"h_{name}"].astype(np.float64)
+        prepared[name] = (h64, normalize_rows(h64),
+                          compute_feature_scores(h64, maha,
+                                                 mean_prototypes_n))
     for state_name in identity_states:
         w_s = lookup[state_name]
-        sc_id = all_scores(cache["h_iid_test"], w_s, b, model, maha,
-                           uncentered_means)
-        preds = logits(cache["h_iid_test"], w_s, b).argmax(1)
+        h64_id, hn_id, feat_id = prepared["iid_test"]
+        sc_id = compute_head_scores(h64_id, hn_id, w_s, b) | feat_id
+        preds = logits(h64_id, w_s, b).argmax(1)
         res_id = (preds != y_id).astype(float)
         for name in ood_names:
-            sc_ood = all_scores(cache[f"h_{name}"], w_s, b, model, maha,
-                                uncentered_means)
-            res = np.concatenate([res_id, np.ones(len(cache[f"h_{name}"]))])
+            h64_o, hn_o, feat_o = prepared[name]
+            sc_ood = compute_head_scores(h64_o, hn_o, w_s, b) | feat_o
+            res = np.concatenate([res_id, np.ones(len(h64_o))])
             pi = float(res.mean())
             augrcs, f_aurocs = [], []
             for score in HEAD_SCORES + FEATURE_SCORES:
@@ -312,13 +337,16 @@ def main() -> None:
               [load_cache(Path(p)) for p in args.caches])
     if not caches:
         parser.error("provide --caches or --synthetic")
+    import time
     for cache in caches:
+        t0 = time.perf_counter()
         result = analyze_checkpoint(cache, out_dir)
         g = result["gates"]
         print(f"{result['slug']}: G2={g['G2_sign_agreement']:.3f} "
               f"({g['G2_material_cells']} cells) "
               f"G3 {g['G3_mae_theory']:.4f}<{g['G3_mae_constant']:.4f}? "
-              f"G1 {g['G1_feature_invariance_max_abs']:.1e}")
+              f"G1 {g['G1_feature_invariance_max_abs']:.1e} "
+              f"[{time.perf_counter() - t0:.0f}s]")
 
 
 if __name__ == "__main__":

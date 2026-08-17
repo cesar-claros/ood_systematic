@@ -1,5 +1,7 @@
 # Wiring the X3 interventions into the fd-shifts fork
 
+**STATUS 2026-08-14: WIRED.** Implemented in the local fork checkout (`fd-shifts-0.1.1/`) as a single `intervention_model` paradigm carrying all three penalty kinds plus the A2 fixed-ETF head and the negative-dose arm; see `documentation/pilot1_intervention_wiring.md` for the change list, smoke commands, and dispatch matrix. The plan below is the original design note (superseded where it differs: one paradigm module instead of three clones).
+
 Target repo: `cesar-claros/fd-shifts-0.1.1`. Three additions, mirroring how the
 `dg` paradigm carries its `rew` scalar.
 
