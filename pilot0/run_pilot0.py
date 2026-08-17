@@ -45,7 +45,12 @@ from pilot0.scores import (
     logits,
     normalize_rows,
 )
-from pilot0.theory import HeadContext, hanley_mcneil_se, predicted_aurocs
+from pilot0.theory import (
+    HeadContext,
+    NoiseModel,
+    hanley_mcneil_se,
+    predicted_aurocs,
+)
 from src.rc_stats import RiskCoverageStats
 
 TAUS = (0.5, 1.0)
@@ -153,6 +158,7 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
             rec["m_ood"] = m_ood
             rec["sigma_o"] = float(
                 np.sqrt((resid**2).sum(1).mean() / h64.shape[1]))
+            rec["cov_o"] = resid.T @ resid / len(resid)
         eval_sets[name] = rec
 
     empirical: dict = {}
@@ -164,8 +170,11 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
                 eval_sets[name]["feat"][score])
 
     id_rec = eval_sets["iid_test"]
+    dim = id_rec["h64"].shape[1]
     for state in states:
         ctx = HeadContext.from_head(state["w"], b)
+        noise_id = {"iso": NoiseModel.isotropic(sigma, ctx, dim),
+                    "emp": NoiseModel.empirical(model.sigma_w, ctx)}
         sc_id = compute_head_scores(id_rec["h64"], id_rec["h_n"], ctx.w, b)
         for name in ood_names:
             rec = eval_sets[name]
@@ -173,9 +182,14 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
             for score in HEAD_SCORES:
                 empirical[(state["name"], name, score)] = auroc(
                     sc_id[score], sc_ood[score])
-            predicted[(state["name"], name)] = predicted_aurocs(
-                uncentered_means, model.class_freq, sigma, rec["m_ood"],
-                rec["sigma_o"], ctx)
+            noise_ood = {
+                "iso": NoiseModel.isotropic(rec["sigma_o"], ctx, dim),
+                "emp": NoiseModel.empirical(rec["cov_o"], ctx)}
+            predicted[(state["name"], name)] = {
+                arm: predicted_aurocs(uncentered_means, model.class_freq,
+                                      noise_id[arm], rec["m_ood"],
+                                      noise_ood[arm], ctx)
+                for arm in ("iso", "emp")}
         state.pop("w")
 
     # G1: feature-only scores never consume the head state; verify the
@@ -190,8 +204,19 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
                 redo[score] - eval_sets[name]["feat"][score]).max()))
     result["gates"]["G1_feature_invariance_max_abs"] = invariance_max
 
-    sign_hits, sign_total = 0, 0
-    abs_err_theory, abs_err_const = [], []
+    # G2: sign agreement on material cells, per predictor arm.
+    # G3a: RESPONSE-scale MAE, |delta_pred - delta_emp| vs the constant-
+    #      response baseline |delta_emp| (the quantity that matters for
+    #      the Pilot 2 plug-in index, which is calibrated per R2 anyway).
+    # G3b: LEVEL MAE at the baseline head state, reported as the
+    #      misspecification diagnostic (T4), not a pass/fail gate: the
+    #      isotropic arm's level error on real anisotropic features is
+    #      expected and documented, not a harness failure.
+    arms = ("iso", "emp")
+    sign_hits = dict.fromkeys(arms, 0)
+    sign_total = dict.fromkeys(arms, 0)
+    resp_err: dict[str, list] = {arm: [] for arm in arms}
+    resp_const: list = []
     cells = []
     for state in states:
         if state["kind"] == "baseline":
@@ -200,28 +225,44 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
             n_ood = len(cache[f"h_{name}"])
             for score in HEAD_SCORES:
                 base_emp = empirical[("baseline", name, score)]
-                base_pred = predicted[("baseline", name)][score]
                 emp = empirical[(state["name"], name, score)]
-                pred = predicted[(state["name"], name)][score]
-                d_pred, d_emp = pred - base_pred, emp - base_emp
+                d_emp = emp - base_emp
                 se = hanley_mcneil_se(base_emp, n_id, n_ood)
-                material = abs(d_pred) >= 2.0 * se
-                abs_err_theory.append(abs(emp - pred))
-                abs_err_const.append(abs(d_emp))
-                if material:
-                    sign_total += 1
-                    sign_hits += int(np.sign(d_pred) == np.sign(d_emp))
-                cells.append({
-                    "state": state["name"], "ood_set": name, "score": score,
-                    "auroc_emp": emp, "auroc_pred": pred,
-                    "delta_emp": d_emp, "delta_pred": d_pred,
-                    "material": bool(material)})
+                resp_const.append(abs(d_emp))
+                cell = {"state": state["name"], "ood_set": name,
+                        "score": score, "auroc_emp": emp, "delta_emp": d_emp}
+                for arm in arms:
+                    base_pred = predicted[("baseline", name)][arm][score]
+                    pred = predicted[(state["name"], name)][arm][score]
+                    d_pred = pred - base_pred
+                    resp_err[arm].append(abs(d_pred - d_emp))
+                    material = abs(d_pred) >= 2.0 * se
+                    if material:
+                        sign_total[arm] += 1
+                        sign_hits[arm] += int(
+                            np.sign(d_pred) == np.sign(d_emp))
+                    cell[f"auroc_pred_{arm}"] = pred
+                    cell[f"delta_pred_{arm}"] = d_pred
+                    cell[f"material_{arm}"] = bool(material)
+                cells.append(cell)
     result["cells"] = cells
-    result["gates"]["G2_sign_agreement"] = (
-        sign_hits / sign_total if sign_total else float("nan"))
-    result["gates"]["G2_material_cells"] = sign_total
-    result["gates"]["G3_mae_theory"] = float(np.mean(abs_err_theory))
-    result["gates"]["G3_mae_constant"] = float(np.mean(abs_err_const))
+    level_err = {arm: [] for arm in arms}
+    for name in ood_names:
+        for score in HEAD_SCORES:
+            for arm in arms:
+                level_err[arm].append(
+                    abs(predicted[("baseline", name)][arm][score]
+                        - empirical[("baseline", name, score)]))
+    for arm in arms:
+        result["gates"][f"G2_sign_agreement_{arm}"] = (
+            sign_hits[arm] / sign_total[arm] if sign_total[arm]
+            else float("nan"))
+        result["gates"][f"G2_material_cells_{arm}"] = sign_total[arm]
+        result["gates"][f"G3a_response_mae_{arm}"] = float(
+            np.mean(resp_err[arm]))
+        result["gates"][f"G3b_level_mae_{arm}"] = float(
+            np.mean(level_err[arm]))
+    result["gates"]["G3a_response_mae_constant"] = float(np.mean(resp_const))
 
     result["gates"].update(_identity_check(cache, model, maha,
                                            uncentered_means, b, ood_names))
@@ -286,11 +327,19 @@ def _write_report(result: dict, out_dir: Path) -> None:
                  f"{g['G0_logit_consistency']:.3e}")
     lines.append(f"- G1 feature-only invariance (max abs score delta): "
                  f"{g['G1_feature_invariance_max_abs']:.3e}")
-    lines.append(f"- G2 sign agreement on material cells: "
-                 f"{g['G2_sign_agreement']:.3f} "
-                 f"({g['G2_material_cells']} cells; gate >= 0.80)")
-    lines.append(f"- G3 MAE theory {g['G3_mae_theory']:.4f} vs constant "
-                 f"{g['G3_mae_constant']:.4f} (gate: theory < constant)")
+    lines.append(f"- G2 sign agreement on material cells (gate >= 0.80): "
+                 f"empirical-cov {g['G2_sign_agreement_emp']:.3f} "
+                 f"({g['G2_material_cells_emp']} cells); "
+                 f"isotropic {g['G2_sign_agreement_iso']:.3f} "
+                 f"({g['G2_material_cells_iso']} cells)")
+    lines.append(f"- G3a response MAE (gate: emp < constant): "
+                 f"empirical-cov {g['G3a_response_mae_emp']:.4f}, "
+                 f"isotropic {g['G3a_response_mae_iso']:.4f}, "
+                 f"constant-response {g['G3a_response_mae_constant']:.4f}")
+    lines.append(f"- G3b baseline level MAE (diagnostic, not a gate): "
+                 f"empirical-cov {g['G3b_level_mae_emp']:.4f}, "
+                 f"isotropic {g['G3b_level_mae_iso']:.4f} "
+                 f"(iso-emp gap = anisotropy misspecification, T4)")
     lines.append(f"- G5 worst within-block Spearman(AUGRC, 1-AUROC_f): "
                  f"{g['G5_rank_agreement_worst_spearman']:.4f}; identity "
                  f"max abs dev {g['G5_identity_max_abs_dev']:.3e}")
@@ -342,9 +391,13 @@ def main() -> None:
         t0 = time.perf_counter()
         result = analyze_checkpoint(cache, out_dir)
         g = result["gates"]
-        print(f"{result['slug']}: G2={g['G2_sign_agreement']:.3f} "
-              f"({g['G2_material_cells']} cells) "
-              f"G3 {g['G3_mae_theory']:.4f}<{g['G3_mae_constant']:.4f}? "
+        print(f"{result['slug']}: "
+              f"G2_emp={g['G2_sign_agreement_emp']:.3f} "
+              f"({g['G2_material_cells_emp']} cells) "
+              f"G3a {g['G3a_response_mae_emp']:.4f}"
+              f"<{g['G3a_response_mae_constant']:.4f}? "
+              f"G3b lvl emp={g['G3b_level_mae_emp']:.3f} "
+              f"iso={g['G3b_level_mae_iso']:.3f} "
               f"G1 {g['G1_feature_invariance_max_abs']:.1e} "
               f"[{time.perf_counter() - t0:.0f}s]")
 

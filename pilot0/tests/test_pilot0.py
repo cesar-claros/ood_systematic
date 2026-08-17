@@ -36,14 +36,23 @@ def test_feature_invariance_exact(result: dict) -> None:
     assert result["gates"]["G1_feature_invariance_max_abs"] == 0.0
 
 
-def test_sign_agreement(result: dict) -> None:
-    assert result["gates"]["G2_material_cells"] > 10
-    assert result["gates"]["G2_sign_agreement"] >= 0.8
+def test_sign_agreement_both_arms(result: dict) -> None:
+    for arm in ("iso", "emp"):
+        assert result["gates"][f"G2_material_cells_{arm}"] > 10
+        assert result["gates"][f"G2_sign_agreement_{arm}"] >= 0.8
 
 
-def test_theory_beats_constant(result: dict) -> None:
-    assert (result["gates"]["G3_mae_theory"]
-            < result["gates"]["G3_mae_constant"])
+def test_theory_beats_constant_on_responses(result: dict) -> None:
+    for arm in ("iso", "emp"):
+        assert (result["gates"][f"G3a_response_mae_{arm}"]
+                < result["gates"]["G3a_response_mae_constant"])
+
+
+def test_level_accurate_on_isotropic_truth(result: dict) -> None:
+    # The synthetic checkpoint has isotropic noise, so both arms must
+    # agree and both must be level-accurate.
+    assert result["gates"]["G3b_level_mae_iso"] < 0.03
+    assert result["gates"]["G3b_level_mae_emp"] < 0.03
 
 
 def test_identity(result: dict) -> None:
