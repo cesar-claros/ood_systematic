@@ -55,6 +55,30 @@ def test_level_accurate_on_isotropic_truth(result: dict) -> None:
     assert result["gates"]["G3b_level_mae_emp"] < 0.03
 
 
+def test_new_feature_nulls_exact(result: dict) -> None:
+    # PCA_RE and Residual join the invariance null set; G1 must stay exact.
+    assert result["gates"]["G1_feature_invariance_max_abs"] == 0.0
+
+
+def test_fdbd_divergence(result: dict) -> None:
+    # tier-3 prediction: the fDBD advantage over head-CTM grows with
+    # away-rotation angle; on the exact-ETF synthetic the trend must be
+    # positive in a majority of OOD sets and near-unit rank correlation
+    # must hold between the two scores at the (near-collapsed) baseline.
+    pos, total = result["gates"]["G7_fdbd_divergence_positive_sets"].split("/")
+    assert int(pos) * 2 > int(total)
+    assert result["fdbd_ctm_score_spearman_baseline"] > 0.9
+
+
+def test_per_score_table(result: dict) -> None:
+    # All four head scores are reported per score; on the exact-ETF
+    # synthetic even the non-registered MSR diagnostic passes.
+    assert set(result["per_score"]) == {"MSR", "MLS", "Energy", "CTM_head"}
+    msr = result["per_score"]["MSR"]["emp"]
+    assert msr["response_mae"] < result["per_score"]["MSR"][
+        "response_mae_constant"]
+
+
 def test_identity(result: dict) -> None:
     assert result["gates"]["G5_rank_agreement_worst_spearman"] > 0.99
     assert result["gates"]["G5_identity_max_abs_dev"] < 5e-3

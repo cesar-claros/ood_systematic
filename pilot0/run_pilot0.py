@@ -39,6 +39,7 @@ from pilot0.scores import (
     FEATURE_SCORES,
     HEAD_SCORES,
     MahalanobisScorer,
+    PCAFamily,
     auroc,
     compute_feature_scores,
     compute_head_scores,
@@ -57,6 +58,7 @@ TAUS = (0.5, 1.0)
 THETAS_DEG = (10.0, 20.0, 30.0, 45.0, 60.0)
 N_DRAWS = 5
 SEED = 20260814
+REGISTERED_SCORES = ("MLS", "Energy", "CTM_head")
 
 
 def load_cache(path: Path) -> dict:
@@ -132,6 +134,8 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
     model = fit_feature_model(h_train, y_train, n_classes)
     uncentered_means = model.class_means + model.global_mean
     maha = MahalanobisScorer(h_train, y_train, n_classes)
+    pca = PCAFamily(h_train, n_classes, w0, b)
+    train_mean = h_train.astype(np.float64).mean(0)
     result["geometry_baseline"] = geometry_record(w0, b, model)
 
     rng = np.random.default_rng(SEED)
@@ -151,7 +155,8 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
     for name in ["iid_test"] + ood_names:
         h64 = cache[f"h_{name}"].astype(np.float64)
         rec = {"h64": h64, "h_n": normalize_rows(h64),
-               "feat": compute_feature_scores(h64, maha, mean_prototypes_n)}
+               "feat": compute_feature_scores(h64, maha, mean_prototypes_n,
+                                              pca)}
         if name != "iid_test":
             m_ood = h64.mean(0)
             resid = h64 - m_ood
@@ -175,11 +180,17 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
         ctx = HeadContext.from_head(state["w"], b)
         noise_id = {"iso": NoiseModel.isotropic(sigma, ctx, dim),
                     "emp": NoiseModel.empirical(model.sigma_w, ctx)}
-        sc_id = compute_head_scores(id_rec["h64"], id_rec["h_n"], ctx.w, b)
+        sc_id = compute_head_scores(id_rec["h64"], id_rec["h_n"], ctx.w, b,
+                                    train_mean)
+        if state["kind"] == "baseline":
+            from scipy.stats import spearmanr
+            result["fdbd_ctm_score_spearman_baseline"] = float(
+                spearmanr(sc_id["fDBD"], sc_id["CTM_head"]).statistic)
         for name in ood_names:
             rec = eval_sets[name]
-            sc_ood = compute_head_scores(rec["h64"], rec["h_n"], ctx.w, b)
-            for score in HEAD_SCORES:
+            sc_ood = compute_head_scores(rec["h64"], rec["h_n"], ctx.w, b,
+                                         train_mean)
+            for score in HEAD_SCORES + ("fDBD",):
                 empirical[(state["name"], name, score)] = auroc(
                     sc_id[score], sc_ood[score])
             noise_ood = {
@@ -198,11 +209,33 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
     invariance_max = 0.0
     for name in ["iid_test"] + ood_names:
         redo = compute_feature_scores(eval_sets[name]["h64"], maha,
-                                      mean_prototypes_n)
+                                      mean_prototypes_n, pca)
         for score in FEATURE_SCORES:
             invariance_max = max(invariance_max, float(np.abs(
                 redo[score] - eval_sets[name]["feat"][score]).max()))
     result["gates"]["G1_feature_invariance_max_abs"] = invariance_max
+
+    # G7 (registered secondary): the fDBD-vs-head-CTM AUROC gap should
+    # grow with away-rotation angle (pairwise averaging suppresses
+    # quenched leakage; tier-3 fDBD divergence result). Spearman trend of
+    # gap on theta, pooled over draws, per OOD set.
+    from scipy.stats import spearmanr as _spearmanr
+    trends = {}
+    for name in ood_names:
+        thetas, gaps = [], []
+        for state in states:
+            if state["kind"] != "away":
+                continue
+            thetas.append(state["param"])
+            gaps.append(empirical[(state["name"], name, "fDBD")]
+                        - empirical[(state["name"], name, "CTM_head")])
+        trends[name] = float(_spearmanr(thetas, gaps).statistic)
+    result["fdbd_divergence_trends"] = trends
+    positive = sum(t > 0 for t in trends.values())
+    result["gates"]["G7_fdbd_divergence_positive_sets"] = (
+        f"{positive}/{len(trends)}")
+    result["gates"]["G7_fdbd_divergence_median_trend"] = float(
+        np.median(list(trends.values())))
 
     # G2: sign agreement on material cells, per predictor arm.
     # G3a: RESPONSE-scale MAE, |delta_pred - delta_emp| vs the constant-
@@ -212,11 +245,17 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
     #      misspecification diagnostic (T4), not a pass/fail gate: the
     #      isotropic arm's level error on real anisotropic features is
     #      expected and documented, not a harness failure.
+    # Confirmatory gates aggregate over REGISTERED_SCORES only: the plan's
+    # section 7 pairs never include MSR, and X1 section 11 explicitly
+    # deferred the MSR tie-case moments (max of correlated Gaussians) as
+    # unnecessary for the registered comparisons. MSR stays in the cells
+    # and the per-score table as a documented theory boundary.
     arms = ("iso", "emp")
-    sign_hits = dict.fromkeys(arms, 0)
-    sign_total = dict.fromkeys(arms, 0)
-    resp_err: dict[str, list] = {arm: [] for arm in arms}
-    resp_const: list = []
+    sign_hits: dict = {(a, s): 0 for a in arms for s in HEAD_SCORES}
+    sign_total: dict = {(a, s): 0 for a in arms for s in HEAD_SCORES}
+    resp_err: dict = {(a, s): [] for a in arms for s in HEAD_SCORES}
+    resp_const: dict = {s: [] for s in HEAD_SCORES}
+    level_err: dict = {(a, s): [] for a in arms for s in HEAD_SCORES}
     cells = []
     for state in states:
         if state["kind"] == "baseline":
@@ -228,50 +267,65 @@ def analyze_checkpoint(cache: dict, out_dir: Path) -> dict:
                 emp = empirical[(state["name"], name, score)]
                 d_emp = emp - base_emp
                 se = hanley_mcneil_se(base_emp, n_id, n_ood)
-                resp_const.append(abs(d_emp))
+                resp_const[score].append(abs(d_emp))
                 cell = {"state": state["name"], "ood_set": name,
                         "score": score, "auroc_emp": emp, "delta_emp": d_emp}
                 for arm in arms:
                     base_pred = predicted[("baseline", name)][arm][score]
                     pred = predicted[(state["name"], name)][arm][score]
                     d_pred = pred - base_pred
-                    resp_err[arm].append(abs(d_pred - d_emp))
+                    resp_err[(arm, score)].append(abs(d_pred - d_emp))
                     material = abs(d_pred) >= 2.0 * se
                     if material:
-                        sign_total[arm] += 1
-                        sign_hits[arm] += int(
+                        sign_total[(arm, score)] += 1
+                        sign_hits[(arm, score)] += int(
                             np.sign(d_pred) == np.sign(d_emp))
                     cell[f"auroc_pred_{arm}"] = pred
                     cell[f"delta_pred_{arm}"] = d_pred
                     cell[f"material_{arm}"] = bool(material)
                 cells.append(cell)
     result["cells"] = cells
-    level_err = {arm: [] for arm in arms}
     for name in ood_names:
         for score in HEAD_SCORES:
             for arm in arms:
-                level_err[arm].append(
+                level_err[(arm, score)].append(
                     abs(predicted[("baseline", name)][arm][score]
                         - empirical[("baseline", name, score)]))
-    for arm in arms:
-        result["gates"][f"G2_sign_agreement_{arm}"] = (
-            sign_hits[arm] / sign_total[arm] if sign_total[arm]
-            else float("nan"))
-        result["gates"][f"G2_material_cells_{arm}"] = sign_total[arm]
-        result["gates"][f"G3a_response_mae_{arm}"] = float(
-            np.mean(resp_err[arm]))
-        result["gates"][f"G3b_level_mae_{arm}"] = float(
-            np.mean(level_err[arm]))
-    result["gates"]["G3a_response_mae_constant"] = float(np.mean(resp_const))
 
-    result["gates"].update(_identity_check(cache, model, maha,
-                                           uncentered_means, b, ood_names))
+    result["per_score"] = {
+        score: {arm: {
+            "sign": (sign_hits[(arm, score)] / sign_total[(arm, score)]
+                     if sign_total[(arm, score)] else float("nan")),
+            "n_material": sign_total[(arm, score)],
+            "response_mae": float(np.mean(resp_err[(arm, score)])),
+            "level_mae": float(np.mean(level_err[(arm, score)])),
+        } for arm in arms} | {
+            "response_mae_constant": float(np.mean(resp_const[score]))}
+        for score in HEAD_SCORES}
+
+    for arm in arms:
+        reg_hits = sum(sign_hits[(arm, s)] for s in REGISTERED_SCORES)
+        reg_total = sum(sign_total[(arm, s)] for s in REGISTERED_SCORES)
+        result["gates"][f"G2_sign_agreement_{arm}"] = (
+            reg_hits / reg_total if reg_total else float("nan"))
+        result["gates"][f"G2_material_cells_{arm}"] = reg_total
+        result["gates"][f"G3a_response_mae_{arm}"] = float(np.mean(
+            [e for s in REGISTERED_SCORES for e in resp_err[(arm, s)]]))
+        result["gates"][f"G3b_level_mae_{arm}"] = float(np.mean(
+            [e for s in REGISTERED_SCORES for e in level_err[(arm, s)]]))
+    result["gates"]["G3a_response_mae_constant"] = float(np.mean(
+        [e for s in REGISTERED_SCORES for e in resp_const[s]]))
+
+    result["gates"].update(_identity_check(cache, model, maha, pca,
+                                           train_mean, uncentered_means, b,
+                                           ood_names))
     _write_report(result, out_dir)
     return result
 
 
 def _identity_check(cache: dict, model: FeatureModel,
-                    maha: MahalanobisScorer, uncentered_means: np.ndarray,
+                    maha: MahalanobisScorer, pca: PCAFamily,
+                    train_mean: np.ndarray, uncentered_means: np.ndarray,
                     b: np.ndarray, ood_names: list[str]) -> dict:
     """G5: AUGRC vs failure-AUROC rank agreement within fixed blocks."""
     from scipy.stats import spearmanr
@@ -287,20 +341,21 @@ def _identity_check(cache: dict, model: FeatureModel,
         h64 = cache[f"h_{name}"].astype(np.float64)
         prepared[name] = (h64, normalize_rows(h64),
                           compute_feature_scores(h64, maha,
-                                                 mean_prototypes_n))
+                                                 mean_prototypes_n, pca))
     for state_name in identity_states:
         w_s = lookup[state_name]
         h64_id, hn_id, feat_id = prepared["iid_test"]
-        sc_id = compute_head_scores(h64_id, hn_id, w_s, b) | feat_id
+        sc_id = compute_head_scores(h64_id, hn_id, w_s, b, train_mean) | feat_id
         preds = logits(h64_id, w_s, b).argmax(1)
         res_id = (preds != y_id).astype(float)
         for name in ood_names:
             h64_o, hn_o, feat_o = prepared[name]
-            sc_ood = compute_head_scores(h64_o, hn_o, w_s, b) | feat_o
+            sc_ood = compute_head_scores(h64_o, hn_o, w_s, b,
+                                         train_mean) | feat_o
             res = np.concatenate([res_id, np.ones(len(h64_o))])
             pi = float(res.mean())
             augrcs, f_aurocs = [], []
-            for score in HEAD_SCORES + FEATURE_SCORES:
+            for score in HEAD_SCORES + ("fDBD",) + FEATURE_SCORES:
                 confids = np.concatenate([sc_id[score], sc_ood[score]])
                 rc = RiskCoverageStats(confids=confids, residuals=res)
                 augrcs.append(rc.augrc / rc.AUC_DISPLAY_SCALE)
@@ -327,12 +382,14 @@ def _write_report(result: dict, out_dir: Path) -> None:
                  f"{g['G0_logit_consistency']:.3e}")
     lines.append(f"- G1 feature-only invariance (max abs score delta): "
                  f"{g['G1_feature_invariance_max_abs']:.3e}")
-    lines.append(f"- G2 sign agreement on material cells (gate >= 0.80): "
+    lines.append(f"- G2 sign agreement, registered endpoints "
+                 f"(MLS/Energy/CTM_head; gate >= 0.80): "
                  f"empirical-cov {g['G2_sign_agreement_emp']:.3f} "
                  f"({g['G2_material_cells_emp']} cells); "
                  f"isotropic {g['G2_sign_agreement_iso']:.3f} "
                  f"({g['G2_material_cells_iso']} cells)")
-    lines.append(f"- G3a response MAE (gate: emp < constant): "
+    lines.append(f"- G3a response MAE, registered endpoints "
+                 f"(gate: emp < constant): "
                  f"empirical-cov {g['G3a_response_mae_emp']:.4f}, "
                  f"isotropic {g['G3a_response_mae_iso']:.4f}, "
                  f"constant-response {g['G3a_response_mae_constant']:.4f}")
@@ -340,9 +397,32 @@ def _write_report(result: dict, out_dir: Path) -> None:
                  f"empirical-cov {g['G3b_level_mae_emp']:.4f}, "
                  f"isotropic {g['G3b_level_mae_iso']:.4f} "
                  f"(iso-emp gap = anisotropy misspecification, T4)")
+    lines.append("")
+    lines.append("### Per-score response diagnostics (empirical-cov arm)")
+    lines.append("")
+    lines.append("| score | sign@material | resp MAE | resp MAE const "
+                 "| level MAE |")
+    lines.append("|---|---|---|---|---|")
+    for score, rec in result["per_score"].items():
+        e = rec["emp"]
+        tag = "" if score in ("MLS", "Energy", "CTM_head") else \
+            " (diagnostic only, tie-case moments deferred in X1 pass 2)"
+        lines.append(
+            f"| {score}{tag} | {e['sign']:.3f}@{e['n_material']} "
+            f"| {e['response_mae']:.4f} "
+            f"| {rec['response_mae_constant']:.4f} "
+            f"| {e['level_mae']:.4f} |")
     lines.append(f"- G5 worst within-block Spearman(AUGRC, 1-AUROC_f): "
                  f"{g['G5_rank_agreement_worst_spearman']:.4f}; identity "
                  f"max abs dev {g['G5_identity_max_abs_dev']:.3e}")
+    lines.append(f"- G7 fDBD-CTM divergence under away-rotation "
+                 f"(registered secondary; predicted: gap grows with theta): "
+                 f"positive trend in {g['G7_fdbd_divergence_positive_sets']} "
+                 f"OOD sets, median Spearman "
+                 f"{g['G7_fdbd_divergence_median_trend']:+.3f}; baseline "
+                 f"fDBD-CTM score Spearman "
+                 f"{result['fdbd_ctm_score_spearman_baseline']:.3f} "
+                 f"(tier-3: -> 1 at exact NC)")
     lines.append("")
     lines.append("### H-estimator recovery (G6)")
     lines.append("")
