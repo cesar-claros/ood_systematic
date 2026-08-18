@@ -110,7 +110,7 @@ def diagnose(path: Path) -> None:
                         for k, v in result["geometry_baseline"].items()
                         if k in ("self_duality_angle_mean_deg", "snr",
                                  "eig_max_over_mean", "effective_rank",
-                                 "head_residual_fraction")})
+                                 "head_residual_fraction", "logit_scale")})
     for arm in ARMS:
         for label, cell_set in (("raw", cells),
                                 ("z-transport", _z_transport(cells, arm))):
