@@ -70,6 +70,24 @@ def test_fdbd_divergence(result: dict) -> None:
     assert result["fdbd_ctm_score_spearman_baseline"] > 0.9
 
 
+def test_wperp_level_ordering() -> None:
+    # On the exact-ETF synthetic the reconstruction-level proposition is
+    # near-exact: the predicted AUROC must rank the OOD sets perfectly
+    # (tilt g1.25 > tilt g1.0 > midpoint at w_perp = 0 ~ chance) and track
+    # the empirical levels closely.
+    from pilot0.diagnose_pilot0 import wperp_level_check
+    from pilot0.run_pilot0 import make_synthetic_cache
+
+    cache = make_synthetic_cache(np.random.default_rng(5), n_classes=10,
+                                 dim=64, snr=8.0)
+    out = wperp_level_check(cache)
+    for family in ("PCA_RE", "Residual"):
+        rec = out[family]
+        assert rec["spearman_pred_emp"] > 0.99
+        err = max(abs(p - e) for p, e in zip(rec["pred"], rec["emp"]))
+        assert err < 0.06
+
+
 def test_per_score_table(result: dict) -> None:
     # All four head scores are reported per score; on the exact-ETF
     # synthetic even the non-registered MSR diagnostic passes.
