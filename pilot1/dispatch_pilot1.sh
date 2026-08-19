@@ -19,7 +19,7 @@ run_one() {
         2>&1 | tee "pilot1_${name}.log"
 }
 
-for R in 1 2 3; do
+for R in 1 2 3 4; do
     SEED=$((1000 + R))
     run_one "etfreg_bbvgg13_do0_run${R}_lam0.0"  exp.global_seed=${SEED} \
         model.intervention_kind=etfreg model.intervention_lam=0.0
