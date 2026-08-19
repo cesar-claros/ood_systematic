@@ -70,6 +70,43 @@ def test_fdbd_divergence(result: dict) -> None:
     assert result["fdbd_ctm_score_spearman_baseline"] > 0.9
 
 
+def test_stage2b_feature_predictors_match_mc() -> None:
+    # Maha and mean-CTM predictors (stage 2b additions) against Monte
+    # Carlo on the exact-ETF synthetic: binormal predictions must land
+    # within a few AUROC points of the rank-based empirical values.
+    from pilot0.geometry import fit_feature_model
+    from pilot0.run_pilot0 import make_synthetic_cache
+    from pilot0.scores import MahalanobisScorer, ctm
+    from pilot0.theory import predicted_ctm_mean_auroc, predicted_maha_auroc
+    from pilot0.scores import auroc as emp_auroc
+
+    cache = make_synthetic_cache(np.random.default_rng(9), n_classes=10,
+                                 dim=64, snr=8.0)
+    n_classes = cache["meta"]["n_classes"]
+    model = fit_feature_model(cache["h_train"], cache["y_train"], n_classes)
+    means_unc = model.class_means + model.global_mean
+    maha = MahalanobisScorer(cache["h_train"], cache["y_train"], n_classes)
+    precision = maha.precision
+    cov_iso = model.sigma_iso**2 * np.eye(cache["h_train"].shape[1])
+
+    for name in cache["meta"]["ood_sets"]:
+        h_o = cache[f"h_{name}"].astype(np.float64)
+        m_o = h_o.mean(0)
+        resid = h_o - m_o
+        cov_o = resid.T @ resid / len(resid)
+
+        emp_m = emp_auroc(maha(cache["h_iid_test"]), maha(h_o))
+        pred_m = predicted_maha_auroc(maha.means, precision, cov_iso,
+                                      m_o, cov_o)
+        assert abs(emp_m - pred_m) < 0.04, (name, emp_m, pred_m)
+
+        emp_c = emp_auroc(ctm(cache["h_iid_test"], means_unc),
+                          ctm(h_o, means_unc))
+        pred_c = predicted_ctm_mean_auroc(means_unc, model.class_freq,
+                                          cov_iso, m_o, cov_o)
+        assert abs(emp_c - pred_c) < 0.04, (name, emp_c, pred_c)
+
+
 def test_wperp_level_ordering() -> None:
     # On the exact-ETF synthetic the reconstruction-level proposition is
     # near-exact: the predicted AUROC must rank the OOD sets perfectly

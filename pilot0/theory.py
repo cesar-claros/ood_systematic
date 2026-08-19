@@ -106,21 +106,85 @@ def population_stats(m: np.ndarray, noise: NoiseModel,
     msr = (float(m_vec[c_star] - lse_mean),
            float(diff @ (noise.logit_cov @ diff)))
 
-    p0_all = ctx.w_hat @ m
+    ctm_head = ctm_stats(m, noise.trace, noise.dim, ctx.w_hat, noise.dir_var)
+    return {"MLS": mls, "Energy": energy, "MSR": msr, "CTM_head": ctm_head}
+
+
+def ctm_stats(m: np.ndarray, trace: float, dim: int,
+              prototypes_hat: np.ndarray,
+              dir_var: np.ndarray) -> tuple[float, float]:
+    """Delta-method (mean, var) of the max-cosine score to unit prototypes.
+
+    Proposition 4 generalized: `dir_var[k]` is the noise variance along
+    prototype k, `trace`/`dim` set the norm-fluctuation scale. Used for
+    CTM_head (prototypes = head rows) and CTM_mean (prototypes = class
+    means, with dir_var measured along the mean directions).
+    """
+    p0_all = prototypes_hat @ m
     m2 = float(m @ m)
-    omega = m2 + noise.trace
+    omega = m2 + trace
     mean_cos = p0_all / np.sqrt(omega)
     k_star = int(np.argmax(mean_cos))
     p0 = float(p0_all[k_star])
-    sigma_dir2 = float(noise.dir_var[k_star])
-    sigma_avg2 = noise.trace / noise.dim
-    q0 = m2 - p0**2 + noise.trace
+    sigma_dir2 = float(dir_var[k_star])
+    sigma_avg2 = trace / dim
+    q0 = m2 - p0**2 + trace
     om = p0**2 + q0
     v_cos = (q0**2 * sigma_dir2 / om**3
              + p0**2 * (4.0 * (m2 - p0**2) * sigma_avg2
-                        + 2.0 * sigma_avg2**2 * noise.dim) / (4.0 * om**3))
-    ctm_head = (float(mean_cos[k_star]), float(v_cos))
-    return {"MLS": mls, "Energy": energy, "MSR": msr, "CTM_head": ctm_head}
+                        + 2.0 * sigma_avg2**2 * dim) / (4.0 * om**3))
+    return (float(mean_cos[k_star]), float(v_cos))
+
+
+def predicted_ctm_mean_auroc(class_means: np.ndarray, class_freq: np.ndarray,
+                             cov_id: np.ndarray, m_ood: np.ndarray,
+                             cov_ood: np.ndarray) -> float:
+    """Binormal mixture AUROC prediction for mean-CTM (feature-side).
+
+    Prototypes are the UNcentered class-mean directions (pipeline
+    convention); directional variances are measured along them from the
+    supplied covariances (pass sigma^2 * I for the isotropic arm).
+    """
+    mu_hat = class_means / np.linalg.norm(class_means, axis=1, keepdims=True)
+    dim = class_means.shape[1]
+    dir_id = ((mu_hat @ cov_id) * mu_hat).sum(1)
+    dir_ood = ((mu_hat @ cov_ood) * mu_hat).sum(1)
+    tr_id, tr_ood = float(np.trace(cov_id)), float(np.trace(cov_ood))
+    m_o, v_o = ctm_stats(m_ood, tr_ood, dim, mu_hat, dir_ood)
+    total = 0.0
+    for mu_y, freq in zip(class_means, class_freq):
+        m_y, v_y = ctm_stats(mu_y, tr_id, dim, mu_hat, dir_id)
+        total += freq * float(norm.cdf((m_y - m_o) / np.sqrt(v_y + v_o)))
+    return total
+
+
+def predicted_maha_auroc(class_means: np.ndarray, precision: np.ndarray,
+                         cov_id: np.ndarray, m_ood: np.ndarray,
+                         cov_ood: np.ndarray) -> float:
+    """Binormal AUROC prediction for shared-covariance Mahalanobis.
+
+    Gaussian quadratic-form moments with nearest-prototype (argmin)
+    stability: for h ~ N(mu, Sigma), (h-mu)' P (h-mu) has mean tr(P Sigma)
+    and variance 2 tr(P Sigma P Sigma); the OOD population adds the
+    displacement d^2 to the mean and 4 delta' P Sigma P delta to the
+    variance at its nearest prototype. Declared approximation: the min
+    over non-nearest prototypes is ignored (X1 Prop 5 min-statistic
+    caveat). Pass sigma^2 * I covariances for the isotropic arm.
+    """
+    p_cov_id = precision @ cov_id
+    m_id = float(np.trace(p_cov_id))
+    v_id = 2.0 * float(np.trace(p_cov_id @ p_cov_id))
+
+    diffs = m_ood - class_means
+    d2 = ((diffs @ precision) * diffs).sum(1)
+    c_star = int(np.argmin(d2))
+    delta = diffs[c_star]
+    p_cov_ood = precision @ cov_ood
+    m_o = float(d2[c_star]) + float(np.trace(p_cov_ood))
+    v_o = (2.0 * float(np.trace(p_cov_ood @ p_cov_ood))
+           + 4.0 * float(delta @ precision @ cov_ood @ precision @ delta))
+    # Score is the NEGATED distance (higher = more ID).
+    return float(norm.cdf((m_o - m_id) / np.sqrt(v_id + v_o)))
 
 
 def predicted_aurocs(class_means: np.ndarray, class_freq: np.ndarray,

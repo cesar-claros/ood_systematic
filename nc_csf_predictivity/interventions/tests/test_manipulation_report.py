@@ -109,6 +109,43 @@ def test_render_contains_gates():
     assert "Selectivity" in text
 
 
+def _stage2b_model(lam: str, run: int, mls: float, maha: float) -> dict:
+    preds = {"MLS": mls, "Maha": maha, "Energy": mls - 0.01,
+             "CTM_head": 0.90, "CTM_mean": 0.90, "MSR": 0.80}
+    sets = {"ood_a": {"n_ood": 10_000,
+                      "preds": {"emp": dict(preds), "iso": dict(preds)}},
+            "ood_b": {"n_ood": 10_000,
+                      "preds": {"emp": {**preds, "MLS": mls + 0.001},
+                                "iso": dict(preds)}}}
+    return {"experiment": f"g/x_run{run}_lam{lam}", "kind": "etfreg",
+            "run": run, "lam": lam, "sets": sets}
+
+
+def test_stage2b_signs_material_direction():
+    from nc_csf_predictivity.interventions.stage2b_signs import evaluate
+
+    records = []
+    for run in (1, 2):
+        records.append(_stage2b_model("0.0", run, mls=0.80, maha=0.85))
+        # A1+: MLS improves by 5 AUROC points, Maha unchanged =>
+        # gap(MLS - Maha) delta = -0.05, strongly material at n=10k.
+        records.append(_stage2b_model("0.3", run, mls=0.85, maha=0.85))
+    table = evaluate(records, "emp")
+    e1 = table["E1"]["A1+"]
+    assert e1["cells"]["ood_a"]["sign"] == -1
+    assert e1["cells"]["ood_a"]["material"]
+    assert e1["majority_sign"] == -1
+    assert e1["n_material"] >= 1
+
+
+def test_stage2b_signs_requires_baseline():
+    import pytest as _pytest
+
+    from nc_csf_predictivity.interventions.stage2b_signs import load_models
+    with _pytest.raises(ValueError):
+        load_models(Path("/nonexistent_dir_for_test"))
+
+
 def test_papyan_metrics_at_exact_collapse():
     rng = np.random.default_rng(1)
     n_classes, dim, radius, sigma = 10, 64, 1.0, 0.05
