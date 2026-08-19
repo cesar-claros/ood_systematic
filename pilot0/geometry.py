@@ -144,8 +144,13 @@ def papyan_metrics(w: np.ndarray, model: FeatureModel) -> dict[str, float]:
     n_classes = len(m)
     beta = -1.0 / (n_classes - 1)
     sigma_b = m.T @ m / n_classes
+    sigma_b = (sigma_b + sigma_b.T) / 2.0
+    # hermitian=True routes pinv through eigh; the default gesdd SVD can
+    # fail to converge on this rank-(C-1) PSD matrix (seen on an early
+    # cadence checkpoint of the Pilot 1 sweep).
     var_collapse = float(np.trace(
-        model.sigma_w @ np.linalg.pinv(sigma_b, rcond=1e-6)) / n_classes)
+        model.sigma_w @ np.linalg.pinv(sigma_b, rcond=1e-6, hermitian=True))
+        / n_classes)
     cos_m = _pairwise_cos_offdiag(m)
     cos_w = _pairwise_cos_offdiag(w64)
     norms_w = np.linalg.norm(w64, axis=1)

@@ -50,6 +50,9 @@ def parse_args() -> argparse.Namespace:
                         default="nc_csf_predictivity/interventions/geometry")
     parser.add_argument("--cadence", action="store_true",
                         help="Also measure every cadence checkpoint")
+    parser.add_argument("--overwrite", action="store_true",
+                        help="Re-measure checkpoints with existing JSONs "
+                             "(default: skip, making reruns resumable)")
     parser.add_argument("--use_cuda", action=argparse.BooleanOptionalAction,
                         default=True)
     return parser.parse_args()
@@ -94,6 +97,11 @@ def measure_checkpoint_state(module, datamodule, device: str,
                                      device)
     _, y_val, g_val = forward_split(module, datamodule.val_dataloader(),
                                     device)
+    for label, arr in (("train features", h_tr), ("train logits", g_tr),
+                       ("val logits", g_val)):
+        if not np.isfinite(arr).all():
+            raise ValueError(f"non-finite values in {label}; checkpoint is "
+                             "a candidate for the manifest failure rule")
     w, b = utils.get_model_and_last_layer(module, "intervention",
                                           return_model=False)
     w_np = w.detach().cpu().numpy().astype(np.float64)
@@ -148,18 +156,30 @@ def main() -> None:
                 ckpts[p.stem] = str(p)
 
         for tag, ckpt_path in ckpts.items():
-            module.load_only_state_dict(ckpt_path, device="cpu")
-            module.model.encoder.disable_dropout()
-            module.to(device)
-            record = measure_checkpoint_state(module, datamodule, device,
-                                              int(cf.data.num_classes))
+            out_path = out_dir / f"{name}__{tag}.json"
+            fail_path = out_dir / f"{name}__{tag}.FAILED.json"
+            if out_path.exists() and not args.overwrite:
+                logger.info(f"skipping existing {out_path}")
+                continue
+            try:
+                module.load_only_state_dict(ckpt_path, device="cpu")
+                module.model.encoder.disable_dropout()
+                module.to(device)
+                record = measure_checkpoint_state(
+                    module, datamodule, device, int(cf.data.num_classes))
+            except (np.linalg.LinAlgError, ValueError, RuntimeError) as err:
+                logger.error(f"measurement failed for {path} [{tag}]: {err}")
+                fail_path.write_text(json.dumps(
+                    {"experiment": path, "checkpoint": tag,
+                     "error": str(err)}, indent=1))
+                continue
             record.update({
                 "experiment": path, "checkpoint": tag,
                 "kind": meta["kind"], "run": int(meta["run"]),
                 "lam": meta["lam"],
             })
-            out_path = out_dir / f"{name}__{tag}.json"
             out_path.write_text(json.dumps(record, indent=1))
+            fail_path.unlink(missing_ok=True)
             logger.info(f"wrote {out_path} (self_duality="
                         f"{record['self_duality']:.4f}, val_acc="
                         f"{record['val_acc']:.4f})")
