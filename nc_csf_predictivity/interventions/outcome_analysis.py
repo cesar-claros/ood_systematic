@@ -55,6 +55,12 @@ STATS_TEMPLATE = "stats_RW0_RF0_ASHNone_{mode}.csv"
 # The stage2b table maps score names identically except head-CTM, which is
 # the plain 'CTM' variant in the stats CSVs.
 STAGE2B_SCORE = {"CTM": "CTM_head"}
+# The registered "PCA_RE" null (manifest section 5) is the paper-roster
+# canonical PCA reconstruction error. That score is ProjectionFiltering's
+# own reconstruction error and only exists as the '_global' variant (there
+# is no plain PCA_RecError by construction), so the stats-CSV row name is
+# canonicalized here. Fixed before any E3 outcome was examined.
+CANONICAL_METHODS = {"PCA_RecError_global": "PCA_RecError"}
 
 
 def load_long(stats_root: Path) -> pd.DataFrame:
@@ -70,6 +76,7 @@ def load_long(stats_root: Path) -> pd.DataFrame:
                 raise FileNotFoundError(f"missing stats CSV: {path}")
             df = pd.read_csv(path, index_col=0)
             for method, row in df.iterrows():
+                method = CANONICAL_METHODS.get(method, method)
                 rows.append({"name": name, "lam": lam, "run": run,
                              "set_name": set_name, "method": method,
                              "auroc_f": float(row["AUROC_f"]),
@@ -152,12 +159,20 @@ def analyze_nulls(table: pd.DataFrame, runs: list[int],
     """E3: TOST equivalence per (null score, arm); margins from baseline."""
     out: dict = {}
     set_names = sorted(table.set_name.unique())
-    margins = {
-        (score, s): 2.0 * float(np.std(
-            [_loss(table, "0.0", r, s, score, scale) for r in runs],
-            ddof=1))
-        for score in NULL_SCORES for s in set_names}
+    present = set(table.method.unique())
     for score in NULL_SCORES:
+        if score not in present:
+            # Registered null absent from the sweep entirely (e.g.
+            # PCA_RecError before the supplementary --projections global
+            # pass). Report it as missing instead of crashing; a partial
+            # presence still raises in _loss (broken sweep).
+            out[score] = {"status": "missing"}
+            continue
+        margins = {
+            s: 2.0 * float(np.std(
+                [_loss(table, "0.0", r, s, score, scale) for r in runs],
+                ddof=1))
+            for s in set_names}
         out[score] = {}
         for label, lam in ARM_LAMS.items():
             per_set = {}
@@ -167,7 +182,7 @@ def analyze_nulls(table: pd.DataFrame, runs: list[int],
                     _loss(table, lam, r, s, score, scale)
                     - _loss(table, "0.0", r, s, score, scale)
                     for r in runs])
-                margin = margins[(score, s)]
+                margin = margins[s]
                 se = deltas.std(ddof=1) / np.sqrt(len(deltas))
                 if se == 0:
                     tost_p = 0.0 if abs(deltas.mean()) < margin else 1.0
@@ -286,11 +301,23 @@ def render(result: dict, scale: str) -> str:
     lines.append("")
     lines.append("| score | " + " | ".join(ARM_LAMS) + " |")
     lines.append("|---|" + "---|" * len(ARM_LAMS))
+    missing_nulls = []
     for score, arms in result["E3"].items():
-        cells = " | ".join(
-            f"{arms[label]['n_equivalent']}/{arms[label]['n_sets']} eq"
-            for label in ARM_LAMS)
+        if arms.get("status") == "missing":
+            missing_nulls.append(score)
+            cells = " | ".join(["MISSING"] * len(ARM_LAMS))
+        else:
+            cells = " | ".join(
+                f"{arms[label]['n_equivalent']}/{arms[label]['n_sets']} eq"
+                for label in ARM_LAMS)
         lines.append(f"| {score} | {cells} |")
+    if missing_nulls:
+        lines.append("")
+        lines.append(
+            f"**MISSING registered null(s): {', '.join(missing_nulls)}** — "
+            f"not present in the sweep stats. PCA_RecError only exists as "
+            f"the global-projection variant; run "
+            f"`pilot1/run_pca_re_pilot1.sh`, then re-run this analysis.")
     lines.append("")
     lines.append("## Exploratory")
     lines.append("")
@@ -347,6 +374,12 @@ def main() -> None:
               f"p={r['p_one_sided']:.4f} holm={primary['holm'][e]:.4f}")
     print(f"E5: p={primary['E5']['pooled_p_one_sided']:.4f} "
           f"holm={primary['holm']['E5']:.4f}; wrote {args.out}")
+    missing = [s for s, arms in primary["E3"].items()
+               if arms.get("status") == "missing"]
+    if missing:
+        print(f"WARNING: E3 registered null(s) missing from the sweep: "
+              f"{', '.join(missing)}. Run pilot1/run_pca_re_pilot1.sh and "
+              f"re-run this analysis for the complete E3 verdict.")
 
 
 if __name__ == "__main__":

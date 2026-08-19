@@ -109,18 +109,32 @@ def test_loader_roundtrip(tmp_path):
     exp.mkdir(parents=True)
     for mode in MODE_TO_SET:
         df = pd.DataFrame(
-            {"AUGRC": [40.0, 55.0], "AURC": [50.0, 60.0],
-             "AUROC_f": [0.9, 0.85], "FPR@95TPR": [0.4, 0.5],
-             "ECE": [0.1, 0.1], "MCE": [0.2, 0.2],
-             "AP_ferr": [0.9, 0.9], "AP_fsuc": [0.5, 0.5]},
-            index=["MLS", "Maha"])
+            {"AUGRC": [40.0, 55.0, 60.0], "AURC": [50.0, 60.0, 70.0],
+             "AUROC_f": [0.9, 0.85, 0.8], "FPR@95TPR": [0.4, 0.5, 0.6],
+             "ECE": [0.1, 0.1, 0.1], "MCE": [0.2, 0.2, 0.2],
+             "AP_ferr": [0.9, 0.9, 0.9], "AP_fsuc": [0.5, 0.5, 0.5]},
+            index=["MLS", "Maha", "PCA_RecError_global"])
         df.to_csv(exp / STATS_TEMPLATE.format(mode=mode))
     table = load_long(tmp_path)
-    assert len(table) == len(MODE_TO_SET) * 2
+    assert len(table) == len(MODE_TO_SET) * 3
     row = table[(table.method == "MLS")
                 & (table.set_name == "ood_sncs")].iloc[0]
     assert row["lam"] == "0.0" and row["run"] == 1
     assert row["auroc_f"] == 0.9 and abs(row["augrc"] - 0.040) < 1e-12
+    # PCA_RecError only exists as the global variant in the stats CSVs;
+    # the loader canonicalizes it to the registered E3 name.
+    assert "PCA_RecError" in set(table.method)
+    assert "PCA_RecError_global" not in set(table.method)
+
+
+def test_missing_null_score_reported_not_fatal():
+    table = _table()
+    table = table[table.method != "PCA_RecError"].reset_index(drop=True)
+    result = run_analysis(table, _committed(), scale="auroc_f")
+    assert result["E3"]["PCA_RecError"] == {"status": "missing"}
+    # The other registered nulls and the pair endpoints are unaffected.
+    assert result["E3"]["Residual"]["A1+"]["n_equivalent"] == 4
+    assert result["pairs"]["E1"]["agreement_overall"] == 1.0
 
 
 def test_loader_missing_mode_raises(tmp_path):
