@@ -1336,7 +1336,254 @@
     }
    },
    "PCA_RecError": {
-    "status": "missing"
+    "A1-": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.018778919300952407,
+       "margin": 0.02884040593131047,
+       "tost_p": 0.2677172563556777,
+       "equivalent": false,
+       "ratio_to_margin": 0.6511322810669995
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.01349880770966197,
+       "margin": 0.030867812868802268,
+       "tost_p": 0.03072325389755748,
+       "equivalent": true,
+       "ratio_to_margin": 0.437310144616856
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.02123853189302144,
+       "margin": 0.03359716540935743,
+       "tost_p": 0.30952737803151253,
+       "equivalent": false,
+       "ratio_to_margin": 0.6321524936477563
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.010700780906221063,
+       "margin": 0.016332733445529848,
+       "tost_p": 0.01283641107097556,
+       "equivalent": true,
+       "ratio_to_margin": 0.655173914513972
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.007401802077855318,
+       "margin": 0.07009456374863389,
+       "tost_p": 0.036135614779764125,
+       "equivalent": true,
+       "ratio_to_margin": 0.10559737705764059
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.021946584846723655,
+       "margin": 0.010081044644660673,
+       "tost_p": 0.9178619005388847,
+       "equivalent": false,
+       "ratio_to_margin": 2.1770149444132705
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.017038927207147253,
+       "margin": 0.025267030995972516,
+       "tost_p": 0.3433386701339425,
+       "equivalent": false,
+       "ratio_to_margin": 0.6743541498747203
+      },
+      "ood_sncs": {
+       "mean_delta": 0.0019741500396566747,
+       "margin": 0.04243675981341899,
+       "tost_p": 0.008756558983241316,
+       "equivalent": true,
+       "ratio_to_margin": 0.04651981085116743
+      }
+     },
+     "n_equivalent": 4,
+     "n_sets": 8
+    },
+    "A1+": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.0025427584715057017,
+       "margin": 0.02884040593131047,
+       "tost_p": 0.1914414301277324,
+       "equivalent": false,
+       "ratio_to_margin": 0.08816652850039002
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.008876413557105056,
+       "margin": 0.030867812868802268,
+       "tost_p": 0.08299531808866398,
+       "equivalent": false,
+       "ratio_to_margin": 0.2875621151013372
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.013261888439554198,
+       "margin": 0.03359716540935743,
+       "tost_p": 0.24757392133981523,
+       "equivalent": false,
+       "ratio_to_margin": 0.39473236143488816
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.011179367115152994,
+       "margin": 0.016332733445529848,
+       "tost_p": 0.13795855705604876,
+       "equivalent": false,
+       "ratio_to_margin": 0.6844761871879264
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.003946948289608093,
+       "margin": 0.07009456374863389,
+       "tost_p": 0.05110588061254104,
+       "equivalent": false,
+       "ratio_to_margin": 0.056308907260800484
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.00937577952398666,
+       "margin": 0.010081044644660673,
+       "tost_p": 0.36817360801512106,
+       "equivalent": false,
+       "ratio_to_margin": 0.9300404724377895
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.003973451510818904,
+       "margin": 0.025267030995972516,
+       "tost_p": 0.24464492819762745,
+       "equivalent": false,
+       "ratio_to_margin": 0.15725834631905344
+      },
+      "ood_sncs": {
+       "mean_delta": 0.018147188772748984,
+       "margin": 0.04243675981341899,
+       "tost_p": 0.04461838565810061,
+       "equivalent": true,
+       "ratio_to_margin": 0.4276289908215527
+      }
+     },
+     "n_equivalent": 1,
+     "n_sets": 8
+    },
+    "A1++": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.038150581616915896,
+       "margin": 0.02884040593131047,
+       "tost_p": 0.6598355116578558,
+       "equivalent": false,
+       "ratio_to_margin": 1.322817081971023
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.009965146364729116,
+       "margin": 0.030867812868802268,
+       "tost_p": 0.034007919920934764,
+       "equivalent": true,
+       "ratio_to_margin": 0.32283292655310775
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.04588514793194717,
+       "margin": 0.03359716540935743,
+       "tost_p": 0.6790306985409733,
+       "equivalent": false,
+       "ratio_to_margin": 1.3657446207996855
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.021795897732802244,
+       "margin": 0.016332733445529848,
+       "tost_p": 0.7823706499923955,
+       "equivalent": false,
+       "ratio_to_margin": 1.3344917313132068
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.028882700533015754,
+       "margin": 0.07009456374863389,
+       "tost_p": 0.02064434675575738,
+       "equivalent": true,
+       "ratio_to_margin": 0.41205336032323425
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.03896626259954786,
+       "margin": 0.010081044644660673,
+       "tost_p": 0.9943050672403553,
+       "equivalent": false,
+       "ratio_to_margin": 3.8653000728635756
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.02905431869079808,
+       "margin": 0.025267030995972516,
+       "tost_p": 0.6074225981035752,
+       "equivalent": false,
+       "ratio_to_margin": 1.149890491503701
+      },
+      "ood_sncs": {
+       "mean_delta": 0.03751879367391897,
+       "margin": 0.04243675981341899,
+       "tost_p": 0.28815996663425236,
+       "equivalent": false,
+       "ratio_to_margin": 0.8841107058804027
+      }
+     },
+     "n_equivalent": 2,
+     "n_sets": 8
+    },
+    "A2": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.21611606642343933,
+       "margin": 0.02884040593131047,
+       "tost_p": 0.9880151087907714,
+       "equivalent": false,
+       "ratio_to_margin": 7.493516802023019
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.2739580638723431,
+       "margin": 0.030867812868802268,
+       "tost_p": 0.997946983127472,
+       "equivalent": false,
+       "ratio_to_margin": 8.875201655418524
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.250509462339011,
+       "margin": 0.03359716540935743,
+       "tost_p": 0.9939423210082043,
+       "equivalent": false,
+       "ratio_to_margin": 7.456267791842925
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.16616748185596833,
+       "margin": 0.016332733445529848,
+       "tost_p": 0.9998910841830742,
+       "equivalent": false,
+       "ratio_to_margin": 10.173892962261451
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.37398301650544935,
+       "margin": 0.07009456374863389,
+       "tost_p": 0.998549117178133,
+       "equivalent": false,
+       "ratio_to_margin": 5.33540686331382
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.20740866706392838,
+       "margin": 0.010081044644660673,
+       "tost_p": 0.9999196474968493,
+       "equivalent": false,
+       "ratio_to_margin": 20.57412444590059
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.23635358571872572,
+       "margin": 0.025267030995972516,
+       "tost_p": 0.9903668352298143,
+       "equivalent": false,
+       "ratio_to_margin": 9.354228668829343
+      },
+      "ood_sncs": {
+       "mean_delta": 0.14185503336854635,
+       "margin": 0.04243675981341899,
+       "tost_p": 0.9991372204955398,
+       "equivalent": false,
+       "ratio_to_margin": 3.3427395020788127
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    }
    },
    "Residual": {
     "A1-": {
@@ -1733,15 +1980,15 @@
      "A1-": {
       "cells": {
        "ood_nsncs_isun": {
-        "mean_delta": 0.0014061512286866612,
-        "sd_delta": 0.01589471675963409,
+        "mean_delta": 0.0014061512286866543,
+        "sd_delta": 0.01589471675963408,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": true,
         "agree": true
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": 0.002659910631391725,
+        "mean_delta": 0.002659910631391711,
         "sd_delta": 0.007067601258442825,
         "observed_sign": 1,
         "committed_sign": 1,
@@ -1758,7 +2005,7 @@
        },
        "ood_nsncs_places365": {
         "mean_delta": -0.00075910697400286,
-        "sd_delta": 0.002070249529612479,
+        "sd_delta": 0.0020702495296124643,
         "observed_sign": -1,
         "committed_sign": 1,
         "committed_material": false
@@ -1779,8 +2026,8 @@
         "committed_material": false
        },
        "ood_nsncs_ti": {
-        "mean_delta": 0.0009490241566494501,
-        "sd_delta": 0.015535142434272078,
+        "mean_delta": 0.0009490241566494431,
+        "sd_delta": 0.01553514243427207,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": true,
@@ -1788,7 +2035,7 @@
        },
        "ood_sncs": {
         "mean_delta": -0.0033754710766952106,
-        "sd_delta": 0.0009466694700619277,
+        "sd_delta": 0.0009466694700619221,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": false
@@ -1809,8 +2056,8 @@
         "agree": true
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": 0.0036527837110982425,
-        "sd_delta": 0.005090009020721738,
+        "mean_delta": 0.0036527837110982286,
+        "sd_delta": 0.005090009020721739,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
@@ -1824,8 +2071,8 @@
         "agree": true
        },
        "ood_nsncs_places365": {
-        "mean_delta": 0.0038876355091197815,
-        "sd_delta": 0.0023522589299857974,
+        "mean_delta": 0.0038876355091197745,
+        "sd_delta": 0.0023522589299857857,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
@@ -1875,8 +2122,8 @@
         "committed_material": false
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": 0.0020688189257040968,
-        "sd_delta": 0.002064249245511289,
+        "mean_delta": 0.002068818925704083,
+        "sd_delta": 0.0020642492455112877,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
@@ -1889,8 +2136,8 @@
         "committed_material": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": 0.006308579900726363,
-        "sd_delta": 0.0016547237452102677,
+        "mean_delta": 0.00630857990072637,
+        "sd_delta": 0.0016547237452102538,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
@@ -1919,8 +2166,8 @@
         "agree": true
        },
        "ood_sncs": {
-        "mean_delta": 0.00258753575487123,
-        "sd_delta": 0.0009456839574047395,
+        "mean_delta": 0.002587535754871237,
+        "sd_delta": 0.0009456839574047582,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": false
@@ -1941,8 +2188,8 @@
         "agree": true
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": -0.033704363564544614,
-        "sd_delta": 0.005330947943983551,
+        "mean_delta": -0.03370436356454463,
+        "sd_delta": 0.005330947943983541,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": true,
@@ -1957,8 +2204,8 @@
         "agree": true
        },
        "ood_nsncs_places365": {
-        "mean_delta": -0.033875713323687696,
-        "sd_delta": 0.004062409325723582,
+        "mean_delta": -0.0338757133236877,
+        "sd_delta": 0.004062409325723578,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": true,
@@ -1981,8 +2228,8 @@
         "agree": true
        },
        "ood_nsncs_ti": {
-        "mean_delta": -0.029417743510382413,
-        "sd_delta": 0.014772607071733862,
+        "mean_delta": -0.029417743510382427,
+        "sd_delta": 0.014772607071733846,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": true,
@@ -2002,10 +2249,10 @@
       "agreement": 1.0
      }
     },
-    "pooled_aligned_mean": 0.0147479689564674,
+    "pooled_aligned_mean": 0.014747968956467402,
     "pooled_aligned_sd": 0.004267891723638994,
-    "t": 6.911126106963476,
-    "p_one_sided": 0.0031045065526065833,
+    "t": 6.9111261069634775,
+    "p_one_sided": 0.0031045065526065807,
     "agreement_overall": 0.8421052631578947
    },
    "E2": {
@@ -2014,7 +2261,7 @@
       "cells": {
        "ood_nsncs_isun": {
         "mean_delta": 0.0012389009149203697,
-        "sd_delta": 0.0007895867901344094,
+        "sd_delta": 0.0007895867901344079,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": false
@@ -2035,8 +2282,8 @@
         "committed_material": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": 0.0010816536140858604,
-        "sd_delta": 9.881070489751626e-05,
+        "mean_delta": 0.0010816536140858674,
+        "sd_delta": 9.881070489750214e-05,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": false
@@ -2056,15 +2303,15 @@
         "committed_material": false
        },
        "ood_nsncs_ti": {
-        "mean_delta": 0.0009723048718992405,
-        "sd_delta": 0.0010499119150121218,
+        "mean_delta": 0.0009723048718992336,
+        "sd_delta": 0.0010499119150121341,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": false
        },
        "ood_sncs": {
-        "mean_delta": 0.00014767873555239508,
-        "sd_delta": 0.0005254429592696831,
+        "mean_delta": 0.0001476787355524159,
+        "sd_delta": 0.0005254429592697063,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": true,
@@ -2079,28 +2326,28 @@
       "cells": {
        "ood_nsncs_isun": {
         "mean_delta": -0.0005370462713834775,
-        "sd_delta": 0.0009897360161167637,
+        "sd_delta": 0.000989736016116742,
         "observed_sign": -1,
         "committed_sign": 1,
         "committed_material": false
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": -0.0005610983024164212,
-        "sd_delta": 0.00043000720795729975,
+        "mean_delta": -0.0005610983024164282,
+        "sd_delta": 0.0004300072079573051,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": false
        },
        "ood_nsncs_lsun_resize": {
-        "mean_delta": -0.0009838377280882299,
-        "sd_delta": 0.001015932552370155,
+        "mean_delta": -0.000983837728088216,
+        "sd_delta": 0.0010159325523701438,
         "observed_sign": -1,
         "committed_sign": 1,
         "committed_material": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": -0.00037189743785864815,
-        "sd_delta": 0.00028842876112000597,
+        "mean_delta": -0.0003718974378586551,
+        "sd_delta": 0.00028842876112002727,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": false
@@ -2127,8 +2374,8 @@
         "committed_material": false
        },
        "ood_sncs": {
-        "mean_delta": -0.0007637145872285631,
-        "sd_delta": 0.00013631063869374435,
+        "mean_delta": -0.0007637145872285492,
+        "sd_delta": 0.00013631063869371893,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": false
@@ -2141,16 +2388,16 @@
      "A1++": {
       "cells": {
        "ood_nsncs_isun": {
-        "mean_delta": -0.0007791020061051201,
-        "sd_delta": 0.0010797109494547978,
+        "mean_delta": -0.000779102006105134,
+        "sd_delta": 0.0010797109494547876,
         "observed_sign": -1,
         "committed_sign": 1,
         "committed_material": true,
         "agree": false
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": -0.0006418453313555561,
-        "sd_delta": 0.00025907652658301787,
+        "mean_delta": -0.000641845331355563,
+        "sd_delta": 0.00025907652658300746,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": false
@@ -2164,8 +2411,8 @@
         "agree": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": -3.894858755842251e-05,
-        "sd_delta": 9.789501037241888e-05,
+        "mean_delta": -3.894858755842945e-05,
+        "sd_delta": 9.789501037243175e-05,
         "observed_sign": -1,
         "committed_sign": 1,
         "committed_material": false
@@ -2194,8 +2441,8 @@
         "agree": false
        },
        "ood_sncs": {
-        "mean_delta": -0.0008575273434726985,
-        "sd_delta": 0.0002543254369944504,
+        "mean_delta": -0.0008575273434726916,
+        "sd_delta": 0.0002543254369944785,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": true,
@@ -2209,16 +2456,16 @@
      "A2": {
       "cells": {
        "ood_nsncs_isun": {
-        "mean_delta": 0.003927045523326053,
-        "sd_delta": 0.0022018204513265444,
+        "mean_delta": 0.00392704552332606,
+        "sd_delta": 0.002201820451326514,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": true,
         "agree": false
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": 0.008667108696931852,
-        "sd_delta": 0.0026083131141121417,
+        "mean_delta": 0.00866710869693186,
+        "sd_delta": 0.0026083131141121396,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
@@ -2232,8 +2479,8 @@
         "agree": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": -0.0006163951581857896,
-        "sd_delta": 0.0003833233198838034,
+        "mean_delta": -0.0006163951581858035,
+        "sd_delta": 0.0003833233198837644,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": true,
@@ -2264,8 +2511,8 @@
         "agree": false
        },
        "ood_sncs": {
-        "mean_delta": -0.004791130646696354,
-        "sd_delta": 0.00027973711261464386,
+        "mean_delta": -0.004791130646696333,
+        "sd_delta": 0.0002797371126146055,
         "observed_sign": -1,
         "committed_sign": -1,
         "committed_material": true,
@@ -2277,9 +2524,9 @@
       "agreement": 0.2857142857142857
      }
     },
-    "pooled_aligned_mean": -0.0008878904318703191,
-    "pooled_aligned_sd": 0.000307308499145965,
-    "t": -5.778495774362492,
+    "pooled_aligned_mean": -0.00088789043187032,
+    "pooled_aligned_sd": 0.0003073084991459636,
+    "t": -5.778495774362524,
     "p_one_sided": 0.994847138462315,
     "agreement_overall": 0.42857142857142855
    },
@@ -2295,23 +2542,23 @@
         "committed_material": false
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": 0.00022359957874119873,
-        "sd_delta": 0.0004307639984578696,
+        "mean_delta": 0.0002235995787412126,
+        "sd_delta": 0.00043076399845786524,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": true,
         "agree": true
        },
        "ood_nsncs_lsun_resize": {
-        "mean_delta": 0.0003074174707930963,
-        "sd_delta": 0.0009292051834762262,
+        "mean_delta": 0.0003074174707930824,
+        "sd_delta": 0.0009292051834762053,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": 1.8333910390209984e-05,
-        "sd_delta": 0.00024305522185297552,
+        "mean_delta": 1.8333910390216923e-05,
+        "sd_delta": 0.0002430552218530027,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": false
@@ -2332,15 +2579,15 @@
         "committed_material": false
        },
        "ood_nsncs_ti": {
-        "mean_delta": 0.0005117183429886665,
-        "sd_delta": 0.0009412289867308314,
+        "mean_delta": 0.0005117183429886735,
+        "sd_delta": 0.0009412289867308405,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": false
        },
        "ood_sncs": {
-        "mean_delta": -2.651604998526319e-05,
-        "sd_delta": 0.00017894381972133284,
+        "mean_delta": -2.6516049985242374e-05,
+        "sd_delta": 0.00017894381972135187,
         "observed_sign": -1,
         "committed_sign": 1,
         "committed_material": false
@@ -2353,31 +2600,31 @@
      "A1+": {
       "cells": {
        "ood_nsncs_isun": {
-        "mean_delta": 0.00041262742348815995,
-        "sd_delta": 0.0007974005086639446,
+        "mean_delta": 0.0004126274234881669,
+        "sd_delta": 0.0007974005086639546,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": true,
         "agree": false
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": 0.0001814584388959914,
-        "sd_delta": 0.00016139597269370772,
+        "mean_delta": 0.00018145843889600527,
+        "sd_delta": 0.00016139597269370273,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
        },
        "ood_nsncs_lsun_resize": {
-        "mean_delta": 0.00023701397630979115,
-        "sd_delta": 0.00070268940716857,
+        "mean_delta": 0.0002370139763097842,
+        "sd_delta": 0.0007026894071685716,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": true,
         "agree": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": 6.67173203603641e-05,
-        "sd_delta": 0.0002063558453549937,
+        "mean_delta": 6.671732036037797e-05,
+        "sd_delta": 0.0002063558453550214,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": false
@@ -2428,8 +2675,8 @@
         "agree": false
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": -2.3523388442386883e-05,
-        "sd_delta": 0.0004808782242919093,
+        "mean_delta": -2.3523388442373006e-05,
+        "sd_delta": 0.00048087822429190554,
         "observed_sign": -1,
         "committed_sign": 1,
         "committed_material": true,
@@ -2444,8 +2691,8 @@
         "agree": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": 0.00023204048963122725,
-        "sd_delta": 0.00020557200777864427,
+        "mean_delta": 0.00023204048963124113,
+        "sd_delta": 0.00020557200777866696,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": false
@@ -2474,8 +2721,8 @@
         "agree": false
        },
        "ood_sncs": {
-        "mean_delta": 0.0001263094630579928,
-        "sd_delta": 0.00020794703096833106,
+        "mean_delta": 0.00012630946305798585,
+        "sd_delta": 0.0002079470309683515,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
@@ -2488,31 +2735,31 @@
      "A2": {
       "cells": {
        "ood_nsncs_isun": {
-        "mean_delta": 0.0006573182600369334,
-        "sd_delta": 0.0007816041206166204,
+        "mean_delta": 0.0006573182600369265,
+        "sd_delta": 0.0007816041206166341,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": true,
         "agree": false
        },
        "ood_nsncs_lsun_cropped": {
-        "mean_delta": 0.0006715805128540628,
-        "sd_delta": 0.0004841454508340981,
+        "mean_delta": 0.0006715805128540767,
+        "sd_delta": 0.0004841454508341099,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
        },
        "ood_nsncs_lsun_resize": {
-        "mean_delta": 0.0009594140636117743,
-        "sd_delta": 0.0006498319527989734,
+        "mean_delta": 0.0009594140636117882,
+        "sd_delta": 0.0006498319527989633,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": true,
         "agree": false
        },
        "ood_nsncs_places365": {
-        "mean_delta": 0.0006230305774944517,
-        "sd_delta": 0.0001597910258335915,
+        "mean_delta": 0.0006230305774944794,
+        "sd_delta": 0.0001597910258335769,
         "observed_sign": 1,
         "committed_sign": 1,
         "committed_material": false
@@ -2534,8 +2781,8 @@
         "agree": false
        },
        "ood_nsncs_ti": {
-        "mean_delta": 0.000981432214618036,
-        "sd_delta": 0.0007968767723079175,
+        "mean_delta": 0.0009814322146180499,
+        "sd_delta": 0.0007968767723079344,
         "observed_sign": 1,
         "committed_sign": -1,
         "committed_material": true,
@@ -2554,10 +2801,10 @@
       "agreement": 0.2
      }
     },
-    "pooled_aligned_mean": -0.0003665580721960533,
-    "pooled_aligned_sd": 0.0003419625876342965,
-    "t": -2.1438489791056314,
-    "p_one_sided": 0.939294612065529,
+    "pooled_aligned_mean": -0.00036655807219605286,
+    "pooled_aligned_sd": 0.0003419625876342967,
+    "t": -2.1438489791056274,
+    "p_one_sided": 0.9392946120655288,
     "agreement_overall": 0.1875
    }
   },
@@ -2566,11 +2813,11 @@
     "A1-": {
      "per_set": {
       "ood_nsncs_isun": {
-       "mean_delta": -0.002928522835926338,
+       "mean_delta": -0.002928522835926331,
        "margin": 0.0158778026488918,
-       "tost_p": 0.06278055164456386,
+       "tost_p": 0.06278055164456375,
        "equivalent": false,
-       "ratio_to_margin": 0.184441317270733
+       "ratio_to_margin": 0.1844413172707326
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": -0.0034233901281345708,
@@ -2589,7 +2836,7 @@
       "ood_nsncs_places365": {
        "mean_delta": 4.813198442183558e-05,
        "margin": 0.0028629012237369636,
-       "tost_p": 0.010747705191312922,
+       "tost_p": 0.01074770519131243,
        "equivalent": true,
        "ratio_to_margin": 0.016812310541056176
       },
@@ -2615,11 +2862,11 @@
        "ratio_to_margin": 0.15047834420669037
       },
       "ood_sncs": {
-       "mean_delta": 0.0021521030205653158,
+       "mean_delta": 0.002152103020565309,
        "margin": 0.002508574007786971,
-       "tost_p": 0.21620048563949745,
+       "tost_p": 0.21620048563949476,
        "equivalent": false,
-       "ratio_to_margin": 0.8578989552968664
+       "ratio_to_margin": 0.8578989552968637
       }
      },
      "n_equivalent": 2,
@@ -2642,11 +2889,11 @@
        "ratio_to_margin": 0.5953807273880722
       },
       "ood_nsncs_lsun_resize": {
-       "mean_delta": -0.0038886649754369396,
+       "mean_delta": -0.0038886649754369465,
        "margin": 0.016458486667803952,
-       "tost_p": 0.06232383276071041,
+       "tost_p": 0.06232383276071063,
        "equivalent": false,
-       "ratio_to_margin": 0.23627111373756712
+       "ratio_to_margin": 0.23627111373756754
       },
       "ood_nsncs_places365": {
        "mean_delta": -0.003049097933520116,
@@ -2711,11 +2958,11 @@
        "ratio_to_margin": 0.11570533708895664
       },
       "ood_nsncs_places365": {
-       "mean_delta": -0.004566789641561014,
+       "mean_delta": -0.004566789641561028,
        "margin": 0.0028629012237369636,
-       "tost_p": 0.9355738544974291,
+       "tost_p": 0.9355738544974306,
        "equivalent": false,
-       "ratio_to_margin": 1.5951614410223884
+       "ratio_to_margin": 1.5951614410223933
       },
       "ood_nsncs_svhn": {
        "mean_delta": -0.002600856579620267,
@@ -2794,11 +3041,11 @@
        "ratio_to_margin": 4.048173050702506
       },
       "ood_nsncs_ti": {
-       "mean_delta": 0.03289027291201778,
+       "mean_delta": 0.032890272912017786,
        "margin": 0.014581281349396315,
        "tost_p": 0.9857427417234385,
        "equivalent": false,
-       "ratio_to_margin": 2.255650386540239
+       "ratio_to_margin": 2.2556503865402395
       },
       "ood_sncs": {
        "mean_delta": 0.041842408527311366,
@@ -2816,11 +3063,11 @@
     "A1-": {
      "per_set": {
       "ood_nsncs_isun": {
-       "mean_delta": -0.004780064273496011,
-       "margin": 0.009732668825422954,
-       "tost_p": 0.09118518548073795,
+       "mean_delta": -0.004780064273496018,
+       "margin": 0.009732668825422966,
+       "tost_p": 0.09118518548073806,
        "equivalent": false,
-       "ratio_to_margin": 0.491136024376981
+       "ratio_to_margin": 0.4911360243769811
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": -0.003022434827266565,
@@ -2837,11 +3084,11 @@
        "ratio_to_margin": 0.38804439573620325
       },
       "ood_nsncs_places365": {
-       "mean_delta": -0.0006999999877463914,
-       "margin": 0.0015995923859165684,
-       "tost_p": 0.10800783128892799,
+       "mean_delta": -0.0006999999877463983,
+       "margin": 0.0015995923859165415,
+       "tost_p": 0.10800783128893432,
        "equivalent": false,
-       "ratio_to_margin": 0.4376114777173627
+       "ratio_to_margin": 0.43761147771737435
       },
       "ood_nsncs_svhn": {
        "mean_delta": -0.003241173309297518,
@@ -2858,11 +3105,11 @@
        "ratio_to_margin": 0.161448669155581
       },
       "ood_nsncs_ti": {
-       "mean_delta": -0.005034896992415931,
+       "mean_delta": -0.005034896992415924,
        "margin": 0.00889892470470223,
        "tost_p": 0.15004410838304372,
        "equivalent": false,
-       "ratio_to_margin": 0.5657871214210263
+       "ratio_to_margin": 0.5657871214210255
       },
       "ood_sncs": {
        "mean_delta": -0.0006405710264565309,
@@ -2878,11 +3125,11 @@
     "A1+": {
      "per_set": {
       "ood_nsncs_isun": {
-       "mean_delta": 0.0001948641366179768,
-       "margin": 0.009732668825422954,
-       "tost_p": 0.025670591623633603,
+       "mean_delta": 0.00019486413661796986,
+       "margin": 0.009732668825422966,
+       "tost_p": 0.025670591623633502,
        "equivalent": true,
-       "ratio_to_margin": 0.02002165491431982
+       "ratio_to_margin": 0.020021654914319082
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": -0.001721589101668121,
@@ -2892,18 +3139,18 @@
        "ratio_to_margin": 0.3405322780858565
       },
       "ood_nsncs_lsun_resize": {
-       "mean_delta": 0.0018966802952049486,
+       "mean_delta": 0.0018966802952049347,
        "margin": 0.010674801624559594,
-       "tost_p": 0.03288568957910698,
+       "tost_p": 0.03288568957910702,
        "equivalent": true,
-       "ratio_to_margin": 0.1776782709330394
+       "ratio_to_margin": 0.1776782709330381
       },
       "ood_nsncs_places365": {
-       "mean_delta": -8.61620116490644e-05,
-       "margin": 0.0015995923859165684,
+       "mean_delta": -8.616201164905746e-05,
+       "margin": 0.0015995923859165415,
        "tost_p": 5.3876592185253536e-05,
        "equivalent": true,
-       "ratio_to_margin": 0.05386497985841153
+       "ratio_to_margin": 0.053864979858408095
       },
       "ood_nsncs_svhn": {
        "mean_delta": 0.00046576005746422344,
@@ -2941,10 +3188,10 @@
      "per_set": {
       "ood_nsncs_isun": {
        "mean_delta": 0.0029186588568021546,
-       "margin": 0.009732668825422954,
-       "tost_p": 0.05971905012760735,
+       "margin": 0.009732668825422966,
+       "tost_p": 0.059719050127607136,
        "equivalent": false,
-       "ratio_to_margin": 0.2998826847142123
+       "ratio_to_margin": 0.2998826847142119
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": -0.0028978800235324523,
@@ -2961,11 +3208,11 @@
        "ratio_to_margin": 0.38410979708282755
       },
       "ood_nsncs_places365": {
-       "mean_delta": -0.0006210794196402566,
-       "margin": 0.0015995923859165684,
-       "tost_p": 0.084900573507809,
+       "mean_delta": -0.0006210794196402428,
+       "margin": 0.0015995923859165415,
+       "tost_p": 0.08490057350781222,
        "equivalent": false,
-       "ratio_to_margin": 0.3882735533805241
+       "ratio_to_margin": 0.38827355338052194
       },
       "ood_nsncs_svhn": {
        "mean_delta": -0.0012180678162805603,
@@ -3002,11 +3249,11 @@
     "A2": {
      "per_set": {
       "ood_nsncs_isun": {
-       "mean_delta": -0.0076504583500552545,
-       "margin": 0.009732668825422954,
-       "tost_p": 0.2770545977864498,
+       "mean_delta": -0.007650458350055268,
+       "margin": 0.009732668825422966,
+       "tost_p": 0.27705459778645003,
        "equivalent": false,
-       "ratio_to_margin": 0.7860596602312508
+       "ratio_to_margin": 0.7860596602312513
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": -0.0004534986874787858,
@@ -3023,11 +3270,11 @@
        "ratio_to_margin": 0.6160712416976865
       },
       "ood_nsncs_places365": {
-       "mean_delta": 0.0025790139462589096,
-       "margin": 0.0015995923859165684,
-       "tost_p": 0.9980654961633756,
+       "mean_delta": 0.0025790139462589165,
+       "margin": 0.0015995923859165415,
+       "tost_p": 0.9980654961633766,
        "equivalent": false,
-       "ratio_to_margin": 1.6122944626178197
+       "ratio_to_margin": 1.612294462617851
       },
       "ood_nsncs_svhn": {
        "mean_delta": -0.003991516883211768,
@@ -3051,11 +3298,11 @@
        "ratio_to_margin": 0.6911645907699852
       },
       "ood_sncs": {
-       "mean_delta": 0.007232578186972254,
+       "mean_delta": 0.007232578186972247,
        "margin": 0.0010810345132317622,
-       "tost_p": 0.9987233628639616,
+       "tost_p": 0.9987233628639617,
        "equivalent": false,
-       "ratio_to_margin": 6.690423014664349
+       "ratio_to_margin": 6.690423014664343
       }
      },
      "n_equivalent": 1,
@@ -3063,17 +3310,264 @@
     }
    },
    "PCA_RecError": {
-    "status": "missing"
+    "A1-": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.0040928001401444175,
+       "margin": 0.007237946407761604,
+       "tost_p": 0.22843170349289482,
+       "equivalent": false,
+       "ratio_to_margin": 0.5654642780658762
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.00378719227421051,
+       "margin": 0.00788717615346801,
+       "tost_p": 0.025680570408288528,
+       "equivalent": true,
+       "ratio_to_margin": 0.48017087491386545
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.004594064924926249,
+       "margin": 0.008232259738880148,
+       "tost_p": 0.2796971408584185,
+       "equivalent": false,
+       "ratio_to_margin": 0.5580563624868314
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.0020602674804228657,
+       "margin": 0.004013532531917621,
+       "tost_p": 0.007042585345038088,
+       "equivalent": true,
+       "ratio_to_margin": 0.513330205757294
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.0016892445273097717,
+       "margin": 0.011706127805430901,
+       "tost_p": 0.03965390484481601,
+       "equivalent": true,
+       "ratio_to_margin": 0.14430429561225783
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.0049898873654665304,
+       "margin": 0.0028366539207669342,
+       "tost_p": 0.875555613954937,
+       "equivalent": false,
+       "ratio_to_margin": 1.759075130362549
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.003582808191077737,
+       "margin": 0.006054882960695717,
+       "tost_p": 0.31105754481019576,
+       "equivalent": false,
+       "ratio_to_margin": 0.5917221215232319
+      },
+      "ood_sncs": {
+       "mean_delta": -3.766619966474177e-05,
+       "margin": 0.010194028845721619,
+       "tost_p": 0.009114928796195576,
+       "equivalent": true,
+       "ratio_to_margin": 0.0036949277106028675
+      }
+     },
+     "n_equivalent": 4,
+     "n_sets": 8
+    },
+    "A1+": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.0005913929243892349,
+       "margin": 0.007237946407761604,
+       "tost_p": 0.18781480404812198,
+       "equivalent": false,
+       "ratio_to_margin": 0.08170728146799419
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.002103481340965545,
+       "margin": 0.00788717615346801,
+       "tost_p": 0.07431524276558793,
+       "equivalent": false,
+       "ratio_to_margin": 0.26669638157385883
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.003164902199022379,
+       "margin": 0.008232259738880148,
+       "tost_p": 0.24291236796934662,
+       "equivalent": false,
+       "ratio_to_margin": 0.3844512077376348
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.002729412895184094,
+       "margin": 0.004013532531917621,
+       "tost_p": 0.1537907481220948,
+       "equivalent": false,
+       "ratio_to_margin": 0.6800525157024231
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.0006150755530198726,
+       "margin": 0.011706127805430901,
+       "tost_p": 0.051788945771528136,
+       "equivalent": false,
+       "ratio_to_margin": 0.0525430409818793
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.002293717336448585,
+       "margin": 0.0028366539207669342,
+       "tost_p": 0.13488098984976366,
+       "equivalent": false,
+       "ratio_to_margin": 0.808599639052353
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.0009257273562908799,
+       "margin": 0.006054882960695717,
+       "tost_p": 0.2464023526077349,
+       "equivalent": false,
+       "ratio_to_margin": 0.15288938899398846
+      },
+      "ood_sncs": {
+       "mean_delta": 0.004340840224113643,
+       "margin": 0.010194028845721619,
+       "tost_p": 0.04852293856060075,
+       "equivalent": true,
+       "ratio_to_margin": 0.4258218502035602
+      }
+     },
+     "n_equivalent": 1,
+     "n_sets": 8
+    },
+    "A1++": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.009382587315976583,
+       "margin": 0.007237946407761604,
+       "tost_p": 0.6576157629309167,
+       "equivalent": false,
+       "ratio_to_margin": 1.2963051654976576
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.002415229112471204,
+       "margin": 0.00788717615346801,
+       "tost_p": 0.020647236454938638,
+       "equivalent": true,
+       "ratio_to_margin": 0.3062222860851437
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.011080751831366129,
+       "margin": 0.008232259738880148,
+       "tost_p": 0.6818670369556799,
+       "equivalent": false,
+       "ratio_to_margin": 1.3460158186011593
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.005262616652197752,
+       "margin": 0.004013532531917621,
+       "tost_p": 0.7309434035787149,
+       "equivalent": false,
+       "ratio_to_margin": 1.3112181377245078
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.0047646169828443885,
+       "margin": 0.011706127805430901,
+       "tost_p": 0.018215503848556892,
+       "equivalent": true,
+       "ratio_to_margin": 0.407019046950257
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.009664905312232477,
+       "margin": 0.0028366539207669342,
+       "tost_p": 0.9971163232663649,
+       "equivalent": false,
+       "ratio_to_margin": 3.407149966894593
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.007020254982804203,
+       "margin": 0.006054882960695717,
+       "tost_p": 0.6200369320256729,
+       "equivalent": false,
+       "ratio_to_margin": 1.1594369417831922
+      },
+      "ood_sncs": {
+       "mean_delta": 0.009054852006966103,
+       "margin": 0.010194028845721619,
+       "tost_p": 0.3083621028998367,
+       "equivalent": false,
+       "ratio_to_margin": 0.8882505772745952
+      }
+     },
+     "n_equivalent": 2,
+     "n_sets": 8
+    },
+    "A2": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.05442309123112258,
+       "margin": 0.007237946407761604,
+       "tost_p": 0.98893257258158,
+       "equivalent": false,
+       "ratio_to_margin": 7.519134318646244
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.06737147764217337,
+       "margin": 0.00788717615346801,
+       "tost_p": 0.9981063029848047,
+       "equivalent": false,
+       "ratio_to_margin": 8.541900970799285
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.061725757576998955,
+       "margin": 0.008232259738880148,
+       "tost_p": 0.9944256913513062,
+       "equivalent": false,
+       "ratio_to_margin": 7.498033290358212
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.041410182513408056,
+       "margin": 0.004013532531917621,
+       "tost_p": 0.9998842942917229,
+       "equivalent": false,
+       "ratio_to_margin": 10.317639681276665
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.06243055627605888,
+       "margin": 0.011706127805430901,
+       "tost_p": 0.9985257200074494,
+       "equivalent": false,
+       "ratio_to_margin": 5.3331517743292585
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.05266590380719014,
+       "margin": 0.0028366539207669342,
+       "tost_p": 0.9999355315048151,
+       "equivalent": false,
+       "ratio_to_margin": 18.5662069742195
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.05831880083563186,
+       "margin": 0.006054882960695717,
+       "tost_p": 0.9911752842062029,
+       "equivalent": false,
+       "ratio_to_margin": 9.63169746041316
+      },
+      "ood_sncs": {
+       "mean_delta": 0.03554093229842419,
+       "margin": 0.010194028845721619,
+       "tost_p": 0.999009264500732,
+       "equivalent": false,
+       "ratio_to_margin": 3.486446118243087
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    }
    },
    "Residual": {
     "A1-": {
      "per_set": {
       "ood_nsncs_isun": {
-       "mean_delta": 0.007482532084334088,
-       "margin": 0.036556461315237966,
-       "tost_p": 0.0873283660343846,
+       "mean_delta": 0.0074825320843340815,
+       "margin": 0.03655646131523798,
+       "tost_p": 0.0873283660343845,
        "equivalent": false,
-       "ratio_to_margin": 0.20468425594616066
+       "ratio_to_margin": 0.20468425594616038
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": -0.0013273513051138205,
@@ -3090,11 +3584,11 @@
        "ratio_to_margin": 0.33813814778932183
       },
       "ood_nsncs_places365": {
-       "mean_delta": 0.006582719438971624,
-       "margin": 0.005081517316733195,
-       "tost_p": 0.8866261166387911,
+       "mean_delta": 0.006582719438971617,
+       "margin": 0.005081517316733192,
+       "tost_p": 0.8866261166387907,
        "equivalent": false,
-       "ratio_to_margin": 1.2954239902509121
+       "ratio_to_margin": 1.2954239902509115
       },
       "ood_nsncs_svhn": {
        "mean_delta": -0.004188607552122539,
@@ -3111,11 +3605,11 @@
        "ratio_to_margin": 1.2935478815860515
       },
       "ood_nsncs_ti": {
-       "mean_delta": 0.010338407790623824,
+       "mean_delta": 0.010338407790623838,
        "margin": 0.03191276052810255,
-       "tost_p": 0.1398609853559697,
+       "tost_p": 0.1398609853559698,
        "equivalent": false,
-       "ratio_to_margin": 0.32395842977982947
+       "ratio_to_margin": 0.3239584297798299
       },
       "ood_sncs": {
        "mean_delta": 0.011976189071777416,
@@ -3131,11 +3625,11 @@
     "A1+": {
      "per_set": {
       "ood_nsncs_isun": {
-       "mean_delta": -0.01792688008038286,
-       "margin": 0.036556461315237966,
-       "tost_p": 0.12535956438346962,
+       "mean_delta": -0.017926880080382873,
+       "margin": 0.03655646131523798,
+       "tost_p": 0.12535956438346985,
        "equivalent": false,
-       "ratio_to_margin": 0.4903888241751214
+       "ratio_to_margin": 0.49038882417512164
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": -0.006508369009081617,
@@ -3152,11 +3646,11 @@
        "ratio_to_margin": 0.47103690142501864
       },
       "ood_nsncs_places365": {
-       "mean_delta": -0.008422282293712585,
-       "margin": 0.005081517316733195,
+       "mean_delta": -0.008422282293712592,
+       "margin": 0.005081517316733192,
        "tost_p": 0.9612301481021135,
        "equivalent": false,
-       "ratio_to_margin": 1.6574345355428406
+       "ratio_to_margin": 1.6574345355428428
       },
       "ood_nsncs_svhn": {
        "mean_delta": -0.002537773650968758,
@@ -3173,11 +3667,11 @@
        "ratio_to_margin": 0.8692281913758452
       },
       "ood_nsncs_ti": {
-       "mean_delta": -0.014670972973946747,
+       "mean_delta": -0.014670972973946726,
        "margin": 0.03191276052810255,
-       "tost_p": 0.16324840522581696,
+       "tost_p": 0.16324840522581674,
        "equivalent": false,
-       "ratio_to_margin": 0.4597212128053732
+       "ratio_to_margin": 0.45972121280537254
       },
       "ood_sncs": {
        "mean_delta": 0.0021308205780970896,
@@ -3193,11 +3687,11 @@
     "A1++": {
      "per_set": {
       "ood_nsncs_isun": {
-       "mean_delta": -0.014246944641542705,
-       "margin": 0.036556461315237966,
+       "mean_delta": -0.014246944641542712,
+       "margin": 0.03655646131523798,
        "tost_p": 0.03770016574734325,
        "equivalent": true,
-       "ratio_to_margin": 0.38972439150186833
+       "ratio_to_margin": 0.3897243915018684
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": -0.00658542368088974,
@@ -3207,18 +3701,18 @@
        "ratio_to_margin": 1.0260589236436473
       },
       "ood_nsncs_lsun_resize": {
-       "mean_delta": -0.011013593046005306,
+       "mean_delta": -0.011013593046005299,
        "margin": 0.032449842282130104,
        "tost_p": 0.03698746930298602,
        "equivalent": true,
-       "ratio_to_margin": 0.33940359248126184
+       "ratio_to_margin": 0.3394035924812616
       },
       "ood_nsncs_places365": {
-       "mean_delta": -0.008349461747772083,
-       "margin": 0.005081517316733195,
-       "tost_p": 0.9339236566008845,
+       "mean_delta": -0.00834946174777209,
+       "margin": 0.005081517316733192,
+       "tost_p": 0.9339236566008844,
        "equivalent": false,
-       "ratio_to_margin": 1.6431040626935782
+       "ratio_to_margin": 1.6431040626935804
       },
       "ood_nsncs_svhn": {
        "mean_delta": -0.0032603372303097455,
@@ -3235,11 +3729,11 @@
        "ratio_to_margin": 0.42886297333534273
       },
       "ood_nsncs_ti": {
-       "mean_delta": -0.012881240878773514,
+       "mean_delta": -0.012881240878773487,
        "margin": 0.03191276052810255,
-       "tost_p": 0.05600107392389675,
+       "tost_p": 0.05600107392389653,
        "equivalent": false,
-       "ratio_to_margin": 0.4036391921479254
+       "ratio_to_margin": 0.4036391921479245
       },
       "ood_sncs": {
        "mean_delta": 0.0028940185094991355,
@@ -3255,11 +3749,11 @@
     "A2": {
      "per_set": {
       "ood_nsncs_isun": {
-       "mean_delta": 0.039396864123535644,
-       "margin": 0.036556461315237966,
-       "tost_p": 0.6277271036695178,
+       "mean_delta": 0.03939686412353564,
+       "margin": 0.03655646131523798,
+       "tost_p": 0.6277271036695169,
        "equivalent": false,
-       "ratio_to_margin": 1.0776990634789287
+       "ratio_to_margin": 1.077699063478928
       },
       "ood_nsncs_lsun_cropped": {
        "mean_delta": 0.05469891175688738,
@@ -3276,11 +3770,11 @@
        "ratio_to_margin": 1.0452579754533755
       },
       "ood_nsncs_places365": {
-       "mean_delta": 0.033989934984683,
-       "margin": 0.005081517316733195,
+       "mean_delta": 0.033989934984682994,
+       "margin": 0.005081517316733192,
        "tost_p": 0.9996937822779803,
        "equivalent": false,
-       "ratio_to_margin": 6.688934203324617
+       "ratio_to_margin": 6.688934203324619
       },
       "ood_nsncs_svhn": {
        "mean_delta": 0.0369202391391453,
@@ -3297,11 +3791,11 @@
        "ratio_to_margin": 4.229482457284887
       },
       "ood_nsncs_ti": {
-       "mean_delta": 0.033772997165466286,
+       "mean_delta": 0.0337729971654663,
        "margin": 0.03191276052810255,
-       "tost_p": 0.5698900839928833,
+       "tost_p": 0.5698900839928839,
        "equivalent": false,
-       "ratio_to_margin": 1.058291310641259
+       "ratio_to_margin": 1.0582913106412595
       },
       "ood_sncs": {
        "mean_delta": 0.03364973232572978,
@@ -3319,135 +3813,135 @@
   "E5": {
    "per_score": {
     "MSR": {
-     "bf_t": 0.4254840810522355,
-     "bf_p_two": 0.6719631688672021,
+     "bf_t": 0.42548408105223423,
+     "bf_p_two": 0.6719631688672031,
      "mean_abs_dev_arm": 0.002104793882410692,
-     "mean_abs_dev_base": 0.001842167875843452
+     "mean_abs_dev_base": 0.001842167875843453
     },
     "MLS": {
-     "bf_t": 0.6729629165960935,
-     "bf_p_two": 0.5035682326105384,
-     "mean_abs_dev_arm": 0.0023649372865369774,
-     "mean_abs_dev_base": 0.001912477380470499
+     "bf_t": 0.6729629165960911,
+     "bf_p_two": 0.50356823261054,
+     "mean_abs_dev_arm": 0.0023649372865369766,
+     "mean_abs_dev_base": 0.0019124773804704998
     },
     "Energy": {
-     "bf_t": 0.8169048903664393,
-     "bf_p_two": 0.4173906098590052,
+     "bf_t": 0.8169048903664388,
+     "bf_p_two": 0.41739060985900545,
      "mean_abs_dev_arm": 0.002512072849845998,
-     "mean_abs_dev_base": 0.001935752314126603
+     "mean_abs_dev_base": 0.0019357523141266039
     },
     "CTM": {
-     "bf_t": -2.6754780132988443,
-     "bf_p_two": 0.00977158658133333,
-     "mean_abs_dev_arm": 0.0013144264189730841,
-     "mean_abs_dev_base": 0.002560972115802157
+     "bf_t": -2.675478013298845,
+     "bf_p_two": 0.009771586581333305,
+     "mean_abs_dev_arm": 0.001314426418973085,
+     "mean_abs_dev_base": 0.0025609721158021577
     },
     "fDBD": {
-     "bf_t": -2.7028337682326935,
-     "bf_p_two": 0.00918497141309173,
-     "mean_abs_dev_arm": 0.0011282680592112964,
-     "mean_abs_dev_base": 0.002359568121585987
+     "bf_t": -2.7028337682326824,
+     "bf_p_two": 0.009184971413091996,
+     "mean_abs_dev_arm": 0.0011282680592112982,
+     "mean_abs_dev_base": 0.0023595681215859855
     }
    },
-   "pooled_p_one_sided": 0.8131809695973311,
-   "median_sd_ratio": 1.0229148350085282
+   "pooled_p_one_sided": 0.8131809695973322,
+   "median_sd_ratio": 1.0229148350085335
   },
   "X_f": {
    "per_score": {
     "MSR": {
-     "bf_t": 0.6409231085526398,
-     "bf_p_two": 0.523966495439758,
+     "bf_t": 0.6409231085526382,
+     "bf_p_two": 0.5239664954397592,
      "mean_abs_dev_arm": 0.0022492447918106466,
-     "mean_abs_dev_base": 0.001842167875843452
+     "mean_abs_dev_base": 0.001842167875843453
     },
     "MLS": {
-     "bf_t": 1.0187625407615741,
-     "bf_p_two": 0.31237204436466726,
-     "mean_abs_dev_arm": 0.0025810775107448277,
-     "mean_abs_dev_base": 0.001912477380470499
+     "bf_t": 1.0187625407615708,
+     "bf_p_two": 0.31237204436466864,
+     "mean_abs_dev_arm": 0.002581077510744827,
+     "mean_abs_dev_base": 0.0019124773804704998
     },
     "Energy": {
-     "bf_t": 1.2719552491298924,
-     "bf_p_two": 0.20828513592945444,
-     "mean_abs_dev_arm": 0.0027628173839978456,
-     "mean_abs_dev_base": 0.001935752314126603
+     "bf_t": 1.271955249129889,
+     "bf_p_two": 0.20828513592945563,
+     "mean_abs_dev_arm": 0.002762817383997844,
+     "mean_abs_dev_base": 0.0019357523141266039
     },
     "CTM": {
-     "bf_t": -2.3881355596585245,
-     "bf_p_two": 0.020288938531728844,
-     "mean_abs_dev_arm": 0.001437813934205153,
-     "mean_abs_dev_base": 0.002560972115802157
+     "bf_t": -2.3881355596585307,
+     "bf_p_two": 0.020288938531728532,
+     "mean_abs_dev_arm": 0.0014378139342051512,
+     "mean_abs_dev_base": 0.0025609721158021577
     },
     "fDBD": {
-     "bf_t": -1.3508157794633198,
-     "bf_p_two": 0.18166768364324812,
+     "bf_t": -1.3508157794633158,
+     "bf_p_two": 0.1816676836432493,
      "mean_abs_dev_arm": 0.001623003926713963,
-     "mean_abs_dev_base": 0.002359568121585987
+     "mean_abs_dev_base": 0.0023595681215859855
     }
    },
-   "pooled_p_one_sided": 0.4871706970878078,
-   "median_sd_ratio": 1.0592865921596246
+   "pooled_p_one_sided": 0.487170697087811,
+   "median_sd_ratio": 1.0592865921596233
   },
   "X_a": {
    "A1-": {
     "per_set": {
-     "ood_nsncs_isun": 0.0007033155227706631,
-     "ood_nsncs_lsun_cropped": -0.0022314160988025147,
-     "ood_nsncs_lsun_resize": 0.0012808718246973064,
-     "ood_nsncs_places365": -0.0017490826569668758,
+     "ood_nsncs_isun": 0.0007033155227706769,
+     "ood_nsncs_lsun_cropped": -0.0022314160988025217,
+     "ood_nsncs_lsun_resize": 0.0012808718246973133,
+     "ood_nsncs_places365": -0.0017490826569668688,
      "ood_nsncs_svhn": -0.00020936510488352156,
      "ood_nsncs_textures": -0.0009650361710899988,
      "ood_nsncs_ti": 0.0009742097303549122,
-     "ood_sncs": 9.436350894979906e-05
+     "ood_sncs": 9.436350894977824e-05
     },
     "n_fdbd_gains": 4,
     "n_sets": 8
    },
    "A1+": {
     "per_set": {
-     "ood_nsncs_isun": 0.0010356905895536062,
-     "ood_nsncs_lsun_cropped": 0.0016817835528213226,
+     "ood_nsncs_isun": 0.001035690589553634,
+     "ood_nsncs_lsun_cropped": 0.0016817835528213296,
      "ood_nsncs_lsun_resize": 0.0010405232432351974,
-     "ood_nsncs_places365": 0.0009317991480855131,
+     "ood_nsncs_places365": 0.000931799148085527,
      "ood_nsncs_svhn": 0.00043563224176593196,
      "ood_nsncs_textures": 0.0005532914259800542,
      "ood_nsncs_ti": 0.00028745277398172647,
-     "ood_sncs": 0.0010935869932126169
+     "ood_sncs": 0.001093586993212603
     },
     "n_fdbd_gains": 0,
     "n_sets": 8
    },
    "A1++": {
     "per_set": {
-     "ood_nsncs_isun": 0.001933950380422371,
-     "ood_nsncs_lsun_cropped": 0.002562239825936223,
-     "ood_nsncs_lsun_resize": 0.001752013550559088,
-     "ood_nsncs_places365": 0.0011092948865802296,
+     "ood_nsncs_isun": 0.0019339503804223918,
+     "ood_nsncs_lsun_cropped": 0.00256223982593623,
+     "ood_nsncs_lsun_resize": 0.0017520135505590811,
+     "ood_nsncs_places365": 0.0011092948865802227,
      "ood_nsncs_svhn": 0.00045400184491105333,
      "ood_nsncs_textures": 0.0010936589527650031,
-     "ood_nsncs_ti": 0.001194328066941322,
-     "ood_sncs": 0.0009256634567309102
+     "ood_nsncs_ti": 0.001194328066941315,
+     "ood_sncs": 0.0009256634567309033
     },
     "n_fdbd_gains": 0,
     "n_sets": 8
    },
    "A2": {
     "per_set": {
-     "ood_nsncs_isun": -0.0008869956152570274,
-     "ood_nsncs_lsun_cropped": 0.004198574803610876,
+     "ood_nsncs_isun": -0.0008869956152570135,
+     "ood_nsncs_lsun_cropped": 0.004198574803610869,
      "ood_nsncs_lsun_resize": -0.00046127977947167664,
-     "ood_nsncs_places365": -0.0005283901196347432,
+     "ood_nsncs_places365": -0.0005283901196347293,
      "ood_nsncs_svhn": 0.00018840222584493027,
      "ood_nsncs_textures": -0.0008311600679129019,
      "ood_nsncs_ti": -0.0009936214330015167,
-     "ood_sncs": -0.003896313726305896
+     "ood_sncs": -0.0038963137263059097
     },
     "n_fdbd_gains": 6,
     "n_sets": 8
    }
   },
   "holm": {
-   "E1": 0.012418026210426333,
+   "E1": 0.012418026210426323,
    "E5": 1.0,
    "E4": 1.0,
    "E2": 1.0

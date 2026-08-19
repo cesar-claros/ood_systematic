@@ -40,10 +40,8 @@
 |---|---|---|---|---|
 | Maha | 2/8 eq | 2/8 eq | 4/8 eq | 0/8 eq |
 | CTM_mean | 3/8 eq | 5/8 eq | 4/8 eq | 0/8 eq |
-| PCA_RecError | MISSING | MISSING | MISSING | MISSING |
+| PCA_RecError | 4/8 eq | 1/8 eq | 2/8 eq | 0/8 eq |
 | Residual | 1/8 eq | 0/8 eq | 3/8 eq | 0/8 eq |
-
-**MISSING registered null(s): PCA_RecError** — not present in the sweep stats. PCA_RecError only exists as the global-projection variant; run `pilot1/run_pca_re_pilot1.sh`, then re-run this analysis.
 
 ## Exploratory
 
@@ -98,10 +96,8 @@
 |---|---|---|---|---|
 | Maha | 2/8 eq | 2/8 eq | 4/8 eq | 0/8 eq |
 | CTM_mean | 3/8 eq | 5/8 eq | 4/8 eq | 1/8 eq |
-| PCA_RecError | MISSING | MISSING | MISSING | MISSING |
+| PCA_RecError | 4/8 eq | 1/8 eq | 2/8 eq | 0/8 eq |
 | Residual | 2/8 eq | 0/8 eq | 3/8 eq | 0/8 eq |
-
-**MISSING registered null(s): PCA_RecError** — not present in the sweep stats. PCA_RecError only exists as the global-projection variant; run `pilot1/run_pca_re_pilot1.sh`, then re-run this analysis.
 
 ## Exploratory
 
