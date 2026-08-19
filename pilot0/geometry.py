@@ -126,6 +126,41 @@ def papyan_self_duality(w: np.ndarray, model: FeatureModel) -> float:
                          - m / np.linalg.norm(m)) ** 2))
 
 
+def _pairwise_cos_offdiag(rows: np.ndarray) -> np.ndarray:
+    normed = rows / np.linalg.norm(rows, axis=1, keepdims=True)
+    cos = normed @ normed.T
+    return cos[~np.eye(len(rows), dtype=bool)]
+
+
+def papyan_metrics(w: np.ndarray, model: FeatureModel) -> dict[str, float]:
+    """Numpy mirror of the eight Papyan coordinates in src/neural_collapse.py.
+
+    `_uc` metrics live on the centered class means, `_wc` on the classifier
+    rows; var_collapse is Tr(Sigma_W Sigma_B^+)/C; self_duality is the
+    Frobenius metric already provided by `papyan_self_duality`.
+    """
+    m = model.class_means
+    w64 = w.astype(np.float64)
+    n_classes = len(m)
+    beta = -1.0 / (n_classes - 1)
+    sigma_b = m.T @ m / n_classes
+    var_collapse = float(np.trace(
+        model.sigma_w @ np.linalg.pinv(sigma_b, rcond=1e-6)) / n_classes)
+    cos_m = _pairwise_cos_offdiag(m)
+    cos_w = _pairwise_cos_offdiag(w64)
+    norms_w = np.linalg.norm(w64, axis=1)
+    return {
+        "var_collapse": var_collapse,
+        "equinorm_uc": float(model.radii.std() / model.radii.mean()),
+        "equinorm_wc": float(norms_w.std() / norms_w.mean()),
+        "equiangular_uc": float(cos_m.std()),
+        "equiangular_wc": float(cos_w.std()),
+        "max_equiangular_uc": float(np.abs(cos_m - beta).mean()),
+        "max_equiangular_wc": float(np.abs(cos_w - beta).mean()),
+        "self_duality": papyan_self_duality(w64, model),
+    }
+
+
 def geometry_record(w: np.ndarray, b: np.ndarray,
                     model: FeatureModel) -> dict[str, float]:
     """Assemble the G-vector extension measurements for one head state."""

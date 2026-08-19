@@ -1,21 +1,19 @@
 
-from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, cast, List
-from fd_shifts import configs
-import pytorch_lightning as pl
-import numpy as np
-import torch
-from pathlib import Path
-from omegaconf import DictConfig, OmegaConf
-from sklearn.model_selection import ParameterGrid
-from tqdm import tqdm
 import os
-from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast
-from torch.utils.data import DataLoader, Subset
-from fd_shifts import logger
-import torchvision.transforms as transforms
-import torchvision
+from collections.abc import Callable, Mapping
+from pathlib import Path
+from typing import TypeVar, cast
+
 import pandas as pd
+import pytorch_lightning as pl
+import torch
+import torchvision
+from fd_shifts import configs, logger
+from omegaconf import DictConfig, OmegaConf
+from torch.utils.data import DataLoader, Subset
+from torchvision import transforms
+from tqdm import tqdm
+
 #%%
 ArrayType = torch.Tensor
 T = TypeVar(
@@ -33,7 +31,9 @@ def _update(d, u):
     return d
 #%%
 def get_study_name(path:str)->str:
-    if 'confidnet' in path:
+    if ('etfreg' in path) or ('etfhard' in path) or ('intervention' in path):
+        study_name = 'intervention'
+    elif 'confidnet' in path:
         study_name = 'confidnet'
     elif 'devries' in path:
         study_name = 'devries'
@@ -79,7 +79,7 @@ def get_model_and_last_layer(module: type[pl.LightningModule],
                                 study_name:str, return_model=True):
     if study_name == 'confidnet':
         model = module.backbone
-    elif (study_name == 'devries') or (study_name == 'dg') or (study_name == 'vit') :
+    elif study_name in ('devries', 'dg', 'vit', 'intervention'):
         model = module.model
     else:
         raise NotImplementedError
@@ -89,7 +89,12 @@ def get_model_and_last_layer(module: type[pl.LightningModule],
     else:
         classifier_state = model.classifier.state_dict()
 
-    if "module.weight" in classifier_state:
+    if "directions" in classifier_state:
+        # Intervention A2 fixed-ETF head: logits = scale * (h @ directions.T),
+        # no bias; the effective last layer is scale * directions.
+        w = classifier_state["scale"] * classifier_state["directions"]
+        b = torch.zeros(w.shape[0], dtype=w.dtype)
+    elif "module.weight" in classifier_state:
         w = classifier_state["module.weight"]
         b = classifier_state["module.bias"]
     elif "fc.weight" in classifier_state:
@@ -263,7 +268,7 @@ def compute_model_evaluations(model, datamodule, set_name:str) :
 #     return ent_df
 #%%
 def read_results_vit(dataset,set_name):
-    experiment_dir = Path(os.environ["EXPERIMENT_ROOT_DIR"]+f'/vit/')
+    experiment_dir = Path(os.environ["EXPERIMENT_ROOT_DIR"]+'/vit/')
     folders_in_exp_dir = [j for j in experiment_dir.iterdir() if f'{dataset}_' in j.parts[-1]]
     # print(len(folders_in_exp_dir))
     if 'super' in  dataset:
