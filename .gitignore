@@ -96,7 +96,7 @@ nc_csf_predictivity/outputs/pool_a/*_newcsfs*
 
 # Intervention JSONs
 nc_csf_predictivity/interventions/geometry/
-
+nc_csf_predictivity/interventions/stage2b/
 # Exception to the *.sh rule: the Pool A extraction runner must sync to the HPC
 !x8_pool_a/run_pool_a_hpc.sh
 !run_new_csfs_pilot.sh
