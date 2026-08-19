@@ -55,7 +55,7 @@ class NNGuide:
                                         proportion_bounds:tuple=(0.1,0.5),
                                         n_iters:int=80,
                                         n_init:int=20,):
-        logger.info(f'NNGuide Score: Tunung hyper-parameters required to minimize AUGRC using the validation set...')
+        logger.info(f'NNGuide Score: Tuning hyper-parameters required to minimize AUGRC using the validation set...')
         def _get_metric(k_clusters, proportion):
             self.compute_NNGuide_params(activations_train,
                                         labels_train=labels_train,
