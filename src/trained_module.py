@@ -57,7 +57,7 @@ class TrainedModule:
                 self.model.encoder.disable_dropout()
                 self.network = self.module.network
                 self.network.encoder.disable_dropout()
-            elif (self.study_name == 'dg') or (self.study_name == 'devries'):
+            elif self.study_name in ('dg', 'devries', 'intervention'):
                 self.model.encoder.disable_dropout()
                 self.network = None
         
@@ -359,6 +359,12 @@ class TrainedModule:
             logits = self.module.model.head(z)
             maha = torch.zeros((logits.shape[0]))
             confidence = maha
+        elif self.ext_confid_name is None:
+            # Intervention paradigm: plain CE, no external confidence head;
+            # MSR stands in as the recorded confid (matches the training
+            # module's own convention).
+            logits = self.model.head(z)
+            confidence = torch.softmax(logits, dim=1).max(dim=1).values
         else:
             raise NotImplementedError
 

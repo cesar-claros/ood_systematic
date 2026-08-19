@@ -83,7 +83,7 @@ def main():
     if study_name == 'confidnet':
         module.backbone.encoder.disable_dropout()
         module.network.encoder.disable_dropout()
-    elif (study_name == 'devries') or (study_name == 'dg'):
+    elif study_name in ('devries', 'dg', 'intervention'):
         # model = module.model
         module.model.encoder.disable_dropout()
     elif study_name == 'vit':
