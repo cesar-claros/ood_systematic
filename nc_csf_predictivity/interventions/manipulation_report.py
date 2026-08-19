@@ -78,6 +78,20 @@ def evaluate(records: list[dict]) -> dict:
     m1_monotone = rho <= -0.8
     m1 = m1_strength and m1_monotone
 
+    # Amended gate (blinded-stage addendum A of the manifest): the A2 arm
+    # is relabeled a distinct joint mechanism when its MEASURED
+    # self-duality lands on the wrong side of baseline (the fixed-ETF
+    # "alignment endpoint" premise failing is a finding, not a dial
+    # failure); M1' evaluates the continuous A1 dial alone.
+    a1_records = [r for r in records if r["lam"] != "hard"]
+    rho_dial = float(spearmanr(
+        [r["dose_rank"] for r in a1_records],
+        [r["self_duality"] for r in a1_records]).statistic)
+    a1_moves = {lam: v for lam, v in moves.items() if lam != "hard"}
+    m1_dial = any(v >= 1.0 for v in a1_moves.values()) and rho_dial <= -0.8
+    a2_relabel = ("hard" in sd_stats
+                  and sd_stats["hard"]["mean"] > base["mean"])
+
     acc_stats = arm_stats(records, "val_acc")
     acc_drops = {lam: (acc_stats["0.0"]["mean"] - acc_stats[lam]["median"])
                  * 100.0 for lam in active}
@@ -105,8 +119,10 @@ def evaluate(records: list[dict]) -> dict:
                             <= BENCHMARK_SPAN[1]) for lam in active}
     return {"sd_stats": sd_stats, "moves": moves, "spearman": rho,
             "M1_strength": m1_strength, "M1_monotone": m1_monotone,
-            "M1": m1, "acc_stats": acc_stats, "acc_drops": acc_drops,
-            "M2": m2, "selectivity": selectivity, "exits_span": exits_span}
+            "M1": m1, "spearman_dial": rho_dial, "M1_dial": m1_dial,
+            "A2_relabel": a2_relabel, "acc_stats": acc_stats,
+            "acc_drops": acc_drops, "M2": m2, "selectivity": selectivity,
+            "exits_span": exits_span}
 
 
 def render(records: list[dict], ev: dict) -> str:
@@ -121,6 +137,17 @@ def render(records: list[dict], ev: dict) -> str:
                  f"monotone {'PASS' if ev['M1_monotone'] else 'FAIL'} "
                  f"(Spearman(dose, self_duality) = {ev['spearman']:+.3f}, "
                  f"gate <= -0.8) => **{'PASS' if ev['M1'] else 'FAIL'}**")
+    lines.append(f"- **M1' (amended, manifest addendum A; A1 dial only)**: "
+                 f"**{'PASS' if ev['M1_dial'] else 'FAIL'}** "
+                 f"(Spearman {ev['spearman_dial']:+.3f}, gate <= -0.8)")
+    if ev["A2_relabel"]:
+        lines.append("- **A2 relabeled (measured geometry)**: the fixed-ETF "
+                     "arm's measured self-duality lands ABOVE baseline, "
+                     "refuting the alignment-endpoint premise; A2 is a "
+                     "distinct joint mechanism, its E1 direction is "
+                     "generated from measured geometry via the frozen "
+                     "plug-in (addendum A), and it does not enter the "
+                     "dose-ordering gate.")
     lines.append(f"- **M2 accuracy**: "
                  f"**{'PASS' if ev['M2'] else 'FAIL'}** "
                  "(median val-acc drop vs baseline, pp: "

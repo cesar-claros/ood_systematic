@@ -52,6 +52,23 @@ def test_gates_pass_on_theory_true_ordering():
     assert ev["spearman"] < -0.9
     assert ev["M2"]
     assert ev["exits_span"]["-0.1"] and ev["exits_span"]["hard"]
+    assert ev["M1_dial"] and not ev["A2_relabel"]
+
+
+def test_a2_relabel_when_measured_geometry_inverts():
+    # The observed Pilot 1 pattern: perfect A1 dial, A2 landing far ABOVE
+    # baseline. Registered M1 fails on ordering, the amended A1-dial gate
+    # passes, and the relabel flag fires.
+    sd = {"-0.1": [0.050, 0.049, 0.050], "0.0": [0.0142, 0.0140, 0.0143],
+          "0.3": [0.0040, 0.0041, 0.0042], "1.0": [0.0027, 0.0026, 0.0028],
+          "hard": [0.389, 0.388, 0.390]}
+    acc = {lam: [0.75, 0.75, 0.76] for lam in ARM_ORDER}
+    ev = evaluate(_records(sd, acc))
+    assert not ev["M1_monotone"]
+    assert not ev["M1"]
+    assert ev["M1_dial"]
+    assert ev["spearman_dial"] < -0.9
+    assert ev["A2_relabel"]
 
 
 def test_monotone_gate_fails_on_scrambled_doses():
