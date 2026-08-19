@@ -1,0 +1,3456 @@
+{
+ "auroc_f": {
+  "pairs": {
+   "E1": {
+    "arms": {
+     "A1-": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.00576366148329166,
+        "sd_delta": 0.06471738698715339,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.010980009058422197,
+        "sd_delta": 0.029325747144245375,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": -0.0007370446566423161,
+        "sd_delta": 0.06388975024845561,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.003139148384916357,
+        "sd_delta": 0.00858417962229122,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.012229269548669541,
+        "sd_delta": 0.021865124158805184,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": -0.0018353934396043992,
+        "sd_delta": 0.016949086508227587,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.0039987044030927454,
+        "sd_delta": 0.06441002558207844,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_sncs": {
+        "mean_delta": -0.013953371082363497,
+        "sd_delta": 0.003957487285978778,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       }
+      },
+      "agree": 4,
+      "material": 5,
+      "agreement": 0.8
+     },
+     "A1+": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.03679912000070007,
+        "sd_delta": 0.05158772601354338,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.01514710088287094,
+        "sd_delta": 0.02114315372490439,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.03319148824070961,
+        "sd_delta": 0.04945312470448136,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.01612901119511495,
+        "sd_delta": 0.009764437828630408,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.007258335389472792,
+        "sd_delta": 0.024784291788676055,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.010007949686871798,
+        "sd_delta": 0.00754558525212418,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.041454059417957184,
+        "sd_delta": 0.06128135815390115,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_sncs": {
+        "mean_delta": 1.7317934408012103e-05,
+        "sd_delta": 0.004333637557732996,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       }
+      },
+      "agree": 3,
+      "material": 4,
+      "agreement": 0.75
+     },
+     "A1++": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.031253215930642786,
+        "sd_delta": 0.031599237867332944,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.008587902645037088,
+        "sd_delta": 0.00852945892812524,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.02567535138338936,
+        "sd_delta": 0.029147408972597495,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.026167681477450133,
+        "sd_delta": 0.006862254053475058,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.00535187344793267,
+        "sd_delta": 0.022360537280415503,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.015011681717546355,
+        "sd_delta": 0.012225319255408032,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.03852338198062408,
+        "sd_delta": 0.033046432125619175,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_sncs": {
+        "mean_delta": 0.010734213326089037,
+        "sd_delta": 0.003925144001361471,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       }
+      },
+      "agree": 1,
+      "material": 2,
+      "agreement": 0.5
+     },
+     "A2": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": -0.14647496676972552,
+        "sd_delta": 0.04852840666865142,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": -0.13996292196708504,
+        "sd_delta": 0.02206896069816252,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": -0.12688077725474275,
+        "sd_delta": 0.05128995584414178,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.14082956390545479,
+        "sd_delta": 0.01682089563975158,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.1326201920217186,
+        "sd_delta": 0.05908369074399552,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": -0.04530111022625008,
+        "sd_delta": 0.019030214539348292,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": -0.12242124891124348,
+        "sd_delta": 0.06127239086489071,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_sncs": {
+        "mean_delta": -0.17788248337004167,
+        "sd_delta": 0.0072748077171684794,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       }
+      },
+      "agree": 8,
+      "material": 8,
+      "agreement": 1.0
+     }
+    },
+    "pooled_aligned_mean": 0.06326135289819375,
+    "pooled_aligned_sd": 0.017128516054232303,
+    "t": 7.386670590481474,
+    "p_one_sided": 0.0025654147294804637,
+    "agreement_overall": 0.8421052631578947
+   },
+   "E2": {
+    "arms": {
+     "A1-": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.005048948772954892,
+        "sd_delta": 0.003215817683339162,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.014248272584949262,
+        "sd_delta": 0.0021635133458693494,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.003468506567283397,
+        "sd_delta": 0.0031496353284016015,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.0044876898754005745,
+        "sd_delta": 0.00041027348339918695,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.007527625942357202,
+        "sd_delta": 0.0019743543993061257,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.005908699397489364,
+        "sd_delta": 0.001979686049877866,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.004039024371625649,
+        "sd_delta": 0.0043541663757321455,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_sncs": {
+        "mean_delta": 0.0006147388771395867,
+        "sd_delta": 0.002176777512453451,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       }
+      },
+      "agree": 2,
+      "material": 2,
+      "agreement": 1.0
+     },
+     "A1+": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": -0.0021860603047850757,
+        "sd_delta": 0.004026981518556327,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": -0.00232754693497203,
+        "sd_delta": 0.0017848192101869924,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": -0.00407947023043681,
+        "sd_delta": 0.004207831848838988,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.0015421340596101507,
+        "sd_delta": 0.0011951310189259972,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.008129256373516969,
+        "sd_delta": 0.004901014739458286,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": -0.003808737068569795,
+        "sd_delta": 0.0014416829657291894,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": -0.00012735184718432047,
+        "sd_delta": 0.004669259322795998,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_sncs": {
+        "mean_delta": -0.003168022212354349,
+        "sd_delta": 0.0005684997033178173,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       }
+      },
+      "agree": 0,
+      "material": 0,
+      "agreement": null
+     },
+     "A1++": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": -0.003171469519341774,
+        "sd_delta": 0.004393097012077347,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": -0.0026620864618325246,
+        "sd_delta": 0.0010596572749114878,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": -0.005139020076969536,
+        "sd_delta": 0.004635206302679159,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.00016203081598972768,
+        "sd_delta": 0.000411071588568281,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.008456798998825454,
+        "sd_delta": 0.0019828169101137765,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": -0.0033347102084686497,
+        "sd_delta": 0.0004952242064070667,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": -0.0012809785756890957,
+        "sd_delta": 0.0039008421622445037,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": -0.0035581382861648303,
+        "sd_delta": 0.0010639652366248177,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       }
+      },
+      "agree": 2,
+      "material": 5,
+      "agreement": 0.4
+     },
+     "A2": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.01600332062362783,
+        "sd_delta": 0.008982957904044958,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.03600436050169267,
+        "sd_delta": 0.010848181373027628,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.008556780089320565,
+        "sd_delta": 0.008734964034162572,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.00257191650883154,
+        "sd_delta": 0.0015885257422983562,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.014164775274324137,
+        "sd_delta": 0.004099685183530965,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.04153026092648951,
+        "sd_delta": 0.004446445771528992,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.011347752312605625,
+        "sd_delta": 0.007587647718370882,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": -0.019923138479685132,
+        "sd_delta": 0.001180243831912374,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       }
+      },
+      "agree": 2,
+      "material": 7,
+      "agreement": 0.2857142857142857
+     }
+    },
+    "pooled_aligned_mean": -0.003701525261626591,
+    "pooled_aligned_sd": 0.001290539373528755,
+    "t": -5.736400357170684,
+    "p_one_sided": 0.9947405674117876,
+    "agreement_overall": 0.42857142857142855
+   },
+   "E4": {
+    "arms": {
+     "A1-": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.0017399092610149436,
+        "sd_delta": 0.004079161406607702,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.0009209999624202325,
+        "sd_delta": 0.0017848122831776313,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.001276500082802945,
+        "sd_delta": 0.0038527531346803814,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 7.256092211613274e-05,
+        "sd_delta": 0.0010101794466992702,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.0013798054945547145,
+        "sd_delta": 0.0027129856091431853,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.0004417001900524631,
+        "sd_delta": 0.001211643031440766,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.002123179330067282,
+        "sd_delta": 0.0039025763020723737,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_sncs": {
+        "mean_delta": -0.00011316029677876926,
+        "sd_delta": 0.0007441708801217239,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       }
+      },
+      "agree": 2,
+      "material": 2,
+      "agreement": 1.0
+     },
+     "A1+": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.0016813813139420208,
+        "sd_delta": 0.0032477840965669425,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.0007522315564016391,
+        "sd_delta": 0.0006671563894713627,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.0009843956110448804,
+        "sd_delta": 0.0029147187757897364,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.0002765892928690561,
+        "sd_delta": 0.0008583175550969993,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.0012698280428753428,
+        "sd_delta": 0.0028280700342166168,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.0008479739791530383,
+        "sd_delta": 0.0006367075124902755,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.0020097693570973185,
+        "sd_delta": 0.003193071301306311,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": 0.00015862168669902865,
+        "sd_delta": 0.0007686782568754889,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       }
+      },
+      "agree": 0,
+      "material": 4,
+      "agreement": 0.0
+     },
+     "A1++": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.0010567478011254405,
+        "sd_delta": 0.0022122524634320463,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": -9.701750987001212e-05,
+        "sd_delta": 0.0019951306996140524,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.0007012391583474942,
+        "sd_delta": 0.002083600538659452,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.0009623514311724868,
+        "sd_delta": 0.0008481244323576382,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.0006415608152424424,
+        "sd_delta": 0.0020594337547210277,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.0005591750802069195,
+        "sd_delta": 0.0008033851851994567,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.0016988459733691952,
+        "sd_delta": 0.0019610127098344684,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": 0.0005237683969324947,
+        "sd_delta": 0.000859039868870914,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       }
+      },
+      "agree": 0,
+      "material": 5,
+      "agreement": 0.0
+     },
+     "A2": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.002679085437134826,
+        "sd_delta": 0.003184898734373751,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.0028082902812319177,
+        "sd_delta": 0.002015468255709776,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.003984189633592872,
+        "sd_delta": 0.0026978516243420098,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.002599684253790646,
+        "sd_delta": 0.0006667373862300409,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.00376288742987152,
+        "sd_delta": 0.0015676944964181983,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.008153010228525354,
+        "sd_delta": 0.0008897054668699344,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.004077387969458196,
+        "sd_delta": 0.0033105404983903752,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": 0.0016667560303133822,
+        "sd_delta": 0.00038158891264213914,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       }
+      },
+      "agree": 1,
+      "material": 5,
+      "agreement": 0.2
+     }
+    },
+    "pooled_aligned_mean": -0.001435672872798683,
+    "pooled_aligned_sd": 0.00151105505064589,
+    "t": -1.9002257689883828,
+    "p_one_sided": 0.9232013193286062,
+    "agreement_overall": 0.1875
+   }
+  },
+  "E3": {
+   "Maha": {
+    "A1-": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.009808569419493346,
+       "margin": 0.06308720355611336,
+       "tost_p": 0.059904982380290406,
+       "equivalent": false,
+       "ratio_to_margin": 0.15547637027165176
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.011960899174441264,
+       "margin": 0.02183785826239218,
+       "tost_p": 0.15373118399453423,
+       "equivalent": false,
+       "ratio_to_margin": 0.547713930126545
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.004751205559015315,
+       "margin": 0.06699627169570505,
+       "tost_p": 0.0586206783301767,
+       "equivalent": false,
+       "ratio_to_margin": 0.07091746210289343
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.002376815996421172,
+       "margin": 0.011541232689687592,
+       "tost_p": 0.030047992689849957,
+       "equivalent": true,
+       "ratio_to_margin": 0.20594125951077327
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.02048628923018095,
+       "margin": 0.06962993079264415,
+       "tost_p": 0.04076564549880757,
+       "equivalent": true,
+       "ratio_to_margin": 0.2942167110748466
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.006714515249971381,
+       "margin": 0.017318752016500922,
+       "tost_p": 0.11585478658874823,
+       "equivalent": false,
+       "ratio_to_margin": 0.3877020263107838
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.006913363968078928,
+       "margin": 0.05908190418294569,
+       "tost_p": 0.07580973228689436,
+       "equivalent": false,
+       "ratio_to_margin": 0.1170132219617002
+      },
+      "ood_sncs": {
+       "mean_delta": 0.011077884559220375,
+       "margin": 0.011433061803879825,
+       "tost_p": 0.40462814144223064,
+       "equivalent": false,
+       "ratio_to_margin": 0.9689341970898013
+      }
+     },
+     "n_equivalent": 2,
+     "n_sets": 8
+    },
+    "A1+": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.02195565702433172,
+       "margin": 0.06308720355611336,
+       "tost_p": 0.09673075408919263,
+       "equivalent": false,
+       "ratio_to_margin": 0.3480207678694001
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.01365152752719112,
+       "margin": 0.02183785826239218,
+       "tost_p": 0.03971056875746537,
+       "equivalent": true,
+       "ratio_to_margin": 0.6251312451597392
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.016002114008316887,
+       "margin": 0.06699627169570505,
+       "tost_p": 0.06449174007473324,
+       "equivalent": false,
+       "ratio_to_margin": 0.23885081368405073
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.012505180447187902,
+       "margin": 0.011541232689687592,
+       "tost_p": 0.6373985587792856,
+       "equivalent": false,
+       "ratio_to_margin": 1.0835220797828315
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.004854176065509891,
+       "margin": 0.06962993079264415,
+       "tost_p": 0.05185677573733094,
+       "equivalent": false,
+       "ratio_to_margin": 0.06971392920043942
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.007753588011945173,
+       "margin": 0.017318752016500922,
+       "tost_p": 0.08420798655833184,
+       "equivalent": false,
+       "ratio_to_margin": 0.4476990030550542
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.025449036091072824,
+       "margin": 0.05908190418294569,
+       "tost_p": 0.15936358327481848,
+       "equivalent": false,
+       "ratio_to_margin": 0.43074163642848234
+      },
+      "ood_sncs": {
+       "mean_delta": -0.0005207073647471305,
+       "margin": 0.011433061803879825,
+       "tost_p": 0.03113218732460654,
+       "equivalent": true,
+       "ratio_to_margin": 0.04554399982080284
+      }
+     },
+     "n_equivalent": 2,
+     "n_sets": 8
+    },
+    "A1++": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.012162769667855206,
+       "margin": 0.06308720355611336,
+       "tost_p": 0.01914984713182899,
+       "equivalent": true,
+       "ratio_to_margin": 0.19279297515599886
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.018255292347698265,
+       "margin": 0.02183785826239218,
+       "tost_p": 0.2911528086966899,
+       "equivalent": false,
+       "ratio_to_margin": 0.8359470113026793
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.007996582100954608,
+       "margin": 0.06699627169570505,
+       "tost_p": 0.02434484985047225,
+       "equivalent": true,
+       "ratio_to_margin": 0.11935861352516498
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.018998120139898766,
+       "margin": 0.011541232689687592,
+       "tost_p": 0.9439808509609331,
+       "equivalent": false,
+       "ratio_to_margin": 1.6461084054629718
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.015855032312017153,
+       "margin": 0.06962993079264415,
+       "tost_p": 0.009355086695079229,
+       "equivalent": true,
+       "ratio_to_margin": 0.22770426642003946
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.00914605372499544,
+       "margin": 0.017318752016500922,
+       "tost_p": 0.06486884988889885,
+       "equivalent": false,
+       "ratio_to_margin": 0.5281012001489069
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.01997473329791477,
+       "margin": 0.05908190418294569,
+       "tost_p": 0.022829774711806583,
+       "equivalent": true,
+       "ratio_to_margin": 0.33808546921682636
+      },
+      "ood_sncs": {
+       "mean_delta": -0.0076972548300268395,
+       "margin": 0.011433061803879825,
+       "tost_p": 0.14670977133026886,
+       "equivalent": false,
+       "ratio_to_margin": 0.6732452742811873
+      }
+     },
+     "n_equivalent": 4,
+     "n_sets": 8
+    },
+    "A2": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.1451633764241283,
+       "margin": 0.06308720355611336,
+       "tost_p": 0.9944414975162741,
+       "equivalent": false,
+       "ratio_to_margin": 2.3009955782080547
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.13248442933746193,
+       "margin": 0.02183785826239218,
+       "tost_p": 0.9990168901501406,
+       "equivalent": false,
+       "ratio_to_margin": 6.066731807927268
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.13144986285464907,
+       "margin": 0.06699627169570505,
+       "tost_p": 0.9873257604867846,
+       "equivalent": false,
+       "ratio_to_margin": 1.9620474323062365
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.13518186890011688,
+       "margin": 0.011541232689687592,
+       "tost_p": 0.9998829511373482,
+       "equivalent": false,
+       "ratio_to_margin": 11.712948914105647
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.11440307201594885,
+       "margin": 0.06962993079264415,
+       "tost_p": 0.9504407751304171,
+       "equivalent": false,
+       "ratio_to_margin": 1.6430157363883897
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.06822227333403777,
+       "margin": 0.017318752016500922,
+       "tost_p": 0.9958965838352708,
+       "equivalent": false,
+       "ratio_to_margin": 3.9392141690715996
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.13065775505813126,
+       "margin": 0.05908190418294569,
+       "tost_p": 0.9816819735944917,
+       "equivalent": false,
+       "ratio_to_margin": 2.211468246750353
+      },
+      "ood_sncs": {
+       "mean_delta": 0.16797009635899646,
+       "margin": 0.011433061803879825,
+       "tost_p": 0.9999978735479822,
+       "equivalent": false,
+       "ratio_to_margin": 14.691610982282592
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    }
+   },
+   "CTM_mean": {
+    "A1-": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.017322185488980124,
+       "margin": 0.03790004309070989,
+       "tost_p": 0.08509232572687442,
+       "equivalent": false,
+       "ratio_to_margin": 0.4570492294038093
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.010313131213514737,
+       "margin": 0.018899604104015075,
+       "tost_p": 0.046585727993919024,
+       "equivalent": true,
+       "ratio_to_margin": 0.5456797484622332
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.014948133610308889,
+       "margin": 0.04272502919410633,
+       "tost_p": 0.065825230521388,
+       "equivalent": false,
+       "ratio_to_margin": 0.34986830652349554
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.0007136964428922365,
+       "margin": 0.005657394262912407,
+       "tost_p": 0.10594194007390678,
+       "equivalent": false,
+       "ratio_to_margin": 0.1261528558422987
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.016814165192668123,
+       "margin": 0.06685297939134219,
+       "tost_p": 0.03068388419754231,
+       "equivalent": true,
+       "ratio_to_margin": 0.25150958634531173
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.004718530775220803,
+       "margin": 0.01724931732565226,
+       "tost_p": 0.058897500137366526,
+       "equivalent": false,
+       "ratio_to_margin": 0.2735488417390094
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.01864910671949535,
+       "margin": 0.035108862773493225,
+       "tost_p": 0.14133540646801745,
+       "equivalent": false,
+       "ratio_to_margin": 0.5311794585831816
+      },
+      "ood_sncs": {
+       "mean_delta": -0.000464068380850835,
+       "margin": 0.006054203044716476,
+       "tost_p": 0.04773191598978188,
+       "equivalent": true,
+       "ratio_to_margin": 0.0766522657768852
+      }
+     },
+     "n_equivalent": 3,
+     "n_sets": 8
+    },
+    "A1+": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.000928383000624422,
+       "margin": 0.03790004309070989,
+       "tost_p": 0.027868338660097268,
+       "equivalent": true,
+       "ratio_to_margin": 0.024495565833591058
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.006993450641381321,
+       "margin": 0.018899604104015075,
+       "tost_p": 0.061464183174485654,
+       "equivalent": false,
+       "ratio_to_margin": 0.370031594465813
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.008005582690751772,
+       "margin": 0.04272502919410633,
+       "tost_p": 0.03512929820595944,
+       "equivalent": true,
+       "ratio_to_margin": 0.18737453997705156
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.00021302973866413333,
+       "margin": 0.005657394262912407,
+       "tost_p": 0.0011804093635583435,
+       "equivalent": true,
+       "ratio_to_margin": 0.03765509857792134
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.0030426164296950553,
+       "margin": 0.06685297939134219,
+       "tost_p": 0.06487618886145397,
+       "equivalent": false,
+       "ratio_to_margin": 0.04551205432272911
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.0004633860888826058,
+       "margin": 0.01724931732565226,
+       "tost_p": 0.0246608088489636,
+       "equivalent": true,
+       "ratio_to_margin": 0.02686402482685404
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.0023303937496751415,
+       "margin": 0.035108862773493225,
+       "tost_p": 0.050984652360161364,
+       "equivalent": false,
+       "ratio_to_margin": 0.06637622428017124
+      },
+      "ood_sncs": {
+       "mean_delta": 0.0010051118878419696,
+       "margin": 0.006054203044716476,
+       "tost_p": 0.03940552271070041,
+       "equivalent": true,
+       "ratio_to_margin": 0.16601886002471195
+      }
+     },
+     "n_equivalent": 5,
+     "n_sets": 8
+    },
+    "A1++": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.01181778990596924,
+       "margin": 0.03790004309070989,
+       "tost_p": 0.08512550167697513,
+       "equivalent": false,
+       "ratio_to_margin": 0.3118146825766019
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.012076161396840257,
+       "margin": 0.018899604104015075,
+       "tost_p": 0.07146692793006681,
+       "equivalent": false,
+       "ratio_to_margin": 0.6389637227519898
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.016924973448236846,
+       "margin": 0.04272502919410633,
+       "tost_p": 0.09973316697288909,
+       "equivalent": false,
+       "ratio_to_margin": 0.3961372003128215
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.0026304941310711094,
+       "margin": 0.005657394262912407,
+       "tost_p": 0.0855784215362071,
+       "equivalent": false,
+       "ratio_to_margin": 0.4649656730335319
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.007455184936815934,
+       "margin": 0.06685297939134219,
+       "tost_p": 0.011361967933123829,
+       "equivalent": true,
+       "ratio_to_margin": 0.11151612096709963
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.002467589619005478,
+       "margin": 0.01724931732565226,
+       "tost_p": 0.02180894802195133,
+       "equivalent": true,
+       "ratio_to_margin": 0.14305433498726416
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.00613930993529202,
+       "margin": 0.035108862773493225,
+       "tost_p": 0.03804610215503041,
+       "equivalent": true,
+       "ratio_to_margin": 0.17486496144577848
+      },
+      "ood_sncs": {
+       "mean_delta": -0.00027781007546903713,
+       "margin": 0.006054203044716476,
+       "tost_p": 0.024922698271297006,
+       "equivalent": true,
+       "ratio_to_margin": 0.04588714210889953
+      }
+     },
+     "n_equivalent": 4,
+     "n_sets": 8
+    },
+    "A2": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.03711512195947461,
+       "margin": 0.03790004309070989,
+       "tost_p": 0.47727556623551215,
+       "equivalent": false,
+       "ratio_to_margin": 0.9792897034613747
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.008002746511123426,
+       "margin": 0.018899604104015075,
+       "tost_p": 0.07543573820579497,
+       "equivalent": false,
+       "ratio_to_margin": 0.42343461096221086
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.03348749889482314,
+       "margin": 0.04272502919410633,
+       "tost_p": 0.2635655132500583,
+       "equivalent": false,
+       "ratio_to_margin": 0.7837911296136116
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.0046761886273708475,
+       "margin": 0.005657394262912407,
+       "tost_p": 0.24298507176012252,
+       "equivalent": false,
+       "ratio_to_margin": 0.8265622670185906
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.03223890574528332,
+       "margin": 0.06685297939134219,
+       "tost_p": 0.07935282019348666,
+       "equivalent": false,
+       "ratio_to_margin": 0.48223588595153066
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.039466451292072796,
+       "margin": 0.01724931732565226,
+       "tost_p": 0.9966652070792977,
+       "equivalent": false,
+       "ratio_to_margin": 2.2880007682031804
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.03172087483800465,
+       "margin": 0.035108862773493225,
+       "tost_p": 0.39698766416433096,
+       "equivalent": false,
+       "ratio_to_margin": 0.9035004933840675
+      },
+      "ood_sncs": {
+       "mean_delta": 0.024012171883281447,
+       "margin": 0.006054203044716476,
+       "tost_p": 0.9993037175809331,
+       "equivalent": false,
+       "ratio_to_margin": 3.9661986401722933
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    }
+   },
+   "PCA_RecError": {
+    "status": "missing"
+   },
+   "Residual": {
+    "A1-": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.03248654090505709,
+       "margin": 0.14732525006164574,
+       "tost_p": 0.09123740841082162,
+       "equivalent": false,
+       "ratio_to_margin": 0.2205089819393733
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.0033107801750509314,
+       "margin": 0.024782357254670283,
+       "tost_p": 0.052983547001222986,
+       "equivalent": false,
+       "ratio_to_margin": 0.1335942396854524
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.047555105454225616,
+       "margin": 0.1333252431940383,
+       "tost_p": 0.15386357106397247,
+       "equivalent": false,
+       "ratio_to_margin": 0.35668493313764355
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.029371443263180586,
+       "margin": 0.019935656547911372,
+       "tost_p": 0.9541926363312688,
+       "equivalent": false,
+       "ratio_to_margin": 1.4733120623638445
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.022690712401091995,
+       "margin": 0.08760954915538981,
+       "tost_p": 0.029592653533808133,
+       "equivalent": true,
+       "ratio_to_margin": 0.25899816423945204
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.02567649191682908,
+       "margin": 0.017009368560041153,
+       "tost_p": 0.7157026554592375,
+       "equivalent": false,
+       "ratio_to_margin": 1.5095499768962004
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.04491862450578463,
+       "margin": 0.13086368650461727,
+       "tost_p": 0.1469914575549122,
+       "equivalent": false,
+       "ratio_to_margin": 0.34324743330686897
+      },
+      "ood_sncs": {
+       "mean_delta": 0.051691973101917144,
+       "margin": 0.017732528202574097,
+       "tost_p": 0.998831020421557,
+       "equivalent": false,
+       "ratio_to_margin": 2.9150932405912324
+      }
+     },
+     "n_equivalent": 1,
+     "n_sets": 8
+    },
+    "A1+": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.07289488750315481,
+       "margin": 0.14732525006164574,
+       "tost_p": 0.12823736843764344,
+       "equivalent": false,
+       "ratio_to_margin": 0.49478882589816203
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.026852278492876136,
+       "margin": 0.024782357254670283,
+       "tost_p": 0.6549755036636805,
+       "equivalent": false,
+       "ratio_to_margin": 1.0835239851049994
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.06329698019053034,
+       "margin": 0.1333252431940383,
+       "tost_p": 0.12756838961937278,
+       "equivalent": false,
+       "ratio_to_margin": 0.4747561577548332
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.03480179290657129,
+       "margin": 0.019935656547911372,
+       "tost_p": 0.9642096037073,
+       "equivalent": false,
+       "ratio_to_margin": 1.7457058824690386
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.015216673820019122,
+       "margin": 0.08760954915538981,
+       "tost_p": 0.060955960388842545,
+       "equivalent": false,
+       "ratio_to_margin": 0.17368738872323006
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.015890620844636216,
+       "margin": 0.017009368560041153,
+       "tost_p": 0.43780013344784185,
+       "equivalent": false,
+       "ratio_to_margin": 0.9342275575100931
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.06074780464280197,
+       "margin": 0.13086368650461727,
+       "tost_p": 0.16665123518830138,
+       "equivalent": false,
+       "ratio_to_margin": 0.464206735003286
+      },
+      "ood_sncs": {
+       "mean_delta": 0.008975029811583601,
+       "margin": 0.017732528202574097,
+       "tost_p": 0.09909031640030434,
+       "equivalent": false,
+       "ratio_to_margin": 0.5061336831981332
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    },
+    "A1++": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.058113185061024,
+       "margin": 0.14732525006164574,
+       "tost_p": 0.04162489017548865,
+       "equivalent": true,
+       "ratio_to_margin": 0.394455024082481
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.02738076841286624,
+       "margin": 0.024782357254670283,
+       "tost_p": 0.563789394922946,
+       "equivalent": false,
+       "ratio_to_margin": 1.1048492333273212
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.04581516097544919,
+       "margin": 0.1333252431940383,
+       "tost_p": 0.04220419407807674,
+       "equivalent": true,
+       "ratio_to_margin": 0.34363455770165685
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.03467845273266182,
+       "margin": 0.019935656547911372,
+       "tost_p": 0.9556686574422364,
+       "equivalent": false,
+       "ratio_to_margin": 1.7395189694063538
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.019872013611787254,
+       "margin": 0.08760954915538981,
+       "tost_p": 0.005230536113779993,
+       "equivalent": true,
+       "ratio_to_margin": 0.22682474460108223
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.007942995715601392,
+       "margin": 0.017009368560041153,
+       "tost_p": 0.15688821712227352,
+       "equivalent": false,
+       "ratio_to_margin": 0.46697769453131155
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.053527806370764014,
+       "margin": 0.13086368650461727,
+       "tost_p": 0.059709507723096356,
+       "equivalent": false,
+       "ratio_to_margin": 0.40903483464739004
+      },
+      "ood_sncs": {
+       "mean_delta": 0.011963109680930006,
+       "margin": 0.017732528202574097,
+       "tost_p": 0.1575358755098347,
+       "equivalent": false,
+       "ratio_to_margin": 0.6746420783469225
+      }
+     },
+     "n_equivalent": 3,
+     "n_sets": 8
+    },
+    "A2": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.15503628881599998,
+       "margin": 0.14732525006164574,
+       "tost_p": 0.584635852827209,
+       "equivalent": false,
+       "ratio_to_margin": 1.0523402386972205
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.22129272209598824,
+       "margin": 0.024782357254670283,
+       "tost_p": 0.9989724896548817,
+       "equivalent": false,
+       "ratio_to_margin": 8.929446049942856
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.13522218784094073,
+       "margin": 0.1333252431940383,
+       "tost_p": 0.5203185654564917,
+       "equivalent": false,
+       "ratio_to_margin": 1.0142279481473861
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.13552482995030268,
+       "margin": 0.019935656547911372,
+       "tost_p": 0.9996332875188413,
+       "equivalent": false,
+       "ratio_to_margin": 6.798112197839876
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.21817374984897114,
+       "margin": 0.08760954915538981,
+       "tost_p": 0.9843819756121736,
+       "equivalent": false,
+       "ratio_to_margin": 2.4902964568623047
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.07278380721163938,
+       "margin": 0.017009368560041153,
+       "tost_p": 0.9921395104268765,
+       "equivalent": false,
+       "ratio_to_margin": 4.279042279242804
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.13458832928671885,
+       "margin": 0.13086368650461727,
+       "tost_p": 0.5333137173548668,
+       "equivalent": false,
+       "ratio_to_margin": 1.028462004102033
+      },
+      "ood_sncs": {
+       "mean_delta": 0.13421497780286376,
+       "margin": 0.017732528202574097,
+       "tost_p": 0.999794912549704,
+       "equivalent": false,
+       "ratio_to_margin": 7.568857427976953
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    }
+   }
+  },
+  "E5": {
+   "per_score": {
+    "MSR": {
+     "bf_t": -0.043715362290578354,
+     "bf_p_two": 0.9652757188792671,
+     "mean_abs_dev_arm": 0.008487818066359364,
+     "mean_abs_dev_base": 0.008618912236155907
+    },
+    "MLS": {
+     "bf_t": 0.2090592853932903,
+     "bf_p_two": 0.8350873352826267,
+     "mean_abs_dev_arm": 0.009607528386170561,
+     "mean_abs_dev_base": 0.00895083499798411
+    },
+    "Energy": {
+     "bf_t": 0.3817885174381696,
+     "bf_p_two": 0.7039426905026374,
+     "mean_abs_dev_arm": 0.010238729767237602,
+     "mean_abs_dev_base": 0.009000723844525167
+    },
+    "CTM": {
+     "bf_t": -2.3145404792182633,
+     "bf_p_two": 0.02503688119090871,
+     "mean_abs_dev_arm": 0.005841979327977202,
+     "mean_abs_dev_base": 0.011032123388471458
+    },
+    "fDBD": {
+     "bf_t": -2.515351554600258,
+     "bf_p_two": 0.015406017168661948,
+     "mean_abs_dev_arm": 0.004547595078473472,
+     "mean_abs_dev_base": 0.010208340825410781
+    }
+   },
+   "pooled_p_one_sided": 0.925747226795018,
+   "median_sd_ratio": 1.0781411237965992
+  },
+  "X_f": {
+   "per_score": {
+    "MSR": {
+     "bf_t": 0.36585718623724106,
+     "bf_p_two": 0.7157185000217456,
+     "mean_abs_dev_arm": 0.009784449985029,
+     "mean_abs_dev_base": 0.008618912236155907
+    },
+    "MLS": {
+     "bf_t": 0.6063983851065359,
+     "bf_p_two": 0.5464799959276017,
+     "mean_abs_dev_arm": 0.010937866994980686,
+     "mean_abs_dev_base": 0.00895083499798411
+    },
+    "Energy": {
+     "bf_t": 0.7318761406964922,
+     "bf_p_two": 0.46705606496878815,
+     "mean_abs_dev_arm": 0.011401110880165842,
+     "mean_abs_dev_base": 0.009000723844525167
+    },
+    "CTM": {
+     "bf_t": -2.291747866865644,
+     "bf_p_two": 0.02600441970149468,
+     "mean_abs_dev_arm": 0.005683104028529302,
+     "mean_abs_dev_base": 0.011032123388471458
+    },
+    "fDBD": {
+     "bf_t": -1.167360452821682,
+     "bf_p_two": 0.24770402908280983,
+     "mean_abs_dev_arm": 0.007190549963329348,
+     "mean_abs_dev_base": 0.010208340825410781
+    }
+   },
+   "pooled_p_one_sided": 0.6649063196568612,
+   "median_sd_ratio": 0.9357774778061014
+  },
+  "X_a": {
+   "A1-": {
+    "per_set": {
+     "ood_nsncs_isun": 0.0028602521661028613,
+     "ood_nsncs_lsun_cropped": -0.009245295896054662,
+     "ood_nsncs_lsun_resize": 0.005304883080575862,
+     "ood_nsncs_places365": -0.007249149810316546,
+     "ood_nsncs_svhn": -0.0012780637265826789,
+     "ood_nsncs_textures": -0.0038958978566666636,
+     "ood_nsncs_ti": 0.004032592530644669,
+     "ood_sncs": 0.0003917245993684815
+    },
+    "n_fdbd_gains": 4,
+    "n_sets": 8
+   },
+   "A1+": {
+    "per_set": {
+     "ood_nsncs_isun": 0.004218637382573748,
+     "ood_nsncs_lsun_cropped": 0.006976857657082419,
+     "ood_nsncs_lsun_resize": 0.00431710445193631,
+     "ood_nsncs_places365": 0.0038649832734070633,
+     "ood_nsncs_svhn": 0.0026458886319251917,
+     "ood_nsncs_textures": 0.002233372046950788,
+     "ood_nsncs_ti": 0.0011928077761817757,
+     "ood_sncs": 0.0045359871569532195
+    },
+    "n_fdbd_gains": 0,
+    "n_sets": 8
+   },
+   "A1++": {
+    "per_set": {
+     "ood_nsncs_isun": 0.007873209583814655,
+     "ood_nsncs_lsun_cropped": 0.010629198170196419,
+     "ood_nsncs_lsun_resize": 0.007261496419159297,
+     "ood_nsncs_places365": 0.004602260558991017,
+     "ood_nsncs_svhn": 0.0027591341358965127,
+     "ood_nsncs_textures": 0.004414432139952962,
+     "ood_nsncs_ti": 0.004949344955903268,
+     "ood_sncs": 0.0038427255489215384
+    },
+    "n_fdbd_gains": 0,
+    "n_sets": 8
+   },
+   "A2": {
+    "per_set": {
+     "ood_nsncs_isun": -0.0036076720746919533,
+     "ood_nsncs_lsun_cropped": 0.01744154224736888,
+     "ood_nsncs_lsun_resize": -0.0018988030441834391,
+     "ood_nsncs_places365": -0.0022013888732229647,
+     "ood_nsncs_svhn": 0.0011820017231839453,
+     "ood_nsncs_textures": -0.003353746607036606,
+     "ood_nsncs_ti": -0.004110704855578573,
+     "ood_sncs": -0.016197699995492587
+    },
+    "n_fdbd_gains": 6,
+    "n_sets": 8
+   }
+  },
+  "holm": {
+   "E1": 0.010261658917921855,
+   "E4": 1.0,
+   "E5": 1.0,
+   "E2": 1.0
+  }
+ },
+ "augrc": {
+  "pairs": {
+   "E1": {
+    "arms": {
+     "A1-": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.0014061512286866612,
+        "sd_delta": 0.01589471675963409,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.002659910631391725,
+        "sd_delta": 0.007067601258442825,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": -0.00019124881902703866,
+        "sd_delta": 0.01540760392349692,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.00075910697400286,
+        "sd_delta": 0.002070249529612479,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.002031655471040783,
+        "sd_delta": 0.0036094046951985316,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": -0.0004552531927371692,
+        "sd_delta": 0.00419694684060592,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.0009490241566494501,
+        "sd_delta": 0.015535142434272078,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_sncs": {
+        "mean_delta": -0.0033754710766952106,
+        "sd_delta": 0.0009466694700619277,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       }
+      },
+      "agree": 4,
+      "material": 5,
+      "agreement": 0.8
+     },
+     "A1+": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.009032296968145802,
+        "sd_delta": 0.012665908698016641,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.0036527837110982425,
+        "sd_delta": 0.005090009020721738,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.007996666687023153,
+        "sd_delta": 0.011922004471895738,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.0038876355091197815,
+        "sd_delta": 0.0023522589299857974,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.0011932497016078764,
+        "sd_delta": 0.004081440671168475,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.0024796917273810573,
+        "sd_delta": 0.0018696481268086309,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.009988535011345792,
+        "sd_delta": 0.014771245747211623,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_sncs": {
+        "mean_delta": 3.708958267421847e-06,
+        "sd_delta": 0.00104279435451308,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       }
+      },
+      "agree": 3,
+      "material": 4,
+      "agreement": 0.75
+     },
+     "A1++": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.007668277913284539,
+        "sd_delta": 0.0077575450874566194,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.0020688189257040968,
+        "sd_delta": 0.002064249245511289,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.006179477509893241,
+        "sd_delta": 0.007030724283635462,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.006308579900726363,
+        "sd_delta": 0.0016547237452102677,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.0008738147155197828,
+        "sd_delta": 0.003674344169286364,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.003719712158037222,
+        "sd_delta": 0.0030312839895857992,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.009280697475271375,
+        "sd_delta": 0.00796281785461538,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_sncs": {
+        "mean_delta": 0.00258753575487123,
+        "sd_delta": 0.0009456839574047395,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       }
+      },
+      "agree": 1,
+      "material": 2,
+      "agreement": 0.5
+     },
+     "A2": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": -0.035890057490480784,
+        "sd_delta": 0.011917907115342071,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": -0.033704363564544614,
+        "sd_delta": 0.005330947943983551,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": -0.03049027836287766,
+        "sd_delta": 0.012365531277850712,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.033875713323687696,
+        "sd_delta": 0.004062409325723582,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.021746990090470153,
+        "sd_delta": 0.009693032578393136,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": -0.011231473094394283,
+        "sd_delta": 0.0047163772844142065,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": -0.029417743510382413,
+        "sd_delta": 0.014772607071733862,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_sncs": {
+        "mean_delta": -0.042768166342642966,
+        "sd_delta": 0.0017795108762834121,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       }
+      },
+      "agree": 8,
+      "material": 8,
+      "agreement": 1.0
+     }
+    },
+    "pooled_aligned_mean": 0.0147479689564674,
+    "pooled_aligned_sd": 0.004267891723638994,
+    "t": 6.911126106963476,
+    "p_one_sided": 0.0031045065526065833,
+    "agreement_overall": 0.8421052631578947
+   },
+   "E2": {
+    "arms": {
+     "A1-": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.0012389009149203697,
+        "sd_delta": 0.0007895867901344094,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.0034350222463556193,
+        "sd_delta": 0.0005215275259641256,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.0008351574988604282,
+        "sd_delta": 0.0007592933466716159,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.0010816536140858604,
+        "sd_delta": 9.881070489751626e-05,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.0012399659124424367,
+        "sd_delta": 0.0003239087534707983,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.0014639712855954792,
+        "sd_delta": 0.0004904116923285289,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.0009723048718992405,
+        "sd_delta": 0.0010499119150121218,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_sncs": {
+        "mean_delta": 0.00014767873555239508,
+        "sd_delta": 0.0005254429592696831,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       }
+      },
+      "agree": 2,
+      "material": 2,
+      "agreement": 1.0
+     },
+     "A1+": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": -0.0005370462713834775,
+        "sd_delta": 0.0009897360161167637,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": -0.0005610983024164212,
+        "sd_delta": 0.00043000720795729975,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": -0.0009838377280882299,
+        "sd_delta": 0.001015932552370155,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.00037189743785864815,
+        "sd_delta": 0.00028842876112000597,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.0013374536777937124,
+        "sd_delta": 0.0008059891880731901,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": -0.0009435603009136095,
+        "sd_delta": 0.000356809302653206,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": -3.1184514115177586e-05,
+        "sd_delta": 0.001126558289028629,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_sncs": {
+        "mean_delta": -0.0007637145872285631,
+        "sd_delta": 0.00013631063869374435,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       }
+      },
+      "agree": 0,
+      "material": 0,
+      "agreement": null
+     },
+     "A1++": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": -0.0007791020061051201,
+        "sd_delta": 0.0010797109494547978,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": -0.0006418453313555561,
+        "sd_delta": 0.00025907652658301787,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": -0.0012397042310677564,
+        "sd_delta": 0.0011196250923498872,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -3.894858755842251e-05,
+        "sd_delta": 9.789501037241888e-05,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.0013909092820705848,
+        "sd_delta": 0.0003241297423950254,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": -0.0008261928907854696,
+        "sd_delta": 0.0001240289514782235,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": -0.0003093234121407176,
+        "sd_delta": 0.0009415530460745871,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": -0.0008575273434726985,
+        "sd_delta": 0.0002543254369944504,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       }
+      },
+      "agree": 2,
+      "material": 5,
+      "agreement": 0.4
+     },
+     "A2": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.003927045523326053,
+        "sd_delta": 0.0022018204513265444,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.008667108696931852,
+        "sd_delta": 0.0026083131141121417,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.0020625866769625537,
+        "sd_delta": 0.002101656305925892,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": -0.0006163951581857896,
+        "sd_delta": 0.0003833233198838034,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.002318820013547898,
+        "sd_delta": 0.0006725697274200998,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.010297927073900405,
+        "sd_delta": 0.0011033424584463028,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.002734620521467404,
+        "sd_delta": 0.0018255713903935855,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": -0.004791130646696354,
+        "sd_delta": 0.00027973711261464386,
+        "observed_sign": -1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": true
+       }
+      },
+      "agree": 2,
+      "material": 7,
+      "agreement": 0.2857142857142857
+     }
+    },
+    "pooled_aligned_mean": -0.0008878904318703191,
+    "pooled_aligned_sd": 0.000307308499145965,
+    "t": -5.778495774362492,
+    "p_one_sided": 0.994847138462315,
+    "agreement_overall": 0.42857142857142855
+   },
+   "E4": {
+    "arms": {
+     "A1-": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.00042705882803442674,
+        "sd_delta": 0.0010018713114419116,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.00022359957874119873,
+        "sd_delta": 0.0004307639984578696,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.0003074174707930963,
+        "sd_delta": 0.0009292051834762262,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 1.8333910390209984e-05,
+        "sd_delta": 0.00024305522185297552,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.00022928195140875518,
+        "sd_delta": 0.00044666247503514416,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.00010926343936284999,
+        "sd_delta": 0.00030011520744674326,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.0005117183429886665,
+        "sd_delta": 0.0009412289867308314,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_sncs": {
+        "mean_delta": -2.651604998526319e-05,
+        "sd_delta": 0.00017894381972133284,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": false
+       }
+      },
+      "agree": 2,
+      "material": 2,
+      "agreement": 1.0
+     },
+     "A1+": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.00041262742348815995,
+        "sd_delta": 0.0007974005086639446,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.0001814584388959914,
+        "sd_delta": 0.00016139597269370772,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.00023701397630979115,
+        "sd_delta": 0.00070268940716857,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 6.67173203603641e-05,
+        "sd_delta": 0.0002063558453549937,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.00020875694511744702,
+        "sd_delta": 0.0004648853629153499,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.0002101015906745829,
+        "sd_delta": 0.00015788650192824524,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.0004842076233726664,
+        "sd_delta": 0.0007696194088630639,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": 3.828882904745312e-05,
+        "sd_delta": 0.0001848492815177589,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       }
+      },
+      "agree": 0,
+      "material": 4,
+      "agreement": 0.0
+     },
+     "A1++": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.000259092491844401,
+        "sd_delta": 0.0005433367684441355,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": -2.3523388442386883e-05,
+        "sd_delta": 0.0004808782242919093,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.00016847696155024988,
+        "sd_delta": 0.0005027178060773204,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.00023204048963122725,
+        "sd_delta": 0.00020557200777864427,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": -0.00010522388347174172,
+        "sd_delta": 0.0003392011540827837,
+        "observed_sign": -1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.00013858018645353243,
+        "sd_delta": 0.00019917034480742283,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.00040908258854700785,
+        "sd_delta": 0.000472723259995175,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": 0.0001263094630579928,
+        "sd_delta": 0.00020794703096833106,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       }
+      },
+      "agree": 0,
+      "material": 5,
+      "agreement": 0.0
+     },
+     "A2": {
+      "cells": {
+       "ood_nsncs_isun": {
+        "mean_delta": 0.0006573182600369334,
+        "sd_delta": 0.0007816041206166204,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_lsun_cropped": {
+        "mean_delta": 0.0006715805128540628,
+        "sd_delta": 0.0004841454508340981,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_lsun_resize": {
+        "mean_delta": 0.0009594140636117743,
+        "sd_delta": 0.0006498319527989734,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_places365": {
+        "mean_delta": 0.0006230305774944517,
+        "sd_delta": 0.0001597910258335915,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       },
+       "ood_nsncs_svhn": {
+        "mean_delta": 0.0006106512231642963,
+        "sd_delta": 0.0002559784338587489,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": true,
+        "agree": true
+       },
+       "ood_nsncs_textures": {
+        "mean_delta": 0.0020222920880405074,
+        "sd_delta": 0.0002211879988114095,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_nsncs_ti": {
+        "mean_delta": 0.000981432214618036,
+        "sd_delta": 0.0007968767723079175,
+        "observed_sign": 1,
+        "committed_sign": -1,
+        "committed_material": true,
+        "agree": false
+       },
+       "ood_sncs": {
+        "mean_delta": 0.0003988353642090381,
+        "sd_delta": 9.143694901839255e-05,
+        "observed_sign": 1,
+        "committed_sign": 1,
+        "committed_material": false
+       }
+      },
+      "agree": 1,
+      "material": 5,
+      "agreement": 0.2
+     }
+    },
+    "pooled_aligned_mean": -0.0003665580721960533,
+    "pooled_aligned_sd": 0.0003419625876342965,
+    "t": -2.1438489791056314,
+    "p_one_sided": 0.939294612065529,
+    "agreement_overall": 0.1875
+   }
+  },
+  "E3": {
+   "Maha": {
+    "A1-": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.002928522835926338,
+       "margin": 0.0158778026488918,
+       "tost_p": 0.06278055164456386,
+       "equivalent": false,
+       "ratio_to_margin": 0.184441317270733
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.0034233901281345708,
+       "margin": 0.005587918967416671,
+       "tost_p": 0.1554164753697046,
+       "equivalent": false,
+       "ratio_to_margin": 0.6126413335799007
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.0016739570164803,
+       "margin": 0.016458486667803952,
+       "tost_p": 0.06228406291169175,
+       "equivalent": false,
+       "ratio_to_margin": 0.1017078331846202
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 4.813198442183558e-05,
+       "margin": 0.0028629012237369636,
+       "tost_p": 0.010747705191312922,
+       "equivalent": true,
+       "ratio_to_margin": 0.016812310541056176
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.0038498234419593463,
+       "margin": 0.011474107474403108,
+       "tost_p": 0.047281319026673096,
+       "equivalent": true,
+       "ratio_to_margin": 0.3355226932070912
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.0012176402168170286,
+       "margin": 0.004482964964341199,
+       "tost_p": 0.07048241792442898,
+       "equivalent": false,
+       "ratio_to_margin": 0.27161493040933654
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.0021941670738690536,
+       "margin": 0.014581281349396315,
+       "tost_p": 0.07923045611498103,
+       "equivalent": false,
+       "ratio_to_margin": 0.15047834420669037
+      },
+      "ood_sncs": {
+       "mean_delta": 0.0021521030205653158,
+       "margin": 0.002508574007786971,
+       "tost_p": 0.21620048563949745,
+       "equivalent": false,
+       "ratio_to_margin": 0.8578989552968664
+      }
+     },
+     "n_equivalent": 2,
+     "n_sets": 8
+    },
+    "A1+": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.005422590662027382,
+       "margin": 0.0158778026488918,
+       "tost_p": 0.09201055479842124,
+       "equivalent": false,
+       "ratio_to_margin": 0.3415202205203032
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.0033269392594061434,
+       "margin": 0.005587918967416671,
+       "tost_p": 0.029842441533876385,
+       "equivalent": true,
+       "ratio_to_margin": 0.5953807273880722
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.0038886649754369396,
+       "margin": 0.016458486667803952,
+       "tost_p": 0.06232383276071041,
+       "equivalent": false,
+       "ratio_to_margin": 0.23627111373756712
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.003049097933520116,
+       "margin": 0.0028629012237369636,
+       "tost_p": 0.6379749962667481,
+       "equivalent": false,
+       "ratio_to_margin": 1.0650377694624436
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.0008341836285269272,
+       "margin": 0.011474107474403108,
+       "tost_p": 0.05348707578308132,
+       "equivalent": false,
+       "ratio_to_margin": 0.07270139576327457
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.0019502849959548568,
+       "margin": 0.004482964964341199,
+       "tost_p": 0.061866435693209154,
+       "equivalent": false,
+       "ratio_to_margin": 0.4350435507455419
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.006165753702958514,
+       "margin": 0.014581281349396315,
+       "tost_p": 0.15275748804375067,
+       "equivalent": false,
+       "ratio_to_margin": 0.42285403835334295
+      },
+      "ood_sncs": {
+       "mean_delta": -0.00016000238609210904,
+       "margin": 0.002508574007786971,
+       "tost_p": 0.0477625979805576,
+       "equivalent": true,
+       "ratio_to_margin": 0.06378220678179669
+      }
+     },
+     "n_equivalent": 2,
+     "n_sets": 8
+    },
+    "A1++": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.0029677803641600456,
+       "margin": 0.0158778026488918,
+       "tost_p": 0.012686146120636455,
+       "equivalent": true,
+       "ratio_to_margin": 0.18691379593178048
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.004386694605711033,
+       "margin": 0.005587918967416671,
+       "tost_p": 0.2545976003776137,
+       "equivalent": false,
+       "ratio_to_margin": 0.7850318931412545
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.001904334747872355,
+       "margin": 0.016458486667803952,
+       "tost_p": 0.017872881927417206,
+       "equivalent": true,
+       "ratio_to_margin": 0.11570533708895664
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.004566789641561014,
+       "margin": 0.0028629012237369636,
+       "tost_p": 0.9355738544974291,
+       "equivalent": false,
+       "ratio_to_margin": 1.5951614410223884
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.002600856579620267,
+       "margin": 0.011474107474403108,
+       "tost_p": 0.013227951956004236,
+       "equivalent": true,
+       "ratio_to_margin": 0.22667179869304524
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.0022545409644835618,
+       "margin": 0.004482964964341199,
+       "tost_p": 0.06911572584322911,
+       "equivalent": false,
+       "ratio_to_margin": 0.5029129119716155
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.004796249950009476,
+       "margin": 0.014581281349396315,
+       "tost_p": 0.01562587509890323,
+       "equivalent": true,
+       "ratio_to_margin": 0.3289319940464661
+      },
+      "ood_sncs": {
+       "mean_delta": -0.0018423077217560313,
+       "margin": 0.002508574007786971,
+       "tost_p": 0.10759665223878823,
+       "equivalent": false,
+       "ratio_to_margin": 0.7344043731766516
+      }
+     },
+     "n_equivalent": 4,
+     "n_sets": 8
+    },
+    "A2": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.03702492937690037,
+       "margin": 0.0158778026488918,
+       "tost_p": 0.9958172271541604,
+       "equivalent": false,
+       "ratio_to_margin": 2.3318673367869667
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.03335555479899266,
+       "margin": 0.005587918967416671,
+       "tost_p": 0.9992125962215765,
+       "equivalent": false,
+       "ratio_to_margin": 5.969226646536919
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.03307970249445892,
+       "margin": 0.016458486667803952,
+       "tost_p": 0.9906084447402739,
+       "equivalent": false,
+       "ratio_to_margin": 2.0098872491824746
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.03396815722567797,
+       "margin": 0.0028629012237369636,
+       "tost_p": 0.9999174401296305,
+       "equivalent": false,
+       "ratio_to_margin": 11.864942088829427
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.020008110697095363,
+       "margin": 0.011474107474403108,
+       "tost_p": 0.9650013264806343,
+       "equivalent": false,
+       "ratio_to_margin": 1.7437618343501007
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.018147817955889566,
+       "margin": 0.004482964964341199,
+       "tost_p": 0.9976486944007136,
+       "equivalent": false,
+       "ratio_to_margin": 4.048173050702506
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.03289027291201778,
+       "margin": 0.014581281349396315,
+       "tost_p": 0.9857427417234385,
+       "equivalent": false,
+       "ratio_to_margin": 2.255650386540239
+      },
+      "ood_sncs": {
+       "mean_delta": 0.041842408527311366,
+       "margin": 0.002508574007786971,
+       "tost_p": 0.9999960398497779,
+       "equivalent": false,
+       "ratio_to_margin": 16.67975845935841
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    }
+   },
+   "CTM_mean": {
+    "A1-": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.004780064273496011,
+       "margin": 0.009732668825422954,
+       "tost_p": 0.09118518548073795,
+       "equivalent": false,
+       "ratio_to_margin": 0.491136024376981
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.003022434827266565,
+       "margin": 0.005055582722863253,
+       "tost_p": 0.028062042432457135,
+       "equivalent": true,
+       "ratio_to_margin": 0.5978410388970542
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.004142296946006069,
+       "margin": 0.010674801624559594,
+       "tost_p": 0.07299236057113234,
+       "equivalent": false,
+       "ratio_to_margin": 0.38804439573620325
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.0006999999877463914,
+       "margin": 0.0015995923859165684,
+       "tost_p": 0.10800783128892799,
+       "equivalent": false,
+       "ratio_to_margin": 0.4376114777173627
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.003241173309297518,
+       "margin": 0.01103041527700274,
+       "tost_p": 0.03513285010886846,
+       "equivalent": true,
+       "ratio_to_margin": 0.2938396450091072
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.0007233936571935523,
+       "margin": 0.004480641810038394,
+       "tost_p": 0.031216135868388034,
+       "equivalent": true,
+       "ratio_to_margin": 0.161448669155581
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.005034896992415931,
+       "margin": 0.00889892470470223,
+       "tost_p": 0.15004410838304372,
+       "equivalent": false,
+       "ratio_to_margin": 0.5657871214210263
+      },
+      "ood_sncs": {
+       "mean_delta": -0.0006405710264565309,
+       "margin": 0.0010810345132317622,
+       "tost_p": 0.1645275375725307,
+       "equivalent": false,
+       "ratio_to_margin": 0.5925537238783785
+      }
+     },
+     "n_equivalent": 3,
+     "n_sets": 8
+    },
+    "A1+": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.0001948641366179768,
+       "margin": 0.009732668825422954,
+       "tost_p": 0.025670591623633603,
+       "equivalent": true,
+       "ratio_to_margin": 0.02002165491431982
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.001721589101668121,
+       "margin": 0.005055582722863253,
+       "tost_p": 0.053042317365625036,
+       "equivalent": false,
+       "ratio_to_margin": 0.3405322780858565
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.0018966802952049486,
+       "margin": 0.010674801624559594,
+       "tost_p": 0.03288568957910698,
+       "equivalent": true,
+       "ratio_to_margin": 0.1776782709330394
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -8.61620116490644e-05,
+       "margin": 0.0015995923859165684,
+       "tost_p": 5.3876592185253536e-05,
+       "equivalent": true,
+       "ratio_to_margin": 0.05386497985841153
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.00046576005746422344,
+       "margin": 0.01103041527700274,
+       "tost_p": 0.06442935815817695,
+       "equivalent": false,
+       "ratio_to_margin": 0.04222507002390784
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.00014414316794592735,
+       "margin": 0.004480641810038394,
+       "tost_p": 0.018265565683723062,
+       "equivalent": true,
+       "ratio_to_margin": 0.03217020553238381
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.0005944859345009962,
+       "margin": 0.00889892470470223,
+       "tost_p": 0.04625030734092206,
+       "equivalent": true,
+       "ratio_to_margin": 0.066804243684281
+      },
+      "ood_sncs": {
+       "mean_delta": 0.00020737885385088695,
+       "margin": 0.0010810345132317622,
+       "tost_p": 0.1043123868180028,
+       "equivalent": false,
+       "ratio_to_margin": 0.19183370309882708
+      }
+     },
+     "n_equivalent": 5,
+     "n_sets": 8
+    },
+    "A1++": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.0029186588568021546,
+       "margin": 0.009732668825422954,
+       "tost_p": 0.05971905012760735,
+       "equivalent": false,
+       "ratio_to_margin": 0.2998826847142123
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.0028978800235324523,
+       "margin": 0.005055582722863253,
+       "tost_p": 0.06930626838583287,
+       "equivalent": false,
+       "ratio_to_margin": 0.5732039573652202
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.0041002958859090236,
+       "margin": 0.010674801624559594,
+       "tost_p": 0.0717292454870918,
+       "equivalent": false,
+       "ratio_to_margin": 0.38410979708282755
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.0006210794196402566,
+       "margin": 0.0015995923859165684,
+       "tost_p": 0.084900573507809,
+       "equivalent": false,
+       "ratio_to_margin": 0.3882735533805241
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.0012180678162805603,
+       "margin": 0.01103041527700274,
+       "tost_p": 0.015583254495242449,
+       "equivalent": true,
+       "ratio_to_margin": 0.1104281013626118
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.0006231054157886454,
+       "margin": 0.004480641810038394,
+       "tost_p": 0.030705747651873116,
+       "equivalent": true,
+       "ratio_to_margin": 0.13906610753679194
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.0014971659037679788,
+       "margin": 0.00889892470470223,
+       "tost_p": 0.021640204139872842,
+       "equivalent": true,
+       "ratio_to_margin": 0.1682412149163224
+      },
+      "ood_sncs": {
+       "mean_delta": -5.375725976655005e-05,
+       "margin": 0.0010810345132317622,
+       "tost_p": 0.03195621921039782,
+       "equivalent": true,
+       "ratio_to_margin": 0.049727607313703834
+      }
+     },
+     "n_equivalent": 4,
+     "n_sets": 8
+    },
+    "A2": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.0076504583500552545,
+       "margin": 0.009732668825422954,
+       "tost_p": 0.2770545977864498,
+       "equivalent": false,
+       "ratio_to_margin": 0.7860596602312508
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.0004534986874787858,
+       "margin": 0.005055582722863253,
+       "tost_p": 0.024038065468205083,
+       "equivalent": true,
+       "ratio_to_margin": 0.08970255504432627
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.00657643829171891,
+       "margin": 0.010674801624559594,
+       "tost_p": 0.14391208545825473,
+       "equivalent": false,
+       "ratio_to_margin": 0.6160712416976865
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.0025790139462589096,
+       "margin": 0.0015995923859165684,
+       "tost_p": 0.9980654961633756,
+       "equivalent": false,
+       "ratio_to_margin": 1.6122944626178197
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.003991516883211768,
+       "margin": 0.01103041527700274,
+       "tost_p": 0.05787681296645508,
+       "equivalent": false,
+       "ratio_to_margin": 0.3618646064517319
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.0085586786194847,
+       "margin": 0.004480641810038394,
+       "tost_p": 0.9970098037971841,
+       "equivalent": false,
+       "ratio_to_margin": 1.9101456850020695
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.006150621651818428,
+       "margin": 0.00889892470470223,
+       "tost_p": 0.20545877977370552,
+       "equivalent": false,
+       "ratio_to_margin": 0.6911645907699852
+      },
+      "ood_sncs": {
+       "mean_delta": 0.007232578186972254,
+       "margin": 0.0010810345132317622,
+       "tost_p": 0.9987233628639616,
+       "equivalent": false,
+       "ratio_to_margin": 6.690423014664349
+      }
+     },
+     "n_equivalent": 1,
+     "n_sets": 8
+    }
+   },
+   "PCA_RecError": {
+    "status": "missing"
+   },
+   "Residual": {
+    "A1-": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.007482532084334088,
+       "margin": 0.036556461315237966,
+       "tost_p": 0.0873283660343846,
+       "equivalent": false,
+       "ratio_to_margin": 0.20468425594616066
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.0013273513051138205,
+       "margin": 0.006418173000731948,
+       "tost_p": 0.04919431958167664,
+       "equivalent": true,
+       "ratio_to_margin": 0.2068113939843076
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.010972529565335093,
+       "margin": 0.032449842282130104,
+       "tost_p": 0.14765058385544574,
+       "equivalent": false,
+       "ratio_to_margin": 0.33813814778932183
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.006582719438971624,
+       "margin": 0.005081517316733195,
+       "tost_p": 0.8866261166387911,
+       "equivalent": false,
+       "ratio_to_margin": 1.2954239902509121
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.004188607552122539,
+       "margin": 0.014406962358862864,
+       "tost_p": 0.03352981388280862,
+       "equivalent": true,
+       "ratio_to_margin": 0.2907349549327999
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.0059039615589275216,
+       "margin": 0.00456416159229338,
+       "tost_p": 0.6449236501575664,
+       "equivalent": false,
+       "ratio_to_margin": 1.2935478815860515
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.010338407790623824,
+       "margin": 0.03191276052810255,
+       "tost_p": 0.1398609853559697,
+       "equivalent": false,
+       "ratio_to_margin": 0.32395842977982947
+      },
+      "ood_sncs": {
+       "mean_delta": 0.011976189071777416,
+       "margin": 0.004241755379213582,
+       "tost_p": 0.9982669497333665,
+       "equivalent": false,
+       "ratio_to_margin": 2.823403992240069
+      }
+     },
+     "n_equivalent": 2,
+     "n_sets": 8
+    },
+    "A1+": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.01792688008038286,
+       "margin": 0.036556461315237966,
+       "tost_p": 0.12535956438346962,
+       "equivalent": false,
+       "ratio_to_margin": 0.4903888241751214
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.006508369009081617,
+       "margin": 0.006418173000731948,
+       "tost_p": 0.5293177637174216,
+       "equivalent": false,
+       "ratio_to_margin": 1.0140532217407328
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.01528507316030512,
+       "margin": 0.032449842282130104,
+       "tost_p": 0.12495126546633584,
+       "equivalent": false,
+       "ratio_to_margin": 0.47103690142501864
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.008422282293712585,
+       "margin": 0.005081517316733195,
+       "tost_p": 0.9612301481021135,
+       "equivalent": false,
+       "ratio_to_margin": 1.6574345355428406
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.002537773650968758,
+       "margin": 0.014406962358862864,
+       "tost_p": 0.06401157114250133,
+       "equivalent": false,
+       "ratio_to_margin": 0.17614911372400252
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.003967297926016272,
+       "margin": 0.00456416159229338,
+       "tost_p": 0.36128839462490614,
+       "equivalent": false,
+       "ratio_to_margin": 0.8692281913758452
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.014670972973946747,
+       "margin": 0.03191276052810255,
+       "tost_p": 0.16324840522581696,
+       "equivalent": false,
+       "ratio_to_margin": 0.4597212128053732
+      },
+      "ood_sncs": {
+       "mean_delta": 0.0021308205780970896,
+       "margin": 0.004241755379213582,
+       "tost_p": 0.11010386585664894,
+       "equivalent": false,
+       "ratio_to_margin": 0.5023440504228562
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    },
+    "A1++": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": -0.014246944641542705,
+       "margin": 0.036556461315237966,
+       "tost_p": 0.03770016574734325,
+       "equivalent": true,
+       "ratio_to_margin": 0.38972439150186833
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": -0.00658542368088974,
+       "margin": 0.006418173000731948,
+       "tost_p": 0.5172781820257428,
+       "equivalent": false,
+       "ratio_to_margin": 1.0260589236436473
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": -0.011013593046005306,
+       "margin": 0.032449842282130104,
+       "tost_p": 0.03698746930298602,
+       "equivalent": true,
+       "ratio_to_margin": 0.33940359248126184
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": -0.008349461747772083,
+       "margin": 0.005081517316733195,
+       "tost_p": 0.9339236566008845,
+       "equivalent": false,
+       "ratio_to_margin": 1.6431040626935782
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": -0.0032603372303097455,
+       "margin": 0.014406962358862864,
+       "tost_p": 0.004786617754827027,
+       "equivalent": true,
+       "ratio_to_margin": 0.2263028908591584
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": -0.001957399911253911,
+       "margin": 0.00456416159229338,
+       "tost_p": 0.09473573973829619,
+       "equivalent": false,
+       "ratio_to_margin": 0.42886297333534273
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": -0.012881240878773514,
+       "margin": 0.03191276052810255,
+       "tost_p": 0.05600107392389675,
+       "equivalent": false,
+       "ratio_to_margin": 0.4036391921479254
+      },
+      "ood_sncs": {
+       "mean_delta": 0.0028940185094991355,
+       "margin": 0.004241755379213582,
+       "tost_p": 0.21324955707812993,
+       "equivalent": false,
+       "ratio_to_margin": 0.6822690727713968
+      }
+     },
+     "n_equivalent": 3,
+     "n_sets": 8
+    },
+    "A2": {
+     "per_set": {
+      "ood_nsncs_isun": {
+       "mean_delta": 0.039396864123535644,
+       "margin": 0.036556461315237966,
+       "tost_p": 0.6277271036695178,
+       "equivalent": false,
+       "ratio_to_margin": 1.0776990634789287
+      },
+      "ood_nsncs_lsun_cropped": {
+       "mean_delta": 0.05469891175688738,
+       "margin": 0.006418173000731948,
+       "tost_p": 0.9990827648236487,
+       "equivalent": false,
+       "ratio_to_margin": 8.522505041644928
+      },
+      "ood_nsncs_lsun_resize": {
+       "mean_delta": 0.03391845644760066,
+       "margin": 0.032449842282130104,
+       "tost_p": 0.5662486204990604,
+       "equivalent": false,
+       "ratio_to_margin": 1.0452579754533755
+      },
+      "ood_nsncs_places365": {
+       "mean_delta": 0.033989934984683,
+       "margin": 0.005081517316733195,
+       "tost_p": 0.9996937822779803,
+       "equivalent": false,
+       "ratio_to_margin": 6.688934203324617
+      },
+      "ood_nsncs_svhn": {
+       "mean_delta": 0.0369202391391453,
+       "margin": 0.014406962358862864,
+       "tost_p": 0.9863087767962847,
+       "equivalent": false,
+       "ratio_to_margin": 2.5626664538644217
+      },
+      "ood_nsncs_textures": {
+       "mean_delta": 0.019304041386818308,
+       "margin": 0.00456416159229338,
+       "tost_p": 0.9945453910978946,
+       "equivalent": false,
+       "ratio_to_margin": 4.229482457284887
+      },
+      "ood_nsncs_ti": {
+       "mean_delta": 0.033772997165466286,
+       "margin": 0.03191276052810255,
+       "tost_p": 0.5698900839928833,
+       "equivalent": false,
+       "ratio_to_margin": 1.058291310641259
+      },
+      "ood_sncs": {
+       "mean_delta": 0.03364973232572978,
+       "margin": 0.004241755379213582,
+       "tost_p": 0.9998260406871623,
+       "equivalent": false,
+       "ratio_to_margin": 7.932973337083009
+      }
+     },
+     "n_equivalent": 0,
+     "n_sets": 8
+    }
+   }
+  },
+  "E5": {
+   "per_score": {
+    "MSR": {
+     "bf_t": 0.4254840810522355,
+     "bf_p_two": 0.6719631688672021,
+     "mean_abs_dev_arm": 0.002104793882410692,
+     "mean_abs_dev_base": 0.001842167875843452
+    },
+    "MLS": {
+     "bf_t": 0.6729629165960935,
+     "bf_p_two": 0.5035682326105384,
+     "mean_abs_dev_arm": 0.0023649372865369774,
+     "mean_abs_dev_base": 0.001912477380470499
+    },
+    "Energy": {
+     "bf_t": 0.8169048903664393,
+     "bf_p_two": 0.4173906098590052,
+     "mean_abs_dev_arm": 0.002512072849845998,
+     "mean_abs_dev_base": 0.001935752314126603
+    },
+    "CTM": {
+     "bf_t": -2.6754780132988443,
+     "bf_p_two": 0.00977158658133333,
+     "mean_abs_dev_arm": 0.0013144264189730841,
+     "mean_abs_dev_base": 0.002560972115802157
+    },
+    "fDBD": {
+     "bf_t": -2.7028337682326935,
+     "bf_p_two": 0.00918497141309173,
+     "mean_abs_dev_arm": 0.0011282680592112964,
+     "mean_abs_dev_base": 0.002359568121585987
+    }
+   },
+   "pooled_p_one_sided": 0.8131809695973311,
+   "median_sd_ratio": 1.0229148350085282
+  },
+  "X_f": {
+   "per_score": {
+    "MSR": {
+     "bf_t": 0.6409231085526398,
+     "bf_p_two": 0.523966495439758,
+     "mean_abs_dev_arm": 0.0022492447918106466,
+     "mean_abs_dev_base": 0.001842167875843452
+    },
+    "MLS": {
+     "bf_t": 1.0187625407615741,
+     "bf_p_two": 0.31237204436466726,
+     "mean_abs_dev_arm": 0.0025810775107448277,
+     "mean_abs_dev_base": 0.001912477380470499
+    },
+    "Energy": {
+     "bf_t": 1.2719552491298924,
+     "bf_p_two": 0.20828513592945444,
+     "mean_abs_dev_arm": 0.0027628173839978456,
+     "mean_abs_dev_base": 0.001935752314126603
+    },
+    "CTM": {
+     "bf_t": -2.3881355596585245,
+     "bf_p_two": 0.020288938531728844,
+     "mean_abs_dev_arm": 0.001437813934205153,
+     "mean_abs_dev_base": 0.002560972115802157
+    },
+    "fDBD": {
+     "bf_t": -1.3508157794633198,
+     "bf_p_two": 0.18166768364324812,
+     "mean_abs_dev_arm": 0.001623003926713963,
+     "mean_abs_dev_base": 0.002359568121585987
+    }
+   },
+   "pooled_p_one_sided": 0.4871706970878078,
+   "median_sd_ratio": 1.0592865921596246
+  },
+  "X_a": {
+   "A1-": {
+    "per_set": {
+     "ood_nsncs_isun": 0.0007033155227706631,
+     "ood_nsncs_lsun_cropped": -0.0022314160988025147,
+     "ood_nsncs_lsun_resize": 0.0012808718246973064,
+     "ood_nsncs_places365": -0.0017490826569668758,
+     "ood_nsncs_svhn": -0.00020936510488352156,
+     "ood_nsncs_textures": -0.0009650361710899988,
+     "ood_nsncs_ti": 0.0009742097303549122,
+     "ood_sncs": 9.436350894979906e-05
+    },
+    "n_fdbd_gains": 4,
+    "n_sets": 8
+   },
+   "A1+": {
+    "per_set": {
+     "ood_nsncs_isun": 0.0010356905895536062,
+     "ood_nsncs_lsun_cropped": 0.0016817835528213226,
+     "ood_nsncs_lsun_resize": 0.0010405232432351974,
+     "ood_nsncs_places365": 0.0009317991480855131,
+     "ood_nsncs_svhn": 0.00043563224176593196,
+     "ood_nsncs_textures": 0.0005532914259800542,
+     "ood_nsncs_ti": 0.00028745277398172647,
+     "ood_sncs": 0.0010935869932126169
+    },
+    "n_fdbd_gains": 0,
+    "n_sets": 8
+   },
+   "A1++": {
+    "per_set": {
+     "ood_nsncs_isun": 0.001933950380422371,
+     "ood_nsncs_lsun_cropped": 0.002562239825936223,
+     "ood_nsncs_lsun_resize": 0.001752013550559088,
+     "ood_nsncs_places365": 0.0011092948865802296,
+     "ood_nsncs_svhn": 0.00045400184491105333,
+     "ood_nsncs_textures": 0.0010936589527650031,
+     "ood_nsncs_ti": 0.001194328066941322,
+     "ood_sncs": 0.0009256634567309102
+    },
+    "n_fdbd_gains": 0,
+    "n_sets": 8
+   },
+   "A2": {
+    "per_set": {
+     "ood_nsncs_isun": -0.0008869956152570274,
+     "ood_nsncs_lsun_cropped": 0.004198574803610876,
+     "ood_nsncs_lsun_resize": -0.00046127977947167664,
+     "ood_nsncs_places365": -0.0005283901196347432,
+     "ood_nsncs_svhn": 0.00018840222584493027,
+     "ood_nsncs_textures": -0.0008311600679129019,
+     "ood_nsncs_ti": -0.0009936214330015167,
+     "ood_sncs": -0.003896313726305896
+    },
+    "n_fdbd_gains": 6,
+    "n_sets": 8
+   }
+  },
+  "holm": {
+   "E1": 0.012418026210426333,
+   "E5": 1.0,
+   "E4": 1.0,
+   "E2": 1.0
+  }
+ }
+}
