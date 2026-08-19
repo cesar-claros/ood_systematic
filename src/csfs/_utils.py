@@ -23,6 +23,23 @@ T = TypeVar(
     "T", Callable[[ArrayType], ArrayType], Callable[[ArrayType, ArrayType], ArrayType]
 )
 
+from contextlib import contextmanager
+
+
+@contextmanager
+def quiet_logging(scope: str = "src"):
+    """Silence per-iteration INFO chatter from `scope` modules.
+
+    Used around Bayesian-optimization loops whose objective re-fits a CSF
+    (~100 iterations x several log lines each). Exceptions still propagate
+    and print normally, so errors remain visible.
+    """
+    logger.disable(scope)
+    try:
+        yield
+    finally:
+        logger.enable(scope)
+
 def cov(tensor:ArrayType, centered:bool=False, rowvar:bool=True, bias:bool=False):
     """Estimate a covariance matrix (np.cov)"""
     tensor = tensor.clone()

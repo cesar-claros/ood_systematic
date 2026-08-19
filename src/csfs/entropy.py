@@ -65,8 +65,11 @@ class EntropyScores:
                                     verbose=0,
                                     random_state=1,
                                 )
-        # Perform the optimization
-        bo.maximize(init_points=n_init, n_iter=n_iters)
+        # Perform the optimization; suppress the objective's per-iteration
+        # INFO chatter (errors still propagate and print).
+        from src.csfs._utils import quiet_logging
+        with quiet_logging():
+            bo.maximize(init_points=n_init, n_iter=n_iters)
         # Best hyperparameters and corresponding accuracy
         best_params = bo.max['params']
         best_augrc = bo.max['target']

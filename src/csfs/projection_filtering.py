@@ -240,12 +240,16 @@ class ProjectionFiltering:
                                     verbose=0,
                                     random_state=1,
                                 )
-        # Perform the optimization
-        bo.maximize(init_points=n_init, n_iter=n_iters)
+        # Perform the optimization; the objective re-scores every
+        # iteration, so suppress its per-call INFO chatter (errors still
+        # propagate and print).
+        from src.csfs._utils import quiet_logging
+        with quiet_logging():
+            bo.maximize(init_points=n_init, n_iter=n_iters)
         # Best hyperparameters and corresponding accuracy
         best_params = bo.max['params']
         best_augrc = bo.max['target']
-        self.variance_explained = best_params['explained_variance'] 
+        self.variance_explained = best_params['explained_variance']
         logger.info(f"Best Hyperparameters: {best_params}")
         logger.info(f"Best AUGRC: {-1*best_augrc}")
         

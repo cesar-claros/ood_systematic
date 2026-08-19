@@ -83,7 +83,9 @@ class NCI:
                 f=lambda alpha: -val_augrc(alpha),
                 pbounds={"alpha": (min(alphas), max(alphas))},
                 verbose=0, random_state=1)
-            bo.maximize(init_points=n_init, n_iter=n_iters)
+            from src.csfs._utils import quiet_logging
+            with quiet_logging():
+                bo.maximize(init_points=n_init, n_iter=n_iters)
             self.alpha = float(bo.max["params"]["alpha"])
             best_augrc = -bo.max["target"]
         elif method == "grid":
