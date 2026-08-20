@@ -88,6 +88,16 @@ def main() -> None:
     from pilot0.theory import predicted_maha_auroc, predicted_maha_auroc_min
     from src import utils
 
+    class _LabeledAdapter(_ForwardAdapter):
+        """stage2b adapter + labels (needed here for the correct-filter
+        and the empirical ID switching rate; stage2b never used them)."""
+
+        @torch.no_grad()
+        def __call__(self, batch, idx):
+            out = _ForwardAdapter.__call__(self, batch, idx)
+            out["labels"] = batch[1].cpu()
+            return out
+
     device = "cuda" if (args.use_cuda and torch.cuda.is_available()) else "cpu"
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -131,7 +141,7 @@ def main() -> None:
                                                   return_model=False)
             w_np = w.detach().cpu().numpy().astype(np.float64)
             b_np = b.detach().cpu().numpy().astype(np.float64)
-            adapter = _ForwardAdapter(module, cf, device)
+            adapter = _LabeledAdapter(module, cf, device)
 
             ev = utils.compute_model_evaluations(adapter, datamodule,
                                                  "test_1")
