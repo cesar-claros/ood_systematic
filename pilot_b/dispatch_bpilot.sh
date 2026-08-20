@@ -39,7 +39,10 @@ for R in 1 2; do
             exp.global_seed=${SEED} \
             model.intervention_kind=varreg model.intervention_lam=${LAM}
     done
-    for LAM in 0.0003 0.001 0.003 0.01; do
+    # Grid rescaled one decade up per the smoke rule (protocol section 8,
+    # 2026-08-20): measured penalty ~45 at epoch 8, so these doses give
+    # lam*penalty ~ 0.14-4.5, inside the [0.05, 5] band.
+    for LAM in 0.003 0.01 0.03 0.1; do
         run_one "ctrreg_bbvgg13_do0_run${R}_lam${LAM}" \
             exp.global_seed=${SEED} \
             model.intervention_kind=ctrreg model.intervention_lam=${LAM}
