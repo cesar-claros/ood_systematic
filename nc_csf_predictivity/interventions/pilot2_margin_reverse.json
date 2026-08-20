@@ -1,0 +1,10 @@
+{
+ "margins": {
+  "auroc_f": 0.00466274781360494,
+  "augrc": 0.001299978665820179
+ },
+ "b": 10000,
+ "seed": 0,
+ "reverse": true,
+ "note": "Deviation note (2026-08-19): the registered Pilot 1 endpoints included A2 cells, so A2 gap OUTCOMES were unblinded before margin setting; the section-8 ordering 'before A2 unblinding' is applied to fitted-arm PREDICTION ERRORS, which do not exist at this stage. The margin is the fixed formula 2 x nested-bootstrap SD (outer: seeds, inner: OOD sets, B=10000, rng seed 0) of the cell-mean arm's held-out MAE, with zero analyst freedom."
+}
