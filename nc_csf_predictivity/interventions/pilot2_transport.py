@@ -437,8 +437,9 @@ def render(result: dict, scale: str) -> str:
         delta = rec["pooled"] - result["mae"]["plugin"]["pooled"]
         lines.append(f"| {arm} | {rec['pooled']:.5f} | {delta:+.5f} |")
     lines.append("")
+    comps = " AND ".join(result["delta_mae_vs_plugin"])
     lines.append(f"**Margin condition: {result['verdict_margin']}** "
-                 f"(plugin must beat nuisance_pc AND dose by > margin).")
+                 f"(plugin must beat {comps} by > margin).")
     s = result["sign"]
     frac = "n/a" if s["fraction"] is None else f"{s['fraction']:.3f}"
     lines.append(f"**Sign condition: {'PASS' if s['pass'] else 'FAIL'}** "
