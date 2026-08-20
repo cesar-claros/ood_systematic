@@ -68,6 +68,13 @@ def load_long(stats_root: Path) -> pd.DataFrame:
     rows = []
     for exp_dir in sorted(p for p in stats_root.iterdir() if p.is_dir()):
         name = exp_dir.name
+        if not (exp_dir / "analysis").is_dir():
+            # Train-only runs (e.g. the B-axis dose-search models, which
+            # are geometry-only by protocol) have no analysis dir; skip
+            # them. A dir WITH an analysis dir but missing mode CSVs
+            # still raises below (broken-sweep detection).
+            print(f"load_long: skipping {name} (no analysis dir)")
+            continue
         lam = name.rsplit("_lam", 1)[-1]
         run = int(name.split("_run")[1].split("_")[0])
         for mode, set_name in MODE_TO_SET.items():

@@ -115,6 +115,8 @@ def test_loader_roundtrip(tmp_path):
              "AP_ferr": [0.9, 0.9, 0.9], "AP_fsuc": [0.5, 0.5, 0.5]},
             index=["MLS", "Maha", "PCA_RecError_global"])
         df.to_csv(exp / STATS_TEMPLATE.format(mode=mode))
+    # A train-only B-axis run (no analysis dir) must be skipped, not fatal.
+    (tmp_path / "varreg_bbvgg13_do0_run1_lam0.1").mkdir()
     table = load_long(tmp_path)
     assert len(table) == len(MODE_TO_SET) * 3
     row = table[(table.method == "MLS")
