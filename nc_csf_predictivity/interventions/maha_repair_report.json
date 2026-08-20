@@ -1,0 +1,102 @@
+{
+ "operators": {
+  "A1": {
+   "n_cells": 96,
+   "mean_d_obs": -0.010272039021135857,
+   "mean_d_old": -0.0025945117907018346,
+   "mean_d_min": -8.71276041666709e-05,
+   "mae_d_old": 0.01745462106177739,
+   "factor_d_old": 0.25258001701155336,
+   "mae_d_min": 0.021999567414383105,
+   "factor_d_min": 0.00848201647086778,
+   "repair_improves": false
+  },
+  "A2": {
+   "n_cells": 32,
+   "mean_d_obs": 0.12819159178543382,
+   "mean_d_old": 0.33293370862794447,
+   "mean_d_min": 0.514668998046875,
+   "mae_d_old": 0.2053351617262925,
+   "factor_d_old": 2.597157145729234,
+   "mae_d_min": 0.38647740626144117,
+   "factor_d_min": 4.014842088148217,
+   "repair_improves": false
+  },
+  "extraction_sanity_corr": 0.9990746943102629
+ },
+ "diagnostics": {
+  "baseline": {
+   "median_mc_id_switch": 0.0,
+   "median_emp_id_switch": 0.24666666666666667,
+   "median_ood_mean_rel_gap": 0.14025302802627354
+  },
+  "A1-": {
+   "median_mc_id_switch": 0.0,
+   "median_emp_id_switch": 0.24422222222222223,
+   "median_ood_mean_rel_gap": 0.1430750416025734
+  },
+  "A1+": {
+   "median_mc_id_switch": 0.0,
+   "median_emp_id_switch": 0.24333333333333335,
+   "median_ood_mean_rel_gap": 0.1413190735405046
+  },
+  "A1++": {
+   "median_mc_id_switch": 0.0,
+   "median_emp_id_switch": 0.24366666666666667,
+   "median_ood_mean_rel_gap": 0.16012783071513526
+  },
+  "A2": {
+   "median_mc_id_switch": 0.0,
+   "median_emp_id_switch": 0.25955555555555554,
+   "median_ood_mean_rel_gap": 0.036137312338882926
+  }
+ },
+ "calibration": {
+  "input": "d_min",
+  "forms": {
+   "linear": {
+    "params": [
+     -0.008651703411408872,
+     18.597269934378545
+    ],
+    "a1_cv_mae": 0.01877993821242202,
+    "admissible": true,
+    "a2_mae": 9.434594988337036,
+    "a2_sign_agreement": 1.0
+   },
+   "slope": {
+    "params": [
+     19.73783873420027
+    ],
+    "a1_cv_mae": 0.019248596712969742,
+    "admissible": true,
+    "a2_mae": 10.030262093156217,
+    "a2_sign_agreement": 1.0
+   },
+   "cap": {
+    "params": [
+     25.099999886361886
+    ],
+    "a1_cv_mae": 0.02199956741660942,
+    "admissible": true,
+    "a2_mae": 0.38637462310581194,
+    "a2_sign_agreement": 1.0
+   },
+   "slope_cap": {
+    "params": [
+     0.042360084239459105,
+     1562.6563637988993
+    ],
+    "a1_cv_mae": 0.016508609492793123,
+    "admissible": true,
+    "a2_mae": 0.08583150654597471,
+    "a2_sign_agreement": 1.0
+   }
+  },
+  "no_change": {
+   "a1_mae": 0.02229591507063311,
+   "a2_mae": 0.12819159178543382
+  },
+  "selected_form": "slope_cap"
+ }
+}
