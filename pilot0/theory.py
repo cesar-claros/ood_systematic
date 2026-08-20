@@ -187,6 +187,76 @@ def predicted_maha_auroc(class_means: np.ndarray, precision: np.ndarray,
     return float(norm.cdf((m_o - m_id) / np.sqrt(v_id + v_o)))
 
 
+def _psd_sqrt(cov: np.ndarray) -> np.ndarray:
+    """Symmetric PSD square root via eigh (negative eigenvalues clipped)."""
+    sym = (cov + cov.T) / 2.0
+    vals, vecs = np.linalg.eigh(sym)
+    return (vecs * np.sqrt(np.clip(vals, 0.0, None))) @ vecs.T
+
+
+def predicted_maha_auroc_min(class_means: np.ndarray,
+                             class_freq: np.ndarray,
+                             precision: np.ndarray, cov_id: np.ndarray,
+                             m_ood: np.ndarray, cov_ood: np.ndarray,
+                             n_samples: int = 4000, seed: int = 0,
+                             diagnostics: bool = False):
+    """Min-statistic repair of `predicted_maha_auroc` (B-axis protocol 7).
+
+    Identical Gaussian population model (ID mixture sum_y freq_y
+    N(mu_y, Sigma_id), OOD N(m_ood, Sigma_ood)) but the score is the TRUE
+    negated min over all class prototypes, evaluated by seeded Monte
+    Carlo, removing the declared argmin approximation (X1 Prop 5 caveat).
+    That approximation ignores the min-benefit on both populations and is
+    the prime suspect for the amplitude bias in high-var_collapse regimes
+    where nearest-prototype switching is rampant (Pilot 1 forensics:
+    A2 over-predicted 2.6x). No fitted parameters; the original closed
+    form stays untouched as the frozen registered operator.
+
+    Returns the AUROC, or ``(auroc, diag)`` with ``diagnostics=True``
+    where diag holds prototype-switching rates and score moments (the
+    audit's section 5.4 measurables).
+    """
+    rng = np.random.default_rng(seed)
+    n_classes, dim = class_means.shape
+    labels = rng.choice(n_classes, size=n_samples,
+                        p=class_freq / class_freq.sum())
+    h_id = (class_means[labels]
+            + rng.standard_normal((n_samples, dim)) @ _psd_sqrt(cov_id).T)
+    h_ood = (m_ood[None, :]
+             + rng.standard_normal((n_samples, dim)) @ _psd_sqrt(cov_ood).T)
+
+    m_quad = np.einsum("cd,dk,ck->c", class_means, precision, class_means,
+                       optimize=True)
+
+    def d2_matrix(h: np.ndarray) -> np.ndarray:
+        h_prec = h @ precision
+        return ((h_prec * h).sum(1)[:, None]
+                - 2.0 * h_prec @ class_means.T + m_quad[None, :])
+
+    d2_id = d2_matrix(h_id)
+    d2_ood = d2_matrix(h_ood)
+    s_id = -d2_id.min(1)
+    s_ood = -d2_ood.min(1)
+
+    from scipy.stats import rankdata
+    ranks = rankdata(np.concatenate([s_id, s_ood]))
+    auc = float((ranks[:n_samples].sum()
+                 - n_samples * (n_samples + 1) / 2.0) / (n_samples ** 2))
+    if not diagnostics:
+        return auc
+    diffs = m_ood - class_means
+    c_star = int(np.argmin(((diffs @ precision) * diffs).sum(1)))
+    diag = {
+        "id_switch_rate": float((d2_id.argmin(1) != labels).mean()),
+        "ood_nearest_share": float((d2_ood.argmin(1) == c_star).mean()),
+        "id_score_mean": float(s_id.mean()),
+        "id_score_var": float(s_id.var(ddof=1)),
+        "ood_score_mean": float(s_ood.mean()),
+        "ood_score_var": float(s_ood.var(ddof=1)),
+    }
+    return auc, diag
+
+
 def predicted_aurocs(class_means: np.ndarray, class_freq: np.ndarray,
                      noise_id: NoiseModel, m_ood: np.ndarray,
                      noise_ood: NoiseModel,
