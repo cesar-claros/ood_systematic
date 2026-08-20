@@ -35,8 +35,8 @@ from fd_shifts.utils import exp_utils
 from pilot0.geometry import fit_feature_model, geometry_record, papyan_metrics
 from src import utils
 
-NAME_RE = re.compile(r"(?P<kind>etfreg|etfhard)_bb\w+_do\d+_run(?P<run>\d+)"
-                     r"_lam(?P<lam>[-\w.]+)")
+NAME_RE = re.compile(r"(?P<kind>etfreg|etfhard|varreg|ctrreg)_bb\w+"
+                     r"_do\d+_run(?P<run>\d+)_lam(?P<lam>[-\w.]+)")
 
 
 def parse_args() -> argparse.Namespace:

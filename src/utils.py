@@ -31,7 +31,8 @@ def _update(d, u):
     return d
 #%%
 def get_study_name(path:str)->str:
-    if ('etfreg' in path) or ('etfhard' in path) or ('intervention' in path):
+    if (('etfreg' in path) or ('etfhard' in path) or ('varreg' in path)
+            or ('ctrreg' in path) or ('intervention' in path)):
         study_name = 'intervention'
     elif 'confidnet' in path:
         study_name = 'confidnet'

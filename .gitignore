@@ -131,3 +131,6 @@ pilot0/outputs/
 !pilot1/dispatch_pilot1.sh
 !pilot1/run_csf_pilot1.sh
 !pilot1/run_pca_re_pilot1.sh
+!pilot_b/dispatch_bpilot.sh
+nc_csf_predictivity/interventions/geometry_bpilot/
+nc_csf_predictivity/interventions/nullspace_bpilot/
