@@ -174,6 +174,12 @@ def main() -> None:
                           "n_correct": int(correct.sum()),
                           "emp_switch_rate": float(
                               (argmin_id != y_id).mean()),
+                          # The scored ID population is correct-filtered;
+                          # all-sample switching tracks the error rate, so
+                          # this is the rate the population model should
+                          # be compared against (round-2 finding).
+                          "emp_switch_rate_correct": float(
+                              (argmin_id[correct] != y_id[correct]).mean()),
                           "emp_score_mean": float(s_id.mean()),
                           "emp_score_var": float(s_id.var(ddof=1))},
                       "val": {
