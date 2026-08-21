@@ -108,6 +108,14 @@ def measure_checkpoint_state(module, datamodule, device: str,
     b_np = b.detach().cpu().numpy().astype(np.float64)
 
     model = fit_feature_model(h_tr, y_tr, n_classes)
+    if (not np.isfinite(model.sigma_iso) or model.sigma_iso <= 0
+            or not np.isfinite(model.radii).all()
+            or model.radii.mean() <= 0):
+        raise ValueError(
+            f"degenerate feature geometry (collapsed encoder): "
+            f"sigma_iso={model.sigma_iso!r}, mean radius="
+            f"{model.radii.mean()!r}; candidate for the manifest "
+            f"failure rule / gate GB5")
     record = geometry_record(w_np, b_np, model)
     record.update(papyan_metrics(w_np, model))
     log_p = g_val.astype(np.float64)
@@ -167,7 +175,8 @@ def main() -> None:
                 module.to(device)
                 record = measure_checkpoint_state(
                     module, datamodule, device, int(cf.data.num_classes))
-            except (np.linalg.LinAlgError, ValueError, RuntimeError) as err:
+            except (np.linalg.LinAlgError, ValueError, RuntimeError,
+                    ZeroDivisionError, FloatingPointError) as err:
                 logger.error(f"measurement failed for {path} [{tag}]: {err}")
                 fail_path.write_text(json.dumps(
                     {"experiment": path, "checkpoint": tag,
