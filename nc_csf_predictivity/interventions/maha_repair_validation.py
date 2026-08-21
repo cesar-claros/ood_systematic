@@ -49,6 +49,12 @@ from nc_csf_predictivity.interventions.outcome_analysis import (
 ARM_LAMS = {"A1-": "-0.1", "A1+": "0.3", "A1++": "1.0", "A2": "hard"}
 A1_LABELS = ("A1-", "A1+", "A1++")
 BASE_LAM = "0.0"
+# Operator variants: response column -> stored prediction key. The _val
+# variants (repair iteration 2) model the scored-ID population from
+# validation residuals against the train-fit means; older extraction
+# JSONs without them are handled (columns simply absent).
+OP_COLS = {"d_old": "pred_old", "d_min": "pred_min",
+           "d_old_val": "pred_old_val", "d_min_val": "pred_min_val"}
 
 
 def load_repair(repair_dir: Path) -> dict[tuple[str, int], dict]:
@@ -78,31 +84,33 @@ def build_cells(table: pd.DataFrame, repair: dict) -> pd.DataFrame:
                 d_obs = (_loss(table, lam, run, set_name, "Maha", "auroc_f")
                          - _loss(table, BASE_LAM, run, set_name, "Maha",
                                  "auroc_f"))
-                rows.append({
+                row = {
                     "label": label, "lam": lam, "run": run,
                     "set_name": set_name, "d_obs": d_obs,
-                    "d_old": s_base["pred_old"] - s_arm["pred_old"],
-                    "d_min": s_base["pred_min"] - s_arm["pred_min"],
                     "emp_auroc_arm": s_arm["emp_auroc"],
                     "obs_auroc_arm": 1.0 - _loss(table, lam, run, set_name,
                                                  "Maha", "auroc_f"),
-                })
+                }
+                for col, key in OP_COLS.items():
+                    if key in s_arm and key in s_base:
+                        row[col] = s_base[key] - s_arm[key]
+                rows.append(row)
     return pd.DataFrame(rows)
 
 
 def operator_comparison(cells: pd.DataFrame) -> dict:
-    out = {}
+    ops = [c for c in OP_COLS if c in cells.columns]
+    out = {"operators": ops}
     for group, labels in (("A1", A1_LABELS), ("A2", ("A2",))):
         sub = cells[cells.label.isin(labels)]
-        rec = {"n_cells": len(sub)}
-        for col in ("d_obs", "d_old", "d_min"):
-            rec[f"mean_{col}"] = float(sub[col].mean())
-        for op in ("d_old", "d_min"):
+        rec = {"n_cells": len(sub), "mean_d_obs": float(sub["d_obs"].mean())}
+        for op in ops:
+            rec[f"mean_{op}"] = float(sub[op].mean())
             rec[f"mae_{op}"] = float((sub[op] - sub["d_obs"]).abs().mean())
             denom = rec["mean_d_obs"]
             rec[f"factor_{op}"] = (float(rec[f"mean_{op}"] / denom)
                                    if abs(denom) > 1e-12 else float("nan"))
-        rec["repair_improves"] = bool(rec["mae_d_min"] < rec["mae_d_old"])
+        rec["best_operator"] = min(ops, key=lambda op: rec[f"mae_{op}"])
         out[group] = rec
     out["extraction_sanity_corr"] = float(np.corrcoef(
         cells["emp_auroc_arm"], cells["obs_auroc_arm"])[0, 1])
@@ -121,11 +129,22 @@ def diagnostics_summary(repair: dict) -> dict:
         gap = [abs(s["mc_diag"]["ood_score_mean"] - s["emp_ood_score_mean"])
                / max(abs(s["emp_ood_score_mean"]), 1e-9)
                for r in recs for s in r["sets"].values()]
-        out[label] = {
+        rec = {
             "median_mc_id_switch": float(np.median(mc_switch)),
             "median_emp_id_switch": float(np.median(emp_switch)),
             "median_ood_mean_rel_gap": float(np.median(gap)),
         }
+        val_switch = [s["mc_diag_val"]["id_switch_rate"]
+                      for r in recs for s in r["sets"].values()
+                      if "mc_diag_val" in s]
+        if val_switch:
+            # Iteration-2 falsifiable check: the val-fit model's sampled
+            # switching should reproduce the empirical test-set rate.
+            rec["median_mc_val_id_switch"] = float(np.median(val_switch))
+            rec["median_val_emp_switch"] = float(np.median(
+                [r["val"]["emp_switch_rate"] for r in recs
+                 if "val" in r]))
+        out[label] = rec
     return out
 
 
@@ -153,35 +172,47 @@ def _fit(form: str, r: np.ndarray, y: np.ndarray) -> np.ndarray:
     return res.x
 
 
-def calibration(cells: pd.DataFrame, input_col: str = "d_min") -> dict:
+def calibration(cells: pd.DataFrame) -> dict:
+    """Fit every form on every available operator input; select the
+    admissible (input, form) pair with the lowest A2 MAE."""
     a1 = cells[cells.label.isin(A1_LABELS)]
     a2 = cells[cells.label == "A2"]
-    out: dict = {"input": input_col, "forms": {}}
     no_change_a1 = float(a1["d_obs"].abs().mean())
     no_change_a2 = float(a2["d_obs"].abs().mean())
-    out["no_change"] = {"a1_mae": no_change_a1, "a2_mae": no_change_a2}
-    for form in FORMS:
-        params = _fit(form, a1[input_col].values, a1["d_obs"].values)
-        cv_errs = []
-        for held in A1_LABELS:
-            tr = a1[a1.label != held]
-            te = a1[a1.label == held]
-            p = _fit(form, tr[input_col].values, tr["d_obs"].values)
-            cv_errs.extend(np.abs(_predict(form, p, te[input_col].values)
-                                  - te["d_obs"].values))
-        pred_a2 = _predict(form, params, a2[input_col].values)
-        out["forms"][form] = {
-            "params": [float(v) for v in params],
-            "a1_cv_mae": float(np.mean(cv_errs)),
-            "admissible": bool(np.mean(cv_errs) <= no_change_a1),
-            "a2_mae": float(np.abs(pred_a2 - a2["d_obs"].values).mean()),
-            "a2_sign_agreement": float(
-                np.mean(np.sign(pred_a2) == np.sign(a2["d_obs"].values))),
-        }
-    admissible = {f: r for f, r in out["forms"].items() if r["admissible"]}
-    out["selected_form"] = (min(admissible,
-                                key=lambda f: admissible[f]["a2_mae"])
-                            if admissible else None)
+    out: dict = {"no_change": {"a1_mae": no_change_a1,
+                               "a2_mae": no_change_a2},
+                 "inputs": {}}
+    best = None
+    for input_col in (c for c in OP_COLS if c in cells.columns):
+        forms: dict = {}
+        for form in FORMS:
+            params = _fit(form, a1[input_col].values, a1["d_obs"].values)
+            cv_errs = []
+            for held in A1_LABELS:
+                tr = a1[a1.label != held]
+                te = a1[a1.label == held]
+                p = _fit(form, tr[input_col].values, tr["d_obs"].values)
+                cv_errs.extend(np.abs(
+                    _predict(form, p, te[input_col].values)
+                    - te["d_obs"].values))
+            pred_a2 = _predict(form, params, a2[input_col].values)
+            rec = {
+                "params": [float(v) for v in params],
+                "a1_cv_mae": float(np.mean(cv_errs)),
+                "admissible": bool(np.mean(cv_errs) <= no_change_a1),
+                "a2_mae": float(
+                    np.abs(pred_a2 - a2["d_obs"].values).mean()),
+                "a2_sign_agreement": float(np.mean(
+                    np.sign(pred_a2) == np.sign(a2["d_obs"].values))),
+            }
+            forms[form] = rec
+            if rec["admissible"] and (best is None
+                                      or rec["a2_mae"] < best["a2_mae"]):
+                best = {"input": input_col, "form": form,
+                        "a2_mae": rec["a2_mae"],
+                        "params": rec["params"]}
+        out["inputs"][input_col] = forms
+    out["selected"] = best
     return out
 
 
@@ -191,15 +222,18 @@ def render(result: dict) -> str:
     lines.append("## 1. Operator comparison (paired responses, "
                  "L = 1 - AUROC_f)")
     lines.append("")
-    lines.append("| group | mean obs | mean old | mean min | MAE old "
-                 "| MAE min | repair improves |")
-    lines.append("|---|---|---|---|---|---|---|")
+    ops = result["operators"]["operators"]
+    lines.append("| group | mean obs | "
+                 + " | ".join(f"mean {op} / MAE" for op in ops)
+                 + " | best |")
+    lines.append("|---|---|" + "---|" * (len(ops) + 1))
     for group in ("A1", "A2"):
         r = result["operators"][group]
-        lines.append(
-            f"| {group} | {r['mean_d_obs']:+.4f} | {r['mean_d_old']:+.4f} "
-            f"| {r['mean_d_min']:+.4f} | {r['mae_d_old']:.4f} "
-            f"| {r['mae_d_min']:.4f} | {r['repair_improves']} |")
+        cells_ = " | ".join(
+            f"{r[f'mean_{op}']:+.4f} / {r[f'mae_{op}']:.4f}"
+            for op in ops)
+        lines.append(f"| {group} | {r['mean_d_obs']:+.4f} | {cells_} "
+                     f"| {r['best_operator']} |")
     lines.append("")
     lines.append(f"- extraction sanity: corr(rank-AUROC from features, "
                  f"pipeline AUROC_f) = "
@@ -207,32 +241,50 @@ def render(result: dict) -> str:
     lines.append("")
     lines.append("## 2. Mechanism diagnostics (audit 5.4)")
     lines.append("")
-    lines.append("| arm | MC id switch | empirical id switch "
-                 "| OOD score-mean rel gap |")
-    lines.append("|---|---|---|---|")
+    has_val = any("median_mc_val_id_switch" in r
+                  for r in result["diagnostics"].values())
+    header = ("| arm | MC id switch (train-fit) | MC id switch (val-fit) "
+              "| empirical val switch | empirical test switch "
+              "| OOD score-mean rel gap |" if has_val else
+              "| arm | MC id switch | empirical id switch "
+              "| OOD score-mean rel gap |")
+    lines.append(header)
+    lines.append("|---|" + "---|" * (header.count("|") - 2))
     for label, r in result["diagnostics"].items():
-        lines.append(f"| {label} | {r['median_mc_id_switch']:.3f} "
-                     f"| {r['median_emp_id_switch']:.3f} "
-                     f"| {r['median_ood_mean_rel_gap']:.3f} |")
+        if has_val:
+            lines.append(
+                f"| {label} | {r['median_mc_id_switch']:.3f} "
+                f"| {r.get('median_mc_val_id_switch', float('nan')):.3f} "
+                f"| {r.get('median_val_emp_switch', float('nan')):.3f} "
+                f"| {r['median_emp_id_switch']:.3f} "
+                f"| {r['median_ood_mean_rel_gap']:.3f} |")
+        else:
+            lines.append(f"| {label} | {r['median_mc_id_switch']:.3f} "
+                         f"| {r['median_emp_id_switch']:.3f} "
+                         f"| {r['median_ood_mean_rel_gap']:.3f} |")
     lines.append("")
     cal = result["calibration"]
-    lines.append(f"## 3. Bounded calibration (input {cal['input']}; "
-                 f"fit on A1, evaluated on A2)")
+    lines.append("## 3. Bounded calibration (all operator inputs; fit on "
+                 "A1, evaluated on A2)")
     lines.append("")
     lines.append(f"No-change MAE: A1 {cal['no_change']['a1_mae']:.4f}, "
                  f"A2 {cal['no_change']['a2_mae']:.4f}.")
     lines.append("")
-    lines.append("| form | params | A1 LOO-dose CV MAE | admissible "
-                 "| A2 MAE | A2 sign |")
-    lines.append("|---|---|---|---|---|---|")
-    for form, r in cal["forms"].items():
-        params = ", ".join(f"{v:+.4f}" for v in r["params"])
-        lines.append(f"| {form} | {params} | {r['a1_cv_mae']:.4f} "
-                     f"| {r['admissible']} | {r['a2_mae']:.4f} "
-                     f"| {r['a2_sign_agreement']:.3f} |")
+    lines.append("| input | form | params | A1 LOO-dose CV MAE "
+                 "| admissible | A2 MAE | A2 sign |")
+    lines.append("|---|---|---|---|---|---|---|")
+    for input_col, forms in cal["inputs"].items():
+        for form, r in forms.items():
+            params = ", ".join(f"{v:+.4f}" for v in r["params"])
+            lines.append(f"| {input_col} | {form} | {params} "
+                         f"| {r['a1_cv_mae']:.4f} | {r['admissible']} "
+                         f"| {r['a2_mae']:.4f} "
+                         f"| {r['a2_sign_agreement']:.3f} |")
     lines.append("")
-    lines.append(f"**Selected form (fresh-confirmation candidate): "
-                 f"{cal['selected_form']}**")
+    sel = cal["selected"]
+    sel_str = (f"{sel['input']} + {sel['form']} (A2 MAE {sel['a2_mae']:.4f})"
+               if sel else "NONE admissible")
+    lines.append(f"**Selected (fresh-confirmation candidate): {sel_str}**")
     lines.append("")
     return "\n".join(lines)
 
@@ -260,10 +312,13 @@ def main() -> None:
     Path(args.out).with_suffix(".json").write_text(
         json.dumps(result, indent=1, default=float))
     ops = result["operators"]
-    print(f"A1: MAE old {ops['A1']['mae_d_old']:.4f} -> min "
-          f"{ops['A1']['mae_d_min']:.4f}; A2: {ops['A2']['mae_d_old']:.4f} "
-          f"-> {ops['A2']['mae_d_min']:.4f}; selected calibration: "
-          f"{result['calibration']['selected_form']}; wrote {args.out}")
+    for group in ("A1", "A2"):
+        maes = ", ".join(f"{op} {ops[group][f'mae_{op}']:.4f}"
+                         for op in ops["operators"])
+        print(f"{group}: obs {ops[group]['mean_d_obs']:+.4f}; MAE {maes}; "
+              f"best {ops[group]['best_operator']}")
+    print(f"selected calibration: {result['calibration']['selected']}; "
+          f"wrote {args.out}")
 
 
 if __name__ == "__main__":
