@@ -48,7 +48,7 @@ def _geometry() -> dict:
     for run in B_RUNS:
         # Matched dose: lands at the A1++ var_collapse level, acc intact.
         geo[("varreg", "1.0", run)] = _b_record(
-            "varreg", "1.0", run, vc=0.1105, acc=0.699, rng=rng)
+            "varreg", "1.0", run, vc=0.1095, acc=0.699, rng=rng)
         # Strong dose: big movement but blows logit scale out of the span.
         geo[("varreg", "3.0", run)] = _b_record(
             "varreg", "3.0", run, vc=0.050, acc=0.697, rng=rng,
@@ -67,7 +67,8 @@ def test_gates_and_selection():
     doses = result["doses"]
     matched = doses["varreg"]["1.0"]
     assert matched["all_pass"] and matched["on_support"]
-    assert matched["sds_moved"] > bd.MATERIAL_SDS
+    # GB2 is anchored to the A1++ displacement (amendment 2026-08-21).
+    assert abs(matched["median_d_vc"]) >= 0.008
     strong = doses["varreg"]["3.0"]
     assert not strong["gates"]["GB3_selectivity"]
     assert not strong["on_support"]

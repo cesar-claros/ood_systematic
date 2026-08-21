@@ -135,3 +135,4 @@ pilot0/outputs/
 !pilot_b/dispatch_bpilot.sh
 nc_csf_predictivity/interventions/geometry_bpilot/
 nc_csf_predictivity/interventions/nullspace_bpilot/
+!pilot_b/dispatch_bpilot_ext.sh

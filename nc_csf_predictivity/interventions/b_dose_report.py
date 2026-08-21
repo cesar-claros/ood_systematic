@@ -9,8 +9,13 @@ quantity enters anywhere.
 
 Gates per (mechanism, dose), medians over its paired seeds:
   GB1 accuracy    val-acc drop vs the same-seed baseline <= 1.5 pp.
-  GB2 material    |delta var_collapse| >= 10 x the baseline seed SD, in
-                  the contraction direction for positive doses.
+  GB2 material    |delta var_collapse| >= the A1++ displacement itself
+                  (|baseline mean vc - A1++ mean vc|, ~4.6 baseline seed
+                  SDs), in the contraction direction for positive doses.
+                  Amended 2026-08-21 (protocol section 8): the original
+                  10-SD threshold contradicted the matching criterion,
+                  since A1++ itself moved only ~4.6 SDs; the amendment is
+                  anchored to Pilot 1 facts that predate the B runs.
   GB3 selectivity off-target coordinates (self_duality, logit_scale,
                   eig_max_over_mean, head_residual_fraction) inside the
                   reference span widened by 25% of its width.
@@ -55,7 +60,6 @@ OFF_TARGET = ("self_duality", "logit_scale", "eig_max_over_mean",
               "head_residual_fraction")
 SUPPORT_COORDS = (TARGET,) + OFF_TARGET
 ACC_GATE_PP = 1.5
-MATERIAL_SDS = 10.0
 SPAN_TOL = 0.25
 ETA_FACTOR = 2.0
 MIN_SEEDS = 2
@@ -103,6 +107,8 @@ def reference_stats(geo: dict[Key, dict]) -> dict:
     return {"ref_keys": ref_keys,
             "base_vc_sd": float(np.std(base_vc, ddof=1)),
             "a1pp_vc": float(np.mean(match_vc)),
+            "a1pp_displacement": float(abs(np.mean(base_vc)
+                                           - np.mean(match_vc))),
             "spans": spans, "support_mu": mu, "support_sd": sd,
             "support_threshold": float(max(loo))}
 
@@ -138,7 +144,7 @@ def evaluate_dose(kind: str, lam: str, geo: dict[Key, dict],
     gates = {
         "GB1_accuracy": med("d_acc_pp") <= ACC_GATE_PP,
         "GB2_material": (abs(med_vc_delta)
-                         >= MATERIAL_SDS * stats["base_vc_sd"]
+                         >= stats["a1pp_displacement"]
                          and (med_vc_delta < 0 or float(lam) < 0)),
         "GB3_selectivity": all(
             stats["spans"][c][0]
