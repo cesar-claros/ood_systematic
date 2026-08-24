@@ -630,5 +630,64 @@
   "varreg": null,
   "ctrreg": null
  },
- "overall_recommendation": null
+ "overall_recommendation": null,
+ "gb3_sensitivity": {
+  "0.1": {
+   "varreg": {
+    "0.003": false,
+    "0.01": false,
+    "0.03": false,
+    "0.1": false,
+    "0.3": false,
+    "1.0": false
+   },
+   "ctrreg": {
+    "0.00003": true,
+    "0.0001": false,
+    "0.0003": false,
+    "0.003": false,
+    "0.01": false,
+    "0.03": false,
+    "0.1": false
+   }
+  },
+  "0.25": {
+   "varreg": {
+    "0.003": false,
+    "0.01": false,
+    "0.03": false,
+    "0.1": false,
+    "0.3": false,
+    "1.0": false
+   },
+   "ctrreg": {
+    "0.00003": true,
+    "0.0001": false,
+    "0.0003": false,
+    "0.003": false,
+    "0.01": false,
+    "0.03": false,
+    "0.1": false
+   }
+  },
+  "0.5": {
+   "varreg": {
+    "0.003": false,
+    "0.01": true,
+    "0.03": false,
+    "0.1": false,
+    "0.3": false,
+    "1.0": false
+   },
+   "ctrreg": {
+    "0.00003": true,
+    "0.0001": false,
+    "0.0003": false,
+    "0.003": false,
+    "0.01": false,
+    "0.03": false,
+    "0.1": false
+   }
+  }
+ }
 }
