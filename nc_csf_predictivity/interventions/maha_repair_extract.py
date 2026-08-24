@@ -165,6 +165,12 @@ def main() -> None:
             resid_val = h_val - means[y_val]
             cov_val = resid_val.T @ resid_val / len(resid_val)
             argmin_val, s_val = d2_and_scores(h_val, means, precision)
+            # Closure-audit R2: the scored ID population is
+            # correct-filtered, so also fit the population covariance on
+            # correctly classified validation examples only.
+            correct_val = (h_val @ w_np.T + b_np).argmax(1) == y_val
+            resid_valc = resid_val[correct_val]
+            cov_valc = resid_valc.T @ resid_valc / len(resid_valc)
 
             record = {"experiment": path, "kind": meta["kind"],
                       "run": int(meta["run"]), "lam": meta["lam"],
@@ -184,8 +190,12 @@ def main() -> None:
                           "emp_score_var": float(s_id.var(ddof=1))},
                       "val": {
                           "n": len(h_val),
+                          "n_correct": int(correct_val.sum()),
                           "emp_switch_rate": float(
                               (argmin_val != y_val).mean()),
+                          "emp_switch_rate_correct": float(
+                              (argmin_val[correct_val]
+                               != y_val[correct_val]).mean()),
                           "emp_score_mean": float(s_val.mean()),
                           "emp_score_var": float(s_val.var(ddof=1))},
                       "sets": {}}
@@ -208,6 +218,12 @@ def main() -> None:
                     means, model.class_freq, precision, cov_val,
                     m_o, cov_o, n_samples=args.n_samples, seed=0,
                     diagnostics=True)
+                pred_old_valc = predicted_maha_auroc(
+                    means, precision, cov_valc, m_o, cov_o)
+                pred_min_valc, diag_valc = predicted_maha_auroc_min(
+                    means, model.class_freq, precision, cov_valc,
+                    m_o, cov_o, n_samples=args.n_samples, seed=0,
+                    diagnostics=True)
                 argmin_o, s_ood = d2_and_scores(h_ood, means, precision)
                 diffs = m_o - means
                 c_star = int(np.argmin(
@@ -218,8 +234,11 @@ def main() -> None:
                     "pred_min": float(pred_min),
                     "pred_old_val": float(pred_old_val),
                     "pred_min_val": float(pred_min_val),
+                    "pred_old_valc": float(pred_old_valc),
+                    "pred_min_valc": float(pred_min_valc),
                     "mc_diag": diag,
                     "mc_diag_val": diag_val,
+                    "mc_diag_valc": diag_valc,
                     "emp_auroc": rank_auroc(s_id, s_ood),
                     "emp_ood_nearest_share": float(
                         (argmin_o == c_star).mean()),

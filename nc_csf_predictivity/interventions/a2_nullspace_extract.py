@@ -70,7 +70,38 @@ def self_duality(w: np.ndarray, m: np.ndarray) -> float:
                          - m64 / np.linalg.norm(m64)) ** 2))
 
 
-def nullspace_record(w: np.ndarray, m: np.ndarray) -> dict:
+def _basis_metrics(basis: np.ndarray, w: np.ndarray,
+                   m: np.ndarray) -> dict:
+    eta, _ = nullspace_fractions(m, basis)
+    m_proj = (m.astype(np.float64) @ basis.T) @ basis
+    return {"rank": len(basis), "eta_perp": eta,
+            "self_duality_proj": self_duality(w, m_proj)}
+
+
+def rank_sensitivity(w: np.ndarray, m: np.ndarray,
+                     fixed_ranks: tuple[int, ...] = (99,),
+                     rtols: tuple[float, ...] = (1e-2, 1e-3, 1e-4, 1e-5),
+                     ) -> dict:
+    """Closure-audit R1: eta_perp and projected self-duality at fixed
+    ranks (the exact ETF rank C-1) and at several RELATIVE singular-value
+    thresholds. The default extraction used a float64 machine-precision
+    tolerance on float32-origin weights, which counted the ETF
+    construction's numerically nonzero final singular value; this table
+    replaces the earlier 'projections unaffected' assertion with an
+    explicit robustness result."""
+    _, s, vt = np.linalg.svd(w.astype(np.float64), full_matrices=False)
+    out: dict = {"singular_value_tail": [float(v) for v in s[-3:]]}
+    for r in fixed_ranks:
+        if r <= len(s):
+            out[f"rank_{r}"] = _basis_metrics(vt[:r], w, m)
+    for rtol in rtols:
+        rank = int((s > rtol * s[0]).sum())
+        out[f"rtol_{rtol:g}"] = _basis_metrics(vt[:rank], w, m)
+    return out
+
+
+def nullspace_record(w: np.ndarray, m: np.ndarray,
+                     fixed_ranks: tuple[int, ...] = (99,)) -> dict:
     basis = rowspan_basis(w)
     eta, per_class = nullspace_fractions(m, basis)
     m_proj = (m.astype(np.float64) @ basis.T) @ basis
@@ -81,6 +112,7 @@ def nullspace_record(w: np.ndarray, m: np.ndarray) -> dict:
         "per_class_max": float(per_class.max()),
         "self_duality_full": self_duality(w, m),
         "self_duality_proj": self_duality(w, m_proj),
+        "sensitivity": rank_sensitivity(w, m, fixed_ranks=fixed_ranks),
     }
 
 
@@ -170,6 +202,22 @@ def main() -> None:
             f"| {r['eta_perp']:.4f} | {r['per_class_max']:.4f} "
             f"| {r['self_duality_full']:.4f} "
             f"| {r['self_duality_proj']:.4f} |")
+    with_sens = [r for r in records if "sensitivity" in r]
+    if with_sens:
+        lines.append("")
+        lines.append("## Rank/threshold sensitivity (closure audit R1)")
+        lines.append("")
+        lines.append("| model | lam | variant | rank | eta_perp "
+                     "| self-duality projected |")
+        lines.append("|---|---|---|---|---|---|")
+        for r in sorted(with_sens, key=lambda r: (r["lam"], r["run"])):
+            for variant, rec in r["sensitivity"].items():
+                if variant == "singular_value_tail":
+                    continue
+                lines.append(
+                    f"| run{r['run']} | {r['lam']} | {variant} "
+                    f"| {rec['rank']} | {rec['eta_perp']:.4f} "
+                    f"| {rec['self_duality_proj']:.4f} |")
     lines.append("")
     lines.append("Reading: if A2's projected self-duality is small while "
                  "its full-space value is large, the A2 refutation is a "

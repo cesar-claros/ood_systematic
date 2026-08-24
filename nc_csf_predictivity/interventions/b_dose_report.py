@@ -82,7 +82,8 @@ def load_records(dirs: list[Path], pattern: str = "*__last.json",
     return out
 
 
-def reference_stats(geo: dict[Key, dict]) -> dict:
+def reference_stats(geo: dict[Key, dict],
+                    span_tol: float = SPAN_TOL) -> dict:
     ref_keys = [k for k in geo
                 if k[0] == REF_KIND and k[1] in REF_LAMS]
     if len(ref_keys) < 8:
@@ -93,7 +94,7 @@ def reference_stats(geo: dict[Key, dict]) -> dict:
     for coord in OFF_TARGET:
         vals = np.array([geo[k][coord] for k in ref_keys])
         lo, hi = float(vals.min()), float(vals.max())
-        tol = SPAN_TOL * (hi - lo)
+        tol = span_tol * (hi - lo)
         spans[coord] = (lo - tol, hi + tol)
     mat = np.array([[geo[k][c] for c in SUPPORT_COORDS] for k in ref_keys])
     mu, sd = mat.mean(0), mat.std(0, ddof=1)
@@ -194,13 +195,25 @@ def run_report(geo: dict[Key, dict], nulls: dict[Key, dict]) -> dict:
     overall = (min(candidates,
                    key=lambda kl: doses[kl[0]][kl[1]]["match_dist"])
                if candidates else None)
+    # Closure-audit R3: GB3 verdicts under alternative span expansions
+    # (robustness analysis, not a gate revision; the frozen gate is 25%).
+    sensitivity: dict = {}
+    for tol in (0.10, 0.25, 0.50):
+        st = reference_stats(geo, span_tol=tol)
+        sensitivity[f"{tol:g}"] = {
+            kind: {lam: bool(evaluate_dose(kind, lam, geo, nulls,
+                                           st)["gates"]
+                             .get("GB3_selectivity", False))
+                   for lam in table}
+            for kind, table in doses.items()}
     return {"reference": {
                 "base_vc_sd": stats["base_vc_sd"],
                 "a1pp_vc": stats["a1pp_vc"],
                 "support_threshold": stats["support_threshold"],
                 "spans": {c: list(v) for c, v in stats["spans"].items()}},
             "doses": doses, "recommended": recommended,
-            "overall_recommendation": overall}
+            "overall_recommendation": overall,
+            "gb3_sensitivity": sensitivity}
 
 
 def render(result: dict) -> str:
@@ -244,6 +257,37 @@ def render(result: dict) -> str:
     lines.append(f"**Overall geometry-matched pick: "
                  f"{overall if overall else 'NONE'}** (closest qualifying "
                  f"var_collapse to the A1++ level; protocol section 6).")
+    lines.append("")
+    if "gb3_sensitivity" in result:
+        tols = sorted(result["gb3_sensitivity"], key=float)
+        lines.append("## GB3 sensitivity to span expansion "
+                     "(closure audit R3; frozen gate = 25%)")
+        lines.append("")
+        lines.append("| mechanism | lam | "
+                     + " | ".join(f"GB3@{t}" for t in tols) + " |")
+        lines.append("|---|---|" + "---|" * len(tols))
+        for kind, table in result["doses"].items():
+            for lam in table:
+                cells_ = " | ".join(
+                    "pass" if result["gb3_sensitivity"][t][kind][lam]
+                    else "fail" for t in tols)
+                lines.append(f"| {kind} | {lam} | {cells_} |")
+        lines.append("")
+    lines.append("## Per-seed trajectories (closure audit R3)")
+    lines.append("")
+    lines.append("| mechanism | lam | run | var_collapse "
+                 "| eig_max_over_mean | logit_scale | d_acc (pp) "
+                 "| support dist |")
+    lines.append("|---|---|---|---|---|---|---|---|")
+    for kind, table in result["doses"].items():
+        for lam, r in table.items():
+            for s in r.get("per_seed", []):
+                lines.append(
+                    f"| {kind} | {lam} | {s['run']} | {s['vc']:.4f} "
+                    f"| {s['off_target']['eig_max_over_mean']:.2f} "
+                    f"| {s['off_target']['logit_scale']:.3f} "
+                    f"| {s['d_acc_pp']:+.2f} "
+                    f"| {s['support_distance']:.2f} |")
     lines.append("")
     return "\n".join(lines)
 

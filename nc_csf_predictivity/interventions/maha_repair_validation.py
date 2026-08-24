@@ -54,7 +54,8 @@ BASE_LAM = "0.0"
 # validation residuals against the train-fit means; older extraction
 # JSONs without them are handled (columns simply absent).
 OP_COLS = {"d_old": "pred_old", "d_min": "pred_min",
-           "d_old_val": "pred_old_val", "d_min_val": "pred_min_val"}
+           "d_old_val": "pred_old_val", "d_min_val": "pred_min_val",
+           "d_old_valc": "pred_old_valc", "d_min_valc": "pred_min_valc"}
 
 
 def load_repair(repair_dir: Path) -> dict[tuple[str, int], dict]:
@@ -144,6 +145,15 @@ def diagnostics_summary(repair: dict) -> dict:
             rec["median_val_emp_switch"] = float(np.median(
                 [r["val"]["emp_switch_rate"] for r in recs
                  if "val" in r]))
+        valc_switch = [s["mc_diag_valc"]["id_switch_rate"]
+                       for r in recs for s in r["sets"].values()
+                       if "mc_diag_valc" in s]
+        if valc_switch:
+            # Closure-audit R2: correct-filtered population comparison.
+            rec["median_mc_valc_id_switch"] = float(np.median(valc_switch))
+            rec["median_valc_emp_switch"] = float(np.median(
+                [r["val"]["emp_switch_rate_correct"] for r in recs
+                 if "emp_switch_rate_correct" in r.get("val", {})]))
         out[label] = rec
     return out
 
@@ -262,6 +272,17 @@ def render(result: dict) -> str:
             lines.append(f"| {label} | {r['median_mc_id_switch']:.3f} "
                          f"| {r['median_emp_id_switch']:.3f} "
                          f"| {r['median_ood_mean_rel_gap']:.3f} |")
+    if any("median_mc_valc_id_switch" in r
+           for r in result["diagnostics"].values()):
+        lines.append("")
+        lines.append("Correct-filtered validation population (R2):")
+        for label, r in result["diagnostics"].items():
+            if "median_mc_valc_id_switch" in r:
+                lines.append(
+                    f"- {label}: MC id switch (valc-fit) "
+                    f"{r['median_mc_valc_id_switch']:.3f}, empirical "
+                    f"correct-filtered val switch "
+                    f"{r['median_valc_emp_switch']:.3f}")
     lines.append("")
     cal = result["calibration"]
     lines.append("## 3. Bounded calibration (all operator inputs; fit on "

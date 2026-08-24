@@ -64,3 +64,24 @@ def test_self_duality_zero_on_identical_matrices():
     rng = np.random.default_rng(3)
     w = rng.normal(size=(C, D))
     assert self_duality(w, 3.0 * w) < 1e-30  # scale-invariant metric
+
+
+def test_rank_sensitivity_table():
+    from nc_csf_predictivity.interventions.a2_nullspace_extract import (
+        rank_sensitivity,
+    )
+    rng = np.random.default_rng(4)
+    w = _etf_head(rng)
+    _, _, vt_full = np.linalg.svd(w, full_matrices=True)
+    null = vt_full[C - 1:]
+    m = w + rng.normal(size=(C, null.shape[0])) @ null
+    sens = rank_sensitivity(w, m, fixed_ranks=(C - 1,),
+                            rtols=(1e-2, 1e-6))
+    fixed = sens[f"rank_{C - 1}"]
+    assert fixed["rank"] == C - 1
+    # At the exact ETF rank the projection is clean: proj self-duality ~ 0.
+    assert fixed["self_duality_proj"] < 1e-10
+    # A strict relative threshold recovers the same rank and metrics.
+    assert sens["rtol_1e-06"]["rank"] == C - 1
+    assert abs(sens["rtol_1e-06"]["eta_perp"] - fixed["eta_perp"]) < 1e-12
+    assert len(sens["singular_value_tail"]) == 3
