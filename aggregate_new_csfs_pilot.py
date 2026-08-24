@@ -19,9 +19,12 @@ import pathlib
 
 import pandas as pd
 
-# Mode vocabulary as used by the paper's sweep manifests (configs_exp/).
+# Mode vocabulary as used by the paper's sweep manifests (configs_exp/),
+# plus iid_val: csf_fit writes validation stats as part of fitting, and the
+# Figure-1 config selection (retrieve_scores/select_best_hyperparameters)
+# needs them for the new CSFs.
 KNOWN_MODES = [
-    "iid_test", "iid_test_corruptions",
+    "iid_val", "iid_test", "iid_test_corruptions",
     "ood_sncs_c10", "ood_sncs_c100", "ood_sncs_sc100",
     "ood_nsncs_svhn", "ood_nsncs_ti", "ood_nsncs_lsun_cropped",
     "ood_nsncs_lsun_resize", "ood_nsncs_isun", "ood_nsncs_textures",

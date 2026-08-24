@@ -1,0 +1,362 @@
+{
+ "summary": {
+  "MSR": {
+   "median_err": 0.01230602629396138,
+   "p95_err": 0.1686377318819327,
+   "max_err": 0.3161100510870486,
+   "within_tol_frac": 0.46551724137931033,
+   "boundary_sign_accuracy": 0.9304769603880356,
+   "known_failure_regime": "scattered (53% of configs)"
+  },
+  "MLS": {
+   "median_err": 0.00047105927097422506,
+   "p95_err": 0.005317412697140133,
+   "max_err": 0.21999919802975432,
+   "within_tol_frac": 0.9741379310344828,
+   "boundary_sign_accuracy": 0.974822974036192,
+   "known_failure_regime": "tied/diffuse alignment, theta_w >= 21 deg, spiked covariance, large gamma*a (3% of configs)"
+  },
+  "Energy": {
+   "median_err": 0.0005597856664167622,
+   "p95_err": 0.005563981378023279,
+   "max_err": 0.3032654093223387,
+   "within_tol_frac": 0.9683908045977011,
+   "boundary_sign_accuracy": 0.977657935285054,
+   "known_failure_regime": "tied/diffuse alignment, theta_w >= 21 deg, spiked covariance (3% of configs)"
+  },
+  "CTM_head": {
+   "median_err": 9.930561635690394e-05,
+   "p95_err": 0.0034304914731829,
+   "max_err": 0.02180223729838715,
+   "within_tol_frac": 0.9885057471264368,
+   "boundary_sign_accuracy": 0.9469350411710887,
+   "known_failure_regime": "tied/diffuse alignment, theta_w >= 21 deg, spiked covariance, large gamma*a (1% of configs)"
+  },
+  "CTM_mean": {
+   "median_err": 5.745024132158827e-05,
+   "p95_err": 0.0029216819250344316,
+   "max_err": 0.028277178498587574,
+   "within_tol_frac": 0.9942528735632183,
+   "boundary_sign_accuracy": 0.9833625218914186,
+   "known_failure_regime": "tied/diffuse alignment, theta_w >= 21 deg, spiked covariance, large gamma*a (1% of configs)"
+  },
+  "Maha": {
+   "median_err": 5.231290395313337e-08,
+   "p95_err": 0.0010457511481150093,
+   "max_err": 0.05525304406582232,
+   "within_tol_frac": 0.9942528735632183,
+   "boundary_sign_accuracy": 0.9948717948717949,
+   "known_failure_regime": "scattered (1% of configs)"
+  },
+  "fDBD": {
+   "median_err": 0.00014296268415653346,
+   "p95_err": 0.03891942528353428,
+   "max_err": 0.20288851143816966,
+   "within_tol_frac": 0.896551724137931,
+   "boundary_sign_accuracy": 0.9326750448833034,
+   "known_failure_regime": "theta_w >= 21 deg, clustered classes (10% of configs)"
+  }
+ },
+ "decisions": {
+  "MSR": "boundary from simulation required (sign accuracy below 0.95 in audited regimes); EXCLUDE tied-logit regimes from the +-0.01 claim (state in abstract and formula table)",
+  "MLS": "calibrated formula (within tolerance)",
+  "Energy": "calibrated formula (within tolerance)",
+  "CTM_head": "calibrated formula (within tolerance)",
+  "CTM_mean": "calibrated formula (within tolerance)",
+  "Maha": "calibrated formula (within tolerance)",
+  "fDBD": "boundary from simulation required (sign accuracy below 0.95 in audited regimes); proxy = degeneracy with head-CTM, valid near collapse only (two-axis divergence is the paper's own claim)"
+ },
+ "crossings": {
+  "C10_s10_MSR|MLS": {
+   "analytic": 0.993,
+   "mc": 0.842,
+   "displacement": -0.152
+  },
+  "C10_s10_MSR|Energy": {
+   "analytic": 0.993,
+   "mc": 0.841,
+   "displacement": -0.152
+  },
+  "C10_s10_MSR|CTM_head": {
+   "analytic": 1.387,
+   "mc": 0.501,
+   "displacement": -0.886
+  },
+  "C10_s10_MSR|CTM_mean": {
+   "analytic": 1.379,
+   "mc": 0.501,
+   "displacement": -0.878
+  },
+  "C10_s10_MSR|fDBD": {
+   "analytic": 1.387,
+   "mc": 0.501,
+   "displacement": -0.886
+  },
+  "C10_s10_MLS|Energy": {
+   "analytic": 0.928,
+   "mc": 0.507,
+   "displacement": -0.421
+  },
+  "C10_s10_MLS|CTM_head": {
+   "analytic": 0.504,
+   "mc": 0.502,
+   "displacement": -0.002
+  },
+  "C10_s10_MLS|CTM_mean": {
+   "analytic": 0.504,
+   "mc": 0.502,
+   "displacement": -0.002
+  },
+  "C10_s10_MLS|Maha": {
+   "analytic": 0.858,
+   "mc": 0.857,
+   "displacement": -0.001
+  },
+  "C10_s10_MLS|fDBD": {
+   "analytic": 0.504,
+   "mc": 0.502,
+   "displacement": -0.002
+  },
+  "C10_s10_Energy|CTM_head": {
+   "analytic": 0.504,
+   "mc": 0.502,
+   "displacement": -0.003
+  },
+  "C10_s10_Energy|CTM_mean": {
+   "analytic": 0.504,
+   "mc": 0.502,
+   "displacement": -0.002
+  },
+  "C10_s10_Energy|Maha": {
+   "analytic": 0.858,
+   "mc": 0.857,
+   "displacement": -0.001
+  },
+  "C10_s10_Energy|fDBD": {
+   "analytic": 0.504,
+   "mc": 0.502,
+   "displacement": -0.002
+  },
+  "C10_s10_CTM_head|CTM_mean": {
+   "analytic": 0.88,
+   "mc": 0.375,
+   "displacement": -0.505
+  },
+  "C10_s10_CTM_head|Maha": {
+   "analytic": 0.918,
+   "mc": 0.918,
+   "displacement": -0.001
+  },
+  "C10_s10_CTM_mean|Maha": {
+   "analytic": 0.916,
+   "mc": 0.915,
+   "displacement": -0.001
+  },
+  "C10_s10_CTM_mean|fDBD": {
+   "analytic": 0.88,
+   "mc": 0.865,
+   "displacement": -0.015
+  },
+  "C10_s10_Maha|fDBD": {
+   "analytic": 0.918,
+   "mc": 0.919,
+   "displacement": 0.001
+  },
+  "C10_s24_MLS|Maha": {
+   "analytic": 0.5,
+   "mc": 0.5,
+   "displacement": -0.0
+  },
+  "C10_s24_Energy|Maha": {
+   "analytic": 0.5,
+   "mc": 0.5,
+   "displacement": -0.0
+  },
+  "C10_s24_CTM_head|CTM_mean": {
+   "analytic": 0.912,
+   "mc": 0.912,
+   "displacement": -0.0
+  },
+  "C10_s24_CTM_head|Maha": {
+   "analytic": 0.25,
+   "mc": 0.82,
+   "displacement": 0.57
+  },
+  "C10_s24_CTM_mean|Maha": {
+   "analytic": 0.25,
+   "mc": 0.829,
+   "displacement": 0.579
+  },
+  "C10_s24_CTM_mean|fDBD": {
+   "analytic": 0.912,
+   "mc": 0.905,
+   "displacement": -0.008
+  },
+  "C10_s24_Maha|fDBD": {
+   "analytic": 0.25,
+   "mc": 0.826,
+   "displacement": 0.576
+  },
+  "C10_s65_MSR|MLS": {
+   "analytic": 0.8,
+   "mc": 0.919,
+   "displacement": 0.119
+  },
+  "C10_s65_MSR|Energy": {
+   "analytic": 0.8,
+   "mc": 0.919,
+   "displacement": 0.119
+  },
+  "C10_s65_MLS|Energy": {
+   "analytic": 0.8,
+   "mc": 0.927,
+   "displacement": 0.127
+  },
+  "C100_s10_MSR|MLS": {
+   "analytic": 0.979,
+   "mc": 0.512,
+   "displacement": -0.467
+  },
+  "C100_s10_MSR|Energy": {
+   "analytic": 0.979,
+   "mc": 0.509,
+   "displacement": -0.469
+  },
+  "C100_s10_MSR|CTM_head": {
+   "analytic": 1.106,
+   "mc": 0.503,
+   "displacement": -0.603
+  },
+  "C100_s10_MSR|CTM_mean": {
+   "analytic": 1.111,
+   "mc": 0.501,
+   "displacement": -0.61
+  },
+  "C100_s10_MSR|Maha": {
+   "analytic": 0.874,
+   "mc": 0.9,
+   "displacement": 0.026
+  },
+  "C100_s10_MSR|fDBD": {
+   "analytic": 1.106,
+   "mc": 0.504,
+   "displacement": -0.602
+  },
+  "C100_s10_MLS|CTM_head": {
+   "analytic": 0.506,
+   "mc": 0.504,
+   "displacement": -0.002
+  },
+  "C100_s10_MLS|CTM_mean": {
+   "analytic": 0.503,
+   "mc": 0.502,
+   "displacement": -0.001
+  },
+  "C100_s10_MLS|Maha": {
+   "analytic": 0.9,
+   "mc": 0.899,
+   "displacement": -0.001
+  },
+  "C100_s10_MLS|fDBD": {
+   "analytic": 0.506,
+   "mc": 0.505,
+   "displacement": -0.001
+  },
+  "C100_s10_Energy|CTM_head": {
+   "analytic": 0.259,
+   "mc": 0.504,
+   "displacement": 0.245
+  },
+  "C100_s10_Energy|CTM_mean": {
+   "analytic": 0.259,
+   "mc": 0.502,
+   "displacement": 0.242
+  },
+  "C100_s10_Energy|Maha": {
+   "analytic": 0.9,
+   "mc": 0.899,
+   "displacement": -0.001
+  },
+  "C100_s10_Energy|fDBD": {
+   "analytic": 0.259,
+   "mc": 0.505,
+   "displacement": 0.246
+  },
+  "C100_s10_CTM_head|CTM_mean": {
+   "analytic": 0.88,
+   "mc": 0.876,
+   "displacement": -0.004
+  },
+  "C100_s10_CTM_head|Maha": {
+   "analytic": 0.912,
+   "mc": 0.912,
+   "displacement": 0.0
+  },
+  "C100_s10_CTM_mean|Maha": {
+   "analytic": 0.912,
+   "mc": 0.911,
+   "displacement": -0.0
+  },
+  "C100_s10_CTM_mean|fDBD": {
+   "analytic": 0.88,
+   "mc": 0.872,
+   "displacement": -0.008
+  },
+  "C100_s10_Maha|fDBD": {
+   "analytic": 0.912,
+   "mc": 0.912,
+   "displacement": 0.0
+  },
+  "C100_s24_MSR|Maha": {
+   "analytic": 0.25,
+   "mc": 0.5,
+   "displacement": 0.25
+  },
+  "C100_s24_MLS|Maha": {
+   "analytic": 0.5,
+   "mc": 0.5,
+   "displacement": -0.0
+  },
+  "C100_s24_Energy|Maha": {
+   "analytic": 0.5,
+   "mc": 0.5,
+   "displacement": -0.0
+  },
+  "C100_s24_CTM_head|CTM_mean": {
+   "analytic": 0.5,
+   "mc": 0.828,
+   "displacement": 0.328
+  },
+  "C100_s24_CTM_head|Maha": {
+   "analytic": 0.504,
+   "mc": 0.502,
+   "displacement": -0.002
+  },
+  "C100_s24_CTM_mean|Maha": {
+   "analytic": 0.502,
+   "mc": 0.501,
+   "displacement": -0.001
+  },
+  "C100_s24_CTM_mean|fDBD": {
+   "analytic": 0.5,
+   "mc": 0.824,
+   "displacement": 0.324
+  },
+  "C100_s24_Maha|fDBD": {
+   "analytic": 0.504,
+   "mc": 0.502,
+   "displacement": -0.002
+  },
+  "C100_s65_CTM_head|CTM_mean": {
+   "analytic": 1.1,
+   "mc": 1.1,
+   "displacement": 0.0
+  },
+  "C100_s65_CTM_mean|fDBD": {
+   "analytic": 1.1,
+   "mc": 1.1,
+   "displacement": 0.0
+  }
+ },
+ "winner_accuracy": 0.7183908045977011
+}

@@ -136,3 +136,7 @@ pilot0/outputs/
 nc_csf_predictivity/interventions/geometry_bpilot/
 nc_csf_predictivity/interventions/nullspace_bpilot/
 !pilot_b/dispatch_bpilot_ext.sh
+nc_csf_predictivity/interventions/figures/
+nc_csf_predictivity/interventions/maha_repair/
+nc_csf_predictivity/interventions/nullspace/*.json
+nc_csf_predictivity/interventions/stats_local/
