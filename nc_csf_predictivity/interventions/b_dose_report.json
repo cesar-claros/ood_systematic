@@ -24,6 +24,144 @@
  },
  "doses": {
   "varreg": {
+   "0.003": {
+    "n_seeds": 2,
+    "per_seed": [
+     {
+      "run": 1,
+      "d_acc_pp": 8.999999999999996,
+      "d_vc": 1.027515379818471,
+      "vc": 1.146491871094098,
+      "off_target": {
+       "self_duality": 0.10881077622766656,
+       "logit_scale": 8.20184050420222,
+       "eig_max_over_mean": 23.9190514183282,
+       "head_residual_fraction": 0.013514227130400921
+      },
+      "support_distance": 107.82334568803954
+     },
+     {
+      "run": 2,
+      "d_acc_pp": -0.6000000000000005,
+      "d_vc": -0.0017635813032882558,
+      "vc": 0.11480988908646303,
+      "off_target": {
+       "self_duality": 0.013926406459632553,
+       "logit_scale": 9.813920153081874,
+       "eig_max_over_mean": 20.911042041841814,
+       "head_residual_fraction": 0.005722347516861936
+      },
+      "support_distance": 0.8410501819356968
+     }
+    ],
+    "median_d_acc_pp": 4.1999999999999975,
+    "median_d_vc": 0.5128758992575914,
+    "median_vc": 0.6306508800902805,
+    "sds_moved": 349.2494255383098,
+    "match_dist": 0.5191020561126263,
+    "support_distance": 54.33219793498762,
+    "on_support": false,
+    "gates": {
+     "GB1_accuracy": false,
+     "GB2_material": false,
+     "GB3_selectivity": false,
+     "GB5_complete": true,
+     "GB4_leakage": true
+    },
+    "all_pass": false
+   },
+   "0.01": {
+    "n_seeds": 2,
+    "per_seed": [
+     {
+      "run": 1,
+      "d_acc_pp": 0.30000000000000027,
+      "d_vc": -0.0056026707787552865,
+      "vc": 0.11337382049687149,
+      "off_target": {
+       "self_duality": 0.014059685077210067,
+       "logit_scale": 9.803268579463644,
+       "eig_max_over_mean": 20.187235282844988,
+       "head_residual_fraction": 0.005428093730775129
+      },
+      "support_distance": 1.3933180109139789
+     },
+     {
+      "run": 2,
+      "d_acc_pp": 0.10000000000000009,
+      "d_vc": -0.0034431784948241173,
+      "vc": 0.11313029189492717,
+      "off_target": {
+       "self_duality": 0.013652655416876314,
+       "logit_scale": 9.826196489227991,
+       "eig_max_over_mean": 20.030456913754843,
+       "head_residual_fraction": 0.005709058427654298
+      },
+      "support_distance": 1.5748126411607577
+     }
+    ],
+    "median_d_acc_pp": 0.20000000000000018,
+    "median_d_vc": -0.004522924636789702,
+    "median_vc": 0.11325205619589933,
+    "sds_moved": 3.07994357589906,
+    "match_dist": 0.0017032322182450738,
+    "support_distance": 1.4840653260373684,
+    "on_support": true,
+    "gates": {
+     "GB1_accuracy": true,
+     "GB2_material": false,
+     "GB3_selectivity": false,
+     "GB5_complete": true,
+     "GB4_leakage": true
+    },
+    "all_pass": false
+   },
+   "0.03": {
+    "n_seeds": 2,
+    "per_seed": [
+     {
+      "run": 1,
+      "d_acc_pp": -1.5000000000000013,
+      "d_vc": -0.011007673480534955,
+      "vc": 0.10796881779509182,
+      "off_target": {
+       "self_duality": 0.013652207584124124,
+       "logit_scale": 9.766781077908439,
+       "eig_max_over_mean": 18.959034938899045,
+       "head_residual_fraction": 0.005116903648521189
+      },
+      "support_distance": 2.502271542813364
+     },
+     {
+      "run": 2,
+      "d_acc_pp": -0.6000000000000005,
+      "d_vc": -0.012485688201854084,
+      "vc": 0.1040877821878972,
+      "off_target": {
+       "self_duality": 0.013579882821018819,
+       "logit_scale": 9.735271111428863,
+       "eig_max_over_mean": 19.113565512094528,
+       "head_residual_fraction": 0.005521773246357365
+      },
+      "support_distance": 2.5665728238977206
+     }
+    ],
+    "median_d_acc_pp": -1.050000000000001,
+    "median_d_vc": -0.01174668084119452,
+    "median_vc": 0.10602829999149452,
+    "sds_moved": 7.999053068603188,
+    "match_dist": 0.005520523986159737,
+    "support_distance": 2.5344221833555425,
+    "on_support": false,
+    "gates": {
+     "GB1_accuracy": true,
+     "GB2_material": true,
+     "GB3_selectivity": false,
+     "GB5_complete": true,
+     "GB4_leakage": true
+    },
+    "all_pass": false
+   },
    "0.1": {
     "n_seeds": 2,
     "per_seed": [
@@ -164,6 +302,144 @@
    }
   },
   "ctrreg": {
+   "0.00003": {
+    "n_seeds": 2,
+    "per_seed": [
+     {
+      "run": 1,
+      "d_acc_pp": -2.6000000000000023,
+      "d_vc": -0.0019307141871969108,
+      "vc": 0.11704577708842986,
+      "off_target": {
+       "self_duality": 0.014816767839791928,
+       "logit_scale": 9.803098012376639,
+       "eig_max_over_mean": 20.997496462619964,
+       "head_residual_fraction": 0.005493967590457076
+      },
+      "support_distance": 0.7274287112600037
+     },
+     {
+      "run": 2,
+      "d_acc_pp": -0.9000000000000008,
+      "d_vc": -0.0009542171776737302,
+      "vc": 0.11561925321207756,
+      "off_target": {
+       "self_duality": 0.01430073884801501,
+       "logit_scale": 9.754771318698083,
+       "eig_max_over_mean": 20.860291059983318,
+       "head_residual_fraction": 0.005754896203957656
+      },
+      "support_distance": 0.7722573657366735
+     }
+    ],
+    "median_d_acc_pp": -1.7500000000000016,
+    "median_d_vc": -0.0014424656824353205,
+    "median_vc": 0.11633251515025371,
+    "sds_moved": 0.9822655181857913,
+    "match_dist": 0.004783691172599455,
+    "support_distance": 0.7498430384983386,
+    "on_support": true,
+    "gates": {
+     "GB1_accuracy": true,
+     "GB2_material": false,
+     "GB3_selectivity": true,
+     "GB5_complete": true,
+     "GB4_leakage": true
+    },
+    "all_pass": false
+   },
+   "0.0001": {
+    "n_seeds": 2,
+    "per_seed": [
+     {
+      "run": 1,
+      "d_acc_pp": -0.40000000000000036,
+      "d_vc": -0.006012776724586194,
+      "vc": 0.11296371455104058,
+      "off_target": {
+       "self_duality": 0.01421744560302176,
+       "logit_scale": 9.786297151217903,
+       "eig_max_over_mean": 19.721868607877447,
+       "head_residual_fraction": 0.005406878803554887
+      },
+      "support_distance": 1.7542598288633873
+     },
+     {
+      "run": 2,
+      "d_acc_pp": 0.40000000000000036,
+      "d_vc": -0.005377363715332664,
+      "vc": 0.11119610667441862,
+      "off_target": {
+       "self_duality": 0.013645162923113914,
+       "logit_scale": 9.77895294940726,
+       "eig_max_over_mean": 19.62626401514776,
+       "head_residual_fraction": 0.005570765643103672
+      },
+      "support_distance": 1.8701773876902066
+     }
+    ],
+    "median_d_acc_pp": 0.0,
+    "median_d_vc": -0.005695070219959429,
+    "median_vc": 0.1120799106127296,
+    "sds_moved": 3.8781311533654135,
+    "match_dist": 0.0005310866350753396,
+    "support_distance": 1.812218608276797,
+    "on_support": false,
+    "gates": {
+     "GB1_accuracy": true,
+     "GB2_material": false,
+     "GB3_selectivity": false,
+     "GB5_complete": true,
+     "GB4_leakage": true
+    },
+    "all_pass": false
+   },
+   "0.0003": {
+    "n_seeds": 2,
+    "per_seed": [
+     {
+      "run": 1,
+      "d_acc_pp": -1.4000000000000012,
+      "d_vc": -0.015225389025859223,
+      "vc": 0.10375110224976755,
+      "off_target": {
+       "self_duality": 0.014171178335588367,
+       "logit_scale": 9.719841910271958,
+       "eig_max_over_mean": 17.857890437217165,
+       "head_residual_fraction": 0.00541673875703494
+      },
+      "support_distance": 3.5396423056434045
+     },
+     {
+      "run": 2,
+      "d_acc_pp": -1.5000000000000013,
+      "d_vc": -0.01323941352512055,
+      "vc": 0.10333405686463074,
+      "off_target": {
+       "self_duality": 0.013206742247466279,
+       "logit_scale": 9.745831545405222,
+       "eig_max_over_mean": 18.13093432798209,
+       "head_residual_fraction": 0.005354406757102265
+      },
+      "support_distance": 3.328596512733455
+     }
+    ],
+    "median_d_acc_pp": -1.4500000000000013,
+    "median_d_vc": -0.014232401275489887,
+    "median_vc": 0.10354257955719914,
+    "sds_moved": 9.691736298568093,
+    "match_dist": 0.00800624442045511,
+    "support_distance": 3.4341194091884297,
+    "on_support": false,
+    "gates": {
+     "GB1_accuracy": true,
+     "GB2_material": true,
+     "GB3_selectivity": false,
+     "GB5_complete": true,
+     "GB4_leakage": true
+    },
+    "all_pass": false
+   },
    "0.003": {
     "n_seeds": 2,
     "per_seed": [
