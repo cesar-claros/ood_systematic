@@ -16,16 +16,26 @@ them. Failures are isolated per checkpoint (FAILED_<slug>.json records the
 error; the sweep continues), and the sweep is resumable (existing outputs are
 skipped).
 
+Batch size / workers: --batch_size and --num_workers set the CSF_BATCH_SIZE /
+CSF_NUM_WORKERS overrides read by load_model (defaults 128 / 12; the env
+variables also work directly, the flags win). Extracted coordinates are
+batch-size invariant; the flag only trades GPU memory against speed.
+
 Usage (from code/, inside the campaign container, .env with
 EXPERIMENT_ROOT_DIR/DATASET_ROOT_DIR):
     # one checkpoint
     python pilot0/extract_pool_coords.py --model_path \
         cifar100_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2
-    # full pool sweep, optionally sharded across GPUs
+    # full pool sweep, optionally sharded across GPUs/jobs
     python pilot0/extract_pool_coords.py --sweep --shard 1/2
     python pilot0/extract_pool_coords.py --sweep --shard 2/2
+    # sweep one ID source at a time (accepts parquet or directory names:
+    # cifar10, cifar100, supercifar100/supercifar, tinyimagenet/tiny-imagenet-200)
+    python pilot0/extract_pool_coords.py --sweep --source cifar100
+    # --source and --shard compose: shard k/n WITHIN the filtered source
+    python pilot0/extract_pool_coords.py --sweep --source supercifar100 --shard 1/2
     # enumerate without running
-    python pilot0/extract_pool_coords.py --sweep --list
+    python pilot0/extract_pool_coords.py --sweep --list [--source ...]
 Outputs: pilot0/pool_coords/<slug>.json  (rsync the whole folder back)
 """
 from __future__ import annotations
@@ -185,31 +195,67 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--model_path", type=str, default=None)
     parser.add_argument("--sweep", action="store_true")
+    parser.add_argument("--source", type=str, default=None,
+                        help="restrict the sweep to one ID source "
+                             "(cifar10, cifar100, supercifar100/supercifar, "
+                             "tinyimagenet/tiny-imagenet-200)")
     parser.add_argument("--shard", type=str, default="1/1",
-                        help="k/n: run the k-th of n interleaved shards")
+                        help="k/n: run the k-th of n interleaved shards of "
+                             "the (optionally source-filtered) target list; "
+                             "use one shard per GPU/job, e.g. 1/2 and 2/2")
     parser.add_argument("--list", action="store_true",
                         help="with --sweep: enumerate and exit")
     parser.add_argument("--use_cuda", action=argparse.BooleanOptionalAction,
                         default=True)
+    parser.add_argument("--batch_size", type=int, default=None,
+                        help="forward-pass batch size (sets CSF_BATCH_SIZE; "
+                             "default 128 from load_model). Deterministic "
+                             "outputs are batch-size invariant; raise on "
+                             "larger GPUs, lower if OOM")
+    parser.add_argument("--num_workers", type=int, default=None,
+                        help="dataloader workers (sets CSF_NUM_WORKERS; "
+                             "default 12)")
     parser.add_argument("--keep_npz", action="store_true")
     parser.add_argument("--out_dir", type=str, default=OUT_DIR_DEFAULT)
     args = parser.parse_args()
     out_dir = Path(args.out_dir)
 
-    import torch
-    use_cuda = bool(args.use_cuda and torch.cuda.is_available())
+    import os
+    if args.batch_size is not None:
+        os.environ["CSF_BATCH_SIZE"] = str(args.batch_size)
+    if args.num_workers is not None:
+        os.environ["CSF_NUM_WORKERS"] = str(args.num_workers)
+
+    def resolve_cuda() -> bool:
+        import torch
+        return bool(args.use_cuda and torch.cuda.is_available())
 
     if args.model_path and not args.sweep:
-        extract_one(args.model_path, out_dir, use_cuda, args.keep_npz)
+        extract_one(args.model_path, out_dir, resolve_cuda(), args.keep_npz)
         return
 
     if not args.sweep:
         parser.error("pass --model_path or --sweep")
     targets, missing, extra = sweep_targets()
+    src_label = "all sources"
+    if args.source:
+        alias = {"cifar10": "cifar10", "cifar100": "cifar100",
+                 "supercifar100": "supercifar", "supercifar": "supercifar",
+                 "tinyimagenet": "tiny-imagenet-200",
+                 "tiny-imagenet-200": "tiny-imagenet-200"}
+        token = alias.get(args.source)
+        if token is None:
+            parser.error(f"unknown --source {args.source!r}; use one of "
+                         f"{sorted(set(alias))}")
+        targets = [t for t in targets
+                   if t.split("_paper_sweep/")[0] == token]
+        missing = [c for c in missing if c["src_dir"] == token]
+        src_label = f"source {args.source} ({token}_paper_sweep)"
     k, n = (int(x) for x in args.shard.split("/"))
     shard = targets[k - 1::n]
-    print(f"[sweep] manifest 280; matched on disk {len(targets)}; "
-          f"MISSING {len(missing)}; unrelated dirs {len(extra)}; "
+    print(f"[sweep] manifest 280; {src_label}: matched on disk "
+          f"{len(targets)}; MISSING {len(missing)}; "
+          f"unrelated dirs {len(extra)}; "
           f"shard {k}/{n} -> {len(shard)} checkpoints")
     for c in missing:
         print(f"[sweep] MISSING from disk: {c}")
@@ -217,6 +263,7 @@ def main() -> None:
         for t in shard:
             print(t)
         return
+    use_cuda = resolve_cuda()
     done = skipped = failed = 0
     for i, rel in enumerate(shard, 1):
         slug = rel.replace("/", "__")
