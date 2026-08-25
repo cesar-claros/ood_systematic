@@ -1,14 +1,14 @@
 # ViT and foundation-regime crossing replication (P1; frozen spec in vit_poola_crossing.py)
 
-Existing tables only; predeclared pairs; band bootstrap B = 50; gap = AUGRC_A - AUGRC_B (positive = second score better).
+Existing tables only; predeclared pairs; band bootstrap B = 2000; gap = AUGRC_A - AUGRC_B (positive = second score better).
 
 ## Fine-tuned ViT (40 cells)
 
-### MLS vs KPCA RecError global  ->  **smeared**
+### MLS vs KPCA RecError global  ->  **sharp**
 
 | estimator | sign changes | first up-crossing | tie region | g(d_min) | g(d_max) |
 |---|---|---|---|---|---|
-| pava | 1 | -0.57 | [-0.76, 1.557] | -11.6 | +6.7 |
+| pava | 1 | -0.57 | [-0.76, -0.512] | -11.6 | +6.7 |
 | loclin | 3 | -0.686 | None | -0.4 | +4.3 |
 | spline | 4 | -0.711 | None | +3.8 | +4.9 |
 | piecewise | 10 | -0.57 | None | +1.3 | +0.5 |
@@ -34,7 +34,7 @@ Existing tables only; predeclared pairs; band bootstrap B = 50; gap = AUGRC_A - 
 
 | estimator | sign changes | first up-crossing | tie region | g(d_min) | g(d_max) |
 |---|---|---|---|---|---|
-| pava | 1 | 1.454 | [-1.413, 1.537] | -2.9 | +3.7 |
+| pava | 1 | 1.454 | [-1.413, 1.527] | -2.9 | +3.7 |
 | loclin | 1 | 1.406 | None | -2.4 | +2.0 |
 | spline | 3 | -1.085 | None | -2.5 | +1.8 |
 | piecewise | 15 | -1.267 | None | -2.9 | +3.7 |
@@ -49,7 +49,7 @@ Existing tables only; predeclared pairs; band bootstrap B = 50; gap = AUGRC_A - 
 
 | estimator | sign changes | first up-crossing | tie region | g(d_min) | g(d_max) |
 |---|---|---|---|---|---|
-| pava | 1 | 0.496 | [-1.413, 1.329] | -24.2 | +84.4 |
+| pava | 1 | 0.496 | [-1.413, 1.378] | -24.2 | +84.4 |
 | loclin | 1 | 0.496 | None | -20.9 | +78.0 |
 | spline | 1 | 0.421 | None | -20.2 | +75.8 |
 | piecewise | 11 | -1.048 | None | -19.3 | +66.7 |

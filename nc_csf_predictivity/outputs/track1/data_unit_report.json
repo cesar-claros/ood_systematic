@@ -1,0 +1,100 @@
+{
+ "parquet": "/Users/cesarclaros/Documents/Obsidian/Research/02 Projects/Systematic_OOD/code/nc_csf_predictivity/outputs/track1/dataset/long_harmonized.parquet",
+ "total_rows": 67320,
+ "columns": [
+  "paradigm",
+  "csf",
+  "reward",
+  "run",
+  "eval_dataset",
+  "augrc",
+  "dropout",
+  "architecture",
+  "source",
+  "aurc",
+  "side",
+  "group",
+  "regime",
+  "var_collapse",
+  "equiangular_uc",
+  "equiangular_wc",
+  "equinorm_uc",
+  "equinorm_wc",
+  "max_equiangular_uc",
+  "max_equiangular_wc",
+  "self_duality",
+  "bias_collapse",
+  "cdnv_score",
+  "w_etf_diff",
+  "M_etf_diff",
+  "wM_etf_diff",
+  "lr",
+  "augrc_z",
+  "augrc_rank",
+  "aurc_z",
+  "aurc_rank"
+ ],
+ "architecture_rows": {
+  "VGG13": 50400,
+  "ResNet18": 10080,
+  "ViT": 6840
+ },
+ "vgg13": {
+  "unique_checkpoints": 280,
+  "checkpoints_per_source": {
+   "cifar10": 60,
+   "cifar100": 70,
+   "supercifar100": 90,
+   "tinyimagenet": 60
+  },
+  "ood_shifts_per_checkpoint_min": 8,
+  "ood_shifts_per_checkpoint_max": 8,
+  "distinct_ood_set_names_poolwide": 9,
+  "checkpoint_shift_observations": 2240,
+  "ood_long_rows_all_csfs": 44800,
+  "csf_count": 20
+ },
+ "crossing_audit_unit": {
+  "rows": 2240,
+  "unique_checkpoints": 280
+ },
+ "fdbd_sourcewise": {
+  "cifar10": {
+   "fDBD": 167.97202673392158,
+   "MLS": 164.36911963240564,
+   "CTM": 170.77652885476795,
+   "fDBD_minus_MLS": 3.602907101515939,
+   "fDBD_minus_CTM": -2.804502120846365,
+   "fdbd_beats_mls": false,
+   "fdbd_beats_ctm": true
+  },
+  "cifar100": {
+   "fDBD": 233.79558356254253,
+   "MLS": 224.06790851950953,
+   "CTM": 221.7501923937379,
+   "fDBD_minus_MLS": 9.727675043033003,
+   "fDBD_minus_CTM": 12.045391168804628,
+   "fdbd_beats_mls": false,
+   "fdbd_beats_ctm": false
+  },
+  "supercifar100": {
+   "fDBD": 282.5785734330221,
+   "MLS": 273.7252891426933,
+   "CTM": 271.3791606834878,
+   "fDBD_minus_MLS": 8.853284290328759,
+   "fDBD_minus_CTM": 11.199412749534304,
+   "fdbd_beats_mls": false,
+   "fdbd_beats_ctm": false
+  },
+  "tinyimagenet": {
+   "fDBD": 228.19999197857484,
+   "MLS": 230.63722081878635,
+   "CTM": 224.8999640675483,
+   "fDBD_minus_MLS": -2.437228840211503,
+   "fDBD_minus_CTM": 3.3000279110265467,
+   "fdbd_beats_mls": true,
+   "fdbd_beats_ctm": false
+  }
+ },
+ "r5_size_like_columns": []
+}

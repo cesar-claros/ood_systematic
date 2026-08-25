@@ -12,10 +12,10 @@
      "bracketed_by_observed": true,
      "g_at_min_d": -11.569349994812317,
      "g_at_max_d": 6.706556303098073,
-     "band_q95": 7.0127864200253835,
+     "band_q95": 6.570021249983155,
      "tie_region": [
       -0.76,
-      1.557
+      -0.512
      ]
     },
     "loclin": {
@@ -63,7 +63,7 @@
      "g_at_max_d": 0.510818121201541
     }
    },
-   "classification": "smeared",
+   "classification": "sharp",
    "strata": {
     "strong": {
      "crossing": -0.795,
@@ -111,7 +111,7 @@
      "bracketed_by_observed": true,
      "g_at_min_d": -42.26625756934176,
      "g_at_max_d": 25.64631661980805,
-     "band_q95": 20.788185322097362,
+     "band_q95": 20.31144981795192,
      "tie_region": [
       -0.037,
       1.418
@@ -213,10 +213,10 @@
      "bracketed_by_observed": true,
      "g_at_min_d": -2.8569556014764514,
      "g_at_max_d": 3.748953529879961,
-     "band_q95": 3.169001847560775,
+     "band_q95": 3.001375473268658,
      "tie_region": [
       -1.413,
-      1.537
+      1.527
      ]
     },
     "loclin": {
@@ -316,10 +316,10 @@
      "bracketed_by_observed": true,
      "g_at_min_d": -24.24719776627632,
      "g_at_max_d": 84.36040969040073,
-     "band_q95": 31.420867497851614,
+     "band_q95": 35.75128621784148,
      "tie_region": [
       -1.413,
-      1.329
+      1.378
      ]
     },
     "loclin": {

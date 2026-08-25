@@ -30,7 +30,7 @@ rho = 1, Std(eta) = 0.1 (quenched draw seed 0), logit-scale target 10,
 C = 100, D = 512, isotropic covariance.
 
 Usage (from code/):  python hero_phase_diagram.py [--quick]
-Output: Paper/ICLR_2027/figures/hero_phase_diagram.pdf (+ .png preview).
+Output: paper/ICLR_2027/figures/hero_phase_diagram.pdf (+ .png preview).
 """
 from __future__ import annotations
 
@@ -65,7 +65,7 @@ from pilot0.theory import (
     predicted_maha_auroc,
 )
 
-PAPER_FIG = CODE.parent / "Paper/ICLR_2027/figures"
+PAPER_FIG = CODE.parent / "paper/ICLR_2027/figures"
 VIRIDIS = matplotlib.colormaps["viridis"]
 TOL = 0.01
 C_MODEL, D_MODEL = 100, 512
@@ -114,6 +114,27 @@ def gap_map(pair: tuple[str, str], ga_grid: np.ndarray,
             au = analytic_pixel(model)
             gap[i, j] = au[pair[0]] - au[pair[1]]
     return gap
+
+
+AUDIT_JSON = CODE / "nc_csf_predictivity/outputs/track1/hero_boundary_audit_report.json"
+
+
+def overlay_audit(ax, panel: str) -> None:
+    """R4 (audit #5): overlay the MC-audited boundary points on a panel.
+    Filled circle = well-conditioned + verified (drawn sharp); open square =
+    shallow-slope, read the contour as a band there."""
+    if not AUDIT_JSON.exists():
+        return
+    import json as _json
+
+    pts = _json.loads(AUDIT_JSON.read_text())["panels"][panel]["boundary"]
+    for r in pts:
+        if r["display_sharp"]:
+            ax.plot(r["ga"], r["y"], marker="o", ms=2.4, mfc="white",
+                    mec="black", mew=0.5, ls="none", zorder=5)
+        else:
+            ax.plot(r["ga"], r["y"], marker="s", ms=2.4, mfc="none",
+                    mec="white", mew=0.7, ls="none", zorder=5)
 
 
 def draw_gap(ax, ga_grid, y_grid, gap, ylabel, yscale=None):
@@ -198,6 +219,7 @@ def main() -> None:
     ax_c = fig.add_subplot(gs[0, 3])
 
     pcm = draw_gap(ax_a, ga_grid, s_grid, gap_a, "SNR $s$", yscale="log")
+    overlay_audit(ax_a, "A")
     for name, s_val in TERTILE_S.items():
         ax_a.axhline(s_val, color="white", linewidth=0.8,
                      linestyle="--", alpha=0.9)
@@ -208,6 +230,7 @@ def main() -> None:
 
     draw_gap(ax_b, ga_grid, theta_grid, gap_b,
              r"self-duality angle $\theta_w$ (deg)")
+    overlay_audit(ax_b, "B")
     ax_b.set_title("B. MLS vs Mahalanobis over "
                    "$(\\gamma a, \\theta_w)$, $s{=}24$",
                    fontsize=8.5, loc="left")
@@ -221,10 +244,11 @@ def main() -> None:
     cbar.ax.set_title("advantage\n(AUROC)", fontsize=6.8, pad=6)
     cbar.ax.yaxis.set_ticks_position("left")
     cbar.ax.yaxis.set_label_position("left")
-    fig.suptitle("Detector selection as a phase diagram: certified "
-                 "pairwise boundaries (A, B; calibrated formulas, "
-                 "audited tolerance 0.01) and the empirical transition "
-                 "they organize (C)", fontsize=9, y=1.05)
+    fig.suptitle("Detector selection as a phase diagram: audited pairwise "
+                 "gap surfaces (A, B; boundary points MC-verified, filled = "
+                 "well-conditioned, open = read as band) and the empirical "
+                 "geometry-ordered handoff they organize (C)",
+                 fontsize=9, y=1.05)
     PAPER_FIG.mkdir(parents=True, exist_ok=True)
     fig.savefig(PAPER_FIG / "hero_phase_diagram.pdf", bbox_inches="tight")
     fig.savefig(PAPER_FIG / "hero_phase_diagram.png", bbox_inches="tight")

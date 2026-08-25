@@ -1,0 +1,151 @@
+{
+ "calibration": {
+  "tau": [
+   18.669759774370547,
+   20.45611185032581,
+   0.9310232430589157
+  ],
+  "sig": [
+   37.41011319115739,
+   37.252721286758536,
+   0.9838310628597051
+  ],
+  "n_clusters": 280,
+  "reps": 200,
+  "b_boot": 500,
+  "seed": 2026
+ },
+ "S1_single": {
+  "true_zeros": [
+   -1.083
+  ],
+  "A": {
+   "declared_crossing": 0.245,
+   "n_sign_changes": 0.245,
+   "zero_set_bounded": 0.0,
+   "left_censor_call": 0.755,
+   "right_censor_call": 0.0,
+   "zero_set_covers_all_true": 0.92,
+   "window_covers_first_true": 0.24,
+   "first_err": 0.11072603542707633,
+   "window_width": 2.7510735487808713
+  },
+  "B": {
+   "declared_crossing": 1.0,
+   "n_sign_changes": 1.0,
+   "zero_set_bounded": 1.0,
+   "left_censor_call": 0.0,
+   "right_censor_call": 0.0,
+   "zero_set_covers_all_true": 1.0,
+   "window_covers_first_true": 1.0,
+   "first_err": 0.022633888311649964,
+   "window_width": 0.9322931057770059
+  }
+ },
+ "S2_none": {
+  "true_zeros": [],
+  "A": {
+   "declared_crossing": 0.005,
+   "n_sign_changes": 0.005,
+   "zero_set_bounded": 0.0,
+   "left_censor_call": 0.0,
+   "right_censor_call": 0.995
+  },
+  "B": {
+   "declared_crossing": 0.32,
+   "n_sign_changes": 0.32,
+   "zero_set_bounded": 0.005,
+   "left_censor_call": 0.0,
+   "right_censor_call": 0.68
+  }
+ },
+ "S4_left_censored": {
+  "true_zeros": [],
+  "A": {
+   "declared_crossing": 0.0,
+   "n_sign_changes": 0.0,
+   "zero_set_bounded": 0.0,
+   "left_censor_call": 1.0,
+   "right_censor_call": 0.0
+  },
+  "B": {
+   "declared_crossing": 1.0,
+   "n_sign_changes": 1.0,
+   "zero_set_bounded": 0.995,
+   "left_censor_call": 0.0,
+   "right_censor_call": 0.0
+  }
+ },
+ "S5_right_censored": {
+  "true_zeros": [],
+  "A": {
+   "declared_crossing": 0.045,
+   "n_sign_changes": 0.06,
+   "zero_set_bounded": 0.0,
+   "left_censor_call": 0.0,
+   "right_censor_call": 0.955
+  },
+  "B": {
+   "declared_crossing": 0.715,
+   "n_sign_changes": 0.715,
+   "zero_set_bounded": 0.01,
+   "left_censor_call": 0.0,
+   "right_censor_call": 0.285
+  }
+ },
+ "S3_multiple": {
+  "true_zeros": [
+   -1.083,
+   1.349
+  ],
+  "A": {
+   "declared_crossing": 0.22,
+   "n_sign_changes": 0.22,
+   "zero_set_bounded": 0.0,
+   "left_censor_call": 0.78,
+   "right_censor_call": 0.0,
+   "zero_set_covers_all_true": 0.89,
+   "window_covers_first_true": 0.22,
+   "first_err": 0.13977918011163973,
+   "window_width": 2.969874507386268
+  },
+  "B": {
+   "declared_crossing": 1.0,
+   "n_sign_changes": 1.0,
+   "zero_set_bounded": 0.955,
+   "left_censor_call": 0.0,
+   "right_censor_call": 0.0,
+   "zero_set_covers_all_true": 0.05,
+   "window_covers_first_true": 1.0,
+   "first_err": 0.018129325338150124,
+   "window_width": 1.0780644461812152
+  }
+ },
+ "S6_per_source_realistic": {
+  "true_zeros": [
+   -1.079
+  ],
+  "A": {
+   "declared_crossing": 0.99,
+   "n_sign_changes": 0.99,
+   "zero_set_bounded": 0.04,
+   "left_censor_call": 0.01,
+   "right_censor_call": 0.0,
+   "zero_set_covers_all_true": 1.0,
+   "window_covers_first_true": 0.99,
+   "first_err": 0.012834632570686953,
+   "window_width": 2.6292888988961125
+  },
+  "B": {
+   "declared_crossing": 1.0,
+   "n_sign_changes": 1.0,
+   "zero_set_bounded": 0.975,
+   "left_censor_call": 0.0,
+   "right_censor_call": 0.0,
+   "zero_set_covers_all_true": 1.0,
+   "window_covers_first_true": 1.0,
+   "first_err": 0.006938700168641386,
+   "window_width": 0.9257098839522996
+  }
+ }
+}

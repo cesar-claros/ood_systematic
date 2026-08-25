@@ -1,0 +1,2246 @@
+{
+ "n": 280,
+ "backbone": "vgg13",
+ "cells": [
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 1,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 2,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 3,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 4,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar10",
+   "src_dir": "cifar10",
+   "run": 5,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 1,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 2,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 3,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 4,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "cifar100",
+   "src_dir": "cifar100",
+   "run": 5,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 3.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 3.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 6.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 6.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 1,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 2,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 3,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 4,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "src_dir": "supercifar",
+   "run": 5,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 0
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 2.2,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 10.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 10.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 12.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 12.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 15.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 15.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 20.0,
+   "dropout": 0
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 1,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 2,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 3,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 4,
+   "reward": 20.0,
+   "dropout": 1
+  },
+  {
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "src_dir": "tiny-imagenet-200",
+   "run": 5,
+   "reward": 20.0,
+   "dropout": 1
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "n_checkpoints": 280,
+ "n_rows": 2240,
+ "fine_range": [
+  -1.413,
+  1.557
+ ],
+ "estimators": [
+  {
+   "estimator": "A_per_score_isotonic",
+   "seed": 11,
+   "b": 2000,
+   "first_up_crossing": -1.089,
+   "all_crossings": [
+    -1.089
+   ],
+   "n_sign_changes": 1,
+   "band_q95": 2.471,
+   "zero_set_span": [
+    -1.116,
+    -1.057
+   ],
+   "zero_set_segments": [
+    [
+     -1.116,
+     -1.057
+    ]
+   ],
+   "zero_set_bounded_right": true,
+   "g_at_min_d": -6.17,
+   "g_at_max_d": 2.47,
+   "seconds": 1.4
+  },
+  {
+   "estimator": "B_direct_gap_isotonic",
+   "seed": 0,
+   "b": 2000,
+   "first_up_crossing": -1.08,
+   "all_crossings": [
+    -1.08
+   ],
+   "n_sign_changes": 1,
+   "band_q95": 4.924,
+   "zero_set_span": [
+    -1.156,
+    1.557
+   ],
+   "zero_set_segments": [
+    [
+     -1.156,
+     1.557
+    ]
+   ],
+   "zero_set_bounded_right": false,
+   "g_at_min_d": -14.16,
+   "g_at_max_d": 3.65,
+   "seconds": 0.8
+  }
+ ],
+ "historical_note": {
+  "script": "documentation/x6_spectral_scripts/x4_real_fit.py",
+  "reported": {
+   "d_star": -1.097,
+   "ci": [
+    -1.116,
+    -1.057
+   ]
+  },
+  "b": 300,
+  "severity_units": "z-units (different axis)",
+  "status": "superseded by this reconciliation"
+ }
+}

@@ -1,0 +1,2675 @@
+{
+ "m_min": 0.2,
+ "disp_max": 0.049999999999999996,
+ "tol": 0.01,
+ "grid": [
+  41,
+  26
+ ],
+ "panels": {
+  "A": {
+   "summary": {
+    "boundary_points": 38,
+    "well_conditioned": 16,
+    "displacement_max_all": 0.009,
+    "displacement_max_well_conditioned": 0.004,
+    "unresolved_brackets": 2,
+    "display_sharp": 15,
+    "sign_pixels_resolvable": 44,
+    "sign_agreement": 1.0,
+    "gap_abs_err_p95": 0.0024,
+    "gap_abs_err_max": 0.0047
+   },
+   "boundary": [
+    {
+     "y": 8.0,
+     "ga": 0.853,
+     "slope": 0.108,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0103,
+      -0.015
+     ],
+     "bracket_se": [
+      0.0026,
+      0.0029
+     ],
+     "displacement": null,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 8.0,
+     "ga": 1.474,
+     "slope": 0.078,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0115,
+      -0.008
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 8.94,
+     "ga": 0.829,
+     "slope": 0.114,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0071,
+      -0.0128
+     ],
+     "bracket_se": [
+      0.0021,
+      0.0025
+     ],
+     "displacement": -0.004,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 8.94,
+     "ga": 1.468,
+     "slope": 0.088,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0115,
+      -0.0068
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 10.0,
+     "ga": 0.811,
+     "slope": 0.148,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0087,
+      -0.0158
+     ],
+     "bracket_se": [
+      0.0019,
+      0.0024
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 10.0,
+     "ga": 1.463,
+     "slope": 0.095,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0111,
+      -0.0065
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 11.18,
+     "ga": 0.797,
+     "slope": 0.119,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0054,
+      -0.0113
+     ],
+     "bracket_se": [
+      0.0014,
+      0.0018
+     ],
+     "displacement": -0.008,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 11.18,
+     "ga": 1.459,
+     "slope": 0.101,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0109,
+      -0.0059
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": 0.0,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 12.5,
+     "ga": 0.782,
+     "slope": 0.144,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0063,
+      -0.0133
+     ],
+     "bracket_se": [
+      0.0012,
+      0.0016
+     ],
+     "displacement": -0.005,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 12.5,
+     "ga": 1.46,
+     "slope": 0.109,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0108,
+      -0.0056
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 13.97,
+     "ga": 0.771,
+     "slope": 0.172,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0067,
+      -0.0153
+     ],
+     "bracket_se": [
+      0.0016,
+      0.0021
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 13.97,
+     "ga": 1.467,
+     "slope": 0.123,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.012,
+      -0.0058
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 15.62,
+     "ga": 0.763,
+     "slope": 0.202,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0073,
+      -0.0179
+     ],
+     "bracket_se": [
+      0.0014,
+      0.0019
+     ],
+     "displacement": 0.0,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 15.62,
+     "ga": 1.481,
+     "slope": 0.148,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0141,
+      -0.0072
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 17.46,
+     "ga": 0.756,
+     "slope": 0.233,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0088,
+      -0.0206
+     ],
+     "bracket_se": [
+      0.0018,
+      0.0025
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 17.46,
+     "ga": 1.503,
+     "slope": 0.107,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0101,
+      -0.0049
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 19.52,
+     "ga": 0.752,
+     "slope": 0.263,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0103,
+      -0.0232
+     ],
+     "bracket_se": [
+      0.0016,
+      0.0023
+     ],
+     "displacement": null,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 19.52,
+     "ga": 1.545,
+     "slope": 0.167,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0172,
+      -0.0083
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.005,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 21.83,
+     "ga": 0.745,
+     "slope": 0.133,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0044,
+      -0.0122
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0016
+     ],
+     "displacement": -0.009,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 21.83,
+     "ga": 1.611,
+     "slope": 0.102,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0109,
+      -0.0058
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 24.4,
+     "ga": 0.737,
+     "slope": 0.148,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0041,
+      -0.0124
+     ],
+     "bracket_se": [
+      0.0008,
+      0.0014
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 24.4,
+     "ga": 1.715,
+     "slope": 0.093,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0109,
+      -0.0063
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.005,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 27.28,
+     "ga": 0.731,
+     "slope": 0.165,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0048,
+      -0.0127
+     ],
+     "bracket_se": [
+      0.0007,
+      0.0012
+     ],
+     "displacement": 0.002,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 27.28,
+     "ga": 1.887,
+     "slope": 0.087,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0129,
+      -0.0087
+     ],
+     "bracket_se": [
+      0.0032,
+      0.0032
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 30.5,
+     "ga": 0.727,
+     "slope": 0.184,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0047,
+      -0.0158
+     ],
+     "bracket_se": [
+      0.0006,
+      0.0012
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 34.1,
+     "ga": 0.724,
+     "slope": 0.204,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0054,
+      -0.0152
+     ],
+     "bracket_se": [
+      0.0006,
+      0.0011
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 38.12,
+     "ga": 0.724,
+     "slope": 0.221,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.004,
+      -0.0166
+     ],
+     "bracket_se": [
+      0.0005,
+      0.001
+     ],
+     "displacement": 0.0,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 42.62,
+     "ga": 0.724,
+     "slope": 0.232,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0055,
+      -0.0138
+     ],
+     "bracket_se": [
+      0.0006,
+      0.0009
+     ],
+     "displacement": 0.003,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 47.65,
+     "ga": 0.725,
+     "slope": 0.24,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0043,
+      -0.0154
+     ],
+     "bracket_se": [
+      0.0005,
+      0.001
+     ],
+     "displacement": 0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 53.27,
+     "ga": 0.726,
+     "slope": 0.249,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.003,
+      -0.0179
+     ],
+     "bracket_se": [
+      0.0004,
+      0.0011
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 59.55,
+     "ga": 0.726,
+     "slope": 0.26,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.003,
+      -0.0165
+     ],
+     "bracket_se": [
+      0.0004,
+      0.001
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 66.58,
+     "ga": 0.727,
+     "slope": 0.271,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0031,
+      -0.0145
+     ],
+     "bracket_se": [
+      0.0004,
+      0.0009
+     ],
+     "displacement": 0.004,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 74.43,
+     "ga": 0.727,
+     "slope": 0.283,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0019,
+      -0.0172
+     ],
+     "bracket_se": [
+      0.0003,
+      0.001
+     ],
+     "displacement": -0.0,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 83.22,
+     "ga": 0.727,
+     "slope": 0.296,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0021,
+      -0.0181
+     ],
+     "bracket_se": [
+      0.0004,
+      0.0011
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 93.03,
+     "ga": 0.727,
+     "slope": 0.307,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0017,
+      -0.0173
+     ],
+     "bracket_se": [
+      0.0003,
+      0.001
+     ],
+     "displacement": -0.0,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 104.01,
+     "ga": 0.727,
+     "slope": 0.319,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0014,
+      -0.0183
+     ],
+     "bracket_se": [
+      0.0003,
+      0.0011
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 116.28,
+     "ga": 0.727,
+     "slope": 0.329,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0011,
+      -0.0198
+     ],
+     "bracket_se": [
+      0.0003,
+      0.0011
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 130.0,
+     "ga": 0.727,
+     "slope": 0.34,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0008,
+      -0.0157
+     ],
+     "bracket_se": [
+      0.0002,
+      0.001
+     ],
+     "displacement": 0.004,
+     "sign_agree": true,
+     "display_sharp": true
+    }
+   ],
+   "sign_pixels": [
+    {
+     "y": 8.0,
+     "ga": 0.2,
+     "analytic": -0.0004,
+     "mc": -0.0001,
+     "se": 0.0001,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0003
+    },
+    {
+     "y": 8.0,
+     "ga": 0.4,
+     "analytic": 0.0005,
+     "mc": -0.0,
+     "se": 0.0002,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0005
+    },
+    {
+     "y": 8.0,
+     "ga": 0.6,
+     "analytic": 0.0027,
+     "mc": 0.0003,
+     "se": 0.0009,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0024
+    },
+    {
+     "y": 8.0,
+     "ga": 0.8,
+     "analytic": -0.0053,
+     "mc": -0.0065,
+     "se": 0.0022,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0013
+    },
+    {
+     "y": 8.0,
+     "ga": 1.0,
+     "analytic": -0.0271,
+     "mc": -0.0279,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0008
+    },
+    {
+     "y": 8.0,
+     "ga": 1.2,
+     "analytic": -0.0359,
+     "mc": -0.0354,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0005
+    },
+    {
+     "y": 8.0,
+     "ga": 1.4,
+     "analytic": -0.0167,
+     "mc": -0.0167,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 8.0,
+     "ga": 1.6,
+     "analytic": -0.003,
+     "mc": -0.0028,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0002
+    },
+    {
+     "y": 8.0,
+     "ga": 1.8,
+     "analytic": -0.0002,
+     "mc": -0.0002,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 8.0,
+     "ga": 2.0,
+     "analytic": -0.0,
+     "mc": -0.0,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 8.0,
+     "ga": 2.2,
+     "analytic": -0.0,
+     "mc": -0.0,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 12.5,
+     "ga": 0.2,
+     "analytic": -0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 12.5,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0001,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 12.5,
+     "ga": 0.6,
+     "analytic": 0.0002,
+     "mc": -0.0002,
+     "se": 0.0005,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0004
+    },
+    {
+     "y": 12.5,
+     "ga": 0.8,
+     "analytic": -0.0126,
+     "mc": -0.0137,
+     "se": 0.0017,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0011
+    },
+    {
+     "y": 12.5,
+     "ga": 1.0,
+     "analytic": -0.0845,
+     "mc": -0.0848,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0003
+    },
+    {
+     "y": 12.5,
+     "ga": 1.2,
+     "analytic": -0.0908,
+     "mc": -0.0924,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0015
+    },
+    {
+     "y": 12.5,
+     "ga": 1.4,
+     "analytic": -0.0202,
+     "mc": -0.0196,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0006
+    },
+    {
+     "y": 12.5,
+     "ga": 1.6,
+     "analytic": -0.0012,
+     "mc": -0.0012,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 12.5,
+     "ga": 1.8,
+     "analytic": -0.0,
+     "mc": -0.0,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 12.5,
+     "ga": 2.0,
+     "analytic": -0.0,
+     "mc": -0.0,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 12.5,
+     "ga": 2.2,
+     "analytic": -0.0,
+     "mc": 0.0,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.52,
+     "ga": 0.2,
+     "analytic": -0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.52,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.52,
+     "ga": 0.6,
+     "analytic": -0.0002,
+     "mc": -0.0002,
+     "se": 0.0003,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.52,
+     "ga": 0.8,
+     "analytic": -0.0228,
+     "mc": -0.0242,
+     "se": 0.0024,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0014
+    },
+    {
+     "y": 19.52,
+     "ga": 1.0,
+     "analytic": -0.2202,
+     "mc": -0.2218,
+     "se": 0.003,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0017
+    },
+    {
+     "y": 19.52,
+     "ga": 1.2,
+     "analytic": -0.2446,
+     "mc": -0.2443,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0003
+    },
+    {
+     "y": 19.52,
+     "ga": 1.4,
+     "analytic": -0.0548,
+     "mc": -0.0549,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 19.52,
+     "ga": 1.6,
+     "analytic": -0.0046,
+     "mc": -0.0045,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 19.52,
+     "ga": 1.8,
+     "analytic": -0.0002,
+     "mc": -0.0001,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 19.52,
+     "ga": 2.0,
+     "analytic": -0.0,
+     "mc": -0.0,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.52,
+     "ga": 2.2,
+     "analytic": -0.0,
+     "mc": -0.0,
+     "se": 0.0032,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 30.5,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 30.5,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 30.5,
+     "ga": 0.6,
+     "analytic": -0.0001,
+     "mc": -0.0,
+     "se": 0.0001,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 30.5,
+     "ga": 0.8,
+     "analytic": -0.0316,
+     "mc": -0.0356,
+     "se": 0.0018,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.004
+    },
+    {
+     "y": 30.5,
+     "ga": 1.0,
+     "analytic": -0.4033,
+     "mc": -0.4028,
+     "se": 0.0025,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0005
+    },
+    {
+     "y": 30.5,
+     "ga": 1.2,
+     "analytic": -0.6631,
+     "mc": -0.6655,
+     "se": 0.003,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0025
+    },
+    {
+     "y": 30.5,
+     "ga": 1.4,
+     "analytic": -0.3994,
+     "mc": -0.4005,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.001
+    },
+    {
+     "y": 30.5,
+     "ga": 1.6,
+     "analytic": -0.1874,
+     "mc": -0.1887,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0014
+    },
+    {
+     "y": 30.5,
+     "ga": 1.8,
+     "analytic": -0.0781,
+     "mc": -0.0758,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0023
+    },
+    {
+     "y": 30.5,
+     "ga": 2.0,
+     "analytic": -0.0296,
+     "mc": -0.0293,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0003
+    },
+    {
+     "y": 30.5,
+     "ga": 2.2,
+     "analytic": -0.0105,
+     "mc": -0.0107,
+     "se": 0.0032,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0002
+    },
+    {
+     "y": 47.65,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 47.65,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 47.65,
+     "ga": 0.6,
+     "analytic": -0.0,
+     "mc": -0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 47.65,
+     "ga": 0.8,
+     "analytic": -0.0345,
+     "mc": -0.0356,
+     "se": 0.0015,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0011
+    },
+    {
+     "y": 47.65,
+     "ga": 1.0,
+     "analytic": -0.4723,
+     "mc": -0.477,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0047
+    },
+    {
+     "y": 47.65,
+     "ga": 1.2,
+     "analytic": -0.9589,
+     "mc": -0.959,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 47.65,
+     "ga": 1.4,
+     "analytic": -0.9604,
+     "mc": -0.9625,
+     "se": 0.0024,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0022
+    },
+    {
+     "y": 47.65,
+     "ga": 1.6,
+     "analytic": -0.9342,
+     "mc": -0.9359,
+     "se": 0.0025,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0017
+    },
+    {
+     "y": 47.65,
+     "ga": 1.8,
+     "analytic": -0.9042,
+     "mc": -0.9041,
+     "se": 0.0026,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 47.65,
+     "ga": 2.0,
+     "analytic": -0.8726,
+     "mc": -0.876,
+     "se": 0.0026,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0034
+    },
+    {
+     "y": 47.65,
+     "ga": 2.2,
+     "analytic": -0.8417,
+     "mc": -0.8401,
+     "se": 0.0027,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0017
+    },
+    {
+     "y": 74.43,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 74.43,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 74.43,
+     "ga": 0.6,
+     "analytic": -0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 74.43,
+     "ga": 0.8,
+     "analytic": -0.0312,
+     "mc": -0.031,
+     "se": 0.0014,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0003
+    },
+    {
+     "y": 74.43,
+     "ga": 1.0,
+     "analytic": -0.4718,
+     "mc": -0.4701,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0017
+    },
+    {
+     "y": 74.43,
+     "ga": 1.2,
+     "analytic": -0.9824,
+     "mc": -0.9819,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0005
+    },
+    {
+     "y": 74.43,
+     "ga": 1.4,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 74.43,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 74.43,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 74.43,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 74.43,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 0.6,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 0.8,
+     "analytic": -0.0292,
+     "mc": -0.0293,
+     "se": 0.0013,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 116.28,
+     "ga": 1.0,
+     "analytic": -0.4684,
+     "mc": -0.4675,
+     "se": 0.0022,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0009
+    },
+    {
+     "y": 116.28,
+     "ga": 1.2,
+     "analytic": -0.983,
+     "mc": -0.983,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 1.4,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 116.28,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    }
+   ]
+  },
+  "B": {
+   "summary": {
+    "boundary_points": 26,
+    "well_conditioned": 20,
+    "displacement_max_all": 0.008,
+    "displacement_max_well_conditioned": 0.008,
+    "unresolved_brackets": 1,
+    "display_sharp": 20,
+    "sign_pixels_resolvable": 58,
+    "sign_agreement": 1.0,
+    "gap_abs_err_p95": 0.0024,
+    "gap_abs_err_max": 0.0039
+   },
+   "boundary": [
+    {
+     "y": 0.0,
+     "ga": 0.726,
+     "slope": 0.217,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0036,
+      -0.0173
+     ],
+     "bracket_se": [
+      0.0008,
+      0.0013
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 2.4,
+     "ga": 0.726,
+     "slope": 0.217,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0047,
+      -0.0172
+     ],
+     "bracket_se": [
+      0.0008,
+      0.0013
+     ],
+     "displacement": -0.005,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 4.8,
+     "ga": 0.726,
+     "slope": 0.217,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0054,
+      -0.0157
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 7.2,
+     "ga": 0.725,
+     "slope": 0.218,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0062,
+      -0.0172
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": -0.008,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 9.6,
+     "ga": 0.725,
+     "slope": 0.219,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0055,
+      -0.0144
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0012
+     ],
+     "displacement": 0.0,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 12.0,
+     "ga": 0.725,
+     "slope": 0.22,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0051,
+      -0.0178
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": -0.005,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 14.4,
+     "ga": 0.724,
+     "slope": 0.221,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0054,
+      -0.0162
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 16.8,
+     "ga": 0.723,
+     "slope": 0.223,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0042,
+      -0.0182
+     ],
+     "bracket_se": [
+      0.0008,
+      0.0013
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 19.2,
+     "ga": 0.722,
+     "slope": 0.226,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0058,
+      -0.0147
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0012
+     ],
+     "displacement": 0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 21.6,
+     "ga": 0.721,
+     "slope": 0.229,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0051,
+      -0.0173
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 24.0,
+     "ga": 0.72,
+     "slope": 0.232,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0066,
+      -0.0184
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": -0.006,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 26.4,
+     "ga": 0.719,
+     "slope": 0.236,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0053,
+      -0.0176
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": 0.0,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 28.8,
+     "ga": 0.717,
+     "slope": 0.241,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0061,
+      -0.0167
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": 0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 31.2,
+     "ga": 0.715,
+     "slope": 0.247,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0071,
+      -0.0186
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0014
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 33.6,
+     "ga": 0.713,
+     "slope": 0.253,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0068,
+      -0.0181
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": 0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 36.0,
+     "ga": 0.711,
+     "slope": 0.261,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0072,
+      -0.0182
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": 0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 38.4,
+     "ga": 0.709,
+     "slope": 0.27,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0084,
+      -0.0229
+     ],
+     "bracket_se": [
+      0.001,
+      0.0014
+     ],
+     "displacement": -0.003,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 40.8,
+     "ga": 0.706,
+     "slope": 0.282,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.009,
+      -0.0219
+     ],
+     "bracket_se": [
+      0.001,
+      0.0014
+     ],
+     "displacement": -0.002,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 43.2,
+     "ga": 0.703,
+     "slope": 0.295,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0093,
+      -0.0248
+     ],
+     "bracket_se": [
+      0.001,
+      0.0015
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 45.6,
+     "ga": 0.699,
+     "slope": 0.133,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0046,
+      -0.01
+     ],
+     "bracket_se": [
+      0.0007,
+      0.001
+     ],
+     "displacement": null,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 48.0,
+     "ga": 0.691,
+     "slope": 0.145,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0044,
+      -0.0108
+     ],
+     "bracket_se": [
+      0.0007,
+      0.001
+     ],
+     "displacement": 0.003,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 50.4,
+     "ga": 0.682,
+     "slope": 0.159,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0042,
+      -0.0133
+     ],
+     "bracket_se": [
+      0.0007,
+      0.0011
+     ],
+     "displacement": -0.0,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 52.8,
+     "ga": 0.673,
+     "slope": 0.176,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0061,
+      -0.014
+     ],
+     "bracket_se": [
+      0.0008,
+      0.0011
+     ],
+     "displacement": 0.001,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 55.2,
+     "ga": 0.664,
+     "slope": 0.198,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0067,
+      -0.0184
+     ],
+     "bracket_se": [
+      0.0008,
+      0.0012
+     ],
+     "displacement": 0.0,
+     "sign_agree": true,
+     "display_sharp": false
+    },
+    {
+     "y": 57.6,
+     "ga": 0.654,
+     "slope": 0.224,
+     "well_conditioned": true,
+     "mc_bracket": [
+      -0.0094,
+      -0.0196
+     ],
+     "bracket_se": [
+      0.0009,
+      0.0013
+     ],
+     "displacement": -0.001,
+     "sign_agree": true,
+     "display_sharp": true
+    },
+    {
+     "y": 60.0,
+     "ga": 0.639,
+     "slope": 0.128,
+     "well_conditioned": false,
+     "mc_bracket": [
+      -0.0051,
+      -0.0123
+     ],
+     "bracket_se": [
+      0.0006,
+      0.001
+     ],
+     "displacement": -0.005,
+     "sign_agree": true,
+     "display_sharp": false
+    }
+   ],
+   "sign_pixels": [
+    {
+     "y": 0.0,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 0.0,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 0.0,
+     "ga": 0.6,
+     "analytic": 0.0003,
+     "mc": 0.0004,
+     "se": 0.0003,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 0.0,
+     "ga": 0.8,
+     "analytic": -0.0394,
+     "mc": -0.0394,
+     "se": 0.0018,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 0.0,
+     "ga": 1.0,
+     "analytic": -0.4819,
+     "mc": -0.4827,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0008
+    },
+    {
+     "y": 0.0,
+     "ga": 1.2,
+     "analytic": -0.9602,
+     "mc": -0.9602,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 0.0,
+     "ga": 1.4,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 0.0,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 0.0,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 0.0,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 0.0,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 9.6,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 9.6,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 9.6,
+     "ga": 0.6,
+     "analytic": 0.0003,
+     "mc": 0.0004,
+     "se": 0.0002,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 9.6,
+     "ga": 0.8,
+     "analytic": -0.0399,
+     "mc": -0.0378,
+     "se": 0.0018,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0021
+    },
+    {
+     "y": 9.6,
+     "ga": 1.0,
+     "analytic": -0.4818,
+     "mc": -0.4821,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0002
+    },
+    {
+     "y": 9.6,
+     "ga": 1.2,
+     "analytic": -0.9595,
+     "mc": -0.9603,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0008
+    },
+    {
+     "y": 9.6,
+     "ga": 1.4,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 9.6,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 9.6,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 9.6,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 9.6,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.2,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.2,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.2,
+     "ga": 0.6,
+     "analytic": 0.0002,
+     "mc": 0.0001,
+     "se": 0.0003,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 19.2,
+     "ga": 0.8,
+     "analytic": -0.0414,
+     "mc": -0.0413,
+     "se": 0.0019,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 19.2,
+     "ga": 1.0,
+     "analytic": -0.482,
+     "mc": -0.4842,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0022
+    },
+    {
+     "y": 19.2,
+     "ga": 1.2,
+     "analytic": -0.9573,
+     "mc": -0.9573,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.2,
+     "ga": 1.4,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.2,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.2,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.2,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 19.2,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 28.8,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 28.8,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 28.8,
+     "ga": 0.6,
+     "analytic": 0.0,
+     "mc": -0.0001,
+     "se": 0.0003,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 28.8,
+     "ga": 0.8,
+     "analytic": -0.0446,
+     "mc": -0.0471,
+     "se": 0.0019,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0026
+    },
+    {
+     "y": 28.8,
+     "ga": 1.0,
+     "analytic": -0.4824,
+     "mc": -0.4796,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0028
+    },
+    {
+     "y": 28.8,
+     "ga": 1.2,
+     "analytic": -0.9532,
+     "mc": -0.9531,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0002
+    },
+    {
+     "y": 28.8,
+     "ga": 1.4,
+     "analytic": -0.9999,
+     "mc": -0.9999,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 28.8,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 28.8,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 28.8,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 28.8,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 38.4,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 38.4,
+     "ga": 0.4,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 38.4,
+     "ga": 0.6,
+     "analytic": -0.0004,
+     "mc": -0.0005,
+     "se": 0.0003,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0002
+    },
+    {
+     "y": 38.4,
+     "ga": 0.8,
+     "analytic": -0.0503,
+     "mc": -0.0523,
+     "se": 0.002,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0021
+    },
+    {
+     "y": 38.4,
+     "ga": 1.0,
+     "analytic": -0.483,
+     "mc": -0.4831,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 38.4,
+     "ga": 1.2,
+     "analytic": -0.9461,
+     "mc": -0.9471,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.001
+    },
+    {
+     "y": 38.4,
+     "ga": 1.4,
+     "analytic": -0.9998,
+     "mc": -0.9998,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 38.4,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 38.4,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 38.4,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 38.4,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 48.0,
+     "ga": 0.2,
+     "analytic": 0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 48.0,
+     "ga": 0.4,
+     "analytic": -0.0,
+     "mc": -0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 48.0,
+     "ga": 0.6,
+     "analytic": -0.0012,
+     "mc": -0.0011,
+     "se": 0.0004,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0001
+    },
+    {
+     "y": 48.0,
+     "ga": 0.8,
+     "analytic": -0.0609,
+     "mc": -0.0569,
+     "se": 0.0021,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0039
+    },
+    {
+     "y": 48.0,
+     "ga": 1.0,
+     "analytic": -0.4841,
+     "mc": -0.4873,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0032
+    },
+    {
+     "y": 48.0,
+     "ga": 1.2,
+     "analytic": -0.9334,
+     "mc": -0.9343,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0009
+    },
+    {
+     "y": 48.0,
+     "ga": 1.4,
+     "analytic": -0.9993,
+     "mc": -0.9994,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 48.0,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 48.0,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 48.0,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 48.0,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 57.6,
+     "ga": 0.2,
+     "analytic": -0.0,
+     "mc": 0.0,
+     "se": 0.0,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 57.6,
+     "ga": 0.4,
+     "analytic": -0.0,
+     "mc": -0.0001,
+     "se": 0.0001,
+     "resolvable": false,
+     "agree": null,
+     "abs_err": 0.0
+    },
+    {
+     "y": 57.6,
+     "ga": 0.6,
+     "analytic": -0.0037,
+     "mc": -0.0033,
+     "se": 0.0005,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0004
+    },
+    {
+     "y": 57.6,
+     "ga": 0.8,
+     "analytic": -0.0819,
+     "mc": -0.0801,
+     "se": 0.0017,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0018
+    },
+    {
+     "y": 57.6,
+     "ga": 1.0,
+     "analytic": -0.4859,
+     "mc": -0.4864,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0005
+    },
+    {
+     "y": 57.6,
+     "ga": 1.2,
+     "analytic": -0.9094,
+     "mc": -0.9118,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0024
+    },
+    {
+     "y": 57.6,
+     "ga": 1.4,
+     "analytic": -0.9973,
+     "mc": -0.997,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0002
+    },
+    {
+     "y": 57.6,
+     "ga": 1.6,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 57.6,
+     "ga": 1.8,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 57.6,
+     "ga": 2.0,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    },
+    {
+     "y": 57.6,
+     "ga": 2.2,
+     "analytic": -1.0,
+     "mc": -1.0,
+     "se": 0.0023,
+     "resolvable": true,
+     "agree": true,
+     "abs_err": 0.0
+    }
+   ]
+  }
+ }
+}
