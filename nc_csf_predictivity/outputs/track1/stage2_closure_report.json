@@ -1,0 +1,566 @@
+{
+ "e1": {
+  "per_set": {
+   "cifar10": {
+    "n_material": 58,
+    "frac_positive": 0.3793103448275862,
+    "theory": 0.0,
+    "theory_bal": 0.0,
+    "severity": 0.9827586206896551,
+    "severity_bal": 0.9772727272727273,
+    "geometry": 0.9310344827586207,
+    "geometry_bal": 0.9444444444444444,
+    "flexible": 1.0,
+    "flexible_bal": 1.0,
+    "mean": 0.3793103448275862,
+    "mean_bal": 0.5,
+    "g_minus_s": -0.051724137931034475
+   },
+   "cifar100": {
+    "n_material": 52,
+    "frac_positive": 0.4230769230769231,
+    "theory": 0.0,
+    "theory_bal": 0.0,
+    "severity": 0.5769230769230769,
+    "severity_bal": 0.5,
+    "geometry": 0.9038461538461539,
+    "geometry_bal": 0.9166666666666667,
+    "flexible": 0.5961538461538461,
+    "flexible_bal": 0.5227272727272727,
+    "mean": 0.4230769230769231,
+    "mean_bal": 0.5,
+    "g_minus_s": 0.326923076923077
+   },
+   "isun": {
+    "n_material": 78,
+    "frac_positive": 0.717948717948718,
+    "theory": 0.1282051282051282,
+    "theory_bal": 0.15827922077922077,
+    "severity": 0.717948717948718,
+    "severity_bal": 0.5,
+    "geometry": 0.8205128205128205,
+    "geometry_bal": 0.7784090909090908,
+    "flexible": 0.8076923076923077,
+    "flexible_bal": 0.7556818181818181,
+    "mean": 0.717948717948718,
+    "mean_bal": 0.5,
+    "g_minus_s": 0.10256410256410253
+   },
+   "lsun cropped": {
+    "n_material": 79,
+    "frac_positive": 0.620253164556962,
+    "theory": 0.0759493670886076,
+    "theory_bal": 0.08707482993197278,
+    "severity": 0.620253164556962,
+    "severity_bal": 0.5,
+    "geometry": 0.8734177215189873,
+    "geometry_bal": 0.8462585034013606,
+    "flexible": 0.8481012658227848,
+    "flexible_bal": 0.8129251700680271,
+    "mean": 0.620253164556962,
+    "mean_bal": 0.5,
+    "g_minus_s": 0.25316455696202533
+   },
+   "lsun resize": {
+    "n_material": 90,
+    "frac_positive": 0.6555555555555556,
+    "theory": 0.18888888888888888,
+    "theory_bal": 0.2359212684527064,
+    "severity": 0.6555555555555556,
+    "severity_bal": 0.5,
+    "geometry": 0.8333333333333334,
+    "geometry_bal": 0.7886823400765446,
+    "flexible": 0.8,
+    "flexible_bal": 0.7479496992892292,
+    "mean": 0.6555555555555556,
+    "mean_bal": 0.5,
+    "g_minus_s": 0.1777777777777778
+   },
+   "places365": {
+    "n_material": 52,
+    "frac_positive": 0.2692307692307692,
+    "theory": 0.0,
+    "theory_bal": 0.0,
+    "severity": 0.2692307692307692,
+    "severity_bal": 0.5,
+    "geometry": 0.28846153846153844,
+    "geometry_bal": 0.5131578947368421,
+    "flexible": 0.28846153846153844,
+    "flexible_bal": 0.5131578947368421,
+    "mean": 0.2692307692307692,
+    "mean_bal": 0.5,
+    "g_minus_s": 0.019230769230769218
+   },
+   "svhn": {
+    "n_material": 101,
+    "frac_positive": 0.8118811881188119,
+    "theory": 0.24752475247524752,
+    "theory_bal": 0.334403080872914,
+    "severity": 0.8118811881188119,
+    "severity_bal": 0.5,
+    "geometry": 0.7029702970297029,
+    "geometry_bal": 0.6755455712451861,
+    "flexible": 0.7623762376237624,
+    "flexible_bal": 0.6919127086007703,
+    "mean": 0.8118811881188119,
+    "mean_bal": 0.5,
+    "g_minus_s": -0.10891089108910901
+   },
+   "textures": {
+    "n_material": 128,
+    "frac_positive": 0.6875,
+    "theory": 0.0078125,
+    "theory_bal": 0.005681818181818182,
+    "severity": 0.6875,
+    "severity_bal": 0.5,
+    "geometry": 0.6953125,
+    "geometry_bal": 0.6011363636363636,
+    "flexible": 0.703125,
+    "flexible_bal": 0.6136363636363636,
+    "mean": 0.6875,
+    "mean_bal": 0.5,
+    "g_minus_s": 0.0078125
+   },
+   "tinyimagenet": {
+    "n_material": 80,
+    "frac_positive": 0.4875,
+    "theory": 0.15,
+    "theory_bal": 0.1494684177611007,
+    "severity": 0.4875,
+    "severity_bal": 0.5,
+    "geometry": 0.8,
+    "geometry_bal": 0.8023764853033146,
+    "flexible": 0.7625,
+    "flexible_bal": 0.7651657285803628,
+    "mean": 0.4875,
+    "mean_bal": 0.5,
+    "g_minus_s": 0.31250000000000006
+   }
+  },
+  "pooled": {
+   "theory": 0.0988857938718663,
+   "severity": 0.6601671309192201,
+   "geometry": 0.7632311977715878,
+   "flexible": 0.7437325905292479,
+   "mean": 0.6002785515320335,
+   "g_minus_s": 0.10306406685236769
+  },
+  "pooled_g_minus_s_dropping_set": {
+   "cifar10": 0.1166666666666667,
+   "cifar100": 0.0855855855855856,
+   "isun": 0.10312500000000002,
+   "lsun cropped": 0.08450704225352113,
+   "lsun resize": 0.09235668789808915,
+   "places365": 0.10960960960960964,
+   "svhn": 0.13776337115072934,
+   "textures": 0.12372881355932197,
+   "tinyimagenet": 0.07680250783699061
+  }
+ },
+ "e2": {
+  "per_source": {
+   "cifar10": {
+    "tertile_bounds_from_train": [
+     0.0081866569817066,
+     0.0113905426114797
+    ],
+    "strata": {
+     "strong": {
+      "n_sign_changes": 0,
+      "all_crossings": [],
+      "first_up_crossing": null,
+      "bracketed_by_observed": false,
+      "g_at_min_d": 3.8729513808277796,
+      "g_at_max_d": 6.589773584621461,
+      "band_q95": 3.2458476455865704,
+      "tie_region": null,
+      "n_ckpt": 13
+     },
+     "middle": {
+      "n_sign_changes": 0,
+      "all_crossings": [],
+      "first_up_crossing": null,
+      "bracketed_by_observed": true,
+      "g_at_min_d": -4.100632041600559,
+      "g_at_max_d": -1.1370490017940256,
+      "band_q95": 5.047326156401525,
+      "tie_region": [
+       -1.413,
+       1.384
+      ],
+      "n_ckpt": 22
+     },
+     "weak": {
+      "n_sign_changes": 0,
+      "all_crossings": [],
+      "first_up_crossing": null,
+      "bracketed_by_observed": false,
+      "g_at_min_d": -32.896001618409066,
+      "g_at_max_d": -13.50590287780003,
+      "band_q95": 3.9812227598529937,
+      "tie_region": null,
+      "n_ckpt": 25
+     }
+    },
+    "crossing_values": {
+     "strong": "<=range-min",
+     "middle": null,
+     "weak": null
+    },
+    "outcome": "RETAINED"
+   },
+   "cifar100": {
+    "tertile_bounds_from_train": [
+     0.0084783332422375,
+     0.0137042263522744
+    ],
+    "strata": {
+     "strong": {
+      "n_sign_changes": 1,
+      "all_crossings": [
+       -0.794
+      ],
+      "first_up_crossing": -0.794,
+      "bracketed_by_observed": true,
+      "g_at_min_d": -4.444510373538547,
+      "g_at_max_d": 5.361436333725441,
+      "band_q95": 2.2087899313915624,
+      "tie_region": [
+       -1.001,
+       -0.65
+      ],
+      "n_ckpt": 35
+     },
+     "middle": {
+      "n_sign_changes": 1,
+      "all_crossings": [
+       -0.646
+      ],
+      "first_up_crossing": -0.646,
+      "bracketed_by_observed": true,
+      "g_at_min_d": -4.174990324806878,
+      "g_at_max_d": 7.049719381546209,
+      "band_q95": 2.1086005445905545,
+      "tie_region": [
+       -0.678,
+       -0.613
+      ],
+      "n_ckpt": 21
+     },
+     "weak": {
+      "n_sign_changes": 1,
+      "all_crossings": [
+       -0.604
+      ],
+      "first_up_crossing": -0.604,
+      "bracketed_by_observed": true,
+      "g_at_min_d": -3.2004494534210486,
+      "g_at_max_d": 2.3896552081937323,
+      "band_q95": 1.3462745099041964,
+      "tie_region": [
+       -0.641,
+       -0.567
+      ],
+      "n_ckpt": 14
+     }
+    },
+    "crossing_values": {
+     "strong": -0.794,
+     "middle": -0.646,
+     "weak": -0.604
+    },
+    "outcome": "RETAINED"
+   },
+   "supercifar100": {
+    "tertile_bounds_from_train": [
+     0.007816950790584,
+     0.0096278889104723
+    ],
+    "strata": {
+     "strong": {
+      "n_ckpt": 2,
+      "note": "too few checkpoints"
+     },
+     "middle": {
+      "n_sign_changes": 0,
+      "all_crossings": [],
+      "first_up_crossing": null,
+      "bracketed_by_observed": false,
+      "g_at_min_d": 4.938838611829419,
+      "g_at_max_d": 14.515489231699254,
+      "band_q95": 4.404901746686837,
+      "tie_region": null,
+      "n_ckpt": 13
+     },
+     "weak": {
+      "n_sign_changes": 1,
+      "all_crossings": [
+       -0.152
+      ],
+      "first_up_crossing": -0.152,
+      "bracketed_by_observed": true,
+      "g_at_min_d": -9.924158766951972,
+      "g_at_max_d": 5.110807505062796,
+      "band_q95": 2.978292879902299,
+      "tie_region": [
+       -0.557,
+       0.034
+      ],
+      "n_ckpt": 75
+     }
+    },
+    "crossing_values": {
+     "strong": null,
+     "middle": "<=range-min",
+     "weak": -0.152
+    },
+    "outcome": "REVERSED"
+   },
+   "tinyimagenet": {
+    "tertile_bounds_from_train": [
+     0.0088713662698864,
+     0.0151142105460166
+    ],
+    "strata": {
+     "strong": {
+      "n_sign_changes": 0,
+      "all_crossings": [],
+      "first_up_crossing": null,
+      "bracketed_by_observed": false,
+      "g_at_min_d": 7.1443635644076915,
+      "g_at_max_d": 8.461999722974818,
+      "band_q95": 1.8162352650955662,
+      "tie_region": null,
+      "n_ckpt": 45
+     },
+     "middle": {
+      "n_sign_changes": 0,
+      "all_crossings": [],
+      "first_up_crossing": null,
+      "bracketed_by_observed": false,
+      "g_at_min_d": 6.571446988225267,
+      "g_at_max_d": 6.710145471634253,
+      "band_q95": 1.6386661145741177,
+      "tie_region": null,
+      "n_ckpt": 15
+     },
+     "weak": {
+      "n_ckpt": 0,
+      "note": "too few checkpoints"
+     }
+    },
+    "crossing_values": {
+     "strong": "<=range-min",
+     "middle": "<=range-min",
+     "weak": null
+    },
+    "outcome": "RETAINED"
+   }
+  },
+  "verdict": "INCONCLUSIVE",
+  "outcomes": [
+   "RETAINED",
+   "RETAINED",
+   "REVERSED",
+   "RETAINED"
+  ]
+ },
+ "e3": {
+  "ckpt5": {
+   "n_material": 718,
+   "frac_positive": 0.6,
+   "g_minus_s_sign": {
+    "point": 0.091,
+    "ci95": [
+     0.051,
+     0.13
+    ]
+   },
+   "g_minus_s_balanced": {
+    "point": 0.129,
+    "ci95": [
+     0.088,
+     0.174
+    ]
+   },
+   "per_source": {
+    "cifar10": {
+     "n_material": 170,
+     "frac_positive": 0.112,
+     "geometry": 0.429,
+     "severity": 0.259,
+     "geometry_bal": 0.679,
+     "severity_bal": 0.468
+    },
+    "cifar100": {
+     "n_material": 90,
+     "frac_positive": 0.978,
+     "geometry": 0.911,
+     "severity": 0.989,
+     "geometry_bal": 0.71,
+     "severity_bal": 0.75
+    },
+    "supercifar100": {
+     "n_material": 314,
+     "frac_positive": 0.573,
+     "geometry": 0.818,
+     "severity": 0.682,
+     "geometry_bal": 0.812,
+     "severity_bal": 0.628
+    },
+    "tinyimagenet": {
+     "n_material": 144,
+     "frac_positive": 1.0,
+     "geometry": 1.0,
+     "severity": 1.0,
+     "geometry_bal": 1.0,
+     "severity_bal": 1.0
+    }
+   },
+   "g_minus_s_dropping_source": {
+    "cifar100": 0.115,
+    "cifar10": 0.066,
+    "supercifar100": 0.054,
+    "tinyimagenet": 0.113
+   }
+  },
+  "loso": {
+   "n_material": 718,
+   "frac_positive": 0.6,
+   "g_minus_s_sign": {
+    "point": 0.096,
+    "ci95": [
+     0.042,
+     0.151
+    ]
+   },
+   "g_minus_s_balanced": {
+    "point": 0.118,
+    "ci95": [
+     0.059,
+     0.179
+    ]
+   },
+   "per_source": {
+    "cifar10": {
+     "n_material": 170,
+     "frac_positive": 0.112,
+     "geometry": 0.182,
+     "severity": 0.259,
+     "geometry_bal": 0.54,
+     "severity_bal": 0.468
+    },
+    "cifar100": {
+     "n_material": 90,
+     "frac_positive": 0.978,
+     "geometry": 0.878,
+     "severity": 0.989,
+     "geometry_bal": 0.693,
+     "severity_bal": 0.75
+    },
+    "supercifar100": {
+     "n_material": 314,
+     "frac_positive": 0.573,
+     "geometry": 0.803,
+     "severity": 0.682,
+     "geometry_bal": 0.813,
+     "severity_bal": 0.628
+    },
+    "tinyimagenet": {
+     "n_material": 144,
+     "frac_positive": 1.0,
+     "geometry": 0.993,
+     "severity": 0.618,
+     "geometry_bal": 0.993,
+     "severity_bal": 0.618
+    }
+   },
+   "g_minus_s_dropping_source": {
+    "cifar100": 0.126,
+    "cifar10": 0.15,
+    "supercifar100": 0.077,
+    "tinyimagenet": 0.026
+   }
+  }
+ },
+ "e4": {
+  "n": 2240,
+  "ga_quantiles_by_source": {
+   "cifar10": [
+    0.122,
+    0.213,
+    0.418
+   ],
+   "cifar100": [
+    0.131,
+    0.318,
+    0.499
+   ],
+   "supercifar100": [
+    0.16,
+    0.33,
+    0.659
+   ],
+   "tinyimagenet": [
+    0.09,
+    0.221,
+    0.46
+   ]
+  },
+  "rho_quantiles_by_source": {
+   "cifar10": [
+    0.716,
+    1.438,
+    2.188
+   ],
+   "cifar100": [
+    0.863,
+    1.037,
+    1.377
+   ],
+   "supercifar100": [
+    0.754,
+    1.216,
+    1.669
+   ],
+   "tinyimagenet": [
+    0.771,
+    1.01,
+    1.243
+   ]
+  },
+  "s_dict_quantiles_by_source": {
+   "cifar10": [
+    21.912,
+    29.295,
+    36.4
+   ],
+   "cifar100": [
+    43.079,
+    107.518,
+    122.812
+   ],
+   "supercifar100": [
+    3.795,
+    30.668,
+    46.02
+   ],
+   "tinyimagenet": [
+    138.378,
+    224.269,
+    322.313
+   ]
+  },
+  "analytic_margin_quantiles": [
+   0.0,
+   0.00976,
+   0.05308,
+   0.13106
+  ],
+  "frac_margin_zero": 0.803,
+  "frac_both_above_099": 0.883,
+  "frac_ctm_material_side": 0.087,
+  "spearman_obsgap_vs_margin_nonzero_cells": 0.087,
+  "median_abs_obs_gap_material": 15.4
+ }
+}

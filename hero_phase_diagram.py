@@ -154,6 +154,70 @@ def draw_gap(ax, ga_grid, y_grid, gap, ylabel, yscale=None):
     return pcm
 
 
+CELL_CACHE = CODE / ("nc_csf_predictivity/outputs/track1/"
+                     "theory_cell_predictions.parquet")
+
+# Held-out validation numbers (heldout_theory_report.md + stage2_closure E3).
+HELDOUT = {
+    "modes": ["checkpoint\nheld-out", "source\nheld-out"],
+    "arms": ["frozen theory", "severity only", "geometry model"],
+    "values": [[0.099, 0.684, 0.774], [0.099, 0.607, 0.703]],
+    "majority": 0.600,
+    "per_source_geometry": {"cifar10": 0.182, "cifar100": 0.878,
+                            "supercifar100": 0.803, "tinyimagenet": 0.993},
+    "per_source_severity": {"cifar10": 0.259, "cifar100": 0.989,
+                            "supercifar100": 0.682, "tinyimagenet": 0.618},
+}
+
+
+def overlay_support(ax) -> None:
+    """Audit #6 section 8 panel A: measured benchmark support on the analytic
+    surface. Each dot is one checkpoint-shift cell at its measured
+    (gamma*a, dictionary-s) coordinates; the support sits on the saturated
+    side and does not traverse the analytic boundary."""
+    if not CELL_CACHE.exists():
+        return
+    import pandas as pd
+    fr = pd.read_parquet(CELL_CACHE).dropna(subset=["ga", "s_dict"])
+    ga = fr.ga.clip(0.2, 2.2)
+    s = fr.s_dict.clip(8, 130)
+    ax.scatter(ga, s, s=1.4, c="black", alpha=0.25, linewidths=0, zorder=4)
+    ax.annotate("measured benchmark cells\n(all on the saturated side)",
+                xy=(0.42, 10.5), fontsize=6.0, color="black")
+
+
+def panel_heldout(ax) -> None:
+    """Audit #6 section 8 panel C: the held-out verdict, with per-source
+    markers exposing the heterogeneity of the geometry gains."""
+    x = np.arange(2)
+    width = 0.26
+    colors = [VIRIDIS(0.85), VIRIDIS(0.55), VIRIDIS(0.2)]
+    for k, arm in enumerate(HELDOUT["arms"]):
+        vals = [HELDOUT["values"][m][k] for m in range(2)]
+        ax.bar(x + (k - 1) * width, vals, width, color=colors[k], label=arm)
+    marks = {"cifar10": "o", "cifar100": "s", "supercifar100": "D",
+             "tinyimagenet": "^"}
+    for src, m in marks.items():
+        ax.plot(1 + (1 - 1) * width, HELDOUT["per_source_severity"][src],
+                marker=m, ms=3.4, mfc="white", mec="black", mew=0.6,
+                ls="none", zorder=5)
+        ax.plot(1 + (2 - 1) * width, HELDOUT["per_source_geometry"][src],
+                marker=m, ms=3.4, mfc="white", mec="black", mew=0.6,
+                ls="none", zorder=5)
+    ax.axhline(HELDOUT["majority"], color="black", linewidth=0.7,
+               linestyle=":", alpha=0.8)
+    ax.annotate("train-fold majority", xy=(-0.42, HELDOUT["majority"] + 0.012),
+                fontsize=5.8)
+    ax.annotate("saturated:\n82% zero margin", xy=(-0.40, 0.13),
+                fontsize=5.8)
+    ax.set_xticks(x)
+    ax.set_xticklabels(HELDOUT["modes"], fontsize=7.5)
+    ax.set_ylim(0, 1.05)
+    ax.set_ylabel("held-out sign accuracy (material cells)")
+    ax.legend(fontsize=6.2, loc="upper left", frameon=False,
+              bbox_to_anchor=(0.0, 0.99))
+
+
 def panel_c(ax, b_boot: int = 500) -> None:
     import pandas as pd
     df = pd.read_parquet(
@@ -210,50 +274,65 @@ def main() -> None:
     print("panel B surface (MLS vs Maha over gamma*a x theta_w) ...")
     gap_b = gap_map(("MLS", "Maha"), ga_grid, theta_grid, "theta")
 
+    # Redesigned 2026-08-25 per audit #6 section 8: A = analytic surface with
+    # the measured benchmark support overlaid (theory-versus-reality made
+    # visible); B = the empirical geometry-ordered pattern; C = the held-out
+    # verdict with per-source heterogeneity. The self-duality surface moves
+    # to its own figure (appendix).
     fig = plt.figure(figsize=(11.6, 3.3))
-    gs = fig.add_gridspec(1, 4, width_ratios=[1.1, 1.0, 0.05, 1.3],
-                          wspace=0.42)
+    gs = fig.add_gridspec(1, 4, width_ratios=[1.15, 0.05, 1.2, 1.0],
+                          wspace=0.45)
     ax_a = fig.add_subplot(gs[0, 0])
-    ax_b = fig.add_subplot(gs[0, 1])
-    ax_cb = fig.add_subplot(gs[0, 2])
+    ax_cb = fig.add_subplot(gs[0, 1])
+    ax_b = fig.add_subplot(gs[0, 2])
     ax_c = fig.add_subplot(gs[0, 3])
 
     pcm = draw_gap(ax_a, ga_grid, s_grid, gap_a, "SNR $s$", yscale="log")
     overlay_audit(ax_a, "A")
+    overlay_support(ax_a)
     for name, s_val in TERTILE_S.items():
         ax_a.axhline(s_val, color="white", linewidth=0.8,
                      linestyle="--", alpha=0.9)
-        ax_a.annotate(f"{name} tertile", xy=(0.24, s_val * 1.06),
+        ax_a.annotate(f"{name} tertile", xy=(1.62, s_val * 1.06),
                       fontsize=6.0, ha="left", color="white")
-    ax_a.set_title("A. Energy vs CTM over $(\\gamma a, s)$",
+    ax_a.set_title("A. Analytic Energy vs CTM surface + measured support",
                    fontsize=8.5, loc="left")
 
-    draw_gap(ax_b, ga_grid, theta_grid, gap_b,
-             r"self-duality angle $\theta_w$ (deg)")
-    overlay_audit(ax_b, "B")
-    ax_b.set_title("B. MLS vs Mahalanobis over "
-                   "$(\\gamma a, \\theta_w)$, $s{=}24$",
+    print("panel B (empirical strata) ...")
+    panel_c(ax_b)
+    ax_b.set_title("B. 280 checkpoints, by collapse tertile",
                    fontsize=8.5, loc="left")
 
-    print("panel C (empirical) ...")
-    panel_c(ax_c)
-    ax_c.set_title("C. 280 checkpoints, by collapse tertile",
-                   fontsize=8.5, loc="left")
+    print("panel C (held-out verdict) ...")
+    panel_heldout(ax_c)
+    ax_c.set_title("C. Held-out validation", fontsize=8.5, loc="left")
 
     cbar = fig.colorbar(pcm, cax=ax_cb)
     cbar.ax.set_title("advantage\n(AUROC)", fontsize=6.8, pad=6)
     cbar.ax.yaxis.set_ticks_position("left")
     cbar.ax.yaxis.set_label_position("left")
-    fig.suptitle("Detector selection as a phase diagram: audited pairwise "
-                 "gap surfaces (A, B; boundary points MC-verified, filled = "
-                 "well-conditioned, open = read as band) and the empirical "
-                 "geometry-ordered handoff they organize (C)",
-                 fontsize=9, y=1.05)
+    fig.suptitle("Phase model and reality: the analytic surface with the "
+                 "measured benchmark support on its saturated side (A), the "
+                 "geometry-ordered empirical pattern (B), and the held-out "
+                 "verdict: formulas fail, geometry-conditioned organization "
+                 "survives (C)", fontsize=9, y=1.05)
     PAPER_FIG.mkdir(parents=True, exist_ok=True)
     fig.savefig(PAPER_FIG / "hero_phase_diagram.pdf", bbox_inches="tight")
     fig.savefig(PAPER_FIG / "hero_phase_diagram.png", bbox_inches="tight")
     plt.close(fig)
-    print(f"wrote {PAPER_FIG / 'hero_phase_diagram.pdf'} (+.png)")
+
+    fig2, ax_sd = plt.subplots(figsize=(3.6, 3.0))
+    pcm2 = draw_gap(ax_sd, ga_grid, theta_grid, gap_b,
+                    r"self-duality angle $\theta_w$ (deg)")
+    overlay_audit(ax_sd, "B")
+    ax_sd.set_title("MLS vs Mahalanobis over $(\\gamma a, \\theta_w)$, "
+                    "$s{=}24$", fontsize=8.5, loc="left")
+    cb2 = fig2.colorbar(pcm2, ax=ax_sd, fraction=0.046)
+    cb2.ax.set_title("advantage\n(AUROC)", fontsize=6.4, pad=5)
+    fig2.savefig(PAPER_FIG / "selfdual_panel.pdf", bbox_inches="tight")
+    plt.close(fig2)
+    print(f"wrote {PAPER_FIG / 'hero_phase_diagram.pdf'} (+.png) and "
+          f"selfdual_panel.pdf")
 
 
 if __name__ == "__main__":
