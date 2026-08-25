@@ -119,8 +119,13 @@ def load_coords(coords_dir: Path) -> tuple[dict, list[str]]:
 def map_ood_names(rec: dict, parquet_sets: set[str]) -> dict[str, dict]:
     """Map coords-JSON OOD keys to parquet eval_dataset names for one source.
 
-    The seven nsncs names map directly; ood_sncs takes the unique leftover
-    parquet name for that source (asserted unique)."""
+    Schema >= 2 (extract_pool_coords v2): keys are already canonical parquet
+    names. Legacy schema-1 caches: the seven nsncs names map directly and
+    ood_sncs takes the unique leftover parquet name (only ever valid for the
+    cifar10/cifar100 loader layout; v1 files are re-extracted by the sweep)."""
+    if int(rec.get("schema", 1)) >= 2:
+        return {k: v for k, v in rec["ood"].items()
+                if "error" not in v and k in parquet_sets}
     mapped: dict[str, dict] = {}
     for k, v in rec["ood"].items():
         if "error" in v:
