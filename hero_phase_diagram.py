@@ -70,8 +70,14 @@ VIRIDIS = matplotlib.colormaps["viridis"]
 TOL = 0.01
 C_MODEL, D_MODEL = 100, 512
 TERTILE_S = {"strong": 120.8, "middle": 46.3, "weak": 23.6}
-plt.rcParams.update({"font.size": 8.5, "axes.spines.top": False,
-                     "axes.spines.right": False, "figure.dpi": 150})
+# Visual corrections 2026-08-26 per audit #7 section 4.4: support overlay is
+# a hexbin density raster (not 2,240 dots), no figure-wide title, no
+# overlapping support annotation, larger panel/axis fonts, in-panel legend
+# for panel C's source markers, saturation annotation 82% -> 80% (full-pool
+# E4 value).
+plt.rcParams.update({"font.size": 10, "axes.spines.top": False,
+                     "axes.spines.right": False, "figure.dpi": 150,
+                     "xtick.labelsize": 9, "ytick.labelsize": 9})
 
 
 def analytic_pixel(model: dict) -> dict[str, float]:
@@ -144,7 +150,7 @@ def draw_gap(ax, ga_grid, y_grid, gap, ylabel, yscale=None):
                         rasterized=True)
     cs = ax.contour(ga_grid, y_grid, gap, levels=[-0.5, -0.1, -TOL],
                     colors="black", linewidths=[0.5, 0.5, 1.3])
-    ax.clabel(cs, fontsize=5.5,
+    ax.clabel(cs, fontsize=6.5,
               fmt={-0.5: "-0.5", -0.1: "-0.1", -TOL: "boundary"})
     ax.axvline(1.0, color="black", linewidth=0.8, linestyle=":")
     ax.set_xlabel(r"$\gamma a$ (OOD norm ratio $\times$ alignment)")
@@ -171,19 +177,24 @@ HELDOUT = {
 
 
 def overlay_support(ax) -> None:
-    """Audit #6 section 8 panel A: measured benchmark support on the analytic
-    surface. Each dot is one checkpoint-shift cell at its measured
-    (gamma*a, dictionary-s) coordinates; the support sits on the saturated
-    side and does not traverse the analytic boundary."""
+    """Audit #6 section 8 / audit #7 section 4.4 panel A: measured benchmark
+    support on the analytic surface as a hexbin density raster (one count per
+    checkpoint-shift cell at its measured (gamma*a, dictionary-s)
+    coordinates); the support sits on the saturated side and does not
+    traverse the analytic boundary. The overlay is explained in the caption,
+    not by an in-panel annotation."""
     if not CELL_CACHE.exists():
         return
     import pandas as pd
     fr = pd.read_parquet(CELL_CACHE).dropna(subset=["ga", "s_dict"])
     ga = fr.ga.clip(0.2, 2.2)
     s = fr.s_dict.clip(8, 130)
-    ax.scatter(ga, s, s=1.4, c="black", alpha=0.25, linewidths=0, zorder=4)
-    ax.annotate("measured benchmark cells\n(all on the saturated side)",
-                xy=(0.42, 10.5), fontsize=6.0, color="black")
+    hb = ax.hexbin(ga, s, gridsize=(32, 22), yscale="log", cmap="Greys",
+                   mincnt=1, alpha=0.75, linewidths=0.0, zorder=4,
+                   extent=(0.2, 2.2, np.log10(8), np.log10(130)))
+    # shift the gray ramp so single-count hexes render mid-gray, not white
+    cmax = float(hb.get_array().max())
+    hb.set_clim(-0.8 * cmax, cmax)
 
 
 def panel_heldout(ax) -> None:
@@ -197,25 +208,34 @@ def panel_heldout(ax) -> None:
         ax.bar(x + (k - 1) * width, vals, width, color=colors[k], label=arm)
     marks = {"cifar10": "o", "cifar100": "s", "supercifar100": "D",
              "tinyimagenet": "^"}
+    from matplotlib.lines import Line2D
+    handles = []
     for src, m in marks.items():
         ax.plot(1 + (1 - 1) * width, HELDOUT["per_source_severity"][src],
-                marker=m, ms=3.4, mfc="white", mec="black", mew=0.6,
+                marker=m, ms=3.8, mfc="white", mec="black", mew=0.6,
                 ls="none", zorder=5)
         ax.plot(1 + (2 - 1) * width, HELDOUT["per_source_geometry"][src],
-                marker=m, ms=3.4, mfc="white", mec="black", mew=0.6,
+                marker=m, ms=3.8, mfc="white", mec="black", mew=0.6,
                 ls="none", zorder=5)
+        handles.append(Line2D([], [], marker=m, ms=3.8, mfc="white",
+                              mec="black", mew=0.6, ls="none", label=src))
     ax.axhline(HELDOUT["majority"], color="black", linewidth=0.7,
                linestyle=":", alpha=0.8)
     ax.annotate("train-fold majority", xy=(-0.42, HELDOUT["majority"] + 0.012),
-                fontsize=5.8)
-    ax.annotate("saturated:\n82% zero margin", xy=(-0.40, 0.13),
-                fontsize=5.8)
+                fontsize=7)
+    ax.annotate("saturated:\n80% zero margin", xy=(-0.40, 0.13),
+                fontsize=7)
     ax.set_xticks(x)
-    ax.set_xticklabels(HELDOUT["modes"], fontsize=7.5)
+    ax.set_xticklabels(HELDOUT["modes"], fontsize=9)
     ax.set_ylim(0, 1.05)
     ax.set_ylabel("held-out sign accuracy (material cells)")
-    ax.legend(fontsize=6.2, loc="upper left", frameon=False,
-              bbox_to_anchor=(0.0, 0.99))
+    leg_arms = ax.legend(fontsize=7.2, loc="upper left", frameon=False,
+                         bbox_to_anchor=(0.0, 0.99))
+    ax.add_artist(leg_arms)
+    ax.legend(handles=handles, fontsize=6.8, loc="center right",
+              bbox_to_anchor=(1.0, 0.42), frameon=True, framealpha=0.85,
+              edgecolor="none", handletextpad=0.3, borderpad=0.3,
+              title="held-out source", title_fontsize=6.8)
 
 
 def panel_c(ax, b_boot: int = 500) -> None:
@@ -256,7 +276,7 @@ def panel_c(ax, b_boot: int = 500) -> None:
     ax.axhline(0.0, color="gray", linewidth=0.7)
     ax.set_xlabel("continuous OOD severity $d$ (CLIP composite)")
     ax.set_ylabel(r"AUGRC$_{Energy}$ $-$ AUGRC$_{CTM}$")
-    ax.legend(frameon=False, fontsize=7, loc="lower right")
+    ax.legend(frameon=False, fontsize=7.5, loc="lower right")
 
 
 def main() -> None:
@@ -279,7 +299,7 @@ def main() -> None:
     # visible); B = the empirical geometry-ordered pattern; C = the held-out
     # verdict with per-source heterogeneity. The self-duality surface moves
     # to its own figure (appendix).
-    fig = plt.figure(figsize=(11.6, 3.3))
+    fig = plt.figure(figsize=(11.6, 3.5))
     gs = fig.add_gridspec(1, 4, width_ratios=[1.15, 0.05, 1.2, 1.0],
                           wspace=0.45)
     ax_a = fig.add_subplot(gs[0, 0])
@@ -294,28 +314,23 @@ def main() -> None:
         ax_a.axhline(s_val, color="white", linewidth=0.8,
                      linestyle="--", alpha=0.9)
         ax_a.annotate(f"{name} tertile", xy=(1.62, s_val * 1.06),
-                      fontsize=6.0, ha="left", color="white")
-    ax_a.set_title("A. Analytic Energy vs CTM surface + measured support",
-                   fontsize=8.5, loc="left")
+                      fontsize=7, ha="left", color="white")
+    ax_a.set_title("A. Analytic surface + measured support",
+                   fontsize=10, loc="left")
 
     print("panel B (empirical strata) ...")
     panel_c(ax_b)
     ax_b.set_title("B. 280 checkpoints, by collapse tertile",
-                   fontsize=8.5, loc="left")
+                   fontsize=10, loc="left")
 
     print("panel C (held-out verdict) ...")
     panel_heldout(ax_c)
-    ax_c.set_title("C. Held-out validation", fontsize=8.5, loc="left")
+    ax_c.set_title("C. Held-out validation", fontsize=10, loc="left")
 
     cbar = fig.colorbar(pcm, cax=ax_cb)
-    cbar.ax.set_title("advantage\n(AUROC)", fontsize=6.8, pad=6)
+    cbar.set_label("CTM advantage (AUROC)", fontsize=8)
     cbar.ax.yaxis.set_ticks_position("left")
     cbar.ax.yaxis.set_label_position("left")
-    fig.suptitle("Phase model and reality: the analytic surface with the "
-                 "measured benchmark support on its saturated side (A), the "
-                 "geometry-ordered empirical pattern (B), and the held-out "
-                 "verdict: formulas fail, geometry-conditioned organization "
-                 "survives (C)", fontsize=9, y=1.05)
     PAPER_FIG.mkdir(parents=True, exist_ok=True)
     fig.savefig(PAPER_FIG / "hero_phase_diagram.pdf", bbox_inches="tight")
     fig.savefig(PAPER_FIG / "hero_phase_diagram.png", bbox_inches="tight")
