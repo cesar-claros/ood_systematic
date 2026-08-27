@@ -79,6 +79,17 @@ def get_conf(path:str, study_name:str)->configs.Config:
     cfg_2 = OmegaConf.load(path_file + '/hydra/hydra.yaml')
     cfg_1.exp.work_dir = cfg_2.hydra.runtime.cwd
     base1_ = _update(DictConfig(cfg_), cfg_1)
+    # Augmentation recipes are ordered pipelines, not mergeable field sets:
+    # the skeleton's default (cifar10) recipe keys must not be unioned into
+    # an experiment whose data config uses different keys (breeds got
+    # cifar's random_crop(32) prepended to its 224px pipeline; svhn got
+    # crop/flip/cutout silently added). Replace wholesale with the saved
+    # experiment recipe. Bit-identical for the original pool: its data
+    # configs share the skeleton's exact key sets.
+    aug = OmegaConf.select(cfg_1, 'data.augmentations')
+    if aug is not None:
+        base1_.data.augmentations = OmegaConf.create(
+            OmegaConf.to_container(aug, resolve=False))
     cfg_1 = OmegaConf.to_object(base1_)
     cf: configs.Config = cast(configs.Config, cfg_1)
     return cf
