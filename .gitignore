@@ -102,6 +102,7 @@ nc_csf_predictivity/interventions/maha_repair/*.json
 
 # Pool Coords JSONs
 pilot0/pool_coords/*.json
+pilot0/stage1_pilot_coords/*.json
 
 # Exception to the *.sh rule: the Pool A extraction runner must sync to the HPC
 !x8_pool_a/run_pool_a_hpc.sh
