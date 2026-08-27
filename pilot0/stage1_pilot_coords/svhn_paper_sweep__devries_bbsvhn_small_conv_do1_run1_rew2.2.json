@@ -1,0 +1,140 @@
+{
+ "schema_stage1": 1,
+ "model_path": "svhn_paper_sweep/devries_bbsvhn_small_conv_do1_run1_rew2.2",
+ "slug": "svhn_paper_sweep__devries_bbsvhn_small_conv_do1_run1_rew2.2",
+ "study": "devries",
+ "source": "svhn",
+ "paradigm": "devries",
+ "reward": "2.2",
+ "substituted": false,
+ "declared_checkpoint": "devries_bbsvhn_small_conv_do1_run1_rew2.2",
+ "n_classes": 10,
+ "dataset": "svhn",
+ "img_size": "[32, 32, 3]",
+ "backbone": "NetworkConfig(name='devries_and_enc', backbone='svhn_small_conv', imagenet_weights_path=None, load_dg_backbone_path=None, save_dg_backbone_path=None)",
+ "iid_token": "test_1",
+ "n_loaders_exposed": 5,
+ "declared_externals": [
+  {
+   "group": "new_class_study",
+   "raw": "cifar10",
+   "token": "test_2",
+   "forward": true
+  },
+  {
+   "group": "new_class_study",
+   "raw": "cifar100",
+   "token": "test_3",
+   "forward": true
+  },
+  {
+   "group": "new_class_study",
+   "raw": "tinyimagenet_resize",
+   "token": "test_4",
+   "forward": true
+  }
+ ],
+ "n_forwardable_externals": 3,
+ "dim": 512,
+ "n_train": 73257,
+ "class_support": {
+  "min": 4659,
+  "median": 6304.5,
+  "n_empty": 0
+ },
+ "geometry": {
+  "head_residual_fraction": 0.3069386184675011,
+  "logit_scale": 16.576491047075496,
+  "self_duality_papyan": 0.40747793037965574,
+  "self_duality_angle_mean_deg": 36.336844390330675,
+  "class_mean_radius": 12.53240610391613,
+  "class_mean_radius_cv": 0.09572575875649911,
+  "sigma_iso": 0.3624658034266294,
+  "snr": 34.57541645429443,
+  "eig_max_over_mean": 34.44917955553158,
+  "effective_rank": 89.89513432317648,
+  "participation_ratio": 39.23317193027535
+ },
+ "papyan": {
+  "var_collapse": 0.14361438757286785,
+  "equinorm_uc": 0.09572575875649911,
+  "equinorm_wc": 0.05991448699891545,
+  "equiangular_uc": 0.1703392401537058,
+  "equiangular_wc": 0.049186352655239456,
+  "max_equiangular_uc": 0.14006423038242305,
+  "max_equiangular_wc": 0.03962980938617392,
+  "self_duality": 0.40747793037965574
+ },
+ "iid_test": {
+  "n": 25032,
+  "id_error_rate": 0.0396,
+  "gamma": 0.06747211120069975,
+  "a": 0.2368738079653279,
+  "aligned_class": 2,
+  "top2_gap": 0.10490346277999671,
+  "rho": 1.6728219461885032,
+  "w_perp": 0.8942473835140018,
+  "n_eff_aligned": 1.4873416545325957,
+  "per_sample_a_mean": 0.796680492304058,
+  "per_sample_norm_ratio_mean": 0.893308107021232
+ },
+ "ood": {
+  "cifar10": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_2",
+   "gamma": 0.3953678609100695,
+   "a": 0.06386373112265312,
+   "aligned_class": 5,
+   "top2_gap": 0.012168004835601015,
+   "rho": 0.8669559332343884,
+   "w_perp": 0.9611030861031327,
+   "n_eff_aligned": 2.5636707166418637,
+   "per_sample_a_mean": 0.3159531524874921,
+   "per_sample_norm_ratio_mean": 0.5761766492922393,
+   "auroc_id_vs_ood_Energy": 0.9748,
+   "auroc_id_vs_ood_CTM": 0.9676,
+   "abs_augrc_gap": 0.0016,
+   "material": false
+  },
+  "cifar100": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_3",
+   "gamma": 0.37455644044300046,
+   "a": 0.04751433505887491,
+   "aligned_class": 6,
+   "top2_gap": 0.005256680583814975,
+   "rho": 0.8949352128952396,
+   "w_perp": 0.9676460040149794,
+   "n_eff_aligned": 2.8566784039517334,
+   "per_sample_a_mean": 0.3361340179860616,
+   "per_sample_norm_ratio_mean": 0.578954711991188,
+   "auroc_id_vs_ood_Energy": 0.9726,
+   "auroc_id_vs_ood_CTM": 0.962,
+   "abs_augrc_gap": 0.0021,
+   "material": false
+  },
+  "tinyimagenet_resize": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_4",
+   "gamma": 0.39099401723309996,
+   "a": 0.09409288102531299,
+   "aligned_class": 5,
+   "top2_gap": 0.02991097303714954,
+   "rho": 0.898017516347527,
+   "w_perp": 0.9536426611275124,
+   "n_eff_aligned": 1.7406608582495458,
+   "per_sample_a_mean": 0.3239628599107329,
+   "per_sample_norm_ratio_mean": 0.5876860753256014,
+   "auroc_id_vs_ood_Energy": 0.9719,
+   "auroc_id_vs_ood_CTM": 0.9672,
+   "abs_augrc_gap": 0.0012,
+   "material": false
+  }
+ },
+ "n_sets_extracted": 3,
+ "n_material_sets": 0,
+ "runtime_sec": 15.0
+}

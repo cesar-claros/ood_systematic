@@ -1,0 +1,140 @@
+{
+ "schema_stage1": 1,
+ "model_path": "svhn_paper_sweep/dg_bbsvhn_small_conv_do1_run1_rew10",
+ "slug": "svhn_paper_sweep__dg_bbsvhn_small_conv_do1_run1_rew10",
+ "study": "dg",
+ "source": "svhn",
+ "paradigm": "dg",
+ "reward": "10",
+ "substituted": false,
+ "declared_checkpoint": "dg_bbsvhn_small_conv_do1_run1_rew10",
+ "n_classes": 10,
+ "dataset": "svhn",
+ "img_size": "[32, 32, 3]",
+ "backbone": "NetworkConfig(name='svhn_small_conv', backbone=None, imagenet_weights_path=None, load_dg_backbone_path=None, save_dg_backbone_path=PosixPath('/work/cniel/sw/FD_Shifts/project/experiments/svhn_paper_sweep/dg_bbsvhn_small_conv_do1_run1_rew10/dg_backbone.ckpt'))",
+ "iid_token": "test_1",
+ "n_loaders_exposed": 5,
+ "declared_externals": [
+  {
+   "group": "new_class_study",
+   "raw": "cifar10",
+   "token": "test_2",
+   "forward": true
+  },
+  {
+   "group": "new_class_study",
+   "raw": "cifar100",
+   "token": "test_3",
+   "forward": true
+  },
+  {
+   "group": "new_class_study",
+   "raw": "tinyimagenet_resize",
+   "token": "test_4",
+   "forward": true
+  }
+ ],
+ "n_forwardable_externals": 3,
+ "dim": 512,
+ "n_train": 73257,
+ "class_support": {
+  "min": 4659,
+  "median": 6304.5,
+  "n_empty": 0
+ },
+ "geometry": {
+  "head_residual_fraction": 0.3508631935087786,
+  "logit_scale": 16.37143322915261,
+  "self_duality_papyan": 0.46858566570426924,
+  "self_duality_angle_mean_deg": 38.97518917000065,
+  "class_mean_radius": 11.25734990343707,
+  "class_mean_radius_cv": 0.10534010823309355,
+  "sigma_iso": 0.3635579392781969,
+  "snr": 30.96439023113417,
+  "eig_max_over_mean": 26.829834492986564,
+  "effective_rank": 112.66696003502304,
+  "participation_ratio": 50.40088796037685
+ },
+ "papyan": {
+  "var_collapse": 0.14768518086392005,
+  "equinorm_uc": 0.10534010823309355,
+  "equinorm_wc": 0.06942286847637276,
+  "equiangular_uc": 0.1708889566851803,
+  "equiangular_wc": 0.041204361271710226,
+  "max_equiangular_uc": 0.13876857025932102,
+  "max_equiangular_wc": 0.03210329829122526,
+  "self_duality": 0.46858566570426924
+ },
+ "iid_test": {
+  "n": 25032,
+  "id_error_rate": 0.0393,
+  "gamma": 0.07692610953386009,
+  "a": 0.22929896014767587,
+  "aligned_class": 2,
+  "top2_gap": 0.15361014841047482,
+  "rho": 1.5776401137137122,
+  "w_perp": 0.8721511022921521,
+  "n_eff_aligned": 1.2314763720818276,
+  "per_sample_a_mean": 0.7576248130053588,
+  "per_sample_norm_ratio_mean": 0.9130548810054836
+ },
+ "ood": {
+  "cifar10": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_2",
+   "gamma": 0.35742736928092433,
+   "a": 0.15283745521287706,
+   "aligned_class": 2,
+   "top2_gap": 0.0706804824314295,
+   "rho": 0.8535315822076864,
+   "w_perp": 0.9262092349764792,
+   "n_eff_aligned": 1.5112448155642968,
+   "per_sample_a_mean": 0.33805068784690573,
+   "per_sample_norm_ratio_mean": 0.57789850119619,
+   "auroc_id_vs_ood_Energy": 0.9772,
+   "auroc_id_vs_ood_CTM": 0.9535,
+   "abs_augrc_gap": 0.0047,
+   "material": false
+  },
+  "cifar100": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_3",
+   "gamma": 0.334183034350059,
+   "a": 0.12438231165467269,
+   "aligned_class": 2,
+   "top2_gap": 0.07466070513203583,
+   "rho": 0.8839000849308214,
+   "w_perp": 0.9570682333858825,
+   "n_eff_aligned": 1.3008742044249335,
+   "per_sample_a_mean": 0.3525442138001802,
+   "per_sample_norm_ratio_mean": 0.5839376727531924,
+   "auroc_id_vs_ood_Energy": 0.9745,
+   "auroc_id_vs_ood_CTM": 0.9483,
+   "abs_augrc_gap": 0.0051,
+   "material": false
+  },
+  "tinyimagenet_resize": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_4",
+   "gamma": 0.33297153221286585,
+   "a": 0.09595060153311089,
+   "aligned_class": 2,
+   "top2_gap": 0.02196002439793303,
+   "rho": 0.873972748999402,
+   "w_perp": 0.9325759209351399,
+   "n_eff_aligned": 2.428991720603221,
+   "per_sample_a_mean": 0.34826614133977657,
+   "per_sample_norm_ratio_mean": 0.578582906387531,
+   "auroc_id_vs_ood_Energy": 0.9755,
+   "auroc_id_vs_ood_CTM": 0.9494,
+   "abs_augrc_gap": 0.0051,
+   "material": false
+  }
+ },
+ "n_sets_extracted": 3,
+ "n_material_sets": 0,
+ "runtime_sec": 15.4
+}

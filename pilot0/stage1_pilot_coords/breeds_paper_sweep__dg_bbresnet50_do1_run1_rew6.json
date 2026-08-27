@@ -1,0 +1,92 @@
+{
+ "schema_stage1": 1,
+ "model_path": "breeds_paper_sweep/dg_bbresnet50_do1_run1_rew6",
+ "slug": "breeds_paper_sweep__dg_bbresnet50_do1_run1_rew6",
+ "study": "dg",
+ "source": "breeds",
+ "paradigm": "dg",
+ "reward": "6",
+ "substituted": false,
+ "declared_checkpoint": "dg_bbresnet50_do1_run1_rew6",
+ "n_classes": 13,
+ "dataset": "breeds",
+ "img_size": "[224, 224, 3]",
+ "backbone": "NetworkConfig(name='resnet50', backbone=None, imagenet_weights_path=None, load_dg_backbone_path=None, save_dg_backbone_path=PosixPath('/work/cniel/sw/FD_Shifts/project/experiments/breeds_paper_sweep/dg_bbresnet50_do1_run1_rew6/dg_backbone.ckpt'))",
+ "iid_token": "test_1",
+ "n_loaders_exposed": 3,
+ "declared_externals": [
+  {
+   "group": "in_class_study",
+   "raw": "breeds_ood_test",
+   "token": "test_2",
+   "forward": true
+  }
+ ],
+ "n_forwardable_externals": 1,
+ "dim": 2048,
+ "n_train": 157120,
+ "class_support": {
+  "min": 11714,
+  "median": 12141.0,
+  "n_empty": 0
+ },
+ "geometry": {
+  "head_residual_fraction": 0.0511800493678731,
+  "logit_scale": 13.059517569794528,
+  "self_duality_papyan": 0.06402007421243333,
+  "self_duality_angle_mean_deg": 14.064884946013981,
+  "class_mean_radius": 4.0886242988972885,
+  "class_mean_radius_cv": 0.05985766895705027,
+  "sigma_iso": 0.07150280989317241,
+  "snr": 57.181309447920015,
+  "eig_max_over_mean": 264.18744771834776,
+  "effective_rank": 44.90976956590559,
+  "participation_ratio": 20.575561139624632
+ },
+ "papyan": {
+  "var_collapse": 0.3789608590501218,
+  "equinorm_uc": 0.05985766895705027,
+  "equinorm_wc": 0.02657797967075429,
+  "equiangular_uc": 0.10315812535692014,
+  "equiangular_wc": 0.06801208126521983,
+  "max_equiangular_uc": 0.08292456791975313,
+  "max_equiangular_wc": 0.05285100648303712,
+  "self_duality": 0.06402007421243333
+ },
+ "iid_test": {
+  "n": 9000,
+  "id_error_rate": 0.0548,
+  "gamma": 0.10270508511676868,
+  "a": 0.1385233238090912,
+  "aligned_class": 5,
+  "top2_gap": 0.006375403552879966,
+  "rho": 1.6811555698069456,
+  "w_perp": 0.9370645426954866,
+  "n_eff_aligned": 2.5667012310137283,
+  "per_sample_a_mean": 0.8162470305939967,
+  "per_sample_norm_ratio_mean": 1.022927452638631
+ },
+ "ood": {
+  "breeds_ood_test": {
+   "n": 167592,
+   "group": "in_class_study",
+   "token": "test_2",
+   "gamma": 0.06735668128480818,
+   "a": 0.5178070911723321,
+   "aligned_class": 5,
+   "top2_gap": 0.20174945130606287,
+   "rho": 1.3823906330500568,
+   "w_perp": 0.3342316361756851,
+   "n_eff_aligned": 1.7871790971950423,
+   "per_sample_a_mean": 0.6741301280319579,
+   "per_sample_norm_ratio_mean": 0.8412296353984744,
+   "auroc_id_vs_ood_Energy": 0.7927,
+   "auroc_id_vs_ood_CTM": 0.7487,
+   "abs_augrc_gap": 0.0021,
+   "material": false
+  }
+ },
+ "n_sets_extracted": 1,
+ "n_material_sets": 0,
+ "runtime_sec": 339.3
+}

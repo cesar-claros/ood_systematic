@@ -1,0 +1,140 @@
+{
+ "schema_stage1": 1,
+ "model_path": "svhn_paper_sweep/confidnet_bbsvhn_small_conv_do1_run1_rew2.2",
+ "slug": "svhn_paper_sweep__confidnet_bbsvhn_small_conv_do1_run1_rew2.2",
+ "study": "confidnet",
+ "source": "svhn",
+ "paradigm": "confidnet",
+ "reward": "2.2",
+ "substituted": false,
+ "declared_checkpoint": "confidnet_bbsvhn_small_conv_do1_run1_rew2.2",
+ "n_classes": 10,
+ "dataset": "svhn",
+ "img_size": "[32, 32, 3]",
+ "backbone": "NetworkConfig(name='confidnet_and_enc', backbone='svhn_small_conv', imagenet_weights_path=None, load_dg_backbone_path=None, save_dg_backbone_path=PosixPath('/work/cniel/sw/FD_Shifts/project/experiments/svhn_paper_sweep/confidnet_bbsvhn_small_conv_do1_run1_rew2.2/dg_backbone.ckpt'))",
+ "iid_token": "test_1",
+ "n_loaders_exposed": 5,
+ "declared_externals": [
+  {
+   "group": "new_class_study",
+   "raw": "cifar10",
+   "token": "test_2",
+   "forward": true
+  },
+  {
+   "group": "new_class_study",
+   "raw": "cifar100",
+   "token": "test_3",
+   "forward": true
+  },
+  {
+   "group": "new_class_study",
+   "raw": "tinyimagenet_resize",
+   "token": "test_4",
+   "forward": true
+  }
+ ],
+ "n_forwardable_externals": 3,
+ "dim": 512,
+ "n_train": 73257,
+ "class_support": {
+  "min": 4659,
+  "median": 6304.5,
+  "n_empty": 0
+ },
+ "geometry": {
+  "head_residual_fraction": 0.4234997190518795,
+  "logit_scale": 16.51417166091155,
+  "self_duality_papyan": 0.5532831871845827,
+  "self_duality_angle_mean_deg": 42.81280308941766,
+  "class_mean_radius": 11.788600862119626,
+  "class_mean_radius_cv": 0.10581375613787003,
+  "sigma_iso": 0.410050558036409,
+  "snr": 28.749139907457213,
+  "eig_max_over_mean": 25.111077886830437,
+  "effective_rank": 124.9615560093621,
+  "participation_ratio": 56.03950317384631
+ },
+ "papyan": {
+  "var_collapse": 0.15949203390456348,
+  "equinorm_uc": 0.10581375613787003,
+  "equinorm_wc": 0.06149279461495306,
+  "equiangular_uc": 0.16455540050606887,
+  "equiangular_wc": 0.04831657732122921,
+  "max_equiangular_uc": 0.1349734743047672,
+  "max_equiangular_wc": 0.03716327724881207,
+  "self_duality": 0.5532831871845827
+ },
+ "iid_test": {
+  "n": 25032,
+  "id_error_rate": 0.0391,
+  "gamma": 0.08886923480412429,
+  "a": 0.19456846346702955,
+  "aligned_class": 2,
+  "top2_gap": 0.1110938757551855,
+  "rho": 1.494401757513892,
+  "w_perp": 0.8941717629242683,
+  "n_eff_aligned": 1.387647391972277,
+  "per_sample_a_mean": 0.7364921353715655,
+  "per_sample_norm_ratio_mean": 0.9080242597253131
+ },
+ "ood": {
+  "cifar10": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_2",
+   "gamma": 0.371502304951124,
+   "a": 0.11182006747161241,
+   "aligned_class": 5,
+   "top2_gap": 0.010874605280569855,
+   "rho": 0.8203211024189542,
+   "w_perp": 0.9099791162006917,
+   "n_eff_aligned": 3.204275602977671,
+   "per_sample_a_mean": 0.32226163157377735,
+   "per_sample_norm_ratio_mean": 0.5827457153843446,
+   "auroc_id_vs_ood_Energy": 0.9767,
+   "auroc_id_vs_ood_CTM": 0.9534,
+   "abs_augrc_gap": 0.0047,
+   "material": false
+  },
+  "cifar100": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_3",
+   "gamma": 0.34256934347219536,
+   "a": 0.09836318812078632,
+   "aligned_class": 2,
+   "top2_gap": 0.027696210596533155,
+   "rho": 0.8459910447040012,
+   "w_perp": 0.9533318523224271,
+   "n_eff_aligned": 2.21583227449591,
+   "per_sample_a_mean": 0.3342340218271214,
+   "per_sample_norm_ratio_mean": 0.5852750582305932,
+   "auroc_id_vs_ood_Energy": 0.974,
+   "auroc_id_vs_ood_CTM": 0.9476,
+   "abs_augrc_gap": 0.0052,
+   "material": false
+  },
+  "tinyimagenet_resize": {
+   "n": 10000,
+   "group": "new_class_study",
+   "token": "test_4",
+   "gamma": 0.35296950995391896,
+   "a": 0.129136438581012,
+   "aligned_class": 5,
+   "top2_gap": 0.02465283344289393,
+   "rho": 0.852038080586516,
+   "w_perp": 0.887190224913348,
+   "n_eff_aligned": 2.739424263683794,
+   "per_sample_a_mean": 0.3361379905330878,
+   "per_sample_norm_ratio_mean": 0.5923293056980989,
+   "auroc_id_vs_ood_Energy": 0.9725,
+   "auroc_id_vs_ood_CTM": 0.949,
+   "abs_augrc_gap": 0.0048,
+   "material": false
+  }
+ },
+ "n_sets_extracted": 3,
+ "n_material_sets": 0,
+ "runtime_sec": 19.3
+}
