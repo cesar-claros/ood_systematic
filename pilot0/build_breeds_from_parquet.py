@@ -9,9 +9,17 @@ the seed-12345 shuffled sorted file listing of the source subclasses, and
 the OOD test set is the full listing of the target subclasses. Two
 consequences drive this script's design:
 
-1. Only the 260 Entity-13 wnids are needed (union of both subclass
+1. Only the 260 Entity-13 wnids need IMAGES (union of both subclass
    partitions of make_entity13(hierarchy_dir, split="rand"), the exact
-   call the loader makes), roughly 26% of ImageNet train.
+   call the loader makes), roughly 26% of ImageNet train. HOWEVER, all
+   1,000 wnid directories must EXIST: robustness's custom_label_mapping
+   matches the grouping's global ImageNet indices against class_to_idx
+   POSITIONS in the sorted listing of directories present on disk, so a
+   partial listing shifts every index (found the hard way in the first
+   Stage-1 BREEDS pilot: 9 of 13 superclasses empty, chance-level
+   accuracy). The script therefore creates the remaining 740 wnid
+   directories empty, which restores canonical positions at zero storage
+   cost; empty directories contribute no samples.
 2. ORIGINAL FILENAMES ARE LOAD-BEARING: the train/id_test partition is a
    seeded shuffle of the sorted listing, so file names must match the
    original ILSVRC names for the partition to reproduce the one the
@@ -110,11 +118,19 @@ def main() -> None:
     num_to_wnid, whitelist, record = entity13_wnids()
     train_root = Path(args.out_dir) / "ILSVRC/Data/CLS-LOC/train"
     train_root.mkdir(parents=True, exist_ok=True)
+    # ALL 1,000 wnid dirs must exist so class_to_idx positions are the
+    # canonical ImageNet indices the groupings address (see header).
+    n_placeholder = 0
+    for i in range(1000):
+        d = train_root / num_to_wnid[i]
+        if not d.is_dir():
+            d.mkdir()
+            n_placeholder += 1
     part_path = Path(args.out_dir) / "entity13_partition.json"
     part_path.write_text(json.dumps(record, indent=1))
     print(f"[breeds] {len(shards)} train shards; whitelist "
-          f"{len(whitelist)} classes; writing under {train_root}",
-          flush=True)
+          f"{len(whitelist)} classes; {n_placeholder} placeholder dirs "
+          f"created; writing under {train_root}", flush=True)
 
     t0 = time.time()
     written = skipped = filtered = 0
@@ -166,15 +182,19 @@ def main() -> None:
                  f"Extracted files are suspect; do not use.")
     classes = sorted(p.name for p in train_root.iterdir() if p.is_dir())
     counts = {c: len(list((train_root / c).iterdir())) for c in classes}
-    print(f"[breeds] DONE: {len(classes)} classes (expect 260), "
-          f"{sum(counts.values())} images, min/class "
-          f"{min(counts.values()) if counts else 0}, written {written}, "
-          f"skipped {skipped}, synthetic names {synthetic}", flush=True)
+    populated = {c: n for c, n in counts.items() if n > 0}
+    print(f"[breeds] DONE: {len(classes)} class dirs (expect 1000), "
+          f"{len(populated)} populated (expect 260), "
+          f"{sum(counts.values())} images, min/populated-class "
+          f"{min(populated.values()) if populated else 0}, "
+          f"written {written}, skipped {skipped}, "
+          f"synthetic names {synthetic}", flush=True)
     (Path(args.out_dir) / "build_summary.json").write_text(json.dumps(
-        {"n_classes": len(classes), "n_images": sum(counts.values()),
+        {"n_class_dirs": len(classes), "n_populated": len(populated),
+         "n_images": sum(counts.values()),
          "written": written, "skipped": skipped,
          "synthetic_names": synthetic, "per_class_min":
-         min(counts.values()) if counts else 0}, indent=1))
+         min(populated.values()) if populated else 0}, indent=1))
 
 
 if __name__ == "__main__":
