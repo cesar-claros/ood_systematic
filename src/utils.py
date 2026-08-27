@@ -25,7 +25,14 @@ def _update(d, u):
         if k=='defaults':
             continue
         if isinstance(v, Mapping):
-            d[k] = _update(d.get(k, {}), v)
+            # The default skeleton may hold None (or a scalar) where the
+            # saved experiment config holds a nested section (e.g. the
+            # breeds data config populates data.kwargs while the skeleton
+            # has kwargs: None); start a fresh mapping in that case.
+            cur = d.get(k, {})
+            if cur is None or not isinstance(cur, Mapping):
+                cur = {}
+            d[k] = _update(cur, v)
         else:
             d[k] = v
     return d
