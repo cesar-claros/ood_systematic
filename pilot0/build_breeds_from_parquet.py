@@ -63,17 +63,27 @@ def entity13_wnids() -> tuple[dict[int, str], set[int], dict]:
         "dataset_class_info.json is not in sorted-wnid order; the HF "
         "label -> wnid assumption does not hold, aborting")
 
-    superclasses, subclass_split, _ = make_entity13(info_dir, split="rand")
+    # The loader consumes ONLY subclass_split (source groups for
+    # train/id_test, target groups for ood_test); the first return value is
+    # superclass metadata and is not part of any grouping.
+    _, subclass_split, _ = make_entity13(info_dir, split="rand")
     train_sub, test_sub = subclass_split
-    flat = {int(c) for group in superclasses for c in group}
-    flat |= {int(c) for group in train_sub for c in group}
-    flat |= {int(c) for group in test_sub for c in group}
+    wnid_to_num = {w: n for n, w in num_to_wnid.items()}
+
+    def to_num(c) -> int:
+        s = str(c)
+        if s.startswith("n") and s in wnid_to_num:
+            return wnid_to_num[s]
+        return int(c)
+
+    flat = {to_num(c) for group in train_sub for c in group}
+    flat |= {to_num(c) for group in test_sub for c in group}
     record = {
         "call": 'make_entity13(hierarchy_dir, split="rand")',
         "n_whitelist_classes": len(flat),
-        "source_subclasses": [[num_to_wnid[int(c)] for c in g]
+        "source_subclasses": [[num_to_wnid[to_num(c)] for c in g]
                               for g in train_sub],
-        "target_subclasses": [[num_to_wnid[int(c)] for c in g]
+        "target_subclasses": [[num_to_wnid[to_num(c)] for c in g]
                               for g in test_sub],
     }
     return num_to_wnid, flat, record
