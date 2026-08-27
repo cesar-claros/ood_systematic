@@ -132,12 +132,15 @@ def resolve_targets(source: str) -> list[dict]:
         chosen = None
         for i, name in enumerate(cands):
             for prefix in PATH_PREFIXES:
-                if (root / prefix / fam / name).is_dir():
+                d = root / prefix / fam / name
+                if d.is_dir():
                     chosen = {"source": source, "paradigm": paradigm,
                               "reward": rew,
                               "model_path": f"{prefix}{fam}/{name}",
                               "substituted": i > 0,
-                              "declared": cands[0]}
+                              "declared": cands[0],
+                              "has_config": (d / "hydra"
+                                             / "config.yaml").is_file()}
                     break
             if chosen:
                 break
@@ -357,7 +360,9 @@ def main() -> None:
     for t in targets:
         state = ("MISSING (all candidates)" if t["model_path"] is None
                  else t["model_path"]
-                 + (" [SUBSTITUTED]" if t["substituted"] else ""))
+                 + (" [SUBSTITUTED]" if t["substituted"] else "")
+                 + ("" if t.get("has_config")
+                    else " [NO hydra/config.yaml: run exp.mode=test first]"))
         print(f"[stage1] {t['source']}/{t['paradigm']}/rew{t['reward']}: "
               f"{state}")
     if args.list:
