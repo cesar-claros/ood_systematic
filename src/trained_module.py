@@ -51,8 +51,20 @@ class TrainedModule:
             self.module.disable_dropout()
         else:    
             self.model, self.w, self.b = utils.get_model_and_last_layer(self.module, self.study_name)
-            self.maxpool_layers_name = [name for name,module in self.model.encoder.features.named_children() if 'MaxPool2d' in str(module)]
-            self.conv_layers_name = [name for name,module in self.model.encoder.features.named_children() if 'Conv2d' in str(module)]
+            if hasattr(self.model.encoder, 'features'):
+                self.maxpool_layers_name = [name for name,module in self.model.encoder.features.named_children() if 'MaxPool2d' in str(module)]
+                self.conv_layers_name = [name for name,module in self.model.encoder.features.named_children() if 'Conv2d' in str(module)]
+            else:
+                # Non-sequential encoders (svhn_small_conv, resnet50): the
+                # layer lists only serve the RankWeight/RankFeat/ASH
+                # surgeries, which slice a .features Sequential. The plain
+                # forward path (encoder(x)) never touches them.
+                self.maxpool_layers_name = []
+                self.conv_layers_name = []
+                if rank_weight or rank_feat or (ash_method is not None):
+                    raise NotImplementedError(
+                        'RankWeight/RankFeat/ASH require an encoder with a '
+                        '.features Sequential; unavailable for this backbone')
             if self.study_name == 'confidnet':
                 self.model.encoder.disable_dropout()
                 self.network = self.module.network
