@@ -91,8 +91,33 @@ else
   fi
 fi
 
-# --- ID images + OOD sets (dir names must match the imglist path prefixes) ---
-fetch 1i1ipLDFARR-JZ9argXd2-0a6DXwVhXEj imagenet_1k "$DATA/images_largescale"
+# --- ID val images (special-cased: the train materializer also writes into
+# imagenet_1k/, so presence of the DIRECTORY must not skip the val bundle;
+# the marker is imagenet_1k/val, and the unpack MERGES into the dir) ---
+if [ -d "$DATA/images_largescale/imagenet_1k/val" ] && [ -n "$(ls -A "$DATA/images_largescale/imagenet_1k/val" 2>/dev/null)" ]; then
+  echo "[skip] imagenet_1k/val already present"
+else
+  echo "[fetch] imagenet_1k (val images)"
+  if gdown 1i1ipLDFARR-JZ9argXd2-0a6DXwVhXEj -O "$TMP/imagenet_1k.zip" \
+     && rm -rf "$TMP/unz_imagenet_1k" && mkdir -p "$TMP/unz_imagenet_1k" \
+     && unzip -q "$TMP/imagenet_1k.zip" -d "$TMP/unz_imagenet_1k"; then
+    VALDIR=$(find "$TMP/unz_imagenet_1k" -maxdepth 3 -type d -name val | head -1)
+    if [ -n "$VALDIR" ]; then
+      mkdir -p "$DATA/images_largescale/imagenet_1k"
+      mv "$VALDIR" "$DATA/images_largescale/imagenet_1k/val"
+      echo "[done] imagenet_1k/val"
+    else
+      echo "[FAIL] imagenet_1k zip contains no val/ dir; inspect $TMP/unz_imagenet_1k"
+      FAILURES=$((FAILURES+1))
+    fi
+    rm -f "$TMP/imagenet_1k.zip"
+    find "$TMP/unz_imagenet_1k" -type d -empty -delete 2>/dev/null
+  else
+    echo "[FAIL] imagenet_1k"; FAILURES=$((FAILURES+1))
+  fi
+fi
+
+# --- OOD sets (dir names must match the imglist path prefixes) ---
 fetch 1PzkA-WGG8Z18h0ooL_pDdz9cO-DCIouE ssb_hard    "$DATA/images_largescale"
 fetch 1Z82cmvIB0eghTehxOGP5VTdLt7OD3nk6 ninco       "$DATA/images_largescale"
 fetch 1zfLfMvoUD0CUlKNnkk7LgxZZBnTBipdj inaturalist "$DATA/images_largescale"
@@ -114,7 +139,7 @@ done
 NCKPT=$(find "$OODROOT/results" -name 'best*.ckpt' 2>/dev/null | sed 's|/[^/]*$||' | sort -u | wc -l)
 echo "checkpoint run dirs with best*.ckpt: $NCKPT (expect 3)"
 [ "$NCKPT" -ge 3 ] || FAILURES=$((FAILURES+1))
-for d in images_largescale/imagenet_1k images_largescale/ssb_hard \
+for d in images_largescale/imagenet_1k/val images_largescale/ssb_hard \
          images_largescale/ninco images_largescale/inaturalist \
          images_largescale/openimage_o images_classic/texture; do
   if [ -d "$DATA/$d" ] && [ -n "$(ls -A "$DATA/$d")" ]; then
