@@ -14,7 +14,15 @@ support (gamma*a, dictionary SNR, rho quantiles). Census: material-cell
 counts under the balanced rule, winner prevalence, raw-vs-balanced gap
 comparison, runtimes.
 
-Inputs: pilot0/stage2_expansion_coords/<slug>.json (88 records).
+Extended 2026-08-28: also processes the Stage-3 OpenOOD ImageNet-200
+records (pilot0/stage3_imagenet200_coords/, three released ResNet-18 CE
+runs) with the identical Q3 theory machinery, plus the stage-3-specific
+deliverables (protocol stage 3): per-set six-score AUROC table with seed
+spread (ranking-direction check), orientation check, material prevalence,
+and coordinate support. No geometry regression at n = 3.
+
+Inputs: pilot0/stage2_expansion_coords/<slug>.json (88 records)
+        pilot0/stage3_imagenet200_coords/<run>.json (3 records, optional)
 Outputs: nc_csf_predictivity/outputs/track1/stage2_expansion_report.md/.json
 Usage (from code/): python stage2_expansion_analysis.py
 """
@@ -65,10 +73,14 @@ def main() -> None:
     cells = []
     cache: dict = {}
     n_ckpt = 0
-    for p in sorted(COORDS.glob("*.json")):
-        if p.name.startswith("FAILED"):
-            continue
+    stage3 = sorted(Path("pilot0/stage3_imagenet200_coords").glob("*.json"))
+    stage3 = [p for p in stage3 if not p.name.startswith("FAILED")]
+    paths = [p for p in sorted(COORDS.glob("*.json"))
+             if not p.name.startswith("FAILED")] + stage3
+    for p in paths:
         r = json.loads(p.read_text())
+        r.setdefault("slug", r.get("run"))
+        r.setdefault("paradigm", "crossentropy")
         n_ckpt += 1
         c, d = int(r["n_classes"]), int(r["dim"])
         vc = r["papyan"]["var_collapse"]
@@ -153,6 +165,39 @@ def main() -> None:
         out["per_source"][src] = block(g, f"Source: {src}")
     for par, g in fr[fr.source == "breeds"].groupby("paradigm"):
         out["per_paradigm_breeds"][par] = block(g, f"breeds / {par}")
+
+    # Stage-3 per-set detail: six-score AUROC means with seed spread
+    # (ranking-direction and orientation checks; protocol stage 3).
+    if stage3:
+        score_names = ("MSR", "MLS", "Energy", "CTM", "Maha", "fDBD")
+        recs = [json.loads(p.read_text()) for p in stage3]
+        L.append("## ImageNet-200 per-set score AUROCs "
+                 "(mean over 3 seeds, [min, max])")
+        L.append("")
+        out["imagenet200_sets"] = {}
+        for name in recs[0]["ood"]:
+            row = {"kind": recs[0]["ood"][name].get("kind")}
+            parts = [f"**{name}** ({row['kind']})"]
+            for s in score_names:
+                vals = [r["ood"][name][f"auroc_id_vs_ood_{s}"]
+                        for r in recs if "error" not in r["ood"][name]]
+                row[s] = [round(float(np.mean(vals)), 3),
+                          round(float(np.min(vals)), 3),
+                          round(float(np.max(vals)), 3)]
+                parts.append(f"{s} {row[s][0]:.3f} [{row[s][1]:.3f}, "
+                             f"{row[s][2]:.3f}]")
+            gaps = [r["ood"][name]["gap_balanced"] for r in recs]
+            row["gap_balanced"] = [round(float(np.mean(gaps)), 4),
+                                   round(float(np.min(gaps)), 4),
+                                   round(float(np.max(gaps)), 4)]
+            parts.append(f"gap_bal {row['gap_balanced'][0]:+.4f} "
+                         f"[{row['gap_balanced'][1]:+.4f}, "
+                         f"{row['gap_balanced'][2]:+.4f}]")
+            out["imagenet200_sets"][name] = row
+            L.append("- " + "; ".join(parts))
+        errs = [r["iid_test"]["id_error_rate"] for r in recs]
+        L += ["", f"ImageNet-200 ID error rates: {errs} (OpenOOD reports "
+              "~86% RN18 accuracy: harmonization sanity).", ""]
 
     L += ["## Notes", "",
           "- Raw-vs-balanced: sign(gap_raw) == sign(gap_balanced) on "

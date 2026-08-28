@@ -1,12 +1,12 @@
 {
- "n_checkpoints": 88,
- "n_cells": 508,
+ "n_checkpoints": 91,
+ "n_cells": 523,
  "per_source": {
   "breeds": {
    "n_cells": 28,
-   "n_material": 18,
+   "n_material": 17,
    "frac_positive_material": 0.0,
-   "median_abs_gap_balanced": 0.0116,
+   "median_abs_gap_balanced": 0.0111,
    "frac_margin_zero": 0.0,
    "frac_both_above_099": 1.0,
    "frac_energy_material_side": 0.0,
@@ -19,17 +19,44 @@
    "s_dict_q": [
     4.8,
     5.5,
-    6.1
+    6.2
    ],
    "rho_q": [
     1.26,
-    1.38,
+    1.39,
     1.54
    ],
    "median_runtime_sec": 354.9,
    "theory_sign_acc_material": 1.0,
    "n_material_pred_zero": 0,
-   "spearman_absmargin_vs_absgap": 0.869
+   "spearman_absmargin_vs_absgap": 0.851
+  },
+  "imagenet200": {
+   "n_cells": 15,
+   "n_material": 0,
+   "frac_positive_material": null,
+   "median_abs_gap_balanced": 0.0055,
+   "frac_margin_zero": 0.0,
+   "frac_both_above_099": 1.0,
+   "frac_energy_material_side": 0.0,
+   "frac_ctm_material_side": 0.0,
+   "ga_q": [
+    0.071,
+    0.147,
+    0.215
+   ],
+   "s_dict_q": [
+    13.9,
+    14.0,
+    14.1
+   ],
+   "rho_q": [
+    1.13,
+    1.26,
+    1.36
+   ],
+   "median_runtime_sec": 278.3,
+   "spearman_absmargin_vs_absgap": 0.411
   },
   "svhn": {
    "n_cells": 480,
@@ -64,27 +91,27 @@
    "n_cells": 4,
    "n_material": 3,
    "frac_positive_material": 0.0,
-   "median_abs_gap_balanced": 0.0121,
+   "median_abs_gap_balanced": 0.0114,
    "frac_margin_zero": 0.0,
    "frac_both_above_099": 1.0,
    "frac_energy_material_side": 0.0,
    "frac_ctm_material_side": 0.0,
    "ga_q": [
-    0.023,
+    0.024,
     0.026,
-    0.037
+    0.036
    ],
    "s_dict_q": [
     4.8,
     5.3,
-    5.5
+    5.6
    ],
    "rho_q": [
     1.25,
     1.33,
     1.4
    ],
-   "median_runtime_sec": 647.0,
+   "median_runtime_sec": 648.7,
    "theory_sign_acc_material": 1.0,
    "n_material_pred_zero": 0,
    "spearman_absmargin_vs_absgap": null
@@ -93,15 +120,15 @@
    "n_cells": 4,
    "n_material": 1,
    "frac_positive_material": 0.0,
-   "median_abs_gap_balanced": 0.0056,
+   "median_abs_gap_balanced": 0.0052,
    "frac_margin_zero": 0.0,
    "frac_both_above_099": 1.0,
    "frac_energy_material_side": 0.0,
    "frac_ctm_material_side": 0.0,
    "ga_q": [
     0.045,
-    0.049,
-    0.051
+    0.05,
+    0.052
    ],
    "s_dict_q": [
     5.5,
@@ -120,9 +147,9 @@
   },
   "dg": {
    "n_cells": 20,
-   "n_material": 14,
+   "n_material": 13,
    "frac_positive_material": 0.0,
-   "median_abs_gap_balanced": 0.0119,
+   "median_abs_gap_balanced": 0.0112,
    "frac_margin_zero": 0.0,
    "frac_both_above_099": 1.0,
    "frac_energy_material_side": 0.0,
@@ -133,19 +160,211 @@
     0.055
    ],
    "s_dict_q": [
-    4.9,
+    5.0,
     5.5,
     6.1
    ],
    "rho_q": [
     1.28,
-    1.38,
+    1.39,
     1.57
    ],
-   "median_runtime_sec": 354.4,
+   "median_runtime_sec": 354.6,
    "theory_sign_acc_material": 1.0,
    "n_material_pred_zero": 0,
-   "spearman_absmargin_vs_absgap": 0.863
+   "spearman_absmargin_vs_absgap": 0.853
+  }
+ },
+ "imagenet200_sets": {
+  "ssb_hard": {
+   "kind": "near",
+   "MSR": [
+    0.804,
+    0.803,
+    0.804
+   ],
+   "MLS": [
+    0.802,
+    0.801,
+    0.802
+   ],
+   "Energy": [
+    0.798,
+    0.798,
+    0.799
+   ],
+   "CTM": [
+    0.794,
+    0.792,
+    0.796
+   ],
+   "Maha": [
+    0.584,
+    0.576,
+    0.589
+   ],
+   "fDBD": [
+    0.806,
+    0.805,
+    0.807
+   ],
+   "gap_balanced": [
+    0.0009,
+    -0.0002,
+    0.0016
+   ]
+  },
+  "ninco": {
+   "kind": "near",
+   "MSR": [
+    0.863,
+    0.862,
+    0.864
+   ],
+   "MLS": [
+    0.857,
+    0.856,
+    0.858
+   ],
+   "Energy": [
+    0.852,
+    0.851,
+    0.853
+   ],
+   "CTM": [
+    0.868,
+    0.867,
+    0.87
+   ],
+   "Maha": [
+    0.655,
+    0.65,
+    0.661
+   ],
+   "fDBD": [
+    0.88,
+    0.878,
+    0.881
+   ],
+   "gap_balanced": [
+    0.0052,
+    0.0047,
+    0.0056
+   ]
+  },
+  "textures": {
+   "kind": "far",
+   "MSR": [
+    0.884,
+    0.883,
+    0.885
+   ],
+   "MLS": [
+    0.906,
+    0.904,
+    0.908
+   ],
+   "Energy": [
+    0.908,
+    0.906,
+    0.91
+   ],
+   "CTM": [
+    0.944,
+    0.943,
+    0.945
+   ],
+   "Maha": [
+    0.792,
+    0.79,
+    0.797
+   ],
+   "fDBD": [
+    0.929,
+    0.928,
+    0.93
+   ],
+   "gap_balanced": [
+    0.0075,
+    0.0068,
+    0.0083
+   ]
+  },
+  "inaturalist": {
+   "kind": "far",
+   "MSR": [
+    0.928,
+    0.925,
+    0.931
+   ],
+   "MLS": [
+    0.931,
+    0.926,
+    0.937
+   ],
+   "Energy": [
+    0.926,
+    0.92,
+    0.932
+   ],
+   "CTM": [
+    0.959,
+    0.958,
+    0.961
+   ],
+   "Maha": [
+    0.75,
+    0.741,
+    0.759
+   ],
+   "fDBD": [
+    0.957,
+    0.956,
+    0.959
+   ],
+   "gap_balanced": [
+    0.0061,
+    0.0055,
+    0.0067
+   ]
+  },
+  "openimage_o": {
+   "kind": "far",
+   "MSR": [
+    0.892,
+    0.892,
+    0.893
+   ],
+   "MLS": [
+    0.896,
+    0.895,
+    0.899
+   ],
+   "Energy": [
+    0.892,
+    0.89,
+    0.896
+   ],
+   "CTM": [
+    0.913,
+    0.912,
+    0.914
+   ],
+   "Maha": [
+    0.699,
+    0.697,
+    0.7
+   ],
+   "fDBD": [
+    0.917,
+    0.916,
+    0.919
+   ],
+   "gap_balanced": [
+    0.0052,
+    0.005,
+    0.0056
+   ]
   }
  }
 }
