@@ -213,14 +213,20 @@ def panel_heldout(ax) -> None:
     for k, arm in enumerate(HELDOUT["arms"]):
         vals = [HELDOUT["values"][m][k] for m in range(2)]
         ax.bar(x + (k - 1) * width, vals, width, color=colors[k], label=arm)
-    # post-hoc audit group (hatched, macro balanced accuracy)
+    # post-hoc audit group (hatched, macro balanced accuracy). Audit #9
+    # section 5.2: neutral edges (no linkage to the solid-arm colors) and
+    # direct in-bar labels, so M0+ cannot be read as the severity-only arm.
     xp = 2.15
     ax.bar(xp - width / 2, POSTHOC["metadata"], width * 0.9,
-           color="white", edgecolor=VIRIDIS(0.55), hatch="///",
-           linewidth=1.0)
+           color="white", edgecolor="0.35", hatch="///", linewidth=1.0)
     ax.bar(xp + width / 2, POSTHOC["metadata_geometry"], width * 0.9,
-           color="white", edgecolor=VIRIDIS(0.2), hatch="///",
-           linewidth=1.0)
+           color="black", fill=False, hatch="xxx", linewidth=1.0)
+    for bx, lab in ((xp - width / 2, "metadata"),
+                    (xp + width / 2, "metadata\n+ geometry")):
+        ax.annotate(lab, xy=(bx, 0.46), ha="center", va="center",
+                    rotation=90, fontsize=6.2, color="black",
+                    bbox=dict(boxstyle="round,pad=0.15", facecolor="white",
+                              edgecolor="none", alpha=0.9))
     yb = max(POSTHOC["metadata"], POSTHOC["metadata_geometry"]) + 0.02
     ax.plot([xp - width / 2, xp - width / 2, xp + width / 2,
              xp + width / 2], [yb, yb + 0.012, yb + 0.012, yb],
