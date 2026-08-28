@@ -52,12 +52,16 @@ fetch () {
   fi
   local entries; entries=$(ls -A "$unz")
   local count; count=$(echo "$entries" | wc -l)
-  if [ "$count" -eq 1 ] && [ -d "$unz/$entries" ]; then
-    if [ "$entries" != "$name" ]; then
-      echo "[note] $name zip unpacks as '$entries'; placing it as '$name'"
-    fi
+  if [ "$count" -eq 1 ] && [ -d "$unz/$entries" ] && [ "$entries" = "$name" ]; then
+    mv "$unz/$entries" "$destroot/$name"
+  elif [ "$count" -eq 1 ] && [ -d "$unz/$entries" ] \
+       && ! echo "$entries" | grep -qxE 'images|train|val|test|data'; then
+    echo "[note] $name zip unpacks as '$entries'; placing it as '$name'"
     mv "$unz/$entries" "$destroot/$name"
   else
+    # bare files, several entries, or a STRUCTURAL top dir (images/train/
+    # val/test/data, which the imglists reference below the dataset name):
+    # wrap under <name>/ preserving the structure
     mkdir -p "$destroot/$name"
     mv "$unz"/* "$destroot/$name/"
   fi
