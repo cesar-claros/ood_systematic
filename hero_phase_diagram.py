@@ -174,6 +174,10 @@ HELDOUT = {
     "per_source_severity": {"cifar10": 0.259, "cifar100": 0.989,
                             "supercifar100": 0.682, "tinyimagenet": 0.618},
 }
+# Post-hoc joint confounding audit (joint_confound_audit_report.md): macro
+# balanced accuracy; the paired increment crosses zero.
+POSTHOC = {"metadata": 0.947, "metadata_geometry": 0.954,
+           "increment": "+0.007 [-0.001, 0.017]"}
 
 
 def overlay_support(ax) -> None:
@@ -198,14 +202,31 @@ def overlay_support(ax) -> None:
 
 
 def panel_heldout(ax) -> None:
-    """Audit #6 section 8 panel C: the held-out verdict, with per-source
-    markers exposing the heterogeneity of the geometry gains."""
+    """Panel C per audit #8 section 7: two labeled comparisons. Solid bars =
+    the pre-specified Stage-2 test (material-cell sign accuracy); hatched
+    bars = the post-hoc joint confounding audit (macro balanced accuracy)
+    with the paired increment and its interval. Per-source markers keep the
+    heterogeneity visible."""
     x = np.arange(2)
     width = 0.26
     colors = [VIRIDIS(0.85), VIRIDIS(0.55), VIRIDIS(0.2)]
     for k, arm in enumerate(HELDOUT["arms"]):
         vals = [HELDOUT["values"][m][k] for m in range(2)]
         ax.bar(x + (k - 1) * width, vals, width, color=colors[k], label=arm)
+    # post-hoc audit group (hatched, macro balanced accuracy)
+    xp = 2.15
+    ax.bar(xp - width / 2, POSTHOC["metadata"], width * 0.9,
+           color="white", edgecolor=VIRIDIS(0.55), hatch="///",
+           linewidth=1.0)
+    ax.bar(xp + width / 2, POSTHOC["metadata_geometry"], width * 0.9,
+           color="white", edgecolor=VIRIDIS(0.2), hatch="///",
+           linewidth=1.0)
+    yb = max(POSTHOC["metadata"], POSTHOC["metadata_geometry"]) + 0.02
+    ax.plot([xp - width / 2, xp - width / 2, xp + width / 2,
+             xp + width / 2], [yb, yb + 0.012, yb + 0.012, yb],
+            color="black", linewidth=0.7)
+    ax.annotate(POSTHOC["increment"], xy=(xp, yb + 0.02), ha="center",
+                fontsize=6.4)
     marks = {"cifar10": "o", "cifar100": "s", "supercifar100": "D",
              "tinyimagenet": "^"}
     from matplotlib.lines import Line2D
@@ -219,23 +240,25 @@ def panel_heldout(ax) -> None:
                 ls="none", zorder=5)
         handles.append(Line2D([], [], marker=m, ms=3.8, mfc="white",
                               mec="black", mew=0.6, ls="none", label=src))
-    ax.axhline(HELDOUT["majority"], color="black", linewidth=0.7,
-               linestyle=":", alpha=0.8)
+    ax.plot([-0.45, 1.45], [HELDOUT["majority"]] * 2, color="black",
+            linewidth=0.7, linestyle=":", alpha=0.8)
     ax.annotate("train-fold majority", xy=(-0.42, HELDOUT["majority"] + 0.012),
-                fontsize=7)
+                fontsize=6.8)
     ax.annotate("saturated:\n80% zero margin", xy=(-0.40, 0.13),
-                fontsize=7)
-    ax.set_xticks(x)
-    ax.set_xticklabels(HELDOUT["modes"], fontsize=9)
-    ax.set_ylim(0, 1.05)
-    ax.set_ylabel("held-out sign accuracy (material cells)")
-    leg_arms = ax.legend(fontsize=7.2, loc="upper left", frameon=False,
-                         bbox_to_anchor=(0.0, 0.99))
+                fontsize=6.8)
+    ax.set_xticks([0, 1, 2.15])
+    ax.set_xticklabels(["checkpoint\nheld-out\n(sign acc.)",
+                        "source\nheld-out\n(sign acc.)",
+                        "post-hoc audit\n(macro bal.\nacc.)"], fontsize=7.5)
+    ax.set_ylim(0, 1.14)
+    ax.set_ylabel("held-out accuracy (material cells)")
+    leg_arms = ax.legend(fontsize=6.2, loc="upper left", frameon=False,
+                         bbox_to_anchor=(0.0, 1.0))
     ax.add_artist(leg_arms)
-    ax.legend(handles=handles, fontsize=6.8, loc="center right",
-              bbox_to_anchor=(1.0, 0.42), frameon=True, framealpha=0.85,
+    ax.legend(handles=handles, fontsize=6.4, loc="center",
+              bbox_to_anchor=(0.60, 0.38), frameon=True, framealpha=0.85,
               edgecolor="none", handletextpad=0.3, borderpad=0.3,
-              title="held-out source", title_fontsize=6.8)
+              title="held-out source", title_fontsize=6.4)
 
 
 def panel_c(ax, b_boot: int = 500) -> None:
