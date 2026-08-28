@@ -1,0 +1,64 @@
+{
+ "counts": {
+  "train": 157120,
+  "id_test": 10000,
+  "ood_test": 167592
+ },
+ "filepath_intersections": {
+  "id_test&ood_test": 0,
+  "id_test&train": 0,
+  "ood_test&train": 0
+ },
+ "train_idtest_content_hash_intersection": 4,
+ "label_frequencies": {
+  "train": {
+   "0": 11714,
+   "9": 11983,
+   "10": 12047,
+   "12": 12120,
+   "2": 12196,
+   "6": 12141,
+   "11": 12240,
+   "1": 12213,
+   "3": 12212,
+   "4": 12248,
+   "7": 11868,
+   "5": 11971,
+   "8": 12167
+  },
+  "id_test": {
+   "2": 770,
+   "5": 798,
+   "9": 784,
+   "0": 753,
+   "6": 703,
+   "12": 819,
+   "10": 778,
+   "3": 788,
+   "1": 787,
+   "8": 782,
+   "11": 760,
+   "4": 752,
+   "7": 726
+  },
+  "ood_test": {
+   "1": 12841,
+   "2": 12771,
+   "3": 13000,
+   "4": 13000,
+   "0": 12631,
+   "9": 12855,
+   "6": 12818,
+   "11": 13000,
+   "10": 13000,
+   "8": 12676,
+   "7": 13000,
+   "5": 13000,
+   "12": 13000
+  }
+ },
+ "canonical_filename_rule_checked": true,
+ "split_manifest_sha256": "e25ad91170fdff2638a19d71387a0155e84a02c73c40264669c1a21d437b218b",
+ "note": "All reported BREEDS numbers come from the post-repair extraction: canonical ILSVRC filenames restored by rename_breeds_canonical.py, which restores the exact seed-12345 partition of the released checkpoints.",
+ "PASS": false
+}

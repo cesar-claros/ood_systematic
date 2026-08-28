@@ -1,0 +1,36 @@
+{
+ "counts": {
+  "train": 73257,
+  "id_test": 26032
+ },
+ "train_idtest_content_hash_intersection": 0,
+ "label_frequencies": {
+  "train": {
+   "1": 13861,
+   "9": 4659,
+   "2": 10585,
+   "3": 8497,
+   "5": 6882,
+   "8": 5045,
+   "7": 5595,
+   "4": 7458,
+   "6": 5727,
+   "0": 4948
+  },
+  "id_test": {
+   "5": 2384,
+   "2": 4149,
+   "1": 5099,
+   "0": 1744,
+   "6": 1977,
+   "9": 1595,
+   "8": 1660,
+   "3": 2882,
+   "4": 2523,
+   "7": 2019
+  }
+ },
+ "split_manifest_sha256": "f7390dc606c9da1d162d44bbdcaecfc287ae1832054dc1d0db49d33b48e2226d",
+ "note": "torchvision official SVHN train/test split; content-level duplicate check",
+ "PASS": true
+}
