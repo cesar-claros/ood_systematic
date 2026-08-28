@@ -45,6 +45,12 @@ ID-test coordinates with the train-to-test rho).
 Failure isolation per checkpoint (FAILED_<slug>.json); resumable; --source
 and --shard k/n compose; --list enumerates without running.
 
+DEDUP SENSITIVITY MODE (audit #9 section 6.3, post hoc, declared): with
+--exclude_idtest <split_integrity json>, the ID-test rows whose file
+basenames appear in the certificate's duplicates[*].id_test lists are
+dropped after the forward pass and before any scoring; write these runs to
+a separate --out_dir. The frozen primary records stay untouched.
+
 Usage (from code/, inside the campaign container, .env with
 EXPERIMENT_ROOT_DIR/DATASET_ROOT_DIR):
     python pilot0/extract_stage2_expansion.py --list
@@ -148,7 +154,8 @@ def set_outcomes(sc_id: dict, res_id: np.ndarray, sc_ood: dict) -> dict:
     return out
 
 
-def extract_one(target: dict, out_dir: Path, use_cuda: bool) -> None:
+def extract_one(target: dict, out_dir: Path, use_cuda: bool,
+                exclude_basenames: set | None = None) -> None:
     import torch  # noqa: F401
     from fd_shifts import logger
     from fd_shifts.loaders.data_loader import FDShiftsDataLoader
@@ -199,6 +206,7 @@ def extract_one(target: dict, out_dir: Path, use_cuda: bool) -> None:
         "dropout": target["dropout"], "run": target["run"],
         "n_classes": n_classes, "dim": int(h_train.shape[1]),
         "n_train": int(len(h_train)), "iid_token": iid_token,
+        "n_idtest_excluded": 0,
         "geometry": geometry_record(w_np, b_np, fm),
         "papyan": papyan_metrics(w_np, fm),
         "ood": {},
@@ -209,8 +217,20 @@ def extract_one(target: dict, out_dir: Path, use_cuda: bool) -> None:
     ev = forward_loader(model, test_loaders[iid_idx])
     h_iid = ev["encoded"].cpu().numpy().astype(np.float32)
     y_iid = ev["labels"].cpu().numpy().astype(np.int64)
+    n_excluded = 0
+    if exclude_basenames:
+        import os as _os
+        ds = test_loaders[iid_idx].dataset
+        paths = [p_ for p_, _ in ds.samples]
+        assert len(paths) == len(h_iid), "sample/forward length mismatch"
+        keep = np.array([_os.path.basename(p_) not in exclude_basenames
+                         for p_ in paths])
+        n_excluded = int((~keep).sum())
+        h_iid, y_iid = h_iid[keep], y_iid[keep]
+    record_excluded = n_excluded
     sc_id = scores_for(h_iid)
     res_id = (sc_id["_logits"].argmax(1) != y_iid).astype(float)
+    record["n_idtest_excluded"] = record_excluded
     record["iid_test"] = dict(estimate_ood_coords(h_iid, fm),
                               n=int(len(h_iid)),
                               id_error_rate=round(float(res_id.mean()), 4))
@@ -277,6 +297,9 @@ def main() -> None:
     parser.add_argument("--batch_size", type=int, default=None)
     parser.add_argument("--num_workers", type=int, default=None)
     parser.add_argument("--out_dir", type=str, default=OUT_DIR_DEFAULT)
+    parser.add_argument("--exclude_idtest", type=str, default=None,
+                        help="split_integrity JSON; drops its duplicate "
+                             "id_test basenames (dedup sensitivity mode)")
     args = parser.parse_args()
     if args.batch_size is not None:
         os.environ["CSF_BATCH_SIZE"] = str(args.batch_size)
@@ -302,6 +325,15 @@ def main() -> None:
                   + ("" if t["has_config"] else " [NO hydra/config.yaml]"))
         return
 
+    exclude_basenames = None
+    if args.exclude_idtest:
+        import os as _os
+        cert = json.loads(Path(args.exclude_idtest).read_text())
+        exclude_basenames = {_os.path.basename(p_)
+                             for d in cert.get("duplicates", [])
+                             for p_ in d["id_test"]}
+        print(f"[stage2] DEDUP MODE: excluding {len(exclude_basenames)} "
+              f"id_test files")
     import torch
     use_cuda = bool(args.use_cuda and torch.cuda.is_available())
     done = skipped = failed = 0
@@ -312,7 +344,7 @@ def main() -> None:
             continue
         print(f"[stage2 {k}/{n}] {i}/{len(shard)}: {t['model_path']}")
         try:
-            extract_one(t, out_dir, use_cuda)
+            extract_one(t, out_dir, use_cuda, exclude_basenames)
             done += 1
         except Exception:  # noqa: BLE001 - per-checkpoint isolation
             failed += 1

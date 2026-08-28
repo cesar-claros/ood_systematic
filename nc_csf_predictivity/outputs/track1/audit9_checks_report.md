@@ -1,0 +1,53 @@
+# Audit-9 checks (R5 unrounded + high precision; within-reward sensitivity)
+
+Post-hoc sensitivities; frozen primaries unchanged. The high-precision check isolates CDF-evaluation and accumulation error on the same float64 deviates; it is not an extraction-uncertainty interval.
+
+## R5 unrounded
+```
+{
+ "float32": {
+  "breeds_sign_flips": 0,
+  "breeds_rank_spearman": 0.9999999999999998,
+  "max_abs_margin_change": 6.692657539275615e-11,
+  "max_rel_margin_change": 2.788950523553512e-07
+ },
+ "rel1e-6": {
+  "breeds_sign_flips": 0,
+  "breeds_rank_spearman": 0.9999999999999998,
+  "max_abs_margin_change": 2.0504535847010175e-09,
+  "max_rel_margin_change": 9.10028146830538e-06
+ }
+}
+```
+
+## R5 high-precision (mpmath, 50 digits)
+```
+{
+ "breeds_smallest": {
+  "cell": "breeds_paper_sweep__devries_bbresnet50_do0_run1_rew2.2 / breeds_ood_test",
+  "margin_float64": 7.423791082650233e-06,
+  "margin_mpmath50": 7.423791082650233e-06,
+  "abs_difference": 0.0,
+  "sign_agrees": true
+ },
+ "imagenet200_median": {
+  "cell": "imagenet200_resnet18_224x224_base_e90_lr0.1_default__s2 / ninco",
+  "margin_float64": 2.434007995155696e-09,
+  "margin_mpmath50": 2.434007995155696e-09,
+  "abs_difference": 0.0,
+  "sign_agrees": true
+ }
+}
+```
+
+## Within-reward BREEDS sensitivity (optional, audit-9 section 11)
+```
+{
+ "observed_spearman": 0.851,
+ "blocked_permutation_p_one_sided": 0.0001,
+ "blocked_null_q95": 0.516,
+ "residual_rank_spearman": 0.772,
+ "n_strata": 7,
+ "note": "strata hold 4 checkpoints each; low power expected"
+}
+```

@@ -141,7 +141,8 @@ def forward(model, loader, device) -> tuple[np.ndarray, np.ndarray]:
 
 
 def extract_one(ckpt: Path, run_name: str, data_root: Path, out_dir: Path,
-                use_cuda: bool, batch_size: int, num_workers: int) -> None:
+                use_cuda: bool, batch_size: int, num_workers: int,
+                exclude_basenames: set | None = None) -> None:
     import torch
     from torchvision.models import resnet18
 
@@ -188,7 +189,18 @@ def extract_one(ckpt: Path, run_name: str, data_root: Path, out_dir: Path,
     }
 
     print(f"[{run_name}] forward id test", flush=True)
-    h_iid, y_iid = forward(model, loader_for(ID_LIST), device)
+    id_loader = loader_for(ID_LIST)
+    h_iid, y_iid = forward(model, id_loader, device)
+    n_excluded = 0
+    if exclude_basenames:
+        import os as _os
+        paths = [str(p_) for p_, _ in id_loader.dataset.items]
+        assert len(paths) == len(h_iid)
+        keep = np.array([_os.path.basename(p_) not in exclude_basenames
+                         for p_ in paths])
+        n_excluded = int((~keep).sum())
+        h_iid, y_iid = h_iid[keep], y_iid[keep]
+    record["n_idtest_excluded"] = n_excluded
     sc_id = scores_for(h_iid)
     res_id = (sc_id["_logits"].argmax(1) != y_iid).astype(float)
     record["iid_test"] = dict(estimate_ood_coords(h_iid, fm),
@@ -245,6 +257,7 @@ def main() -> None:
     parser.add_argument("--batch_size", type=int, default=256)
     parser.add_argument("--num_workers", type=int, default=12)
     parser.add_argument("--out_dir", type=str, default=OUT_DIR_DEFAULT)
+    parser.add_argument("--exclude_idtest", type=str, default=None)
     args = parser.parse_args()
     ckpts = discover_ckpts(Path(args.ckpt_root))
     data_root = Path(args.data_root)
@@ -262,6 +275,15 @@ def main() -> None:
     if missing:
         sys.exit("[stage3] imglists missing; download benchmark_imglist "
                  "first")
+    exclude_basenames = None
+    if args.exclude_idtest:
+        import os as _os
+        cert = json.loads(Path(args.exclude_idtest).read_text())
+        exclude_basenames = {_os.path.basename(p_)
+                             for d in cert.get("duplicates", [])
+                             for p_ in d["id_test"]}
+        print(f"[stage3] DEDUP MODE: excluding {len(exclude_basenames)} "
+              f"id_test files")
     import torch
     use_cuda = bool(args.use_cuda and torch.cuda.is_available())
     out_dir = Path(args.out_dir)
@@ -272,7 +294,8 @@ def main() -> None:
             continue
         try:
             extract_one(ckpt, name, data_root, out_dir, use_cuda,
-                        args.batch_size, args.num_workers)
+                        args.batch_size, args.num_workers,
+                        exclude_basenames)
             done += 1
         except Exception:  # noqa: BLE001 - per-checkpoint isolation
             failed += 1

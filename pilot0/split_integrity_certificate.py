@@ -73,7 +73,18 @@ def certify(split_paths: dict[str, list], split_labels: dict[str, list],
           flush=True)
     h_train = hash_many(split_paths["train"], "train")
     h_id = hash_many(split_paths["id_test"], "id_test")
-    content_inter = len(set(h_train.values()) & set(h_id.values()))
+    shared = set(h_train.values()) & set(h_id.values())
+    content_inter = len(shared)
+    # Duplicate-exclusion support (audit #9 section 6.3): list the exact
+    # ID-test files whose content also appears in train.
+    dup_by_hash: dict[str, dict] = {h: {"sha256": h, "train": [],
+                                        "id_test": []} for h in shared}
+    for p, h in h_train.items():
+        if h in shared:
+            dup_by_hash[h]["train"].append(p)
+    for p, h in h_id.items():
+        if h in shared:
+            dup_by_hash[h]["id_test"].append(p)
     cert = {
         "counts": {k: len(v) for k, v in split_paths.items()},
         "filepath_intersections": inter,
@@ -84,6 +95,8 @@ def certify(split_paths: dict[str, list], split_labels: dict[str, list],
         "split_manifest_sha256": manifest_hash(split_paths),
         "note": note,
     }
+    cert["duplicates"] = sorted(dup_by_hash.values(),
+                                key=lambda d: d["sha256"])
     cert["PASS"] = (all(v == 0 for v in inter.values())
                     and content_inter == 0)
     return cert
