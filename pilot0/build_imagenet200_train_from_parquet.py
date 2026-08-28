@@ -26,9 +26,26 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
+
+WNID_RE = re.compile(r"^n\d{8}$")
+
+
+def canon(basename: str) -> str:
+    """Canonical match key for an ImageNet train file name.
+
+    Normalizes extension case and the Hugging Face re-packaging convention
+    that renames `<wnid>_<num>.JPEG` to `<wnid>_<num>_<wnid>.JPEG` (the
+    trailing duplicate wnid is stripped when it matches the leading one).
+    """
+    stem = basename.rsplit(".", 1)[0] if "." in basename else basename
+    parts = stem.split("_")
+    if len(parts) >= 3 and WNID_RE.match(parts[-1]) and parts[0] == parts[-1]:
+        stem = "_".join(parts[:-1])
+    return stem.lower()
 
 
 def main() -> None:
@@ -42,13 +59,20 @@ def main() -> None:
     import pyarrow.parquet as pq
 
     needed: dict[str, str] = {}
+    samples: list[str] = []
     for line in Path(args.imglist).read_text().splitlines():
         line = line.strip()
         if not line:
             continue
         rel = line.rsplit(" ", 1)[0]
-        needed[os.path.basename(rel)] = rel
-    print(f"[in200] imglist lists {len(needed)} train files", flush=True)
+        key = canon(os.path.basename(rel))
+        if key in needed:
+            sys.exit(f"[in200] ABORT: canonical-key collision on {key}")
+        needed[key] = rel
+        if len(samples) < 3:
+            samples.append(rel)
+    print(f"[in200] imglist lists {len(needed)} train files; sample "
+          f"entries: {samples}", flush=True)
 
     out_root = Path(args.out_root) / "images_largescale"
     shards = sorted(Path(args.parquet_dir).rglob("train-*.parquet"))
@@ -57,13 +81,16 @@ def main() -> None:
 
     t0 = time.time()
     written = skipped = 0
+    pq_samples: list[str] = []
     for si, shard in enumerate(shards, 1):
         pf = pq.ParquetFile(shard)
         for batch in pf.iter_batches(batch_size=args.batch_size,
                                      columns=["image"]):
             for img in batch.column("image").to_pylist():
                 name = os.path.basename(str(img.get("path") or ""))
-                rel = needed.get(name)
+                if len(pq_samples) < 3:
+                    pq_samples.append(name)
+                rel = needed.get(canon(name))
                 if rel is None:
                     continue
                 wnid = rel.split("/")[-2]
@@ -79,6 +106,14 @@ def main() -> None:
                 written += 1
         print(f"[in200] shard {si}/{len(shards)}: written {written}, "
               f"skipped {skipped}, {time.time() - t0:.0f}s", flush=True)
+        if si == 1:
+            print(f"[in200] parquet sample basenames: {pq_samples}",
+                  flush=True)
+        if si == 5 and written + skipped == 0:
+            sys.exit("[in200] ABORT: zero matches after 5 shards even with "
+                     "normalization. Compare the imglist sample entries "
+                     "and parquet sample basenames printed above and "
+                     "report both.")
 
     present = sum(1 for rel in needed.values()
                   if (out_root / "imagenet_1k"
