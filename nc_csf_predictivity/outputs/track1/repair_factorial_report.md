@@ -1,0 +1,267 @@
+# Phase-2 factorial diagnostic (P00/P01/P10/P11, development subset)
+
+Post hoc; development half only; frozen spec in the header of repair_factorial.py; validation half untouched.
+
+```
+{
+ "n_cells": 224,
+ "n_material": 86,
+ "P00r_vs_P00d": {
+  "sign_agreement": 0.4509,
+  "max_abs_margin_dev": 6929.358
+ },
+ "arms": {
+  "P00d": {
+   "sign_acc": 0.3953,
+   "balanced_acc": 0.4439,
+   "spearman_absM_absgap_material": -0.2568,
+   "spearman_absM_absgap_all": -0.073
+  },
+  "P00r": {
+   "sign_acc": 0.814,
+   "balanced_acc": 0.7744,
+   "spearman_absM_absgap_material": -0.2415,
+   "spearman_absM_absgap_all": 0.1287
+  },
+  "P10r": {
+   "sign_acc": 0.6047,
+   "balanced_acc": 0.7213,
+   "spearman_absM_absgap_material": -0.2701,
+   "spearman_absM_absgap_all": 0.0631
+  },
+  "P01m": {
+   "sign_acc": 0.3837,
+   "balanced_acc": 0.483,
+   "spearman_absM_absgap_material": -0.2676,
+   "spearman_absM_absgap_all": -0.0461
+  },
+  "P11m": {
+   "sign_acc": 0.3953,
+   "balanced_acc": 0.3731,
+   "spearman_absM_absgap_material": -0.1746,
+   "spearman_absM_absgap_all": 0.0387
+  }
+ },
+ "comparators": {
+  "severity": {
+   "sign_acc": 0.7674,
+   "balanced_acc": 0.6118
+  },
+  "mean": {
+   "sign_acc": 0.7093,
+   "balanced_acc": 0.5
+  }
+ },
+ "stability_mean": {
+  "P01m": 1.0,
+  "P11m": 1.0
+ },
+ "per_source_balanced_P11m": {
+  "cifar10": 0.528,
+  "cifar100": 0.067,
+  "supercifar100": 0.947,
+  "tinyimagenet": 0.136
+ },
+ "paired_diffs_balanced": {
+  "P10r_minus_P00r": {
+   "point": -0.0531,
+   "ci95": [
+    -0.1589,
+    0.118
+   ]
+  },
+  "P01m_minus_P00r": {
+   "point": -0.2915,
+   "ci95": [
+    -0.4124,
+    -0.1164
+   ]
+  },
+  "P11m_minus_P00r": {
+   "point": -0.4013,
+   "ci95": [
+    -0.6174,
+    0.0358
+   ]
+  },
+  "P11m_minus_P10r": {
+   "point": -0.3482,
+   "ci95": [
+    -0.517,
+    -0.0163
+   ]
+  },
+  "P11m_minus_P01m": {
+   "point": -0.1098,
+   "ci95": [
+    -0.2787,
+    0.2872
+   ]
+  },
+  "P11m_minus_severity_sign": {
+   "point": -0.2387,
+   "ci95": [
+    -0.4203,
+    0.0276
+   ]
+  },
+  "P01m_minus_severity_sign": {
+   "point": -0.1289,
+   "ci95": [
+    -0.3103,
+    -0.0186
+   ]
+  }
+ }
+}
+```
+
+## BREEDS (n=5, descriptive)
+```
+{
+ "rows": [
+  {
+   "slug": "breeds_paper_sweep__dg_bbresnet50_do1_run1_rew2.2",
+   "gap_balanced": -0.00722,
+   "auroc_E_emp": 0.7502,
+   "auroc_C_emp": 0.7202,
+   "m_P00r": -2.0653,
+   "aurocs_P00r": [
+    1.0,
+    1.0
+   ],
+   "m_P10r": 0.0731,
+   "aurocs_P10r": [
+    0.7871,
+    0.8021
+   ],
+   "m_P01m": 3.2637,
+   "aurocs_P01m": [
+    0.9402,
+    0.9977
+   ],
+   "m_P11m": 0.051,
+   "aurocs_P11m": [
+    0.8125,
+    0.8218
+   ]
+  },
+  {
+   "slug": "breeds_paper_sweep__dg_bbresnet50_do1_run1_rew6",
+   "gap_balanced": -0.01107,
+   "auroc_E_emp": 0.7674,
+   "auroc_C_emp": 0.7245,
+   "m_P00r": -1.2995,
+   "aurocs_P00r": [
+    1.0,
+    0.9999
+   ],
+   "m_P10r": -0.0011,
+   "aurocs_P10r": [
+    0.8058,
+    0.8056
+   ],
+   "m_P01m": 3.6335,
+   "aurocs_P01m": [
+    0.8987,
+    0.9973
+   ],
+   "m_P11m": -0.0333,
+   "aurocs_P11m": [
+    0.8235,
+    0.8175
+   ]
+  },
+  {
+   "slug": "breeds_paper_sweep__dg_bbresnet50_do1_run1_rew15",
+   "gap_balanced": -0.0111,
+   "auroc_E_emp": 0.7661,
+   "auroc_C_emp": 0.7192,
+   "m_P00r": -1.1472,
+   "aurocs_P00r": [
+    0.9999,
+    0.9997
+   ],
+   "m_P10r": -0.0922,
+   "aurocs_P10r": [
+    0.7961,
+    0.7764
+   ],
+   "m_P01m": 3.328,
+   "aurocs_P01m": [
+    0.9125,
+    0.9969
+   ],
+   "m_P11m": -0.159,
+   "aurocs_P11m": [
+    0.8247,
+    0.7944
+   ]
+  },
+  {
+   "slug": "breeds_paper_sweep__confidnet_bbresnet50_do1_run1_rew2.2",
+   "gap_balanced": -0.01539,
+   "auroc_E_emp": 0.7624,
+   "auroc_C_emp": 0.7034,
+   "m_P00r": -0.8881,
+   "aurocs_P00r": [
+    0.9996,
+    0.9991
+   ],
+   "m_P10r": -0.2315,
+   "aurocs_P10r": [
+    0.7914,
+    0.737
+   ],
+   "m_P01m": 3.2482,
+   "aurocs_P01m": [
+    0.8882,
+    0.9957
+   ],
+   "m_P11m": -0.3085,
+   "aurocs_P11m": [
+    0.8254,
+    0.7623
+   ]
+  },
+  {
+   "slug": "breeds_paper_sweep__devries_bbresnet50_do1_run1_rew2.2",
+   "gap_balanced": -0.00413,
+   "auroc_E_emp": 0.7506,
+   "auroc_C_emp": 0.7317,
+   "m_P00r": -0.9831,
+   "aurocs_P00r": [
+    1.0,
+    1.0
+   ],
+   "m_P10r": 0.047,
+   "aurocs_P10r": [
+    0.7794,
+    0.7895
+   ],
+   "m_P01m": 3.5595,
+   "aurocs_P01m": [
+    0.9437,
+    0.9984
+   ],
+   "m_P11m": 0.2609,
+   "aurocs_P11m": [
+    0.7745,
+    0.8263
+   ]
+  }
+ ],
+ "level_mae": {
+  "P00r": 0.2603,
+  "P10r": 0.0475,
+  "P01m": 0.2174,
+  "P11m": 0.0687
+ },
+ "sign_match": {
+  "P00r": 5,
+  "P10r": 3,
+  "P01m": 0,
+  "P11m": 3
+ }
+}
+```
