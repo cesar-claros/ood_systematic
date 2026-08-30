@@ -105,6 +105,8 @@ pilot0/pool_coords/*.json
 pilot0/stage1_pilot_coords/*.json
 pilot0/stage2_expansion_coords/*.json
 pilot0/stage3_imagenet200_coords/*.json
+pilot0/repair_phase1_stats/*.json
+pilot0/repair_phase1_stats/*.npz
 
 # Exception to the *.sh rule: the Pool A extraction runner must sync to the HPC
 !x8_pool_a/run_pool_a_hpc.sh
