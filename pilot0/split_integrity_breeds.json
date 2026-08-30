@@ -60,5 +60,43 @@
  "canonical_filename_rule_checked": true,
  "split_manifest_sha256": "e25ad91170fdff2638a19d71387a0155e84a02c73c40264669c1a21d437b218b",
  "note": "All reported BREEDS numbers come from the post-repair extraction: canonical ILSVRC filenames restored by rename_breeds_canonical.py, which restores the exact seed-12345 partition of the released checkpoints.",
+ "duplicates": [
+  {
+   "sha256": "3be77ead002b55e5167154728cac6ff05bd87a1f74751829e8d865a23935780a",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/breeds/ILSVRC/Data/CLS-LOC/train/n07717556/n07717556_12578.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/breeds/ILSVRC/Data/CLS-LOC/train/n07717410/n07717410_6611.JPEG"
+   ]
+  },
+  {
+   "sha256": "520c7052a4545392f4054ba68035dc71618e926597d469ad0f923c14e9dbaf0d",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/breeds/ILSVRC/Data/CLS-LOC/train/n03832673/n03832673_15823.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/breeds/ILSVRC/Data/CLS-LOC/train/n03782006/n03782006_8044.JPEG"
+   ]
+  },
+  {
+   "sha256": "887c0ad1d91ed2832936be198b5016bffae1bc171f263f8960548c3db9045108",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/breeds/ILSVRC/Data/CLS-LOC/train/n03095699/n03095699_8392.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/breeds/ILSVRC/Data/CLS-LOC/train/n03673027/n03673027_9302.JPEG"
+   ]
+  },
+  {
+   "sha256": "f09ff72c3d526d02b2c4db7291e9a3e72ebd6e65d39b15f53a1821a68bcff0f5",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/breeds/ILSVRC/Data/CLS-LOC/train/n01773549/n01773549_128.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/breeds/ILSVRC/Data/CLS-LOC/train/n01774384/n01774384_513.JPEG"
+   ]
+  }
+ ],
  "PASS": false
 }

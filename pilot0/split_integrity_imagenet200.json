@@ -416,5 +416,205 @@
  "canonical_filename_rule_checked": true,
  "split_manifest_sha256": "e4e3ae103671684cc9649d99ff47a795db921febbd69ed81f77e89bfbcd841c6",
  "note": "OpenOOD imglist-defined splits; train images materialized from HF parquet under the LISTED canonical names",
+ "duplicates": [
+  {
+   "sha256": "1d4550dbb3e087c31369b3d1487b7eee2ea099a7af61a769a5f65b7c18a516b8",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n07720875/n07720875_3563.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00048012.JPEG"
+   ]
+  },
+  {
+   "sha256": "1eaad60533294b3d4361dd6d43cd2da3947c1342b24d7d3fcef027f1dc393c0a",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02085620/n02085620_3683.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00027485.JPEG"
+   ]
+  },
+  {
+   "sha256": "329ce9f08d619245f898a3883762ad7e9b7ec7a89173fd085fc51baa34aa41a2",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n01632777/n01632777_20321.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00032171.JPEG"
+   ]
+  },
+  {
+   "sha256": "3c35db84572dea500e4a777ec53530367c9847cc2397b8e8f257b1ec2b28285a",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02128385/n02128385_12321.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00036474.JPEG"
+   ]
+  },
+  {
+   "sha256": "55a46a3d42c599d5d2fbf1d99643b18327dbd56c0dc3861e2edfb7471e6096eb",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02128385/n02128385_1101.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00036401.JPEG"
+   ]
+  },
+  {
+   "sha256": "56d2688fb913f04f3df7daf4e5039e319e4b70da7086094a0980a747413a6164",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n07720875/n07720875_6115.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00030047.JPEG"
+   ]
+  },
+  {
+   "sha256": "6b1d60d4b373bf25c6950aa27df3046237c9e49816c56e37a1f3cd8996614f6b",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n07753592/n07753592_8056.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00000320.JPEG"
+   ]
+  },
+  {
+   "sha256": "6dd2708d763d1f436577f7296ff4af7aef026cfbaea885b2062c87a0d681d1e6",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02128385/n02128385_14635.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00045606.JPEG"
+   ]
+  },
+  {
+   "sha256": "770ae9cce65451cd3020f0d6798c5c7874e81438aeaff9b7f333cf715284460c",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02206856/n02206856_4328.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00016181.JPEG"
+   ]
+  },
+  {
+   "sha256": "8060857689b0e060963715fc9afb6e863bea748c6afdfe0047859ce7a740223f",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02129165/n02129165_9606.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00011590.JPEG"
+   ]
+  },
+  {
+   "sha256": "85b9c83e89844e2dde7cfbf2b6a8aa36d8f901ed8c9f259473b28765ae0a252a",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n07749582/n07749582_7119.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00016182.JPEG"
+   ]
+  },
+  {
+   "sha256": "85e9ba9ae0864c1e20e63a5f3d38842bb37ae86cee07c56195b9bc5d5d673027",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n07768694/n07768694_4346.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00034491.JPEG"
+   ]
+  },
+  {
+   "sha256": "8d34460356be0c070698f6770ecbc482b44ebf81cf7aeddc66b3233cc911cf5d",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n01632777/n01632777_16078.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00049350.JPEG"
+   ]
+  },
+  {
+   "sha256": "9d40e3094162074e0be5057a8691c27a451cbdf75a18fa94c87f0c525e90a926",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02483362/n02483362_9939.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00026043.JPEG"
+   ]
+  },
+  {
+   "sha256": "a830ae3a0fb037d73dba2f00ef9e40f70e79bedd11ffdaa1bf142f95b8aa75a6",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n04254680/n04254680_698.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00025897.JPEG"
+   ]
+  },
+  {
+   "sha256": "b43c02073bad639c58c5ca47507d127fa65171f303902ce481f26cff0a21c9c3",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n07753275/n07753275_8879.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00018896.JPEG"
+   ]
+  },
+  {
+   "sha256": "b43e2b56df75d34c51898f8dd5086ed6a89c32aec92d0547764503cb223a8bdf",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02447366/n02447366_25684.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00042428.JPEG"
+   ]
+  },
+  {
+   "sha256": "c197b059f3ddfe54665f353d20c34740b28255fe894f634ab2502930bc48c7d1",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n07753275/n07753275_7610.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00029906.JPEG"
+   ]
+  },
+  {
+   "sha256": "dcf87c0ea0bfba74d8a77d0985a3f9bbd62d8095f84ae9aac16ed1d9ad241478",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n07753592/n07753592_2114.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00001936.JPEG"
+   ]
+  },
+  {
+   "sha256": "df14b2196d53e44dda7fb2e37ceaf98735ef83d16ec5eaae3f5c47c9313ab16d",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02096585/n02096585_3826.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00041894.JPEG"
+   ]
+  },
+  {
+   "sha256": "e5a9792af309b59a0eeb9c7b83ca4c8eccf712e4453939b2429a00bc1ebff812",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n02128385/n02128385_6919.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00036622.JPEG"
+   ]
+  },
+  {
+   "sha256": "ee00be577484663a73abd8be272fa68072ee10b4795edae8bafe221c510390cf",
+   "train": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/train/n01518878/n01518878_11108.JPEG"
+   ],
+   "id_test": [
+    "/work/cniel/sw/FD_Shifts/project/datasets/openood/data/images_largescale/imagenet_1k/val/ILSVRC2012_val_00048670.JPEG"
+   ]
+  }
+ ],
  "PASS": false
 }
