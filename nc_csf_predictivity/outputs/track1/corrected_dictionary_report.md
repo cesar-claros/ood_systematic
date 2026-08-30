@@ -1,0 +1,92 @@
+# Corrected-dictionary audit (NC1 normalization; paper's stated definition)
+
+Post-outcome correctness audit; frozen Stage-2 artifacts untouched; spec in the script header.
+
+```
+{
+ "s_corrected_per_source_median": {
+  "cifar10": 9.24,
+  "cifar100": 10.65,
+  "supercifar100": 7.06,
+  "tinyimagenet": 8.72
+ },
+ "frac_resolvable_direct": 0.9272,
+ "frac_resolvable_frozen_reference": 0.197,
+ "spearman_absM_absgap_all": 0.1568,
+ "pooled": {
+  "n_material": 718,
+  "sign_acc": 0.7312,
+  "sign_acc_ci95": [
+   0.682,
+   0.774
+  ],
+  "balanced_acc": 0.6934,
+  "severity_sign_acc": 0.6838,
+  "trainfold_mean_sign_acc": 0.6003,
+  "corr_minus_severity": {
+   "point": 0.0474,
+   "ci95": [
+    -0.008,
+    0.103
+   ]
+  },
+  "spearman_absM_absgap_material": -0.0395,
+  "per_source_sign_acc": {
+   "cifar10": 0.647,
+   "cifar100": 0.778,
+   "supercifar100": 0.685,
+   "tinyimagenet": 0.903
+  }
+ },
+ "development_half": {
+  "n_material": 353,
+  "sign_acc": 0.7479,
+  "sign_acc_ci95": [
+   0.682,
+   0.811
+  ],
+  "balanced_acc": 0.6963,
+  "severity_sign_acc": 0.7139,
+  "trainfold_mean_sign_acc": 0.6431,
+  "corr_minus_severity": {
+   "point": 0.034,
+   "ci95": [
+    -0.051,
+    0.123
+   ]
+  },
+  "spearman_absM_absgap_material": -0.0624,
+  "per_source_sign_acc": {
+   "cifar10": 0.707,
+   "cifar100": 0.75,
+   "supercifar100": 0.676,
+   "tinyimagenet": 0.932
+  }
+ },
+ "validation_half_quasi_confirmatory": {
+  "n_material": 365,
+  "sign_acc": 0.7151,
+  "sign_acc_ci95": [
+   0.656,
+   0.774
+  ],
+  "balanced_acc": 0.6921,
+  "severity_sign_acc": 0.6548,
+  "trainfold_mean_sign_acc": 0.5589,
+  "corr_minus_severity": {
+   "point": 0.0603,
+   "ci95": [
+    -0.015,
+    0.132
+   ]
+  },
+  "spearman_absM_absgap_material": -0.0279,
+  "per_source_sign_acc": {
+   "cifar10": 0.591,
+   "cifar100": 0.824,
+   "supercifar100": 0.692,
+   "tinyimagenet": 0.873
+  }
+ }
+}
+```
