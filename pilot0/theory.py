@@ -278,6 +278,58 @@ def predicted_aurocs(class_means: np.ndarray, class_freq: np.ndarray,
     return totals
 
 
+def head_z_components(class_means: np.ndarray, class_freq: np.ndarray,
+                      noise_id: NoiseModel, m_ood: np.ndarray,
+                      noise_ood: NoiseModel, ctx: HeadContext
+                      ) -> dict[str, tuple[np.ndarray, np.ndarray]]:
+    """Component-level binormal deviates for the head-side mixture AUROCs.
+
+    Returns, per score, ``(weights, z)`` with z_y = (m_y - m_o) /
+    sqrt(v_y + v_o) so that ``predicted_aurocs`` equals
+    sum_y weights_y * Phi(z_y) term by term (identical arithmetic; added
+    for the tail-space audit, existing functions untouched).
+    """
+    ood = population_stats(m_ood, noise_ood, ctx)
+    per_class = [population_stats(mu_y, noise_id, ctx)
+                 for mu_y in class_means]
+    out = {}
+    for name, (m_o, v_o) in ood.items():
+        z = np.array([(st[name][0] - m_o) / np.sqrt(st[name][1] + v_o)
+                      for st in per_class])
+        out[name] = (np.asarray(class_freq, dtype=float), z)
+    return out
+
+
+def ctm_mean_z_components(class_means: np.ndarray, class_freq: np.ndarray,
+                          cov_id: np.ndarray, m_ood: np.ndarray,
+                          cov_ood: np.ndarray
+                          ) -> tuple[np.ndarray, np.ndarray]:
+    """Component-level deviates matching ``predicted_ctm_mean_auroc``."""
+    mu_hat = class_means / np.linalg.norm(class_means, axis=1, keepdims=True)
+    dim = class_means.shape[1]
+    dir_id = ((mu_hat @ cov_id) * mu_hat).sum(1)
+    dir_ood = ((mu_hat @ cov_ood) * mu_hat).sum(1)
+    tr_id, tr_ood = float(np.trace(cov_id)), float(np.trace(cov_ood))
+    m_o, v_o = ctm_stats(m_ood, tr_ood, dim, mu_hat, dir_ood)
+    z = np.empty(len(class_means))
+    for i, mu_y in enumerate(class_means):
+        m_y, v_y = ctm_stats(mu_y, tr_id, dim, mu_hat, dir_id)
+        z[i] = (m_y - m_o) / np.sqrt(v_y + v_o)
+    return np.asarray(class_freq, dtype=float), z
+
+
+def log_error_probability(weights: np.ndarray, z: np.ndarray) -> float:
+    """Stable log of the mixture pairwise error, log sum_y w_y Phibar(z_y).
+
+    Uses log_ndtr(-z) (Phibar(z) = Phi(-z)) with logsumexp, so the value
+    stays finite far beyond float64 CDF resolution. In exact arithmetic
+    sign(l_A - l_B) = sign(AUROC_B - AUROC_A).
+    """
+    from scipy.special import log_ndtr, logsumexp
+    w = np.asarray(weights, dtype=float)
+    return float(logsumexp(np.log(w / w.sum()) + log_ndtr(-np.asarray(z))))
+
+
 def hanley_mcneil_se(auc: float, n_id: int, n_ood: int) -> float:
     """Hanley-McNeil standard error of an AUROC estimate."""
     a = min(max(auc, 0.5), 1.0 - 1e-12)

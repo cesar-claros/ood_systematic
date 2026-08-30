@@ -250,7 +250,7 @@ def panel_heldout(ax) -> None:
             linewidth=0.7, linestyle=":", alpha=0.8)
     ax.annotate("train-fold majority", xy=(-0.42, HELDOUT["majority"] + 0.012),
                 fontsize=6.8)
-    ax.annotate("saturated:\n80% zero margin", xy=(-0.40, 0.13),
+    ax.annotate("saturated:\n80% ceiling-tied", xy=(-0.40, 0.13),
                 fontsize=6.8)
     ax.set_xticks([0, 1, 2.15])
     ax.set_xticklabels(["checkpoint\nheld-out\n(sign acc.)",
