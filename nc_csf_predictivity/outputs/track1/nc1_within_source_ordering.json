@@ -1,0 +1,168 @@
+{
+ "old": {
+  "cifar10": {
+   "strong": {
+    "x": null,
+    "tie": [
+     -1.413,
+     0.078
+    ]
+   },
+   "middle": {
+    "x": null,
+    "tie": [
+     -0.789,
+     1.384
+    ]
+   },
+   "weak": {
+    "x": null,
+    "tie": null
+   },
+   "ordering_retained": true
+  },
+  "cifar100": {
+   "strong": {
+    "x": -0.88,
+    "tie": [
+     -1.075,
+     -0.687
+    ]
+   },
+   "middle": {
+    "x": -0.647,
+    "tie": [
+     -0.678,
+     -0.613
+    ]
+   },
+   "weak": {
+    "x": -0.624,
+    "tie": [
+     -0.66,
+     -0.586
+    ]
+   },
+   "ordering_retained": true
+  },
+  "supercifar100": {
+   "strong": {
+    "x": null,
+    "tie": null
+   },
+   "middle": {
+    "x": -0.124,
+    "tie": [
+     -0.235,
+     -0.009
+    ]
+   },
+   "weak": {
+    "x": null,
+    "tie": [
+     -0.592,
+     1.435
+    ]
+   },
+   "ordering_retained": true
+  },
+  "tinyimagenet": {
+   "strong": {
+    "x": null,
+    "tie": null
+   },
+   "middle": {
+    "x": null,
+    "tie": null
+   },
+   "weak": {
+    "x": null,
+    "tie": null
+   },
+   "ordering_retained": true
+  }
+ },
+ "new": {
+  "cifar10": {
+   "strong": {
+    "x": null,
+    "tie": [
+     -1.413,
+     0.75
+    ]
+   },
+   "middle": {
+    "x": null,
+    "tie": [
+     -0.901,
+     1.384
+    ]
+   },
+   "weak": {
+    "x": null,
+    "tie": null
+   },
+   "ordering_retained": true
+  },
+  "cifar100": {
+   "strong": {
+    "x": -0.9,
+    "tie": [
+     -1.094,
+     -0.706
+    ]
+   },
+   "middle": {
+    "x": -0.652,
+    "tie": [
+     -0.678,
+     -0.632
+    ]
+   },
+   "weak": {
+    "x": -0.595,
+    "tie": [
+     -0.632,
+     -0.558
+    ]
+   },
+   "ordering_retained": true
+  },
+  "supercifar100": {
+   "strong": {
+    "x": null,
+    "tie": null
+   },
+   "middle": {
+    "x": -0.126,
+    "tie": [
+     -0.235,
+     -0.009
+    ]
+   },
+   "weak": {
+    "x": null,
+    "tie": [
+     -0.592,
+     1.435
+    ]
+   },
+   "ordering_retained": true
+  },
+  "tinyimagenet": {
+   "strong": {
+    "x": null,
+    "tie": null
+   },
+   "middle": {
+    "x": null,
+    "tie": null
+   },
+   "weak": {
+    "x": null,
+    "tie": null
+   },
+   "ordering_retained": true
+  }
+ }
+}
