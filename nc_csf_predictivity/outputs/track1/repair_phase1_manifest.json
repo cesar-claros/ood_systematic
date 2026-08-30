@@ -1,0 +1,337 @@
+{
+ "plan": "analytic_saturation_diagnosis_and_repair_plan_2026-08-28 section 12 Phase 1",
+ "rule": "(declared before any repair statistic exists; no\ndetector outcome, score, gap, or winner is read here; the only measured\ninput is per-checkpoint variability collapse, a geometry coordinate):\n- Pool checkpoints come EXCLUSIVELY from the frozen development half of\n  the repair split (outputs/track1/repair_dev_split.json, seed 20260830;\n  the validation half stays untouched). Per source x paradigm cell:\n  the development checkpoints with the lowest and the highest\n  var_collapse (ties broken by cell-key sort). Per source, additionally\n  the DeepGamblers development checkpoint with median var_collapse\n  (lower median, sorted index (n-1)//2, the stage-1 convention).\n  Duplicates collapse. This spans strong/middle/weak collapse in every\n  cell and covers all four sources and all three paradigms; coverage of\n  both empirical Energy-CTM directions follows structurally from the\n  known opposite source base rates and is NOT checked against outcomes.\n- Lower-SNR external case: five BREEDS checkpoints by the stage-1\n  deterministic rule on metadata only: dg do1 run1 at the lowest,\n  median, and highest reward, plus confidnet do1 run1 rew2.2 and\n  devries do1 run1 rew2.2, with the stage-1 substitution ladder\n  (do1_run1 -> do0_run1 -> do1_run2 -> do0_run2) if a slug is absent.\n  The roster is enumerated from the committed stage-2 coordinate\n  filenames (metadata only; no record content is read).",
+ "dev_split_seed": 20260830,
+ "n_pool": 28,
+ "n_breeds": 5,
+ "pool": [
+  {
+   "cell": "confidnet|cifar100|3|2.2|False",
+   "model_path": "cifar100_paper_sweep/confidnet_bbvgg13_do0_run3_rew2.2",
+   "source": "cifar100",
+   "paradigm": "confidnet",
+   "var_collapse": 0.009698225185275,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "confidnet|cifar100|3|2.2|True",
+   "model_path": "cifar100_paper_sweep/confidnet_bbvgg13_do1_run3_rew2.2",
+   "source": "cifar100",
+   "paradigm": "confidnet",
+   "var_collapse": 0.0076743499375879,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "confidnet|cifar10|1|2.2|False",
+   "model_path": "cifar10_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2",
+   "source": "cifar10",
+   "paradigm": "confidnet",
+   "var_collapse": 0.0096434401348233,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "confidnet|cifar10|2|2.2|True",
+   "model_path": "cifar10_paper_sweep/confidnet_bbvgg13_do1_run2_rew2.2",
+   "source": "cifar10",
+   "paradigm": "confidnet",
+   "var_collapse": 0.0162357036024332,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "confidnet|supercifar100|1|2.2|False",
+   "model_path": "supercifar_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2",
+   "source": "supercifar100",
+   "paradigm": "confidnet",
+   "var_collapse": 0.0109733371064066,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "confidnet|supercifar100|2|2.2|True",
+   "model_path": "supercifar_paper_sweep/confidnet_bbvgg13_do1_run2_rew2.2",
+   "source": "supercifar100",
+   "paradigm": "confidnet",
+   "var_collapse": 0.0142295891419053,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "confidnet|tinyimagenet|3|2.2|True",
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do1_run3_rew2.2",
+   "source": "tinyimagenet",
+   "paradigm": "confidnet",
+   "var_collapse": 0.0104401241987943,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "confidnet|tinyimagenet|5|2.2|False",
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do0_run5_rew2.2",
+   "source": "tinyimagenet",
+   "paradigm": "confidnet",
+   "var_collapse": 0.001990403747186,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "devries|cifar100|1|2.2|False",
+   "model_path": "cifar100_paper_sweep/devries_bbvgg13_do0_run1_rew2.2",
+   "source": "cifar100",
+   "paradigm": "devries",
+   "var_collapse": 0.0064138816669583,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "devries|cifar100|5|2.2|True",
+   "model_path": "cifar100_paper_sweep/devries_bbvgg13_do1_run5_rew2.2",
+   "source": "cifar100",
+   "paradigm": "devries",
+   "var_collapse": 0.010696898214519,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "devries|cifar10|1|2.2|False",
+   "model_path": "cifar10_paper_sweep/devries_bbvgg13_do0_run1_rew2.2",
+   "source": "cifar10",
+   "paradigm": "devries",
+   "var_collapse": 0.0080258045345544,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "devries|cifar10|3|2.2|True",
+   "model_path": "cifar10_paper_sweep/devries_bbvgg13_do1_run3_rew2.2",
+   "source": "cifar10",
+   "paradigm": "devries",
+   "var_collapse": 0.017775660380721,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "devries|supercifar100|1|2.2|False",
+   "model_path": "supercifar_paper_sweep/devries_bbvgg13_do0_run1_rew2.2",
+   "source": "supercifar100",
+   "paradigm": "devries",
+   "var_collapse": 0.0082645816728472,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "devries|supercifar100|2|2.2|True",
+   "model_path": "supercifar_paper_sweep/devries_bbvgg13_do1_run2_rew2.2",
+   "source": "supercifar100",
+   "paradigm": "devries",
+   "var_collapse": 0.0257687922567129,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "devries|tinyimagenet|3|2.2|True",
+   "model_path": "tiny-imagenet-200_paper_sweep/devries_bbvgg13_do1_run3_rew2.2",
+   "source": "tinyimagenet",
+   "paradigm": "devries",
+   "var_collapse": 0.0104162953794002,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "devries|tinyimagenet|4|2.2|False",
+   "model_path": "tiny-imagenet-200_paper_sweep/devries_bbvgg13_do0_run4_rew2.2",
+   "source": "tinyimagenet",
+   "paradigm": "devries",
+   "var_collapse": 0.0022752236109226,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "dg|cifar100|1|6.0|False",
+   "model_path": "cifar100_paper_sweep/dg_bbvgg13_do0_run1_rew6",
+   "source": "cifar100",
+   "paradigm": "dg",
+   "var_collapse": 0.001267853542231,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "dg|cifar100|4|15.0|True",
+   "model_path": "cifar100_paper_sweep/dg_bbvgg13_do1_run4_rew15",
+   "source": "cifar100",
+   "paradigm": "dg",
+   "var_collapse": 0.0653100460767746,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "dg|cifar100|5|12.0|False",
+   "model_path": "cifar100_paper_sweep/dg_bbvgg13_do0_run5_rew12",
+   "source": "cifar100",
+   "paradigm": "dg",
+   "var_collapse": 0.0084222061559557,
+   "why": [
+    "source_dg_median_collapse"
+   ]
+  },
+  {
+   "cell": "dg|cifar10|3|6.0|False",
+   "model_path": "cifar10_paper_sweep/dg_bbvgg13_do0_run3_rew6",
+   "source": "cifar10",
+   "paradigm": "dg",
+   "var_collapse": 0.0091690449044108,
+   "why": [
+    "source_dg_median_collapse"
+   ]
+  },
+  {
+   "cell": "dg|cifar10|3|6.0|True",
+   "model_path": "cifar10_paper_sweep/dg_bbvgg13_do1_run3_rew6",
+   "source": "cifar10",
+   "paradigm": "dg",
+   "var_collapse": 0.0153281083330512,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "dg|cifar10|4|2.2|False",
+   "model_path": "cifar10_paper_sweep/dg_bbvgg13_do0_run4_rew2.2",
+   "source": "cifar10",
+   "paradigm": "dg",
+   "var_collapse": 0.0060864672996103,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "dg|supercifar100|2|2.2|True",
+   "model_path": "supercifar_paper_sweep/dg_bbvgg13_do1_run2_rew2.2",
+   "source": "supercifar100",
+   "paradigm": "dg",
+   "var_collapse": 2.3970839977264404,
+   "why": [
+    "cell_max_collapse"
+   ]
+  },
+  {
+   "cell": "dg|supercifar100|4|2.2|False",
+   "model_path": "supercifar_paper_sweep/dg_bbvgg13_do0_run4_rew2.2",
+   "source": "supercifar100",
+   "paradigm": "dg",
+   "var_collapse": 0.00800590403378,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "dg|supercifar100|5|10.0|True",
+   "model_path": "supercifar_paper_sweep/dg_bbvgg13_do1_run5_rew10",
+   "source": "supercifar100",
+   "paradigm": "dg",
+   "var_collapse": 0.0279981456696987,
+   "why": [
+    "source_dg_median_collapse"
+   ]
+  },
+  {
+   "cell": "dg|tinyimagenet|2|10.0|True",
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbvgg13_do1_run2_rew10",
+   "source": "tinyimagenet",
+   "paradigm": "dg",
+   "var_collapse": 0.0079308459535241,
+   "why": [
+    "source_dg_median_collapse"
+   ]
+  },
+  {
+   "cell": "dg|tinyimagenet|2|20.0|False",
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbvgg13_do0_run2_rew20",
+   "source": "tinyimagenet",
+   "paradigm": "dg",
+   "var_collapse": 0.0019162835087627,
+   "why": [
+    "cell_min_collapse"
+   ]
+  },
+  {
+   "cell": "dg|tinyimagenet|5|20.0|True",
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbvgg13_do1_run5_rew20",
+   "source": "tinyimagenet",
+   "paradigm": "dg",
+   "var_collapse": 0.0099133616313338,
+   "why": [
+    "cell_max_collapse"
+   ]
+  }
+ ],
+ "breeds": [
+  {
+   "slug": "breeds_paper_sweep__dg_bbresnet50_do1_run1_rew2.2",
+   "model_path": "breeds_paper_sweep/dg_bbresnet50_do1_run1_rew2.2",
+   "paradigm": "dg",
+   "reward": "2.2",
+   "dropout": 1,
+   "run": 1,
+   "why": "dg_lowest_reward"
+  },
+  {
+   "slug": "breeds_paper_sweep__dg_bbresnet50_do1_run1_rew6",
+   "model_path": "breeds_paper_sweep/dg_bbresnet50_do1_run1_rew6",
+   "paradigm": "dg",
+   "reward": "6",
+   "dropout": 1,
+   "run": 1,
+   "why": "dg_median_reward"
+  },
+  {
+   "slug": "breeds_paper_sweep__dg_bbresnet50_do1_run1_rew15",
+   "model_path": "breeds_paper_sweep/dg_bbresnet50_do1_run1_rew15",
+   "paradigm": "dg",
+   "reward": "15",
+   "dropout": 1,
+   "run": 1,
+   "why": "dg_highest_reward"
+  },
+  {
+   "slug": "breeds_paper_sweep__confidnet_bbresnet50_do1_run1_rew2.2",
+   "model_path": "breeds_paper_sweep/confidnet_bbresnet50_do1_run1_rew2.2",
+   "paradigm": "confidnet",
+   "reward": "2.2",
+   "dropout": 1,
+   "run": 1,
+   "why": "confidnet"
+  },
+  {
+   "slug": "breeds_paper_sweep__devries_bbresnet50_do1_run1_rew2.2",
+   "model_path": "breeds_paper_sweep/devries_bbresnet50_do1_run1_rew2.2",
+   "paradigm": "devries",
+   "reward": "2.2",
+   "dropout": 1,
+   "run": 1,
+   "why": "devries"
+  }
+ ],
+ "note": "no detector outcome consulted; var_collapse is the only measured input; validation half untouched"
+}
