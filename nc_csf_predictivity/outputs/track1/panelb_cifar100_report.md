@@ -1,0 +1,232 @@
+# Audit-11 R11.2: cifar100 case-study panel B (gate G11.B)
+
+Frozen spec in header; corrected panel; ordering verdicts by the frozen rule.
+
+```
+{
+ "n_checkpoints": 70,
+ "strata_sizes": {
+  "strong": 23,
+  "middle": 23,
+  "weak": 24
+ },
+ "estimators": {
+  "pava": {
+   "pooled": {
+    "x": -0.669,
+    "tie": [
+     -0.715,
+     -0.641
+    ],
+    "n_sign": 1
+   },
+   "strong": {
+    "x": -0.9,
+    "tie": [
+     -1.084,
+     -0.715
+    ],
+    "n_sign": 1
+   },
+   "middle": {
+    "x": -0.652,
+    "tie": [
+     -0.678,
+     -0.632
+    ],
+    "n_sign": 1
+   },
+   "weak": {
+    "x": -0.595,
+    "tie": [
+     -0.632,
+     -0.558
+    ],
+    "n_sign": 1
+   },
+   "ordering_retained": true
+  },
+  "loclin": {
+   "pooled": {
+    "x": -0.728,
+    "tie": [
+     -0.909,
+     1.557
+    ],
+    "n_sign": 2
+   },
+   "strong": {
+    "x": -0.892,
+    "tie": [
+     -1.066,
+     1.557
+    ],
+    "n_sign": 1
+   },
+   "middle": {
+    "x": -0.814,
+    "tie": [
+     -1.094,
+     1.557
+    ],
+    "n_sign": 1
+   },
+   "weak": {
+    "x": -0.573,
+    "tie": [
+     -0.743,
+     1.455
+    ],
+    "n_sign": 2
+   },
+   "ordering_retained": true
+  },
+  "spline": {
+   "pooled": {
+    "x": -0.678,
+    "tie": [
+     -0.743,
+     1.557
+    ],
+    "n_sign": 2
+   },
+   "strong": {
+    "x": -0.874,
+    "tie": [
+     -1.214,
+     1.557
+    ],
+    "n_sign": 1
+   },
+   "middle": {
+    "x": -0.666,
+    "tie": [
+     -1.214,
+     1.557
+    ],
+    "n_sign": 1
+   },
+   "weak": {
+    "x": -0.605,
+    "tie": [
+     -0.687,
+     1.557
+    ],
+    "n_sign": 2
+   },
+   "ordering_retained": true
+  },
+  "piecewise": {
+   "pooled": {
+    "x": -0.672,
+    "tie": [
+     -0.789,
+     1.557
+    ],
+    "n_sign": 2
+   },
+   "strong": {
+    "x": -0.9,
+    "tie": [
+     -1.103,
+     1.557
+    ],
+    "n_sign": 1
+   },
+   "middle": {
+    "x": -0.663,
+    "tie": [
+     -0.77,
+     1.557
+    ],
+    "n_sign": 1
+   },
+   "weak": {
+    "x": -0.598,
+    "tie": [
+     -0.65,
+     1.473
+    ],
+    "n_sign": 2
+   },
+   "ordering_retained": true
+  }
+ },
+ "estimators_retained": "4/4",
+ "leave_one_oodset": {
+  "cifar10": {
+   "retained": true,
+   "strong_x": null
+  },
+  "isun": {
+   "retained": true,
+   "strong_x": -0.9
+  },
+  "lsun cropped": {
+   "retained": false,
+   "strong_x": -0.893
+  },
+  "lsun resize": {
+   "retained": true,
+   "strong_x": -0.9
+  },
+  "places365": {
+   "retained": true,
+   "strong_x": -0.9
+  },
+  "svhn": {
+   "retained": true,
+   "strong_x": -0.9
+  },
+  "textures": {
+   "retained": true,
+   "strong_x": -0.9
+  },
+  "tinyimagenet": {
+   "retained": true,
+   "strong_x": -0.9
+  }
+ },
+ "loo_retained": "7/9",
+ "severity_variants": {
+  "full_composite": {
+   "retained": true,
+   "strong_x": -0.9
+  },
+  "only_kid": {
+   "retained": true,
+   "strong_x": -1.385
+  },
+  "without_kid": {
+   "retained": true,
+   "strong_x": -0.891
+  },
+  "only_fd": {
+   "retained": false,
+   "strong_x": -1.475
+  },
+  "without_fd": {
+   "retained": true,
+   "strong_x": -0.969
+  },
+  "only_text_align": {
+   "retained": true,
+   "strong_x": null
+  },
+  "without_text_align": {
+   "retained": true,
+   "strong_x": -1.028
+  },
+  "only_img_centroid": {
+   "retained": true,
+   "strong_x": null
+  },
+  "without_img_centroid": {
+   "retained": true,
+   "strong_x": -1.053
+  }
+ },
+ "variants_retained": "8/9",
+ "G11B": "FAIL"
+}
+```

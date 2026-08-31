@@ -35,6 +35,7 @@ Output: paper/ICLR_2027/figures/hero_phase_diagram.pdf (+ .png preview).
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -69,7 +70,7 @@ PAPER_FIG = CODE.parent / "paper/ICLR_2027/figures"
 VIRIDIS = matplotlib.colormaps["viridis"]
 TOL = 0.01
 C_MODEL, D_MODEL = 100, 512
-TERTILE_S = {"strong": 120.8, "middle": 46.3, "weak": 23.6}
+# TERTILE_S retired (audit-11: pooled tertiles were mis-scaled panel artifacts).
 # Visual corrections 2026-08-26 per audit #7 section 4.4: support overlay is
 # a hexbin density raster (not 2,240 dots), no figure-wide title, no
 # overlapping support annotation, larger panel/axis fonts, in-panel legend
@@ -162,6 +163,12 @@ def draw_gap(ax, ga_grid, y_grid, gap, ylabel, yscale=None):
 
 CELL_CACHE = CODE / ("nc_csf_predictivity/outputs/track1/"
                      "theory_cell_predictions.parquet")
+# Audit-11: corrected-dictionary support coordinates + case-study curves.
+CORR_CACHE_HERO = CODE / ("nc_csf_predictivity/outputs/track1/"
+                          "theory_cell_predictions_corrected.parquet")
+PANELB_CURVES = CODE / ("nc_csf_predictivity/outputs/track1/"
+                        "panelb_cifar100_curves.json")
+S_LO, S_HI = 2.0, 40.0
 
 # Held-out validation numbers (heldout_theory_report.md + stage2_closure E3).
 HELDOUT = {
@@ -178,24 +185,27 @@ HELDOUT = {
 # balanced accuracy; the paired increment crosses zero.
 POSTHOC = {"metadata": 0.947, "metadata_geometry": 0.954,
            "increment": "+0.007 [-0.001, 0.017]"}
+# Audit-11: material sign accuracy of the frozen formulas under the
+# corrected NC1 panel (post-outcome audit; fold-free).
+CORR_THEORY = 0.731
 
 
 def overlay_support(ax) -> None:
-    """Audit #6 section 8 / audit #7 section 4.4 panel A: measured benchmark
-    support on the analytic surface as a hexbin density raster (one count per
-    checkpoint-shift cell at its measured (gamma*a, dictionary-s)
-    coordinates); the support sits on the saturated side and does not
-    traverse the analytic boundary. The overlay is explained in the caption,
-    not by an in-panel annotation."""
-    if not CELL_CACHE.exists():
+    """Audit #11 panel A: measured benchmark support at the CORRECTED
+    dictionary coordinates (theory_cell_predictions_corrected.parquet;
+    the stated NC1 definition; audit-11 R11.1). The support concentrates
+    on the saturated side but a minority of cells sits past the displayed
+    boundary (17% CTM-material side); the caption carries the reading."""
+    if not CORR_CACHE_HERO.exists():
         return
     import pandas as pd
-    fr = pd.read_parquet(CELL_CACHE).dropna(subset=["ga", "s_dict"])
+    fr = pd.read_parquet(CORR_CACHE_HERO).dropna(
+        subset=["ga", "s_corrected"])
     ga = fr.ga.clip(0.2, 2.2)
-    s = fr.s_dict.clip(8, 130)
+    s = fr.s_corrected.clip(S_LO, S_HI)
     hb = ax.hexbin(ga, s, gridsize=(32, 22), yscale="log", cmap="Greys",
                    mincnt=1, alpha=0.75, linewidths=0.0, zorder=4,
-                   extent=(0.2, 2.2, np.log10(8), np.log10(130)))
+                   extent=(0.2, 2.2, np.log10(S_LO), np.log10(S_HI)))
     # shift the gray ramp so single-count hexes render mid-gray, not white
     cmax = float(hb.get_array().max())
     hb.set_clim(-0.8 * cmax, cmax)
@@ -208,11 +218,17 @@ def panel_heldout(ax) -> None:
     with the paired increment and its interval. Per-source markers keep the
     heterogeneity visible."""
     x = np.arange(2)
-    width = 0.26
+    width = 0.2
     colors = [VIRIDIS(0.85), VIRIDIS(0.55), VIRIDIS(0.2)]
     for k, arm in enumerate(HELDOUT["arms"]):
         vals = [HELDOUT["values"][m][k] for m in range(2)]
-        ax.bar(x + (k - 1) * width, vals, width, color=colors[k], label=arm)
+        ax.bar(x + (k - 1.5) * width, vals, width, color=colors[k],
+               label=arm)
+    # Audit-11: corrected-NC1 theory arm (post-outcome audit; fold-free,
+    # same value both modes); neutral hatched styling = post hoc.
+    ax.bar(x + 1.5 * width, [CORR_THEORY] * 2, width * 0.9,
+           color="white", edgecolor="0.2", hatch="\\\\\\", linewidth=1.0,
+           label="corrected NC1 (post hoc)")
     # post-hoc audit group (hatched, macro balanced accuracy). Audit #9
     # section 5.2: neutral edges (no linkage to the solid-arm colors) and
     # direct in-bar labels, so M0+ cannot be read as the severity-only arm.
@@ -268,6 +284,11 @@ def panel_heldout(ax) -> None:
 
 
 def panel_c(ax, b_boot: int = 500) -> None:
+    """Audit-11 panel B: the claim-backed POOLED first handoff (direct-gap
+    pava curve, simultaneous band, first up-crossing marker) plus the
+    CIFAR-100 within-source case-study strata (descriptive; curves and
+    B=2000 bands precomputed by panelb_cifar100_audit.py; the pooled
+    tertile stratification is retired per app:nc1audit)."""
     import pandas as pd
     df = pd.read_parquet(
         CODE / "nc_csf_predictivity/outputs/track1/dataset/"
@@ -275,37 +296,47 @@ def panel_c(ax, b_boot: int = 500) -> None:
     rows = load_severity_rows()
     cells = attach_d(build_cells(df), severity_map(
         rows, ("kid", "fd", "text_align", "img_centroid")))
-    strata = tertiles(cells)
     data, active, fine = make_data(cells)
     rng = np.random.default_rng(0)
+    g0 = curve("pava", data, active, fine)
+    devs = np.empty(b_boot)
+    for i in range(b_boot):
+        boot = list(rng.choice(active, len(active), replace=True))
+        devs[i] = np.nanmax(np.abs(curve("pava", data, boot, fine) - g0))
+    q = np.quantile(devs, 0.95)
+    ax.fill_between(fine, g0 - q, g0 + q, color="0.55", alpha=0.18,
+                    linewidth=0)
+    ax.plot(fine, g0, color="black", linewidth=2.0,
+            label="pooled (280 ckpts)")
+    s = np.sign(g0)
+    for i in range(len(s) - 1):
+        if s[i] < 0 <= s[i + 1]:
+            x0 = fine[i] + (fine[i + 1] - fine[i]) * (
+                g0[i] / (g0[i] - g0[i + 1]))
+            ax.plot([x0], [0.0], marker="o", color="black", markersize=6,
+                    markeredgecolor="white", markeredgewidth=0.8,
+                    zorder=6)
+            break
+    cs = json.loads(PANELB_CURVES.read_text())
+    fine_c = np.array(cs["fine"], dtype=float)
     shades = {"strong": 0.15, "middle": 0.5, "weak": 0.85}
     for name in ("strong", "middle", "weak"):
-        sub = [c for c in active if c in strata[name]]
-        g0 = curve("pava", data, sub, fine)
+        gc = np.array(cs[name]["curve"], dtype=float)
         color = VIRIDIS(shades[name])
-        devs = np.empty(b_boot)
-        for i in range(b_boot):
-            boot = list(rng.choice(sub, len(sub), replace=True))
-            devs[i] = np.nanmax(np.abs(curve("pava", data, boot, fine)
-                                       - g0))
-        q = np.quantile(devs, 0.95)
-        ax.fill_between(fine, g0 - q, g0 + q, color=color, alpha=0.12,
-                        linewidth=0)
-        ax.plot(fine, g0, color=color, linewidth=1.6,
-                label=f"{name} collapse")
-        s = np.sign(g0)
-        for i in range(len(s) - 1):
-            if s[i] < 0 <= s[i + 1]:
-                x0 = fine[i] + (fine[i + 1] - fine[i]) * (
-                    g0[i] / (g0[i] - g0[i + 1]))
-                ax.plot([x0], [0.0], marker="o", color=color,
-                        markersize=5, markeredgecolor="black",
-                        markeredgewidth=0.5, zorder=5)
-                break
+        qc = float(cs[name]["band_q95"])
+        ax.fill_between(fine_c, gc - qc, gc + qc, color=color,
+                        alpha=0.10, linewidth=0)
+        ax.plot(fine_c, gc, color=color, linewidth=1.3, linestyle="--",
+                label=f"c100 {name} (case study)")
+        x = cs[name]["first_up_crossing"]
+        if x is not None and str(x) != "None":
+            ax.plot([float(x)], [0.0], marker="D", color=color,
+                    markersize=4, markeredgecolor="black",
+                    markeredgewidth=0.5, zorder=5)
     ax.axhline(0.0, color="gray", linewidth=0.7)
     ax.set_xlabel("continuous OOD severity $d$ (CLIP composite)")
     ax.set_ylabel(r"AUGRC$_{Energy}$ $-$ AUGRC$_{CTM}$")
-    ax.legend(frameon=False, fontsize=7.5, loc="lower right")
+    ax.legend(frameon=False, fontsize=7.0, loc="lower right")
 
 
 def main() -> None:
@@ -315,7 +346,7 @@ def main() -> None:
     n_ga, n_y = (16, 10) if args.quick else (41, 26)
 
     ga_grid = np.linspace(0.2, 2.2, n_ga)
-    s_grid = np.geomspace(8, 130, n_y)
+    s_grid = np.geomspace(S_LO, S_HI, n_y)
     theta_grid = np.linspace(0, 60, n_y)
 
     print("panel A surface (Energy vs CTM over gamma*a x s) ...")
@@ -339,17 +370,13 @@ def main() -> None:
     pcm = draw_gap(ax_a, ga_grid, s_grid, gap_a, "SNR $s$", yscale="log")
     overlay_audit(ax_a, "A")
     overlay_support(ax_a)
-    for name, s_val in TERTILE_S.items():
-        ax_a.axhline(s_val, color="white", linewidth=0.8,
-                     linestyle="--", alpha=0.9)
-        ax_a.annotate(f"{name} tertile", xy=(1.62, s_val * 1.06),
-                      fontsize=7, ha="left", color="white")
+    ax_a.set_ylim(S_LO, S_HI)
     ax_a.set_title("A. Analytic surface + measured support",
                    fontsize=10, loc="left")
 
-    print("panel B (empirical strata) ...")
+    print("panel B (pooled + case study) ...")
     panel_c(ax_b)
-    ax_b.set_title("B. 280 checkpoints, by collapse tertile",
+    ax_b.set_title("B. Pooled handoff + CIFAR-100 strata",
                    fontsize=10, loc="left")
 
     print("panel C (held-out verdict) ...")
