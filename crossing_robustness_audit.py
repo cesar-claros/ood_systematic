@@ -57,9 +57,16 @@ SEVERITY_CSV = (CODE.parent
                 / "documentation/x6_spectral_scripts/clip_severity.csv")
 OUT_DIR = CODE / "nc_csf_predictivity/outputs/track1"
 METRICS = ("kid", "fd", "text_align", "img_centroid")
+# DEFECT REPAIR 2026-08-31 (severity-axis amendment; contract entry):
+# the csv's `text_align` column ALREADY stores inverse alignment
+# (1 - similarity, from the clustering pipeline's `inv text alignment
+# mean`), so the historical "inverse_text_align_only" arm double-flipped
+# it and analyzed raw similarity in the wrong severity direction. The
+# arm is renamed and no longer flips; historical outputs of the old arm
+# are invalid and annotated so in the amendment.
 SINGLE_AXES = {"kid_only": ("kid",), "fd_only": ("fd",),
                "img_centroid_only": ("img_centroid",),
-               "inverse_text_align_only": ("text_align",)}
+               "inv_text_align_only": ("text_align",)}
 FINE_N = 301
 ESTIMATORS = ("pava", "loclin", "spline", "piecewise")
 
@@ -77,7 +84,9 @@ def severity_map(rows: list[dict], metrics: tuple[str, ...],
                  exclude_set: str | None = None,
                  invert_text: bool = False) -> dict[tuple[str, str], float]:
     """(source, eval_dataset) -> d, z-standardized per source over the
-    included OOD sets. invert_text flips text_align (single-axis variant)."""
+    included OOD sets. NOTE: `text_align` already stores INVERSE
+    alignment; invert_text is retained for API compatibility but must
+    stay False (the 2026-08-31 amendment removed its only caller)."""
     by_source: dict[str, list[dict]] = {}
     for r in rows:
         if r["eval_dataset"] == exclude_set:
@@ -349,8 +358,7 @@ def run_audit(df: pd.DataFrame, sev_rows: list[dict], b: int,
     # Analysis D: severity-definition sensitivity (pava; no bands).
     variants: dict[str, dict] = {"full_composite": dmap}
     for name, metrics in SINGLE_AXES.items():
-        variants[name] = severity_map(
-            sev_rows, metrics, invert_text=("text_align" in metrics))
+        variants[name] = severity_map(sev_rows, metrics)
     for drop in METRICS:
         keep = tuple(m for m in METRICS if m != drop)
         variants[f"without_{drop}"] = severity_map(sev_rows, keep)
