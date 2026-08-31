@@ -35,12 +35,25 @@ INSPECTED_IN200 = (
 )
 
 
+def dedup_by_parent(paths: list[str]) -> list[str]:
+    """One checkpoint per run dir (the stage-3 discover_ckpts rule):
+    OpenOOD saves best.ckpt AND its named best_epoch* twin per seed;
+    both are the same run, and E1's checkpoint-cluster bootstrap must
+    see each run once. Prefer best.ckpt, else the first sorted file."""
+    by_parent: dict[str, str] = {}
+    for p in sorted(paths):
+        parent = str(Path(p).parent)
+        if parent not in by_parent or Path(p).name == "best.ckpt":
+            by_parent[parent] = p
+    return [by_parent[k] for k in sorted(by_parent)]
+
+
 def find_ckpts(root: Path) -> list[str]:
     out = []
     if root and root.is_dir():
         for p in sorted(root.rglob("best*.ckpt")):
             out.append(str(p))
-    return out
+    return dedup_by_parent(out)
 
 
 def main() -> None:

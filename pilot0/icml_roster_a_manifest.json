@@ -4,19 +4,13 @@
  "rosters": {
   "cifar10": [
    "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar10_resnet18_32x32_base_e100_lr0.1_default/s0/best.ckpt",
-   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar10_resnet18_32x32_base_e100_lr0.1_default/s0/best_epoch96_acc0.9470.ckpt",
    "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar10_resnet18_32x32_base_e100_lr0.1_default/s1/best.ckpt",
-   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar10_resnet18_32x32_base_e100_lr0.1_default/s1/best_epoch95_acc0.9500.ckpt",
-   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar10_resnet18_32x32_base_e100_lr0.1_default/s2/best.ckpt",
-   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar10_resnet18_32x32_base_e100_lr0.1_default/s2/best_epoch99_acc0.9450.ckpt"
+   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar10_resnet18_32x32_base_e100_lr0.1_default/s2/best.ckpt"
   ],
   "cifar100": [
    "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar100_resnet18_32x32_base_e100_lr0.1_default/s0/best.ckpt",
-   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar100_resnet18_32x32_base_e100_lr0.1_default/s0/best_epoch99_acc0.7810.ckpt",
    "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar100_resnet18_32x32_base_e100_lr0.1_default/s1/best.ckpt",
-   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar100_resnet18_32x32_base_e100_lr0.1_default/s1/best_epoch100_acc0.7710.ckpt",
-   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar100_resnet18_32x32_base_e100_lr0.1_default/s2/best.ckpt",
-   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar100_resnet18_32x32_base_e100_lr0.1_default/s2/best_epoch90_acc0.7760.ckpt"
+   "/work/cniel/sw/FD_Shifts/project/datasets/openood/results/cifar100_resnet18_32x32_base_e100_lr0.1_default/s2/best.ckpt"
   ],
   "imagenet200_extra": []
  },
@@ -66,5 +60,20 @@
   "vit/tiny-imagenet-200_modelvit_bbvit_lr0.01_bs128_run3_do1_rew0",
   "vit/tiny-imagenet-200_modelvit_bbvit_lr0.01_bs128_run4_do0_rew0",
   "vit/tiny-imagenet-200_modelvit_bbvit_lr0.01_bs128_run4_do1_rew0"
- ]
+ ],
+ "dedup": {
+  "rule": "one checkpoint per run dir (dedup_by_parent, the stage-3 discover_ckpts rule: best.ckpt preferred over its named best_epoch* twin of the same run); applied 2026-08-31 pre-outcome, before any forward pass",
+  "counts_before": {
+   "cifar10": 6,
+   "cifar100": 6,
+   "imagenet200_extra": 0
+  },
+  "counts_after": {
+   "cifar10": 3,
+   "cifar100": 3,
+   "imagenet200_extra": 0
+  }
+ },
+ "in200_scope_note": "EMPTY BY RULE: OpenOOD's release contains exactly one ImageNet-200 RN18 bundle (imagenet200_res18_v1.5 = the three inspected base CE runs, all excluded by the honesty rule); verified 2026-08-31 against scripts/download/download.py. The IN200 slice of roster A is therefore empty and the stage-3 ICML extraction job is not run.",
+ "cifar_scope_note": "Scope = the documented v1.5 model zoo (README: 'ResNet-18 classifiers trained with cross-entropy loss from 3 training runs' per CIFAR benchmark). The legacy v1.0 bundles (cifar10_res18, cifar100_res18 in download.py) are superseded pre-v1.5 artifacts outside the documented release and are excluded; decision recorded 2026-08-31, pre-outcome."
 }
