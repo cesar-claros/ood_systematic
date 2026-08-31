@@ -1,0 +1,988 @@
+{
+ "K": {
+  "pooled": {
+   "pava": {
+    "x": -1.424,
+    "tie": [
+     -1.878,
+     1.795
+    ],
+    "n_sign": 1
+   },
+   "loclin": {
+    "x": -1.588,
+    "tie": null,
+    "n_sign": 3
+   },
+   "spline": {
+    "x": -1.797,
+    "tie": null,
+    "n_sign": 3
+   },
+   "piecewise": {
+    "x": -1.577,
+    "tie": null,
+    "n_sign": 15
+   }
+  },
+  "pooled_loo_locations": {
+   "cifar10": -1.254,
+   "cifar100": -1.178,
+   "isun": -1.404,
+   "lsun cropped": -1.445,
+   "lsun resize": -1.419,
+   "places365": -1.417,
+   "svhn": -1.423,
+   "textures": -1.414,
+   "tinyimagenet": -1.452
+  },
+  "pooled_loso_locations": {
+   "cifar10": -1.5,
+   "cifar100": -1.352,
+   "supercifar100": -1.497,
+   "tinyimagenet": -0.848
+  },
+  "c100_estimators": {
+   "pava": {
+    "pooled": {
+     "x": -1.269,
+     "tie": [
+      -1.479,
+      -1.067
+     ],
+     "n_sign": 1
+    },
+    "strong": {
+     "x": -1.385,
+     "tie": [
+      -1.723,
+      -1.045
+     ],
+     "n_sign": 1
+    },
+    "middle": {
+     "x": -1.43,
+     "tie": [
+      -1.701,
+      -1.156
+     ],
+     "n_sign": 1
+    },
+    "weak": {
+     "x": -0.199,
+     "tie": [
+      -1.156,
+      -0.088
+     ],
+     "n_sign": 1
+    },
+    "ordering_retained": true
+   },
+   "loclin": {
+    "pooled": {
+     "x": -1.541,
+     "tie": null,
+     "n_sign": 2
+    },
+    "strong": {
+     "x": -1.459,
+     "tie": null,
+     "n_sign": 1
+    },
+    "middle": {
+     "x": -1.714,
+     "tie": null,
+     "n_sign": 1
+    },
+    "weak": {
+     "x": -1.261,
+     "tie": null,
+     "n_sign": 4
+    },
+    "ordering_retained": false
+   },
+   "spline": {
+    "pooled": {
+     "x": -1.975,
+     "tie": null,
+     "n_sign": 4
+    },
+    "strong": {
+     "x": -1.855,
+     "tie": null,
+     "n_sign": 1
+    },
+    "middle": {
+     "x": -1.995,
+     "tie": null,
+     "n_sign": 5
+    },
+    "weak": {
+     "x": -1.964,
+     "tie": null,
+     "n_sign": 4
+    },
+    "ordering_retained": false
+   },
+   "piecewise": {
+    "pooled": {
+     "x": -1.541,
+     "tie": null,
+     "n_sign": 4
+    },
+    "strong": {
+     "x": -1.459,
+     "tie": null,
+     "n_sign": 1
+    },
+    "middle": {
+     "x": -1.715,
+     "tie": null,
+     "n_sign": 3
+    },
+    "weak": {
+     "x": -1.253,
+     "tie": null,
+     "n_sign": 4
+    },
+    "ordering_retained": false
+   }
+  },
+  "c100_loo": {
+   "cifar10": true,
+   "isun": true,
+   "lsun cropped": false,
+   "lsun resize": true,
+   "places365": true,
+   "svhn": true,
+   "textures": true,
+   "tinyimagenet": true
+  },
+  "c100_loo_n": 8,
+  "gate_E_inputs": {
+   "estimators_retained": 1,
+   "loo_retained": 7,
+   "n_loo": 8
+  },
+  "heldout": {
+   "ckpt5": {
+    "n_material": 718,
+    "arms": {
+     "theory": {
+      "sign": 0.7312,
+      "balanced": 0.6934
+     },
+     "severity": {
+      "sign": 0.6838,
+      "balanced": 0.608
+     },
+     "geometry": {
+      "sign": 0.7716,
+      "balanced": 0.7283
+     },
+     "flexible": {
+      "sign": 0.7744,
+      "balanced": 0.7358
+     },
+     "mean": {
+      "sign": 0.6003,
+      "balanced": 0.5
+     }
+    },
+    "geometry_minus_severity": {
+     "point": 0.0877,
+     "ci95": [
+      0.052,
+      0.1248
+     ]
+    },
+    "corrected_minus_severity": {
+     "point": 0.0474,
+     "ci95": [
+      -0.0056,
+      0.1037
+     ]
+    }
+   },
+   "loso": {
+    "n_material": 718,
+    "arms": {
+     "theory": {
+      "sign": 0.7312,
+      "balanced": 0.6934
+     },
+     "severity": {
+      "sign": 0.6309,
+      "balanced": 0.5639
+     },
+     "geometry": {
+      "sign": 0.7201,
+      "balanced": 0.6801
+     },
+     "flexible": {
+      "sign": 0.6755,
+      "balanced": 0.6156
+     },
+     "mean": {
+      "sign": 0.6003,
+      "balanced": 0.5
+     }
+    },
+    "geometry_minus_severity": {
+     "point": 0.0891,
+     "ci95": [
+      0.0414,
+      0.141
+     ]
+    },
+    "corrected_minus_severity": {
+     "point": 0.1003,
+     "ci95": [
+      0.0468,
+      0.1545
+     ]
+    }
+   }
+  },
+  "paradigm": {
+   "confidnet": {
+    "strata": {
+     "strong": 1.202,
+     "middle": -1.425,
+     "weak": -1.644
+    }
+   },
+   "devries": {
+    "strata": {
+     "strong": 1.228,
+     "middle": -1.244,
+     "weak": -1.576
+    }
+   },
+   "dg": {
+    "strata": {
+     "strong": -0.939,
+     "middle": -1.318,
+     "weak": -1.276
+    }
+   }
+  },
+  "equal_paradigm_pooled_x": -1.42,
+  "joint": {
+   "arms": {
+    "M0": {
+     "bal_macro": 0.838,
+     "bal_macro_two_class": 0.67,
+     "bal_row": 0.803,
+     "sign_macro": 0.899,
+     "sign_row": 0.825
+    },
+    "M0plus": {
+     "bal_macro": 0.941,
+     "bal_macro_two_class": 0.858,
+     "bal_row": 0.911,
+     "sign_macro": 0.965,
+     "sign_row": 0.914
+    },
+    "M1": {
+     "bal_macro": 0.956,
+     "bal_macro_two_class": 0.893,
+     "bal_row": 0.924,
+     "sign_macro": 0.977,
+     "sign_row": 0.93
+    },
+    "MH": {
+     "bal_macro": 0.958,
+     "bal_macro_two_class": 0.899,
+     "bal_row": 0.915,
+     "sign_macro": 0.976,
+     "sign_row": 0.923
+    },
+    "MHG": {
+     "bal_macro": 0.957,
+     "bal_macro_two_class": 0.898,
+     "bal_row": 0.925,
+     "sign_macro": 0.977,
+     "sign_row": 0.932
+    },
+    "sev_pooled": {
+     "bal_macro": 0.719,
+     "bal_macro_two_class": 0.664,
+     "bal_row": 0.608,
+     "sign_macro": 0.742,
+     "sign_row": 0.684
+    },
+    "sev_source": {
+     "bal_macro": 0.878,
+     "bal_macro_two_class": 0.706,
+     "bal_row": 0.825,
+     "sign_macro": 0.933,
+     "sign_row": 0.841
+    }
+   },
+   "differences": {
+    "M0plus-M0": {
+     "bal_macro": {
+      "point": 0.103,
+      "ci95": [
+       0.078,
+       0.116
+      ]
+     },
+     "bal_row": {
+      "point": 0.109,
+      "ci95": [
+       0.063,
+       0.154
+      ]
+     },
+     "sign_row": {
+      "point": 0.089,
+      "ci95": [
+       0.045,
+       0.134
+      ]
+     }
+    },
+    "M1-M0plus": {
+     "bal_macro": {
+      "point": 0.015,
+      "ci95": [
+       0.001,
+       0.028
+      ]
+     },
+     "bal_row": {
+      "point": 0.013,
+      "ci95": [
+       -0.006,
+       0.033
+      ]
+     },
+     "sign_row": {
+      "point": 0.017,
+      "ci95": [
+       0.0,
+       0.035
+      ]
+     }
+    },
+    "M1-M0": {
+     "bal_macro": {
+      "point": 0.118,
+      "ci95": [
+       0.086,
+       0.134
+      ]
+     },
+     "bal_row": {
+      "point": 0.121,
+      "ci95": [
+       0.079,
+       0.164
+      ]
+     },
+     "sign_row": {
+      "point": 0.106,
+      "ci95": [
+       0.068,
+       0.145
+      ]
+     }
+    },
+    "MH-M0plus": {
+     "bal_macro": {
+      "point": 0.017,
+      "ci95": [
+       -0.002,
+       0.028
+      ]
+     },
+     "bal_row": {
+      "point": 0.003,
+      "ci95": [
+       -0.028,
+       0.031
+      ]
+     },
+     "sign_row": {
+      "point": 0.01,
+      "ci95": [
+       -0.016,
+       0.035
+      ]
+     }
+    },
+    "MHG-MH": {
+     "bal_macro": {
+      "point": -0.001,
+      "ci95": [
+       -0.007,
+       0.007
+      ]
+     },
+     "bal_row": {
+      "point": 0.01,
+      "ci95": [
+       -0.005,
+       0.028
+      ]
+     },
+     "sign_row": {
+      "point": 0.008,
+      "ci95": [
+       -0.003,
+       0.024
+      ]
+     }
+    },
+    "M1-MH": {
+     "bal_macro": {
+      "point": -0.002,
+      "ci95": [
+       -0.014,
+       0.01
+      ]
+     },
+     "bal_row": {
+      "point": 0.009,
+      "ci95": [
+       -0.008,
+       0.03
+      ]
+     },
+     "sign_row": {
+      "point": 0.007,
+      "ci95": [
+       -0.008,
+       0.025
+      ]
+     }
+    },
+    "M0plus-sev_source": {
+     "bal_macro": {
+      "point": 0.063,
+      "ci95": [
+       0.049,
+       0.072
+      ]
+     },
+     "bal_row": {
+      "point": 0.087,
+      "ci95": [
+       0.043,
+       0.126
+      ]
+     },
+     "sign_row": {
+      "point": 0.072,
+      "ci95": [
+       0.031,
+       0.112
+      ]
+     }
+    }
+   }
+  },
+  "gates": {
+   "GC_or_GD": true,
+   "GE": false,
+   "GF": true
+  }
+ },
+ "F": {
+  "pooled": {
+   "pava": {
+    "x": -1.425,
+    "tie": [
+     -1.625,
+     1.284
+    ],
+    "n_sign": 1
+   },
+   "loclin": {
+    "x": -1.448,
+    "tie": null,
+    "n_sign": 5
+   },
+   "spline": {
+    "x": -1.391,
+    "tie": null,
+    "n_sign": 1
+   },
+   "piecewise": {
+    "x": -1.508,
+    "tie": null,
+    "n_sign": 11
+   }
+  },
+  "pooled_loo_locations": {
+   "cifar10": -1.421,
+   "cifar100": -1.266,
+   "isun": -1.425,
+   "lsun cropped": -1.425,
+   "lsun resize": -1.425,
+   "places365": -1.425,
+   "svhn": -1.425,
+   "textures": -1.422,
+   "tinyimagenet": -1.441
+  },
+  "pooled_loso_locations": {
+   "cifar10": -1.45,
+   "cifar100": -1.365,
+   "supercifar100": -1.471,
+   "tinyimagenet": -1.257
+  },
+  "c100_estimators": {
+   "pava": {
+    "pooled": {
+     "x": -1.465,
+     "tie": [
+      -1.527,
+      -1.402
+     ],
+     "n_sign": 1
+    },
+    "strong": {
+     "x": -1.475,
+     "tie": [
+      -1.59,
+      -1.36
+     ],
+     "n_sign": 1
+    },
+    "middle": {
+     "x": -1.531,
+     "tie": [
+      -1.611,
+      -1.454
+     ],
+     "n_sign": 1
+    },
+    "weak": {
+     "x": -1.297,
+     "tie": [
+      -1.465,
+      1.02
+     ],
+     "n_sign": 1
+    },
+    "ordering_retained": false
+   },
+   "loclin": {
+    "pooled": {
+     "x": -1.52,
+     "tie": null,
+     "n_sign": 1
+    },
+    "strong": {
+     "x": -1.49,
+     "tie": null,
+     "n_sign": 1
+    },
+    "middle": {
+     "x": -1.584,
+     "tie": null,
+     "n_sign": 1
+    },
+    "weak": {
+     "x": -1.413,
+     "tie": null,
+     "n_sign": 1
+    },
+    "ordering_retained": false
+   },
+   "spline": {
+    "pooled": {
+     "x": -1.549,
+     "tie": null,
+     "n_sign": 3
+    },
+    "strong": {
+     "x": -1.499,
+     "tie": null,
+     "n_sign": 3
+    },
+    "middle": {
+     "x": -1.616,
+     "tie": null,
+     "n_sign": 3
+    },
+    "weak": {
+     "x": -1.436,
+     "tie": null,
+     "n_sign": 3
+    },
+    "ordering_retained": false
+   },
+   "piecewise": {
+    "pooled": {
+     "x": -1.52,
+     "tie": null,
+     "n_sign": 5
+    },
+    "strong": {
+     "x": -1.49,
+     "tie": null,
+     "n_sign": 1
+    },
+    "middle": {
+     "x": -1.584,
+     "tie": null,
+     "n_sign": 3
+    },
+    "weak": {
+     "x": -1.413,
+     "tie": null,
+     "n_sign": 5
+    },
+    "ordering_retained": false
+   }
+  },
+  "c100_loo": {
+   "cifar10": true,
+   "isun": true,
+   "lsun cropped": false,
+   "lsun resize": true,
+   "places365": false,
+   "svhn": false,
+   "textures": false,
+   "tinyimagenet": true
+  },
+  "c100_loo_n": 8,
+  "gate_E_inputs": {
+   "estimators_retained": 0,
+   "loo_retained": 4,
+   "n_loo": 8
+  },
+  "heldout": {
+   "ckpt5": {
+    "n_material": 718,
+    "arms": {
+     "theory": {
+      "sign": 0.7312,
+      "balanced": 0.6934
+     },
+     "severity": {
+      "sign": 0.6838,
+      "balanced": 0.608
+     },
+     "geometry": {
+      "sign": 0.7772,
+      "balanced": 0.7341
+     },
+     "flexible": {
+      "sign": 0.7883,
+      "balanced": 0.7515
+     },
+     "mean": {
+      "sign": 0.6003,
+      "balanced": 0.5
+     }
+    },
+    "geometry_minus_severity": {
+     "point": 0.0933,
+     "ci95": [
+      0.0567,
+      0.1319
+     ]
+    },
+    "corrected_minus_severity": {
+     "point": 0.0474,
+     "ci95": [
+      -0.0056,
+      0.1037
+     ]
+    }
+   },
+   "loso": {
+    "n_material": 718,
+    "arms": {
+     "theory": {
+      "sign": 0.7312,
+      "balanced": 0.6934
+     },
+     "severity": {
+      "sign": 0.6602,
+      "balanced": 0.5883
+     },
+     "geometry": {
+      "sign": 0.7214,
+      "balanced": 0.6813
+     },
+     "flexible": {
+      "sign": 0.6407,
+      "balanced": 0.5866
+     },
+     "mean": {
+      "sign": 0.6003,
+      "balanced": 0.5
+     }
+    },
+    "geometry_minus_severity": {
+     "point": 0.0613,
+     "ci95": [
+      0.0155,
+      0.111
+     ]
+    },
+    "corrected_minus_severity": {
+     "point": 0.071,
+     "ci95": [
+      0.0195,
+      0.1264
+     ]
+    }
+   }
+  },
+  "paradigm": {
+   "confidnet": {
+    "strata": {
+     "strong": 1.195,
+     "middle": -1.423,
+     "weak": -1.546
+    }
+   },
+   "devries": {
+    "strata": {
+     "strong": 1.204,
+     "middle": -0.79,
+     "weak": -1.508
+    }
+   },
+   "dg": {
+    "strata": {
+     "strong": -1.744,
+     "middle": -1.266,
+     "weak": -1.262
+    }
+   }
+  },
+  "equal_paradigm_pooled_x": -1.42,
+  "joint": {
+   "arms": {
+    "M0": {
+     "bal_macro": 0.83,
+     "bal_macro_two_class": 0.665,
+     "bal_row": 0.803,
+     "sign_macro": 0.883,
+     "sign_row": 0.816
+    },
+    "M0plus": {
+     "bal_macro": 0.951,
+     "bal_macro_two_class": 0.883,
+     "bal_row": 0.921,
+     "sign_macro": 0.974,
+     "sign_row": 0.925
+    },
+    "M1": {
+     "bal_macro": 0.961,
+     "bal_macro_two_class": 0.907,
+     "bal_row": 0.938,
+     "sign_macro": 0.98,
+     "sign_row": 0.942
+    },
+    "MH": {
+     "bal_macro": 0.965,
+     "bal_macro_two_class": 0.916,
+     "bal_row": 0.935,
+     "sign_macro": 0.984,
+     "sign_row": 0.942
+    },
+    "MHG": {
+     "bal_macro": 0.965,
+     "bal_macro_two_class": 0.915,
+     "bal_row": 0.934,
+     "sign_macro": 0.983,
+     "sign_row": 0.94
+    },
+    "sev_pooled": {
+     "bal_macro": 0.719,
+     "bal_macro_two_class": 0.664,
+     "bal_row": 0.608,
+     "sign_macro": 0.742,
+     "sign_row": 0.684
+    },
+    "sev_source": {
+     "bal_macro": 0.878,
+     "bal_macro_two_class": 0.706,
+     "bal_row": 0.825,
+     "sign_macro": 0.933,
+     "sign_row": 0.841
+    }
+   },
+   "differences": {
+    "M0plus-M0": {
+     "bal_macro": {
+      "point": 0.121,
+      "ci95": [
+       0.094,
+       0.139
+      ]
+     },
+     "bal_row": {
+      "point": 0.118,
+      "ci95": [
+       0.079,
+       0.16
+      ]
+     },
+     "sign_row": {
+      "point": 0.109,
+      "ci95": [
+       0.071,
+       0.15
+      ]
+     }
+    },
+    "M1-M0plus": {
+     "bal_macro": {
+      "point": 0.01,
+      "ci95": [
+       0.001,
+       0.016
+      ]
+     },
+     "bal_row": {
+      "point": 0.017,
+      "ci95": [
+       -0.002,
+       0.037
+      ]
+     },
+     "sign_row": {
+      "point": 0.017,
+      "ci95": [
+       -0.001,
+       0.036
+      ]
+     }
+    },
+    "M1-M0": {
+     "bal_macro": {
+      "point": 0.131,
+      "ci95": [
+       0.1,
+       0.149
+      ]
+     },
+     "bal_row": {
+      "point": 0.135,
+      "ci95": [
+       0.095,
+       0.174
+      ]
+     },
+     "sign_row": {
+      "point": 0.125,
+      "ci95": [
+       0.09,
+       0.161
+      ]
+     }
+    },
+    "MH-M0plus": {
+     "bal_macro": {
+      "point": 0.014,
+      "ci95": [
+       0.001,
+       0.022
+      ]
+     },
+     "bal_row": {
+      "point": 0.014,
+      "ci95": [
+       -0.008,
+       0.034
+      ]
+     },
+     "sign_row": {
+      "point": 0.017,
+      "ci95": [
+       -0.003,
+       0.037
+      ]
+     }
+    },
+    "MHG-MH": {
+     "bal_macro": {
+      "point": -0.0,
+      "ci95": [
+       -0.003,
+       0.003
+      ]
+     },
+     "bal_row": {
+      "point": -0.001,
+      "ci95": [
+       -0.013,
+       0.012
+      ]
+     },
+     "sign_row": {
+      "point": -0.001,
+      "ci95": [
+       -0.012,
+       0.01
+      ]
+     }
+    },
+    "M1-MH": {
+     "bal_macro": {
+      "point": -0.004,
+      "ci95": [
+       -0.011,
+       0.003
+      ]
+     },
+     "bal_row": {
+      "point": 0.003,
+      "ci95": [
+       -0.011,
+       0.017
+      ]
+     },
+     "sign_row": {
+      "point": 0.0,
+      "ci95": [
+       -0.013,
+       0.013
+      ]
+     }
+    },
+    "M0plus-sev_source": {
+     "bal_macro": {
+      "point": 0.074,
+      "ci95": [
+       0.056,
+       0.084
+      ]
+     },
+     "bal_row": {
+      "point": 0.096,
+      "ci95": [
+       0.055,
+       0.135
+      ]
+     },
+     "sign_row": {
+      "point": 0.084,
+      "ci95": [
+       0.044,
+       0.122
+      ]
+     }
+    }
+   }
+  },
+  "gates": {
+   "GC_or_GD": false,
+   "GE": false,
+   "GF": true
+  }
+ },
+ "gates_pending_hpc": {
+  "GateA_provenance": "recorded; full pass requires the CLIP regeneration (ICML extraction job)",
+  "GateB_kid_uncertainty": "requires features; pending same job"
+ }
+}

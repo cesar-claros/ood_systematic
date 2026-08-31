@@ -1,0 +1,78 @@
+# Severity-axis supplement (LOO held-out, categorical control, hero curves)
+
+```
+{
+ "K": {
+  "heldout_loo_geo_minus_sev": {
+   "per_set": {
+    "cifar10": 0.0864,
+    "cifar100": 0.1021,
+    "isun": 0.0828,
+    "lsun cropped": 0.0829,
+    "lsun resize": 0.078,
+    "places365": 0.0856,
+    "svhn": 0.1151,
+    "textures": 0.1339,
+    "tinyimagenet": 0.0502
+   },
+   "range": [
+    0.0502,
+    0.1339
+   ]
+  },
+  "categorical": {
+   "M1cat_minus_M0pluscat_macro": {
+    "point": 0.008,
+    "ci95": [
+     -0.001,
+     0.018
+    ]
+   },
+   "M1cat_minus_M0pluscat_two_class": {
+    "point": 0.019,
+    "ci95": [
+     -0.003,
+     0.044
+    ]
+   },
+   "M0pluscat_macro": 0.945
+  }
+ },
+ "F": {
+  "heldout_loo_geo_minus_sev": {
+   "per_set": {
+    "cifar10": 0.0985,
+    "cifar100": 0.1036,
+    "isun": 0.0922,
+    "lsun cropped": 0.0892,
+    "lsun resize": 0.0828,
+    "places365": 0.0901,
+    "svhn": 0.1475,
+    "textures": 0.1441,
+    "tinyimagenet": 0.0627
+   },
+   "range": [
+    0.0627,
+    0.1475
+   ]
+  },
+  "categorical": {
+   "M1cat_minus_M0pluscat_macro": {
+    "point": 0.005,
+    "ci95": [
+     -0.006,
+     0.012
+    ]
+   },
+   "M1cat_minus_M0pluscat_two_class": {
+    "point": 0.021,
+    "ci95": [
+     -0.001,
+     0.032
+    ]
+   },
+   "M0pluscat_macro": 0.958
+  }
+ }
+}
+```

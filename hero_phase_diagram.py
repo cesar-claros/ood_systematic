@@ -174,12 +174,12 @@ S_LO, S_HI = 2.0, 40.0
 HELDOUT = {
     "modes": ["checkpoint\nheld-out", "source\nheld-out"],
     "arms": ["frozen theory", "severity only", "geometry model"],
-    "values": [[0.099, 0.684, 0.774], [0.099, 0.607, 0.703]],
+    "values": [[0.099, 0.684, 0.772], [0.099, 0.631, 0.720]],
     "majority": 0.600,
-    "per_source_geometry": {"cifar10": 0.182, "cifar100": 0.878,
-                            "supercifar100": 0.803, "tinyimagenet": 0.993},
+    "per_source_geometry": {"cifar10": 0.229, "cifar100": 0.878,
+                            "supercifar100": 0.815, "tinyimagenet": 0.993},
     "per_source_severity": {"cifar10": 0.259, "cifar100": 0.989,
-                            "supercifar100": 0.682, "tinyimagenet": 0.618},
+                            "supercifar100": 0.682, "tinyimagenet": 0.736},
 }
 # Post-hoc joint confounding audit (joint_confound_audit_report.md): macro
 # balanced accuracy; the paired increment crosses zero.
@@ -283,58 +283,51 @@ def panel_heldout(ax) -> None:
               title="held-out source", title_fontsize=6.4)
 
 
-def panel_c(ax, b_boot: int = 500) -> None:
-    """Audit-11 panel B: the claim-backed POOLED first handoff (direct-gap
-    pava curve, simultaneous band, first up-crossing marker) plus the
-    CIFAR-100 within-source case-study strata (descriptive; curves and
-    B=2000 bands precomputed by panelb_cifar100_audit.py; the pooled
-    tertile stratification is retired per app:nc1audit)."""
-    import pandas as pd
-    df = pd.read_parquet(
-        CODE / "nc_csf_predictivity/outputs/track1/dataset/"
-               "long_harmonized.parquet")
-    rows = load_severity_rows()
-    cells = attach_d(build_cells(df), severity_map(
-        rows, ("kid", "fd", "text_align", "img_centroid")))
-    data, active, fine = make_data(cells)
-    rng = np.random.default_rng(0)
-    g0 = curve("pava", data, active, fine)
-    devs = np.empty(b_boot)
-    for i in range(b_boot):
-        boot = list(rng.choice(active, len(active), replace=True))
-        devs[i] = np.nanmax(np.abs(curve("pava", data, boot, fine) - g0))
-    q = np.quantile(devs, 0.95)
+def panel_c(ax, curves_path=None, xlabel=None) -> None:
+    """Audit-11 + severity-amendment panel B: the pooled first-handoff
+    curve and the CIFAR-100 case-study strata, read from the precomputed
+    amended-axis exports (severity_axis_supplement.py; B=2000 bands)."""
+    cs = json.loads((curves_path or (CODE /
+        "nc_csf_predictivity/outputs/track1/hero_curves_dK.json"))
+        .read_text())
+    fine = np.array(cs["fine"], dtype=float)
+    g0 = np.array(cs["pooled"]["curve"], dtype=float)
+    q = float(cs["pooled"]["band_q95"])
     ax.fill_between(fine, g0 - q, g0 + q, color="0.55", alpha=0.18,
                     linewidth=0)
     ax.plot(fine, g0, color="black", linewidth=2.0,
             label="pooled (280 ckpts)")
-    s = np.sign(g0)
-    for i in range(len(s) - 1):
-        if s[i] < 0 <= s[i + 1]:
+    sgn = np.sign(g0)
+    for i in range(len(sgn) - 1):
+        if sgn[i] < 0 <= sgn[i + 1]:
             x0 = fine[i] + (fine[i + 1] - fine[i]) * (
                 g0[i] / (g0[i] - g0[i + 1]))
             ax.plot([x0], [0.0], marker="o", color="black", markersize=6,
                     markeredgecolor="white", markeredgewidth=0.8,
                     zorder=6)
             break
-    cs = json.loads(PANELB_CURVES.read_text())
-    fine_c = np.array(cs["fine"], dtype=float)
+    fine_c = np.array(cs["fine_c100"], dtype=float)
     shades = {"strong": 0.15, "middle": 0.5, "weak": 0.85}
     for name in ("strong", "middle", "weak"):
         gc = np.array(cs[name]["curve"], dtype=float)
-        color = VIRIDIS(shades[name])
         qc = float(cs[name]["band_q95"])
+        color = VIRIDIS(shades[name])
         ax.fill_between(fine_c, gc - qc, gc + qc, color=color,
                         alpha=0.10, linewidth=0)
         ax.plot(fine_c, gc, color=color, linewidth=1.3, linestyle="--",
                 label=f"c100 {name} (case study)")
-        x = cs[name]["first_up_crossing"]
-        if x is not None and str(x) != "None":
-            ax.plot([float(x)], [0.0], marker="D", color=color,
-                    markersize=4, markeredgecolor="black",
-                    markeredgewidth=0.5, zorder=5)
+        sgn = np.sign(gc)
+        for i in range(len(sgn) - 1):
+            if sgn[i] < 0 <= sgn[i + 1]:
+                x0 = fine_c[i] + (fine_c[i + 1] - fine_c[i]) * (
+                    gc[i] / (gc[i] - gc[i + 1]))
+                ax.plot([x0], [0.0], marker="D", color=color,
+                        markersize=4, markeredgecolor="black",
+                        markeredgewidth=0.5, zorder=5)
+                break
     ax.axhline(0.0, color="gray", linewidth=0.7)
-    ax.set_xlabel("continuous OOD severity $d$ (CLIP composite)")
+    ax.set_xlabel(xlabel or
+                  "source-standardized KID severity $d^K$")
     ax.set_ylabel(r"AUGRC$_{Energy}$ $-$ AUGRC$_{CTM}$")
     ax.legend(frameon=False, fontsize=7.0, loc="lower right")
 
@@ -376,7 +369,7 @@ def main() -> None:
 
     print("panel B (pooled + case study) ...")
     panel_c(ax_b)
-    ax_b.set_title("B. Pooled handoff + CIFAR-100 strata",
+    ax_b.set_title("B. Pooled handoff + CIFAR-100 strata (KID)",
                    fontsize=10, loc="left")
 
     print("panel C (held-out verdict) ...")
@@ -391,6 +384,14 @@ def main() -> None:
     fig.savefig(PAPER_FIG / "hero_phase_diagram.pdf", bbox_inches="tight")
     fig.savefig(PAPER_FIG / "hero_phase_diagram.png", bbox_inches="tight")
     plt.close(fig)
+
+    fig3, ax_fd = plt.subplots(figsize=(4.2, 3.0))
+    panel_c(ax_fd, curves_path=CODE /
+            "nc_csf_predictivity/outputs/track1/hero_curves_dF.json",
+            xlabel="source-standardized FD severity $d^F$")
+    ax_fd.set_title("FD robustness companion", fontsize=10, loc="left")
+    fig3.savefig(PAPER_FIG / "fd_panel.pdf", bbox_inches="tight")
+    plt.close(fig3)
 
     fig2, ax_sd = plt.subplots(figsize=(3.6, 3.0))
     pcm2 = draw_gap(ax_sd, ga_grid, theta_grid, gap_b,
