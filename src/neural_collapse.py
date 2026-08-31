@@ -127,11 +127,22 @@ class NeuralCollapseMetrics:
                 sigma_W = sigma_W + h_ki_c @ h_ki_c.T
             self.class_variance.append( torch.linalg.norm(H_k, dim=1, ord=2).pow(2).mean() )
         # Variability Collapse (Within-class variation collapse)
+        # FIXED 2026-08-30 (audit #11, NC1 normalization): sigma_W is the
+        # average over ALL N samples (1/N), not 1/(N*K); the old extra 1/K
+        # made var_collapse = NC1/C for the stated definition
+        # Tr(Sigma_W Sigma_B^+)/C (verified analytically on the isotropic
+        # ETF and empirically on 280 checkpoints, ratio == C per source).
+        # The pseudoinverse is pinned (float64, hermitian, rtol 1e-6) to
+        # match the audited pilot0 implementation: torch's default rtol on
+        # the rank-(C-1) Sigma_B made high-D values pinv-fragile
+        # (nc1_tinyimagenet_fragility report).
         K = self.num_classes
         N = activations_train.shape[0]
         sigma_B = (1/K) * sigma_B
-        sigma_W = (1/(N*K)) * sigma_W
-        var_collapse = (1/K)*torch.trace(sigma_W @ torch.linalg.pinv(sigma_B))
+        sigma_W = (1/N) * sigma_W
+        var_collapse = (1/K)*torch.trace(
+            sigma_W.double() @ torch.linalg.pinv(
+                sigma_B.double(), rtol=1e-6, hermitian=True))
         # Equiangularity and Max-angle
         M = torch.vstack(self.class_means) - self.global_mean
         cos_uc = pairwise_cosine_similarity( M, zero_diagonal=False )
