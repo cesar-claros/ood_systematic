@@ -1,0 +1,234 @@
+{
+ "plan": "ICML retarget protocol section 9 (KID/FD severity amendment): CLIP severity regeneration v2",
+ "model": "ViT-B-32",
+ "pretrained_tag": "laion2b_s34b_b79k",
+ "tag_selection": "explicit (no automatic selection)",
+ "feature_dim": 512,
+ "l2_normalize": true,
+ "id_reference": "train split of each source (deployed clip_proximity.py convention)",
+ "kernel": "k(u,v) = (1 + u'v/512)^3 (gamma=1/D, coef0=1, degree=3), unbiased MMD^2",
+ "kid_subsets": [
+  50,
+  1000
+ ],
+ "kid_point_seed": 0,
+ "kid_group_seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "fd_eqn_seeds": [
+  201,
+  202,
+  203
+ ],
+ "versions": {
+  "open_clip": "2.32.0",
+  "torch": "1.13.1+cu117",
+  "numpy": "1.26.4"
+ },
+ "stages": [
+  "pool",
+  "new",
+  "roster_a"
+ ],
+ "n_pairs": 65,
+ "caches": {
+  "id_cifar10_train": {
+   "n": 50000,
+   "dim": 512,
+   "sha256": "9f5986458c6be5391e19556700fcbde6b6700327b632e39cee64b25a4243aa29"
+  },
+  "eval_cifar100_test": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "95b778a1db7e2ecab492da0b85b670282e51b4b5b5c2f5062418a5c7a873ccaf"
+  },
+  "eval_tinyimagenet_val": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "8ddb125116c0f792ddda7ed108518b8a5a9b04c2bb4c6c9aaac73da1d57c0a63"
+  },
+  "eval_isun": {
+   "n": 8925,
+   "dim": 512,
+   "sha256": "4aa8b9a45c877ab9a90f222c79aaebab81107a9fda622e8ed6db5584c6fe3e84"
+  },
+  "eval_lsun_resize": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "7eaae0d16d38e607ebf45519726d49daeb1e9227f4336ec3e2a7460320b8de5a"
+  },
+  "eval_lsun_cropped": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "3126086249c1f06c5686ac7694e6bb1232c0e69a13457802128a2eca41f3f33b"
+  },
+  "eval_svhn_test": {
+   "n": 26032,
+   "dim": 512,
+   "sha256": "7ad79db99322d76aa525c3d7c08fc1c12b9385191cf6e0388027283ceca218e0"
+  },
+  "eval_places365": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "e3e3ec45f2afb2c5f03bd746d7865b0814609ace8c5d069dd816c8c30e9fb50e"
+  },
+  "eval_textures": {
+   "n": 5640,
+   "dim": 512,
+   "sha256": "926c5d0267c878cfe06b3990d308c1cbf75bc83eda50eeb8a150ac77658ebde3"
+  },
+  "eval_mnist_test": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "c9956dfa954d76a8e03b46fa480d25caf03c1bddc13bbfd37d66aeb9c01f6fa3"
+  },
+  "eval_fashionmnist_test": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "e96b87b5722f552070497c90be83973f1c1e2b550d966c49a07394d2bb177cfa"
+  },
+  "eval_kmnist_test": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "983260ba0328b58a27e96e38af16ac54e158d4dd6826644ce22d0df60a6edf8c"
+  },
+  "eval_stl10_test": {
+   "n": 8000,
+   "dim": 512,
+   "sha256": "188e5a67449f6b5c51b589af19b8f935c4cd9337817b6eb60e558ede52bea831"
+  },
+  "id_supercifar100_train": {
+   "n": 38000,
+   "dim": 512,
+   "sha256": "c747f9d060c753b40a768a9b65175f3c8e843dc216faea9849785ff0102173c4"
+  },
+  "eval_cifar10_test": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "ae56b4972d208857bae6792cfd752053d3bef6f4a1560125012d9f039209ca61"
+  },
+  "id_cifar100_train": {
+   "n": 50000,
+   "dim": 512,
+   "sha256": "2670e2b65792617079438c7625a19de987b3207dc9361d259e62a15c4416b525"
+  },
+  "id_tinyimagenet_train": {
+   "n": 100000,
+   "dim": 512,
+   "sha256": "0d55984f5f4baad89d6d8d66c7c73bca587f28a197814ba1e1aad28618617a54"
+  },
+  "oo_cifar10_train": {
+   "n": 50000,
+   "dim": 512,
+   "sha256": "01bc5eba13f4dfcd5f88fa21b504f410dba18af5480cb94fdf077816d5d9f8f0"
+  },
+  "oo_cifar10_cifar100": {
+   "n": 9000,
+   "dim": 512,
+   "sha256": "23e68168e188d5b565f338f7c873bbad9478125d10293d2e565b80f63cd6c493"
+  },
+  "oo_cifar10_tin": {
+   "n": 7793,
+   "dim": 512,
+   "sha256": "d2efe7eb2553ef59a122785c670803b09c1c487a1207b06fe5af45fb0594aff8"
+  },
+  "oo_cifar10_mnist": {
+   "n": 70000,
+   "dim": 512,
+   "sha256": "7ea47ec8826a07feadf52f5cfa47fc2e750660dd15dacbb1df806a0807d7bf84"
+  },
+  "oo_cifar10_svhn": {
+   "n": 26032,
+   "dim": 512,
+   "sha256": "c579a0814d547c43875f66a3ea50943e69fb82a4745ca3761696271602c826a6"
+  },
+  "oo_cifar10_texture": {
+   "n": 5640,
+   "dim": 512,
+   "sha256": "83633f82a89305ddd1eef0afc81d241cf2ce9c424a6a1fc815563c3580dfdcc6"
+  },
+  "oo_cifar10_places365": {
+   "n": 35195,
+   "dim": 512,
+   "sha256": "d88d7d576eb682bb3458c432c8c05b4d69d3616379dc65d8d1ba0d032cc2b27e"
+  },
+  "oo_cifar100_train": {
+   "n": 50000,
+   "dim": 512,
+   "sha256": "edbb63779e1eba4f638d591be71228f87e39bf7eacc4b043a8d00e6c92a60782"
+  },
+  "oo_cifar100_cifar10": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "9490854b6df4855cc3e7c20251d7dfb0cb799fb907c56b72e8f3ad7210ca9824"
+  },
+  "oo_cifar100_tin": {
+   "n": 6526,
+   "dim": 512,
+   "sha256": "fdd71864e1c647911fc7d64e04b8dc534a0ee8e01e6f27b752e96d2130de4e39"
+  },
+  "oo_cifar100_mnist": {
+   "n": 70000,
+   "dim": 512,
+   "sha256": "7ea47ec8826a07feadf52f5cfa47fc2e750660dd15dacbb1df806a0807d7bf84"
+  },
+  "oo_cifar100_svhn": {
+   "n": 26032,
+   "dim": 512,
+   "sha256": "c579a0814d547c43875f66a3ea50943e69fb82a4745ca3761696271602c826a6"
+  },
+  "oo_cifar100_texture": {
+   "n": 5640,
+   "dim": 512,
+   "sha256": "83633f82a89305ddd1eef0afc81d241cf2ce9c424a6a1fc815563c3580dfdcc6"
+  },
+  "oo_cifar100_places365": {
+   "n": 33773,
+   "dim": 512,
+   "sha256": "df3d328f050eb04a51f6f736260d77cc0119e04b9da19b8db6109fc22d3340c5"
+  },
+  "oo_imagenet200_train": {
+   "n": 258951,
+   "dim": 512,
+   "sha256": "8a375a1bc0cad60f5dff9df1377a32869e854cb6574d63c3abf96ab27615c11e"
+  },
+  "oo_imagenet200_test": {
+   "n": 9000,
+   "dim": 512,
+   "sha256": "12fa5a269b486dd767f57ec7c579d333dbb6a6fa86a767c970aa74726d45ab9c"
+  },
+  "oo_in200_ssb_hard": {
+   "n": 49000,
+   "dim": 512,
+   "sha256": "94a9e16d51b79a02ab34447abc5f43f0b462e8c812896ca1e55234339f59366b"
+  },
+  "oo_in200_ninco": {
+   "n": 5879,
+   "dim": 512,
+   "sha256": "c2f1af82f35405553250ab6df3d27ca0244347406dde7d95ebf48b15007f1c89"
+  },
+  "oo_in200_textures": {
+   "n": 5160,
+   "dim": 512,
+   "sha256": "a63541a8ee94eb6ce64773cca23a8f435084211ee757ce8b5f71069bf20ff90e"
+  },
+  "oo_in200_inaturalist": {
+   "n": 10000,
+   "dim": 512,
+   "sha256": "a74e133cf6e98202aa59a93e956c33b99fb89be7b20c333db75de2f7988f2bfe"
+  },
+  "oo_in200_openimage_o": {
+   "n": 15869,
+   "dim": 512,
+   "sha256": "7bac5dda8427f9c6e96be13ed99374c07b6f2e512b610cf217405ef188923900"
+  }
+ },
+ "table_sha256": "bdc55bf333f27845661b5c38024710d997f4cc66146b26bcad8462b6053bb7e2"
+}
