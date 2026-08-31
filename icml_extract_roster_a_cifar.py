@@ -8,10 +8,13 @@ of this extractor stay UNREAD until the committed analysis suite runs.
 
 FROZEN CONVENTIONS (mirroring the stage-2/3 expansion extractors):
 - Model: torchvision resnet18(num_classes=C) with the OpenOOD 32x32
-  stem (conv1 -> 3x3 stride 1 pad 1, maxpool -> Identity); the state
-  dict must load with strict=True (any mismatch fails the checkpoint).
-  Penultimate feature = avgpool flatten (512-d); logits recomputed as
-  h @ W' + b from the stored fc (sliced-head convention).
+  stem (conv1 -> 3x3 stride 1 pad 1, maxpool -> Identity) and the
+  `shortcut` -> `downsample` key rename (OpenOOD's ResNet18_32x32 is
+  the classic CIFAR ResNet-18; verified structurally identical to this
+  torchvision configuration, naming aside); the state dict must load
+  with strict=True (any mismatch fails the checkpoint). Penultimate
+  feature = avgpool flatten (512-d); logits recomputed as h @ W' + b
+  from the stored fc (sliced-head convention).
 - Preprocessing (OpenOOD cifar test convention, declared): Resize 32,
   CenterCrop 32, ToTensor, per-source normalization: CIFAR-10
   (0.4914, 0.4822, 0.4465)/(0.2470, 0.2435, 0.2616); CIFAR-100
@@ -85,6 +88,15 @@ def build_model(ckpt: Path, n_classes: int, use_cuda: bool):
         state = state["state_dict"]
     state = { (k[7:] if k.startswith("module.") else k): v
               for k, v in state.items() }
+    # OpenOOD's ResNet18_32x32 is the classic CIFAR ResNet-18, which
+    # names the residual projection `shortcut`; torchvision names the
+    # SAME 1x1-conv+BN module `downsample`. Verified 2026-08-31 against
+    # openood/networks/resnet18_32x32.py: block structure, relu
+    # placement, stem, pooling, and fc are otherwise identical, so the
+    # rename yields an exactly equivalent model; strict=True still
+    # gates every other mismatch.
+    state = {k.replace(".shortcut.", ".downsample."): v
+             for k, v in state.items()}
     net.load_state_dict(state, strict=True)
     w = net.fc.weight.detach().cpu().numpy().astype(np.float64)
     b = net.fc.bias.detach().cpu().numpy().astype(np.float64)
