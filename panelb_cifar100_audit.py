@@ -19,6 +19,18 @@ softened) per the audit-11 decision document.
 Also exports the primary strata curves (fine grid, pava curve, band q95,
 first up-crossings) for the hero panel-B rebuild.
 
+POST-RUN NOTE (2026-08-30, before any consequence was applied): the
+declared LOO threshold used denominator 9, which is impossible for
+cifar100's 8-set suite (the 9-set count is the pool-wide union), so
+as written the gate demands zero failing refits; the observed result
+is 7/8 (one failure: dropping 'lsun cropped' swaps strong and middle
+by 0.10). RULING (strict execution): G11.B FAIL as written; the
+ordering claim is dropped from the paper's claims per the audit-11
+consequence, the case study stays descriptive with the exceptions
+disclosed, and the corrected-count reading (7/8 = at most one
+failure) is recorded for the user's Option-C decision. The report
+strings' '/9' denominators are this defect, left as produced.
+
 Usage (from code/): python panelb_cifar100_audit.py
 Outputs: outputs/track1/panelb_cifar100_report.md/.json
          outputs/track1/panelb_cifar100_curves.json  (hero input)
