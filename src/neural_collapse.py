@@ -50,10 +50,15 @@ class NeuralCollapseMetrics:
         return equi_angle, max_angle
     
     def cdnv(self, class_means, class_variance):
+        # FIXED 2026-08-30 (audit #11 metric review): CDNV (Galanti et al.)
+        # divides by twice the SQUARED distance,
+        # (V_c + V_c') / (2 ||mu_c - mu_c'||^2); the old code divided by
+        # the unsquared distance. Not consumed by any claim in either
+        # paper (dataset extra column only); fixed for future runs.
         mu_dist = pairwise_euclidean_distance(torch.vstack(class_means), zero_diagonal=False)
         variances = torch.stack(class_variance)
         var_sum = variances.unsqueeze(0) + variances.unsqueeze(-1)
-        cdnv_matrix = var_sum/(2*mu_dist)
+        cdnv_matrix = var_sum/(2*mu_dist.pow(2))
 
         n = cdnv_matrix.shape[0]
         diagonal_mask = torch.eye(n, dtype=torch.bool)
@@ -98,6 +103,7 @@ class NeuralCollapseMetrics:
         sigma_W = torch.zeros(dim_B, dim_B)
         self.class_means = []
         self.class_variance = []
+        n_sigma_w = 0
         for c in range(self.num_classes):
 
             activations_per_class_tensor = activations_train[labels_train==c]
@@ -126,6 +132,7 @@ class NeuralCollapseMetrics:
                 H_k[j] = h_ki_c.T
                 sigma_W = sigma_W + h_ki_c @ h_ki_c.T
             self.class_variance.append( torch.linalg.norm(H_k, dim=1, ord=2).pow(2).mean() )
+            n_sigma_w += len(activations_per_class_tensor)
         # Variability Collapse (Within-class variation collapse)
         # FIXED 2026-08-30 (audit #11, NC1 normalization): sigma_W is the
         # average over ALL N samples (1/N), not 1/(N*K); the old extra 1/K
@@ -137,7 +144,12 @@ class NeuralCollapseMetrics:
         # the rank-(C-1) Sigma_B made high-D values pinv-fragile
         # (nc1_tinyimagenet_fragility report).
         K = self.num_classes
-        N = activations_train.shape[0]
+        # GUARD 2026-08-30: normalize by the number of samples actually
+        # accumulated into sigma_W (n_sigma_w == N when only_correct is
+        # False, the production path; under only_correct=True the old
+        # N-based normalization would deflate sigma_W by the accuracy
+        # factor - a latent hazard, never triggered in production).
+        N = n_sigma_w
         sigma_B = (1/K) * sigma_B
         sigma_W = (1/N) * sigma_W
         var_collapse = (1/K)*torch.trace(
