@@ -231,7 +231,21 @@ def main() -> None:
     needed = ([f"{il}/train_{args.source}.txt",
                f"{il}/test_{args.source}.txt"]
               + [f"{il}/test_{n}.txt" for n in SUITES[args.source]])
-    missing = [r for r in needed if not (data_root / r).is_file()]
+    missing = []
+    for r in needed:
+        if not (data_root / r).is_file():
+            missing.append(f"imglist {r}")
+            continue
+        for line in (data_root / r).read_text().splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            img = line.rsplit(" ", 1)[0]
+            if not (data_root / "images_classic" / img).is_file():
+                missing.append(f"images for {r} (first ref: "
+                               f"images_classic/{img}; run pilot0/"
+                               f"icml_download_openood_cifar.sh)")
+            break
     out_dir = Path(args.out_dir)
     todo = [c for c in cks if not (
         out_dir / (f"{args.source}__{c.parent.parent.name}__"

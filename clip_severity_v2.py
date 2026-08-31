@@ -307,6 +307,65 @@ class Embedder:
 
 
 # ---------------------------------------------------------------------------
+# Preflight: report EVERY missing input up front, before any embedding.
+# ---------------------------------------------------------------------------
+
+def preflight(args, stages: list[str]) -> None:
+    from pilot0.extract_stage3_imagenet200 import (ID_LIST, OOD_LISTS,
+                                                   TRAIN_LIST)
+    missing: list[str] = []
+
+    def check_imglist(root: Path, rel: str, images_sub: str) -> None:
+        path = root / rel
+        if not path.is_file():
+            missing.append(f"imglist {rel}")
+            return
+        for line in path.read_text().splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            img = line.rsplit(" ", 1)[0]
+            if not (root / images_sub / img).is_file():
+                missing.append(f"images for {rel} "
+                               f"(first ref: {images_sub}/{img})")
+            return
+
+    if "pool" in stages:
+        default_root = Path("/work/cniel/sw/FD_Shifts/project/datasets")
+        root = Path(args.data_root_dir) if args.data_root_dir \
+            else default_root
+        for sub in ("LSUN_resize", "LSUN", "iSUN", "dtd/images",
+                    "places365"):
+            if not (root / sub).is_dir():
+                missing.append(f"pool folder set {root / sub}")
+    if "roster_a" in stages:
+        oo = Path(args.openood_root)
+        for source, suite in OPENOOD_CIFAR_SUITES.items():
+            il = f"benchmark_imglist/{source}"
+            check_imglist(oo, f"{il}/train_{source}.txt",
+                          "images_classic")
+            check_imglist(oo, f"{il}/test_{source}.txt", "images_classic")
+            for name in suite:
+                check_imglist(oo, f"{il}/test_{name}.txt",
+                              "images_classic")
+        check_imglist(oo, TRAIN_LIST[0], TRAIN_LIST[1])
+        check_imglist(oo, ID_LIST[0], ID_LIST[1])
+        for rel, sub, _tier in OOD_LISTS.values():
+            check_imglist(oo, rel, sub)
+    if missing:
+        print("[clipv2] PREFLIGHT FAILED; missing inputs:", flush=True)
+        for m in missing:
+            print(f"  - {m}", flush=True)
+        raise SystemExit(
+            "[clipv2] download the missing data first (CIFAR-side: "
+            "bash pilot0/icml_download_openood_cifar.sh; ImageNet-side: "
+            "bash pilot0/stage3_download_openood.sh), then rerun; "
+            "cached embeddings are kept and skipped.")
+    print("[clipv2] preflight OK: every imglist, first image, and "
+          "folder set present", flush=True)
+
+
+# ---------------------------------------------------------------------------
 # Pair enumeration and the run.
 # ---------------------------------------------------------------------------
 
@@ -314,6 +373,7 @@ def run(args) -> None:
     from pilot0.extract_stage3_imagenet200 import (ID_LIST, OOD_LISTS,
                                                    TRAIN_LIST)
     stages = args.stages.split(",")
+    preflight(args, stages)
     emb = Embedder(Path(args.cache_dir), args.batch_size,
                    args.num_workers, args.data_root_dir,
                    args.openood_root)
@@ -459,12 +519,18 @@ def main() -> None:
     ap.add_argument("--batch_size", type=int, default=256)
     ap.add_argument("--num_workers", type=int, default=8)
     ap.add_argument("--self-test", action="store_true", dest="self_test")
+    ap.add_argument("--preflight", action="store_true",
+                    help="check inputs and exit (no CLIP load, no "
+                         "embedding)")
     args = ap.parse_args()
     if args.self_test:
         self_test()
         return
     if "roster_a" in args.stages:
         assert args.openood_root, "--openood_root required for roster_a"
+    if args.preflight:
+        preflight(args, args.stages.split(","))
+        return
     run(args)
 
 
