@@ -170,6 +170,31 @@ def mixture_stats(hc: np.ndarray, w: np.ndarray, mu_hat: np.ndarray,
             "diagnostics": diag, "batch_occupancy": batch}
 
 
+def compact_p10(h_ood: np.ndarray, fm, w: np.ndarray,
+                set_index: int = 0) -> dict:
+    """ADDITIVE 2026-08-31 (ICML campaign, protocol section 8.1/8.3):
+    the JSON-compact per-set inputs of the P10 mixture arm, computed
+    with the FROZEN rules above (assign_components N_MIN merge,
+    pooled shared residual). Exactly the fields repair_factorial's
+    arm_P10r consumes: per kept component (weight, n2, a_max) and the
+    shared rho_res = sqrt(trS_res / trS_id). No detector outcome enters.
+    """
+    hc = h_ood.astype(np.float64) - fm.global_mean
+    mu_hat = fm.class_means / fm.radii[:, None]
+    st = mixture_stats(hc, w, mu_hat, set_index=set_index)
+    trs_id = float(np.trace(fm.sigma_w))
+    return {
+        "rho_res": float(np.sqrt(st["resid_shared"]["trS"] / trs_id)),
+        "trS_res": float(st["resid_shared"]["trS"]),
+        "trS_id": trs_id, "R": float(fm.radius),
+        "components": [{"component": c["component"], "n": c["n"],
+                        "weight": c["weight"], "n2": c["n2"],
+                        "a_max": float(np.max(c["a"]))}
+                       for c in st["components"]],
+        "diagnostics": st["diagnostics"],
+    }
+
+
 def split_record(stats: dict) -> tuple[dict, dict]:
     """Split one stats dict into JSON-safe scalars and npz arrays."""
     scalars, arrays = {}, {}

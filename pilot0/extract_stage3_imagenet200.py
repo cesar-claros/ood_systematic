@@ -38,6 +38,14 @@ prevalence-balanced failure AUGRC (subsample to min(n_id, n_ood), rng
 20260827), signed Energy-CTM gaps, materiality on the balanced gap;
 frozen geometry/coordinate estimators unchanged.
 
+ICML ROSTER-A MODE (additive, 2026-08-31; retarget protocol section
+8.2): --manifest pilot0/icml_roster_a_manifest.json restricts the sweep
+to the committed "imagenet200_extra" enumeration (every released IN200
+RN18 checkpoint EXCEPT the three inspected base CE runs; the exclusion
+is re-asserted here) and requires --out_dir. Every OOD-set entry now
+also carries the compact P10 mixture block (frozen repair_stats rules;
+endpoint E3); no extraction convention above changes.
+
 Usage (from code/, inside the campaign container):
     python pilot0/extract_stage3_imagenet200.py --list \
         --ckpt_root $DATASET_ROOT_DIR/openood/results \
@@ -63,6 +71,7 @@ from pilot0.extract_stage2_expansion import set_outcomes
 from pilot0.geometry import (fit_feature_model, geometry_record,
                              papyan_metrics)
 from pilot0.ood_coords import estimate_ood_coords
+from pilot0.repair_stats import compact_p10
 from pilot0.scores import MahalanobisScorer, ctm, fdbd, head_scores
 
 SCHEMA_S3 = 1
@@ -208,12 +217,13 @@ def extract_one(ckpt: Path, run_name: str, data_root: Path, out_dir: Path,
                               id_error_rate=round(float(res_id.mean()), 4))
 
     n_material = 0
-    for cname, spec in OOD_LISTS.items():
+    for si, (cname, spec) in enumerate(OOD_LISTS.items(), start=1):
         try:
             print(f"[{run_name}] forward {cname}", flush=True)
             h_ood, _ = forward(model, loader_for(spec), device)
             sc_ood = scores_for(h_ood)
-            entry = dict(estimate_ood_coords(h_ood, fm), kind=spec[2])
+            entry = dict(estimate_ood_coords(h_ood, fm), kind=spec[2],
+                         p10=compact_p10(h_ood, fm, w_np, set_index=si))
             entry.update(set_outcomes(sc_id, res_id, sc_ood))
             n_material += int(entry["material"])
             record["ood"][cname] = entry
@@ -258,11 +268,28 @@ def main() -> None:
     parser.add_argument("--num_workers", type=int, default=12)
     parser.add_argument("--out_dir", type=str, default=OUT_DIR_DEFAULT)
     parser.add_argument("--exclude_idtest", type=str, default=None)
+    parser.add_argument("--manifest", type=str, default=None,
+                        help="ICML roster-A mode: committed enumeration "
+                             "manifest; restricts the sweep to its "
+                             "imagenet200_extra list")
     args = parser.parse_args()
     ckpts = discover_ckpts(Path(args.ckpt_root))
     data_root = Path(args.data_root)
-    print(f"[stage3] {len(ckpts)} checkpoints under {args.ckpt_root} "
-          f"(expect 3)")
+    if args.manifest:
+        man = json.loads(Path(args.manifest).read_text())
+        allowed = set(man["rosters"]["imagenet200_extra"])
+        inspected = tuple(man["excluded_inspected_in200"])
+        assert not any(any(x in p for x in inspected) for p in allowed), (
+            "manifest contains an inspected base CE run")
+        ckpts = [(p, n) for p, n in ckpts if str(p) in allowed]
+        assert args.out_dir != OUT_DIR_DEFAULT, (
+            "ICML roster-A mode requires an explicit --out_dir "
+            "(keep the frozen pilot outputs separate)")
+        print(f"[stage3] ICML roster-A mode: {len(ckpts)} of "
+              f"{len(allowed)} enumerated checkpoints found")
+    else:
+        print(f"[stage3] {len(ckpts)} checkpoints under {args.ckpt_root} "
+              f"(expect 3)")
     missing = [rel for rel, _ in ([TRAIN_LIST, ID_LIST]
                                   + [v[:2] for v in OOD_LISTS.values()])
                if not (data_root / rel).is_file()]
