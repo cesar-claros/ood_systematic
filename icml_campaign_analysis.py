@@ -491,8 +491,11 @@ def roster_c_cells(stats_dir: Path, out_dir: Path) -> pd.DataFrame:
                 {"n_classes": c_num, "dim": d_num, "papyan": pap,
                  "geometry": geo},
                 {"components": comps, "R": radius, "rho_res": rho_res})
+            # stats records carry no top-level `source`; derive it from
+            # model_path (the pool loaders' convention)
+            source = r["model_path"].split("_paper_sweep/")[0]
             rows.append(dict(
-                cell=r["slug"], source=r["source"], eval_dataset=name,
+                cell=r["slug"], source=source, eval_dataset=name,
                 gap=float(oent["gap_raw"]) * 1000.0,
                 l_E=l_e, l_C=l_c, m=l_e - l_c,
                 l_E_p10=p_e, l_C_p10=p_c,
