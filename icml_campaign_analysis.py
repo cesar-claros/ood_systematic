@@ -534,6 +534,20 @@ def run(b: int) -> None:
     recs_b, prob_b = _load_dir(DIR_B, "schema_icml_b")
     for r in recs_a3:
         r["slug"] = r["run"]
+    # Roster-B schema-1 records omit the top-level `dim`; it is a
+    # checkpoint property, joined by model_path from the committed
+    # pool_coords records of the SAME 280 checkpoints (metadata only;
+    # defect surfaced as a KeyError before any endpoint ran, 2026-08-31).
+    dim_map = {}
+    for p in sorted(DIR_POOL.glob("*.json")):
+        if p.name.startswith("FAILED"):
+            continue
+        r = json.loads(p.read_text())
+        if r.get("schema") == 2:
+            dim_map[r["model_path"]] = int(r["dim"])
+    for r in recs_b:
+        if "dim" not in r:
+            r["dim"] = dim_map[r["model_path"]]
     cells_a = cells_from_records(recs_a + recs_a3, "gap_balanced",
                                  with_p10=True)
     cells_b = cells_from_records(recs_b, "gap_raw", with_p10=False)

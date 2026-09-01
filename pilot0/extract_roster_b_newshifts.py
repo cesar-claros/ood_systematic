@@ -142,6 +142,7 @@ def extract_one(model_path: str, out_dir: Path, use_cuda: bool) -> None:
     record: dict = {"schema_icml_b": 1, "model_path": model_path,
                     "slug": slug, "source": source,
                     "n_classes": n_classes,
+                    "dim": int(fm.global_mean.shape[0]),
                     "geometry": geometry_record(w_np, b_np, fm),
                     "papyan": papyan_metrics(w_np, fm), "ood": {}}
 
