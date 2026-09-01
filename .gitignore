@@ -139,6 +139,11 @@ x6_gradpca/outputs/
 pilot0/caches/
 pilot0/clip_v2_cache/
 pilot0/outputs/
+pilot0/icml_roster_a_coords/
+pilot0/icml_roster_b_coords/
+pilot0/icml_roster_c_outcomes/
+pilot0/roster_c_stats/
+
 !pilot1/dispatch_pilot1.sh
 !pilot1/run_csf_pilot1.sh
 !pilot1/run_pca_re_pilot1.sh
