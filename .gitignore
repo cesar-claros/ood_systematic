@@ -104,6 +104,7 @@ nc_csf_predictivity/interventions/maha_repair/*.json
 pilot0/pool_coords/*.json
 pilot0/stage1_pilot_coords/*.json
 pilot0/stage2_expansion_coords/*.json
+pilot0/stage2_iwildcam_coords/*.json
 pilot0/stage3_imagenet200_coords/*.json
 pilot0/repair_phase1_stats/*.json
 pilot0/repair_phase1_stats/*.npz
