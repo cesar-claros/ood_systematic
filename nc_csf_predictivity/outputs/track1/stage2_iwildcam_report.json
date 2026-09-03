@@ -1,0 +1,158 @@
+{
+ "denominators": {
+  "n_records": 5,
+  "n_id_clean": [
+   7154
+  ],
+  "pre_slice": [
+   "devries"
+  ],
+  "n_ood": 42791
+ },
+ "cells": [
+  {
+   "cell": "confidnet/rew2.2",
+   "n_id_clean": 7154,
+   "pre_slice": "devries",
+   "id_error_rate": 0.2441,
+   "auroc": {
+    "Energy": 0.6169,
+    "CTM": 0.5931,
+    "MSR": 0.5596,
+    "MLS": 0.6151,
+    "Maha": 0.6872,
+    "fDBD": 0.6025
+   },
+   "gap_raw": -0.00296,
+   "gap_balanced": -0.00832,
+   "material_raw": false,
+   "material_balanced": false,
+   "k_balanced": 7154,
+   "l_E": -2.4983385164316463,
+   "l_C": -5.331669778059892,
+   "M": 2.8333312616282456,
+   "sign_match_balanced": false,
+   "pred_auroc_Energy": 0.9178,
+   "pred_auroc_CTM": 0.9952,
+   "level_abs_err_Energy": 0.3009,
+   "level_abs_err_CTM": 0.4021
+  },
+  {
+   "cell": "devries/rew2.2",
+   "n_id_clean": 7154,
+   "pre_slice": "devries",
+   "id_error_rate": 0.234,
+   "auroc": {
+    "Energy": 0.626,
+    "CTM": 0.5876,
+    "MSR": 0.5603,
+    "MLS": 0.6228,
+    "Maha": 0.6638,
+    "fDBD": 0.5738
+   },
+   "gap_raw": -0.00591,
+   "gap_balanced": -0.01707,
+   "material_raw": false,
+   "material_balanced": true,
+   "k_balanced": 7154,
+   "l_E": -1.858560422452742,
+   "l_C": -5.466760682195999,
+   "M": 3.608200259743257,
+   "sign_match_balanced": false,
+   "pred_auroc_Energy": 0.8441,
+   "pred_auroc_CTM": 0.9958,
+   "level_abs_err_Energy": 0.2181,
+   "level_abs_err_CTM": 0.4082
+  },
+  {
+   "cell": "dg/rew15",
+   "n_id_clean": 7154,
+   "pre_slice": "devries",
+   "id_error_rate": 0.2354,
+   "auroc": {
+    "Energy": 0.6359,
+    "CTM": 0.6194,
+    "MSR": 0.5815,
+    "MLS": 0.6334,
+    "Maha": 0.6774,
+    "fDBD": 0.611
+   },
+   "gap_raw": -0.00334,
+   "gap_balanced": -0.01041,
+   "material_raw": false,
+   "material_balanced": true,
+   "k_balanced": 7154,
+   "l_E": -2.865596178543119,
+   "l_C": -6.197832320254044,
+   "M": 3.3322361417109247,
+   "sign_match_balanced": false,
+   "pred_auroc_Energy": 0.9431,
+   "pred_auroc_CTM": 0.998,
+   "level_abs_err_Energy": 0.3072,
+   "level_abs_err_CTM": 0.3786
+  },
+  {
+   "cell": "dg/rew2.2",
+   "n_id_clean": 7154,
+   "pre_slice": "devries",
+   "id_error_rate": 0.2389,
+   "auroc": {
+    "Energy": 0.617,
+    "CTM": 0.6304,
+    "MSR": 0.5659,
+    "MLS": 0.6152,
+    "Maha": 0.6779,
+    "fDBD": 0.6114
+   },
+   "gap_raw": -0.00082,
+   "gap_balanced": -0.00576,
+   "material_raw": false,
+   "material_balanced": false,
+   "k_balanced": 7154,
+   "l_E": -2.587888134337544,
+   "l_C": -5.813422144517547,
+   "M": 3.225534010180003,
+   "sign_match_balanced": false,
+   "pred_auroc_Energy": 0.9248,
+   "pred_auroc_CTM": 0.997,
+   "level_abs_err_Energy": 0.3078,
+   "level_abs_err_CTM": 0.3666
+  },
+  {
+   "cell": "dg/rew6",
+   "n_id_clean": 7154,
+   "pre_slice": "devries",
+   "id_error_rate": 0.2339,
+   "auroc": {
+    "Energy": 0.6497,
+    "CTM": 0.631,
+    "MSR": 0.585,
+    "MLS": 0.647,
+    "Maha": 0.6747,
+    "fDBD": 0.6238
+   },
+   "gap_raw": -0.00322,
+   "gap_balanced": -0.00966,
+   "material_raw": false,
+   "material_balanced": false,
+   "k_balanced": 7154,
+   "l_E": -2.7697522013058857,
+   "l_C": -6.1098496885233455,
+   "M": 3.34009748721746,
+   "sign_match_balanced": false,
+   "pred_auroc_Energy": 0.9373,
+   "pred_auroc_CTM": 0.9978,
+   "level_abs_err_Energy": 0.2876,
+   "level_abs_err_CTM": 0.3668
+  }
+ ],
+ "n_material_raw": 0,
+ "n_material_balanced": 2,
+ "sign_agreement_material_balanced": [
+  false,
+  false
+ ],
+ "spearman_absM_absgap_balanced_descriptive_n5": 0.7999999999999999,
+ "level_mae_Energy": 0.2843,
+ "level_mae_CTM": 0.3845
+}

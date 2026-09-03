@@ -83,7 +83,7 @@ def main():
     if study_name == 'confidnet':
         module.backbone.encoder.disable_dropout()
         module.network.encoder.disable_dropout()
-    elif study_name in ('devries', 'dg', 'intervention'):
+    elif study_name in ('devries', 'dg', 'intervention', 'ce'):
         # model = module.model
         module.model.encoder.disable_dropout()
     elif study_name == 'vit':
@@ -92,7 +92,7 @@ def main():
         raise NotImplementedError
     # 
     if do_enabled and use_cuda_opt:
-        if (study_name=='devries' or study_name=='dg'):
+        if study_name in ('devries', 'dg', 'intervention', 'ce'):
             if 'tiny' in path:
                 new_batch_size = cf.trainer.batch_size//8
             else:    

@@ -69,7 +69,7 @@ class TrainedModule:
                 self.model.encoder.disable_dropout()
                 self.network = self.module.network
                 self.network.encoder.disable_dropout()
-            elif self.study_name in ('dg', 'devries', 'intervention'):
+            elif self.study_name in ('dg', 'devries', 'intervention', 'ce'):
                 self.model.encoder.disable_dropout()
                 self.network = None
         
@@ -330,6 +330,11 @@ class TrainedModule:
                 maha = torch.zeros((logits.shape[0]))
                 logits_list.append(logits.unsqueeze(2))
                 conf_list.append(maha.unsqueeze(1))
+            elif self.ext_confid_name is None:
+                logits = self.model.head(z)
+                confidence = F.softmax(logits, dim=1).max(dim=1).values
+                logits_list.append(logits.unsqueeze(2))
+                conf_list.append(confidence.unsqueeze(1))
 
         if self.study_name=='vit':
             self.module.disable_dropout()
@@ -372,9 +377,8 @@ class TrainedModule:
             maha = torch.zeros((logits.shape[0]))
             confidence = maha
         elif self.ext_confid_name is None:
-            # Intervention paradigm: plain CE, no external confidence head;
-            # MSR stands in as the recorded confid (matches the training
-            # module's own convention).
+            # CE and intervention paradigms have no external confidence
+            # head; maximum softmax is the recorded confidence.
             logits = self.model.head(z)
             confidence = torch.softmax(logits, dim=1).max(dim=1).values
         else:

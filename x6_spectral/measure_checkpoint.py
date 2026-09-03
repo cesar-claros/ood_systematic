@@ -97,7 +97,7 @@ def load_model(path: str, use_cuda: bool) -> tuple:
     if study_name == "confidnet":
         module.backbone.encoder.disable_dropout()
         module.network.encoder.disable_dropout()
-    elif study_name in ("devries", "dg", "intervention"):
+    elif study_name in ("devries", "dg", "intervention", "ce"):
         module.model.encoder.disable_dropout()
     elif study_name == "vit":
         module.disable_dropout()

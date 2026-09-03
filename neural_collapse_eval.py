@@ -114,14 +114,14 @@ def main():
                     if study_name == 'confidnet':
                         module.backbone.encoder.disable_dropout()
                         module.network.encoder.disable_dropout()
-                    elif (study_name == 'devries') or (study_name == 'dg'):
+                    elif study_name in ('devries', 'dg', 'ce'):
                         module.model.encoder.disable_dropout()
                     elif study_name == 'vit':
                         module.disable_dropout()
                     
                     # Batch size adjustments
                     if do_enabled and use_cuda_opt:
-                        if (study_name=='devries' or study_name=='dg'):
+                        if study_name in ('devries', 'dg', 'ce'):
                             cf.trainer.batch_size //= 2
                
                         elif (study_name=='confidnet'):
@@ -239,4 +239,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
