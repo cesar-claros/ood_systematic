@@ -112,6 +112,7 @@ pilot0/repair_phase1_stats/*.npz
 !x8_pool_a/run_pool_a_hpc.sh
 !run_new_csfs_pilot.sh
 !run_new_csfs_vit_all.sh
+!train_ce_local.sh
 # x9 ImageNet-scale experiments are tracked from the start (plan decision 5)
 !x9_imagenet/*.sh
 # X6 campaign stage-1 runner (*.sh) and its dev-pool manifest (*.txt) must

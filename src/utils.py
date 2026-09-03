@@ -41,6 +41,8 @@ def get_study_name(path:str)->str:
     if (('etfreg' in path) or ('etfhard' in path) or ('varreg' in path)
             or ('ctrreg' in path) or ('intervention' in path)):
         study_name = 'intervention'
+    elif '/ce_bb' in f'/{path}':
+        study_name = 'ce'
     elif 'confidnet' in path:
         study_name = 'confidnet'
     elif 'devries' in path:
@@ -66,6 +68,8 @@ def is_dropout_enabled(path:str)->bool:
 def get_conf(path:str, study_name:str)->configs.Config:
     if study_name=='dg':
         study_name = 'deepgamblers'
+    elif study_name=='ce':
+        study_name = 'cross_entropy'
     configs.init()
     cfg_ = configs.Config.with_defaults(study=study_name)
     cfg_.trainer.optimizer = configs.SGD()
@@ -98,7 +102,7 @@ def get_model_and_last_layer(module: type[pl.LightningModule],
                                 study_name:str, return_model=True):
     if study_name == 'confidnet':
         model = module.backbone
-    elif study_name in ('devries', 'dg', 'vit', 'intervention'):
+    elif study_name in ('devries', 'dg', 'vit', 'intervention', 'ce'):
         model = module.model
     else:
         raise NotImplementedError
