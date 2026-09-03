@@ -57,32 +57,22 @@ if ! command -v fd_shifts >/dev/null 2>&1; then
 fi
 
 code_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-log_dir=${CE_LOCAL_LOG_DIR:-"$code_dir/logs"}
-mkdir -p "$log_dir"
-log_dir=$(cd -- "$log_dir" && pwd)
-
-timestamp=$(date +%Y-%m-%d_%H-%M-%S)
-master_log="$log_dir/ce_${source_dataset}_do${dropout}_${timestamp}.log"
-
 cd "$code_dir"
 
 for run_index in 0 1 2 3 4; do
     display_run=$((run_index + 1))
-    echo "[$(date '+%Y-%m-%dT%H:%M:%S%z')] Starting run ${display_run}/5" \
-        | tee -a "$master_log"
+    echo "[$(date '+%Y-%m-%dT%H:%M:%S%z')] Starting run ${display_run}/5"
     if ! fd_shifts launch \
             --model=ce \
             --backbone=resnet18 \
             --dataset="$source_dataset" \
             --dropout="$dropout" \
             --run="$run_index" \
-            --mode="$mode" 2>&1 | tee -a "$master_log"; then
-        echo "Run ${display_run}/5 failed; stopping." \
-            | tee -a "$master_log" >&2
+            --mode="$mode"; then
+        echo "Run ${display_run}/5 failed; stopping." >&2
         exit 1
     fi
-    echo "[$(date '+%Y-%m-%dT%H:%M:%S%z')] Finished run ${display_run}/5" \
-        | tee -a "$master_log"
+    echo "[$(date '+%Y-%m-%dT%H:%M:%S%z')] Finished run ${display_run}/5"
 done
 
-echo "All five runs completed. Log: $master_log" | tee -a "$master_log"
+echo "All five runs completed. Native logs are in $code_dir/logs/."
