@@ -11,7 +11,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -21,7 +22,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -31,7 +33,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -41,7 +44,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -51,7 +55,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -61,7 +66,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -71,7 +77,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -81,7 +88,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -91,7 +99,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -101,7 +110,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -111,7 +121,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -121,7 +132,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -131,7 +143,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -141,7 +154,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -151,7 +165,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -161,7 +176,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -171,7 +187,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -181,7 +198,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -191,7 +209,8 @@
    "reward": 3.0,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew3",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -201,7 +220,8 @@
    "reward": 3.0,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew3",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -211,7 +231,8 @@
    "reward": 6.0,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew6",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -221,7 +242,8 @@
    "reward": 6.0,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew6",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -231,7 +253,8 @@
    "reward": 10.0,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew10",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -241,7 +264,8 @@
    "reward": 10.0,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew10",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -251,7 +275,8 @@
    "reward": 6.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew6",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -261,7 +286,8 @@
    "reward": 6.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew6",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -271,7 +297,8 @@
    "reward": 10.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew10",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -281,7 +308,8 @@
    "reward": 10.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew10",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -291,7 +319,8 @@
    "reward": 12.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew12",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -301,7 +330,8 @@
    "reward": 12.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew12",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -311,7 +341,8 @@
    "reward": 15.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew15",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -321,7 +352,8 @@
    "reward": 15.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew15",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -331,7 +363,8 @@
    "reward": 20.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew20",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -341,7 +374,8 @@
    "reward": 20.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew20",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -351,7 +385,8 @@
    "reward": 2.2,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -361,7 +396,8 @@
    "reward": 2.2,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -371,7 +407,8 @@
    "reward": 3.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew3",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -381,7 +418,8 @@
    "reward": 3.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew3",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -391,7 +429,8 @@
    "reward": 6.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew6",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -401,7 +440,8 @@
    "reward": 6.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew6",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -411,7 +451,8 @@
    "reward": 10.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew10",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -421,7 +462,8 @@
    "reward": 10.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew10",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -431,7 +473,8 @@
    "reward": 12.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew12",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -441,7 +484,8 @@
    "reward": 12.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew12",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -451,7 +495,8 @@
    "reward": 15.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew15",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -461,7 +506,8 @@
    "reward": 15.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew15",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -471,7 +517,8 @@
    "reward": 20.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew20",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -481,7 +528,8 @@
    "reward": 20.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew20",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -491,7 +539,8 @@
    "reward": 10.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew10",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -501,7 +550,8 @@
    "reward": 10.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew10",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -511,7 +561,8 @@
    "reward": 12.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew12",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -521,7 +572,8 @@
    "reward": 12.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew12",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -531,7 +583,8 @@
    "reward": 15.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew15",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -541,7 +594,8 @@
    "reward": 15.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew15",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -551,7 +605,8 @@
    "reward": 20.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew20",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -561,7 +616,8 @@
    "reward": 20.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew20",
-   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -571,7 +627,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run1_rew0",
-   "seed": 270000
+   "seed": 270000,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -581,7 +638,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run2_rew0",
-   "seed": 270001
+   "seed": 270001,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -591,7 +649,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run3_rew0",
-   "seed": 270002
+   "seed": 270002,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -601,7 +660,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run4_rew0",
-   "seed": 270003
+   "seed": 270003,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -611,7 +671,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run5_rew0",
-   "seed": 270004
+   "seed": 270004,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -621,7 +682,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run1_rew0",
-   "seed": 270005
+   "seed": 270005,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -631,7 +693,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run2_rew0",
-   "seed": 270006
+   "seed": 270006,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -641,7 +704,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run3_rew0",
-   "seed": 270007
+   "seed": 270007,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -651,7 +715,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run4_rew0",
-   "seed": 270008
+   "seed": 270008,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -661,7 +726,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run5_rew0",
-   "seed": 270009
+   "seed": 270009,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -671,7 +737,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run1_rew0",
-   "seed": 270000
+   "seed": 270000,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -681,7 +748,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run2_rew0",
-   "seed": 270001
+   "seed": 270001,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -691,7 +759,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run3_rew0",
-   "seed": 270002
+   "seed": 270002,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -701,7 +770,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run4_rew0",
-   "seed": 270003
+   "seed": 270003,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -711,7 +781,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run5_rew0",
-   "seed": 270004
+   "seed": 270004,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -721,7 +792,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run1_rew0",
-   "seed": 270005
+   "seed": 270005,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -731,7 +803,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run2_rew0",
-   "seed": 270006
+   "seed": 270006,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -741,7 +814,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run3_rew0",
-   "seed": 270007
+   "seed": 270007,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -751,7 +825,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run4_rew0",
-   "seed": 270008
+   "seed": 270008,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -761,7 +836,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run5_rew0",
-   "seed": 270009
+   "seed": 270009,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -771,7 +847,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run1_rew0",
-   "seed": 270000
+   "seed": 270000,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -781,7 +858,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run2_rew0",
-   "seed": 270001
+   "seed": 270001,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -791,7 +869,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run3_rew0",
-   "seed": 270002
+   "seed": 270002,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -801,7 +880,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run4_rew0",
-   "seed": 270003
+   "seed": 270003,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -811,7 +891,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run5_rew0",
-   "seed": 270004
+   "seed": 270004,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -821,7 +902,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run1_rew0",
-   "seed": 270005
+   "seed": 270005,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -831,7 +913,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run2_rew0",
-   "seed": 270006
+   "seed": 270006,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -841,7 +924,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run3_rew0",
-   "seed": 270007
+   "seed": 270007,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -851,7 +935,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run4_rew0",
-   "seed": 270008
+   "seed": 270008,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -861,7 +946,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run5_rew0",
-   "seed": 270009
+   "seed": 270009,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -871,7 +957,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run1_rew0",
-   "seed": 270000
+   "seed": 270000,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -881,7 +968,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run2_rew0",
-   "seed": 270001
+   "seed": 270001,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -891,7 +979,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run3_rew0",
-   "seed": 270002
+   "seed": 270002,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -901,7 +990,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run4_rew0",
-   "seed": 270003
+   "seed": 270003,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -911,7 +1001,8 @@
    "reward": 0.0,
    "dropout": 0,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run5_rew0",
-   "seed": 270004
+   "seed": 270004,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -921,7 +1012,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run1_rew0",
-   "seed": 270005
+   "seed": 270005,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -931,7 +1023,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run2_rew0",
-   "seed": 270006
+   "seed": 270006,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -941,7 +1034,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run3_rew0",
-   "seed": 270007
+   "seed": 270007,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -951,7 +1045,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run4_rew0",
-   "seed": 270008
+   "seed": 270008,
+   "mechanically_eligible": true
   },
   {
    "component": "standalone_ce",
@@ -961,7 +1056,8 @@
    "reward": 0.0,
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run5_rew0",
-   "seed": 270009
+   "seed": 270009,
+   "mechanically_eligible": true
   },
   {
    "component": "paradigm_pool",
@@ -972,7 +1068,10 @@
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
    "seed_note": "single run label; one dependence block (v3 section 3.3)",
-   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1"
+   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1",
+   "mechanically_eligible": false,
+   "phase1_failure": "ZeroDivisionError in geometry_record (degenerate features: zero-valued geometry denominator)",
+   "decision_2026_09_09": "EXCLUDED as mechanically ineligible by the phase-1 rule; consistent with their absence from the harmonized panel"
   },
   {
    "component": "paradigm_pool",
@@ -983,7 +1082,10 @@
    "dropout": 0,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew3",
    "seed_note": "single run label; one dependence block (v3 section 3.3)",
-   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1"
+   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1",
+   "mechanically_eligible": false,
+   "phase1_failure": "ZeroDivisionError in geometry_record (degenerate features: zero-valued geometry denominator)",
+   "decision_2026_09_09": "EXCLUDED as mechanically ineligible by the phase-1 rule; consistent with their absence from the harmonized panel"
   },
   {
    "component": "paradigm_pool",
@@ -994,7 +1096,10 @@
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
    "seed_note": "single run label; one dependence block (v3 section 3.3)",
-   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1"
+   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1",
+   "mechanically_eligible": false,
+   "phase1_failure": "NC1 identical to the rew3 twin to 12 digits (4.2385106383) and bootstrap Gram arithmetic numerically inconsistent (-47.2 vs 4.24): degenerate/duplicated checkpoint",
+   "decision_2026_09_09": "EXCLUDED as mechanically ineligible by the phase-1 rule; consistent with their absence from the harmonized panel"
   },
   {
    "component": "paradigm_pool",
@@ -1005,8 +1110,16 @@
    "dropout": 1,
    "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew3",
    "seed_note": "single run label; one dependence block (v3 section 3.3)",
-   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1"
+   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1",
+   "mechanically_eligible": false,
+   "phase1_failure": "NC1 identical to the rew2.2 twin to 12 digits and bootstrap Gram arithmetic numerically inconsistent (426.7 vs 4.24): degenerate/duplicated checkpoint",
+   "decision_2026_09_09": "EXCLUDED as mechanically ineligible by the phase-1 rule; consistent with their absence from the harmonized panel"
   }
  ],
- "amendment_2026_09_08": "4 cifar100 DeepGamblers cells added pre-forward from the phase-0 extra-dir scan"
+ "amendment_2026_09_08": "4 cifar100 DeepGamblers cells added pre-forward from the phase-0 extra-dir scan",
+ "panel_of_record_2026_09_09": {
+  "n_eligible": 96,
+  "n_ineligible": 4,
+  "note": "phase-1 re-measurement succeeded on all 96 originally expected cells (bootstrap arithmetic assertion passed on every one); the 4 pre-forward additions failed as degenerate"
+ }
 }

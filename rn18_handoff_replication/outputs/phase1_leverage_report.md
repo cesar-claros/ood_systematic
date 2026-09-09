@@ -1,0 +1,286 @@
+# Phase-1 geometry-leverage gate (training features only)
+
+```
+{
+ "n_records": 96,
+ "sources": {
+  "cifar10": {
+   "full": {
+    "n": 22,
+    "nc1_min": 0.010432065041716367,
+    "nc1_max": 0.09104897397660323,
+    "ratio_max_min": 8.727799684195903,
+    "labels_hash_agree": true,
+    "Q_g": 86.76657407046005,
+    "frac_stable_pairs": 0.9653679653679653,
+    "tertiles": [
+     7,
+     7,
+     8
+    ],
+    "eligible": true,
+    "tolerance_grid_median_ratio": 1.0
+   },
+   "paradigm_pool": {
+    "n": 12,
+    "nc1_min": 0.010432065041716367,
+    "nc1_max": 0.042472688606711134,
+    "ratio_max_min": 4.071359643260352,
+    "labels_hash_agree": true,
+    "Q_g": 47.60551979216039,
+    "frac_stable_pairs": 0.9848484848484849,
+    "tertiles": [
+     4,
+     4,
+     4
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.0
+   },
+   "ce_all": {
+    "n": 10,
+    "nc1_min": 0.061542435025778976,
+    "nc1_max": 0.09104897397660323,
+    "ratio_max_min": 1.4794503002434747,
+    "labels_hash_agree": true,
+    "Q_g": 22.603861718093054,
+    "frac_stable_pairs": 0.8444444444444444,
+    "tertiles": [
+     3,
+     3,
+     4
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.0
+   },
+   "ce_do0": {
+    "n": 5,
+    "nc1_min": 0.061542435025778976,
+    "nc1_max": 0.06419720946558413,
+    "ratio_max_min": 1.0431372993072685,
+    "labels_hash_agree": true,
+    "Q_g": 2.2386885930583538,
+    "frac_stable_pairs": 0.9,
+    "tertiles": [
+     1,
+     2,
+     2
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.0
+   }
+  },
+  "cifar100": {
+   "full": {
+    "n": 24,
+    "nc1_min": 0.04899612013915494,
+    "nc1_max": 10.265546920462294,
+    "ratio_max_min": 209.51754733450102,
+    "labels_hash_agree": true,
+    "Q_g": 252.51947906427313,
+    "frac_stable_pairs": 0.9818840579710145,
+    "tertiles": [
+     8,
+     8,
+     8
+    ],
+    "eligible": true,
+    "tolerance_grid_median_ratio": 1.0
+   },
+   "paradigm_pool": {
+    "n": 14,
+    "nc1_min": 0.04899612013915494,
+    "nc1_max": 10.265546920462294,
+    "ratio_max_min": 209.51754733450102,
+    "labels_hash_agree": true,
+    "Q_g": 206.4199155754186,
+    "frac_stable_pairs": 0.989010989010989,
+    "tertiles": [
+     4,
+     5,
+     5
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.9333155259097894
+   },
+   "ce_all": {
+    "n": 10,
+    "nc1_min": 0.13942916799327848,
+    "nc1_max": 0.349633050766968,
+    "ratio_max_min": 2.5076033644826947,
+    "labels_hash_agree": true,
+    "Q_g": 96.76448965879676,
+    "frac_stable_pairs": 0.9111111111111111,
+    "tertiles": [
+     3,
+     3,
+     4
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.0
+   },
+   "ce_do0": {
+    "n": 5,
+    "nc1_min": 0.13942916799327848,
+    "nc1_max": 0.1468518988597425,
+    "ratio_max_min": 1.0532365714670395,
+    "labels_hash_agree": true,
+    "Q_g": 7.45296476736256,
+    "frac_stable_pairs": 0.8,
+    "tertiles": [
+     1,
+     2,
+     2
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.0
+   }
+  },
+  "supercifar100": {
+   "full": {
+    "n": 28,
+    "nc1_min": 0.028966781635437536,
+    "nc1_max": 0.5060206275065574,
+    "ratio_max_min": 17.468997207736024,
+    "labels_hash_agree": true,
+    "Q_g": 110.57996461266843,
+    "frac_stable_pairs": 0.9761904761904762,
+    "tertiles": [
+     9,
+     9,
+     10
+    ],
+    "eligible": true,
+    "tolerance_grid_median_ratio": 1.0
+   },
+   "paradigm_pool": {
+    "n": 18,
+    "nc1_min": 0.028966781635437536,
+    "nc1_max": 0.5060206275065574,
+    "ratio_max_min": 17.468997207736024,
+    "labels_hash_agree": true,
+    "Q_g": 121.6426840152802,
+    "frac_stable_pairs": 0.9607843137254902,
+    "tertiles": [
+     6,
+     6,
+     6
+    ],
+    "eligible": true,
+    "tolerance_grid_median_ratio": 1.0
+   },
+   "ce_all": {
+    "n": 10,
+    "nc1_min": 0.0788586673113821,
+    "nc1_max": 0.139825352962926,
+    "ratio_max_min": 1.7731133143654365,
+    "labels_hash_agree": true,
+    "Q_g": 51.48555391164244,
+    "frac_stable_pairs": 0.9555555555555556,
+    "tertiles": [
+     3,
+     3,
+     4
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.0
+   },
+   "ce_do0": {
+    "n": 5,
+    "nc1_min": 0.0788586673113821,
+    "nc1_max": 0.08508998501043,
+    "ratio_max_min": 1.0790188055606222,
+    "labels_hash_agree": true,
+    "Q_g": 6.638486254048656,
+    "frac_stable_pairs": 0.9,
+    "tertiles": [
+     1,
+     2,
+     2
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.0
+   }
+  },
+  "tinyimagenet": {
+   "full": {
+    "n": 22,
+    "nc1_min": 0.1146214006592205,
+    "nc1_max": 16.376085057305946,
+    "ratio_max_min": 142.87109530264325,
+    "labels_hash_agree": true,
+    "Q_g": 277.72972882185974,
+    "frac_stable_pairs": 0.974025974025974,
+    "tertiles": [
+     7,
+     7,
+     8
+    ],
+    "eligible": true,
+    "tolerance_grid_median_ratio": 1.4033626221400974
+   },
+   "paradigm_pool": {
+    "n": 12,
+    "nc1_min": 0.2094995664680923,
+    "nc1_max": 16.376085057305946,
+    "ratio_max_min": 78.16763219794106,
+    "labels_hash_agree": true,
+    "Q_g": 91.71543568762267,
+    "frac_stable_pairs": 0.9545454545454546,
+    "tertiles": [
+     4,
+     4,
+     4
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 2.0576899380644598
+   },
+   "ce_all": {
+    "n": 10,
+    "nc1_min": 0.1146214006592205,
+    "nc1_max": 0.44700688817024214,
+    "ratio_max_min": 3.8998553987246494,
+    "labels_hash_agree": true,
+    "Q_g": 153.96138982183277,
+    "frac_stable_pairs": 0.9333333333333333,
+    "tertiles": [
+     3,
+     3,
+     4
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.191511410356306
+   },
+   "ce_do0": {
+    "n": 5,
+    "nc1_min": 0.1146214006592205,
+    "nc1_max": 0.11834439222082815,
+    "ratio_max_min": 1.0324807718296554,
+    "labels_hash_agree": true,
+    "Q_g": 4.458278865604819,
+    "frac_stable_pairs": 0.9,
+    "tertiles": [
+     1,
+     2,
+     2
+    ],
+    "eligible": false,
+    "tolerance_grid_median_ratio": 1.0
+   }
+  }
+ },
+ "HO_eligible_sources": [
+  "cifar10",
+  "cifar100",
+  "supercifar100",
+  "tinyimagenet"
+ ],
+ "expansion_trigger_ce_do0": {
+  "cifar10": false,
+  "cifar100": false,
+  "supercifar100": false,
+  "tinyimagenet": false
+ },
+ "four_source_nc1_ineligible": false
+}
+```
