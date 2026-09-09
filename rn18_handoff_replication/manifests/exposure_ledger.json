@@ -1241,15 +1241,17 @@
    "n_with_config": 56,
    "n_with_checkpoint": 56,
    "n_with_native_outputs": 5,
-   "human_inspection_four_shift_outcomes": null,
-   "human_inspection_registered_suite_outputs": null,
-   "declared_by": null,
-   "declared_on": null,
+   "human_inspection_four_shift_outcomes": "never_computed",
+   "human_inspection_registered_suite_outputs": "viewed",
+   "declared_by": "Claude (asserted fields) / owner (pending field)",
+   "declared_on": "2026-09-08",
    "allowed_values": [
     "never_computed",
     "computed_not_viewed",
     "viewed"
-   ]
+   ],
+   "four_shift_basis": "no new-shift token in any config (asserted by phase 0); no ResNet-18 record in any extraction output directory (asserted locally 2026-09-08)",
+   "registered_suite_basis": "consumed: registered-suite outcomes of the 56 cells sit in the panel of record and were used by the rescore campaign; irrelevant to the four-shift target"
   },
   "standalone_ce": {
    "cells": [
@@ -2179,15 +2181,17 @@
    "n_with_config": 40,
    "n_with_checkpoint": 40,
    "n_with_native_outputs": 6,
-   "human_inspection_four_shift_outcomes": null,
+   "human_inspection_four_shift_outcomes": "never_computed",
    "human_inspection_registered_suite_outputs": null,
-   "declared_by": null,
-   "declared_on": null,
+   "declared_by": "Claude (asserted fields) / owner (pending field)",
+   "declared_on": "2026-09-08",
    "allowed_values": [
     "never_computed",
     "computed_not_viewed",
     "viewed"
-   ]
+   ],
+   "four_shift_basis": "no new-shift token in any config (asserted by phase 0); no ResNet-18 record in any extraction output directory (asserted locally 2026-09-08)",
+   "registered_suite_note": "6 of 40 runs have native raw_logits.npz dated 2026-09-02 (train_test mode); owner declaration pending; registered-suite outputs enter no v3 endpoint"
   }
  },
  "extra_resnet18_dirs_not_in_panel": [

@@ -1,6 +1,6 @@
 {
  "plan": "RN18 handoff-replication plan v3, section 3.3 panel of record (expected)",
- "n_paradigm_pool": 56,
+ "n_paradigm_pool": 60,
  "n_standalone_ce": 40,
  "cells": [
   {
@@ -962,6 +962,51 @@
    "dropout": 1,
    "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run5_rew0",
    "seed": 270009
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 3.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew3",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 3.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)",
+   "enumeration_note": "found on disk by the phase-0 audit 2026-09-08; absent from long_harmonized_v2 (registered-suite outcomes never harmonized); added PRE-FORWARD under the v3 section-3.3 rule; mechanical eligibility decided by phase 1"
   }
- ]
+ ],
+ "amendment_2026_09_08": "4 cifar100 DeepGamblers cells added pre-forward from the phase-0 extra-dir scan"
 }
