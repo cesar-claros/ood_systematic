@@ -240,55 +240,88 @@ def regret(delta: np.ndarray, p_c: np.ndarray) -> np.ndarray:
     return p_c * np.maximum(-delta, 0) + (1 - p_c) * np.maximum(delta, 0)
 
 
+def sel_verdict(ivs: dict) -> str:
+    """The SEL decision rule on the nine simultaneous intervals (shared
+    with the phase-4 simulator). A missing interval (degenerate) blocks
+    the superiority claim and the reference-based claims."""
+    if all(iv is not None and iv[0] > EPS_R for iv in ivs.values()):
+        return "PRACTICALLY SUPERIOR TO ALL DECLARED ZERO-SHOT COMPARATORS"
+    ref = ivs.get(REFERENCE)
+    if ref is None:
+        return "UNRESOLVED"
+    if ref[1] < -EPS_R:
+        return "PRACTICALLY INFERIOR TO THE REFERENCE"
+    if -EPS_R <= ref[0] and ref[1] <= EPS_R:
+        return "PRACTICALLY EQUIVALENT TO THE REFERENCE"
+    return "UNRESOLVED"
+
+
+def level_verdict(iv: list) -> dict:
+    """The LEVEL decision rule (shared with the phase-4 simulator)."""
+    return {"verdict": ("resolved improvement" if iv[0] > 0 else "resolved worsening" if iv[1] < 0
+                        else "unresolved direction"),
+            "equivalent_within_0.01": bool(-MARGIN_LEVEL <= iv[0] and iv[1] <= MARGIN_LEVEL),
+            "at_least_one_point": bool(iv[0] > MARGIN_LEVEL)}
+
+
+def assert_families(df: pd.DataFrame, expected: int) -> None:
+    fams = sorted(df.family.unique())
+    assert len(fams) == expected, f"family count {len(fams)} != expected {expected}: {fams}"
+    counts = df.groupby("family").cell.nunique()
+    assert counts.nunique() == 1, f"unequal family sizes (duplicate label?): {counts.to_dict()}"
+
+
 def sel_endpoint(ce: pd.DataFrame, comp: Comparators, mult: float = 1.0) -> dict:
-    ce = ce.copy()
+    ok = np.isfinite(ce.dA.values) & np.isfinite(ce.M.values)
+    n_bad = int((~ok).sum())
+    ce = ce[ok].copy()
     ce["R_P00"] = regret(ce.dA.values, choice_prob(ce.M.values))
     for n in NAMES:
         ce[f"R_{n}"] = regret(ce.dA.values, choice_prob(comp.predict(n, ce)))
     fams = sorted(ce.family.unique())
-    out = {"N_f": len(fams), "n_cells": int(len(ce)), "mean_regret_P00": float(ce.R_P00.mean()), "comparators": {}}
+    out = {"N_f": len(fams), "n_cells": int(len(ce)), "score_domain_failures_excluded": n_bad,
+           "mean_regret_P00": float(ce.R_P00.mean()), "comparators": {}}
     alpha_each = ALPHA_SEL / len(NAMES)
-    lower_all_above, ref_iv = True, None
+    ivs = {}
     for n in NAMES:
         jk = jackknife(ce, lambda d, n=n: d[f"R_{n}"].mean() - d["R_P00"].mean())
         iv = interval(jk, alpha_each, mult)
         out["comparators"][n] = {"mean_regret": float(ce[f"R_{n}"].mean()), "D_b": jk["estimate"],
                                  "ci": iv, "degenerate": jk.get("degenerate")}
-        lower_all_above &= bool(iv and iv[0] > EPS_R)
-        if n == REFERENCE:
-            ref_iv = iv
-    if lower_all_above:
-        v = "PRACTICALLY SUPERIOR TO ALL DECLARED ZERO-SHOT COMPARATORS"
-    elif ref_iv and ref_iv[1] < -EPS_R:
-        v = "PRACTICALLY INFERIOR TO THE REFERENCE"
-    elif ref_iv and -EPS_R <= ref_iv[0] and ref_iv[1] <= EPS_R:
-        v = "PRACTICALLY EQUIVALENT TO THE REFERENCE"
-    else:
-        v = "UNRESOLVED"
-    out["verdict"] = v
+        ivs[n] = iv
+    out["verdict"] = sel_verdict(ivs)
     out["material_sign_accuracy_dG"] = (float(np.mean(np.sign(ce.M[np.abs(ce.dG) >= 0.01]) == np.sign(ce.dG[np.abs(ce.dG) >= 0.01])))
                                         if (np.abs(ce.dG) >= 0.01).any() else None)
     return out
 
 
+def _level_delta(sub: pd.DataFrame) -> pd.Series:
+    sub = sub.copy()
+    pa = lambda col: np.array([pred_auroc(v) for v in sub[col]])
+    sub["e00"] = (np.abs(pa("l_E") - sub.aurocE.values) + np.abs(pa("l_C") - sub.aurocC.values)) / 2
+    sub["e10"] = (np.abs(pa("l_E_p10") - sub.aurocE.values) + np.abs(pa("l_C_p10") - sub.aurocC.values)) / 2
+    per_ck = sub.groupby(["family", "source", "cell"])[["e00", "e10"]].mean().reset_index()
+    fam = per_ck.groupby(["family", "source"])[["e00", "e10"]].mean().groupby("family").mean()
+    return fam.e00 - fam.e10
+
+
 def level_endpoint(ce: pd.DataFrame, mult: float = 1.0) -> dict:
     if "l_E_p10" not in ce or ce.l_E_p10.isna().all():
         return {"verdict": "INELIGIBLE", "reason": "no P10 block"}
-    sub = ce.dropna(subset=["l_E_p10"]).copy()
-    sub["e00"] = (np.abs([pred_auroc(v) for v in sub.l_E] - sub.aurocE) + np.abs([pred_auroc(v) for v in sub.l_C] - sub.aurocC)) / 2
-    sub["e10"] = (np.abs([pred_auroc(v) for v in sub.l_E_p10] - sub.aurocE) + np.abs([pred_auroc(v) for v in sub.l_C_p10] - sub.aurocC)) / 2
-    per_ck = sub.groupby(["family", "source", "cell"])[["e00", "e10"]].mean().reset_index()
-    fam = per_ck.groupby(["family", "source"])[["e00", "e10"]].mean().groupby("family").mean()
-    d = fam.e00 - fam.e10
+    need = ["l_E", "l_C", "l_E_p10", "l_C_p10", "aurocE", "aurocC"]
+    finite = np.isfinite(ce[need].to_numpy(float)).all(1)
+    n_missing = int((~finite).sum())
+    sub = ce[finite].copy()
+    if n_missing:
+        d = _level_delta(sub)
+        return {"verdict": "INELIGIBLE-INCOMPLETE-PANEL", "n_missing_cells": n_missing,
+                "descriptive_delta_common_cells": float(d.mean()), "n_common_cells": int(len(sub))}
+    d = _level_delta(sub)
     N = len(d)
     se = float(d.std(ddof=1) / np.sqrt(N))
     q = student.ppf(1 - ALPHA_LEVEL / 2, N - 1) * mult * se
     iv = [round(float(d.mean() - q), 5), round(float(d.mean() + q), 5)]
-    verdict = ("resolved improvement" if iv[0] > 0 else "resolved worsening" if iv[1] < 0 else "unresolved direction")
-    equiv = bool(-MARGIN_LEVEL <= iv[0] and iv[1] <= MARGIN_LEVEL)
-    return {"N_f": N, "mae_P00": float(fam.e00.mean()), "mae_P10": float(fam.e10.mean()), "delta": float(d.mean()),
-            "ci": iv, "verdict": verdict, "equivalent_within_0.01": equiv,
-            "at_least_one_point": bool(iv[0] > MARGIN_LEVEL)}
+    return {"N_f": N, "delta": float(d.mean()), "ci": iv, **level_verdict(iv)}
 
 
 def rank_slope_stat(df: pd.DataFrame, y: str = "dG") -> float:
@@ -368,7 +401,7 @@ def run(b: int) -> None:
            "ce_families": sorted(df[df.component == "standalone_ce"].family.unique()),
            "vgg_checkpoints": int(vgg.cell.nunique())}
     ce = df[df.component == "standalone_ce"]
-    assert len(den["ce_families"]) == 10, den["ce_families"]
+    assert_families(ce, 10)
     comp_A = Comparators(vgg, "dA")
     report = {"denominators": den, "HO": ho_endpoint(df, b),
               "SEL_ce": sel_endpoint(ce, comp_A),
