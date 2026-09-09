@@ -1,0 +1,4 @@
+{
+ "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+ "error": "Traceback (most recent call last):\n  File \"/work/cniel/sw/FD_Shifts_test/project/rn18_handoff_replication/phase1_nc1_remeasure.py\", line 258, in main\n    extract_one(c, root, out_dir, args.use_cuda, args.bootstrap)\n  File \"/work/cniel/sw/FD_Shifts_test/project/rn18_handoff_replication/phase1_nc1_remeasure.py\", line 172, in extract_one\n    det, fm = view_record(h, y, w_np, b_np, n_classes)\n  File \"/work/cniel/sw/FD_Shifts_test/project/rn18_handoff_replication/phase1_nc1_remeasure.py\", line 107, in view_record\n    geo = geometry_record(w_np, b_np, fm)\n  File \"/work/cniel/sw/FD_Shifts_test/project/pilot0/geometry.py\", line 181, in geometry_record\n    \"snr\": float(model.radius / model.sigma_iso),\nZeroDivisionError: float division by zero\n"
+}

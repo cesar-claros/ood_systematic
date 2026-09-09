@@ -1,0 +1,4 @@
+{
+ "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+ "error": "Traceback (most recent call last):\n  File \"/work/cniel/sw/FD_Shifts_test/project/rn18_handoff_replication/phase1_nc1_remeasure.py\", line 258, in main\n    extract_one(c, root, out_dir, args.use_cuda, args.bootstrap)\n  File \"/work/cniel/sw/FD_Shifts_test/project/rn18_handoff_replication/phase1_nc1_remeasure.py\", line 180, in extract_one\n    assert rel < 1e-8, f\"bootstrap arithmetic mismatch: {base} vs {det['nc1_corrected']}\"\nAssertionError: bootstrap arithmetic mismatch: 426.6967187726134 vs 4.238510638297753\n"
+}

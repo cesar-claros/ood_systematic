@@ -1,0 +1,91 @@
+{
+ "schema_phase1": 1,
+ "component": "paradigm_pool",
+ "paradigm": "dg",
+ "source": "cifar10",
+ "run_label": 1,
+ "reward": 3.0,
+ "dropout": 1,
+ "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+ "seed_note": "single run label; one dependence block (v3 section 3.3)",
+ "resolved_model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+ "slug": "cifar10_paper_sweep__dg_bbresnet18_do1_run1_rew3",
+ "study": "dg",
+ "n_classes": 10,
+ "dim": 512,
+ "n_train": 50000,
+ "class_support": {
+  "min": 5000,
+  "median": 5000.0,
+  "n_empty": 0
+ },
+ "deterministic_view": {
+  "papyan": {
+   "var_collapse": 0.030235641550304143,
+   "equinorm_uc": 0.03341079824172375,
+   "equinorm_wc": 0.0096218852309211,
+   "equiangular_uc": 0.1640298605581935,
+   "equiangular_wc": 0.09488998318688269,
+   "max_equiangular_uc": 0.12371516668155864,
+   "max_equiangular_wc": 0.0722815557393184,
+   "self_duality": 0.020733666296031794
+  },
+  "geometry": {
+   "head_residual_fraction": 0.00728342887490249,
+   "logit_scale": 8.564808398816828,
+   "self_duality_papyan": 0.020733666296031794,
+   "self_duality_angle_mean_deg": 7.720055656045921,
+   "class_mean_radius": 7.2347097810439776,
+   "class_mean_radius_cv": 0.03341079824172375,
+   "sigma_iso": 0.05970198922602869,
+   "snr": 121.1803806679495,
+   "eig_max_over_mean": 100.43142975495938,
+   "effective_rank": 9.601095581614308,
+   "participation_ratio": 7.86134435103529
+  },
+  "nc1_corrected": 0.030235641550304143,
+  "s_dict": 16.36752132439503,
+  "snr_iso": 121.1803806679495,
+  "n": 50000,
+  "labels_sha256": "f5cfe00b0f00968c0cc5ff3b1d2de51b10e33efa277c2986f4e0fa63e58c9f4f",
+  "first_batch_checksum": -15990.522311073903
+ },
+ "aug_view": {
+  "papyan": {
+   "var_collapse": 0.07031701451201763,
+   "equinorm_uc": 0.020994888445919586,
+   "equinorm_wc": 0.0096218852309211,
+   "equiangular_uc": 0.17133787514835486,
+   "equiangular_wc": 0.09488998318688269,
+   "max_equiangular_uc": 0.12846776422343012,
+   "max_equiangular_wc": 0.0722815557393184,
+   "self_duality": 0.02196779789309064
+  },
+  "geometry": {
+   "head_residual_fraction": 0.007115942954445127,
+   "logit_scale": 8.154429518131034,
+   "self_duality_papyan": 0.02196779789309064,
+   "self_duality_angle_mean_deg": 8.12637477784354,
+   "class_mean_radius": 6.893790944044085,
+   "class_mean_radius_cv": 0.020994888445919586,
+   "sigma_iso": 0.08342948814417239,
+   "snr": 82.63014789364522,
+   "eig_max_over_mean": 101.98617186194957,
+   "effective_rank": 9.575245059471852,
+   "participation_ratio": 8.20001991291084
+  },
+  "nc1_corrected": 0.07031701451201763,
+  "s_dict": 10.732781740927527,
+  "snr_iso": 82.63014789364522,
+  "n": 50000,
+  "labels_sha256": "f5cfe00b0f00968c0cc5ff3b1d2de51b10e33efa277c2986f4e0fa63e58c9f4f",
+  "first_batch_checksum": -131359.20566536428
+ },
+ "bootstrap": {
+  "B": 500,
+  "seed": 1201,
+  "sd_log_nc1": 0.017594540139571773,
+  "labels_sha256": "f5cfe00b0f00968c0cc5ff3b1d2de51b10e33efa277c2986f4e0fa63e58c9f4f"
+ },
+ "runtime_sec": 72.0
+}
