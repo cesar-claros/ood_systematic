@@ -109,6 +109,11 @@ pilot0/stage3_imagenet200_coords/*.json
 pilot0/repair_phase1_stats/*.json
 pilot0/repair_phase1_stats/*.npz
 
+#RN18
+rn18_handoff_replication/outputs/fourshift_rn18
+rn18_handoff_replication/outputs/fourshift_vgg_bridge
+
+
 # Exception to the *.sh rule: the Pool A extraction runner must sync to the HPC
 !x8_pool_a/run_pool_a_hpc.sh
 !run_new_csfs_pilot.sh
