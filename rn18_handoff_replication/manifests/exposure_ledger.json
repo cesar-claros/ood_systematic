@@ -1,0 +1,2200 @@
+{
+ "plan": "RN18 handoff-replication plan v3, phase 0 exposure audit",
+ "rule": "existence is not exposure; unknown exposure is not blindness; the four-shift outcomes of every cell below have never been computed by any registered pipeline (asserted: no new-shift token in any config)",
+ "experiment_root": "/work/cniel/sw/FD_Shifts/project/experiments",
+ "components": {
+  "paradigm_pool": {
+   "cells": [
+    {
+     "component": "paradigm_pool",
+     "paradigm": "confidnet",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "confidnet",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "confidnet",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "confidnet",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "confidnet",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/external_confids.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-04-16T15:40:47",
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "confidnet",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "confidnet",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "confidnet",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "devries",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/external_confids.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_new_class_study_cifar100_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_cifar100_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_proposed_mode.csv",
+      "test_results/analysis_metrics_noise_study_1.csv",
+      "test_results/analysis_metrics_noise_study_2.csv",
+      "test_results/analysis_metrics_noise_study_3.csv",
+      "test_results/analysis_metrics_noise_study_4.csv",
+      "test_results/analysis_metrics_noise_study_5.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-04-16T01:15:47",
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "devries",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/external_confids.npz",
+      "test_results/external_confids_dist.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_new_class_study_cifar100_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_cifar100_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_proposed_mode.csv",
+      "test_results/analysis_metrics_noise_study_1.csv",
+      "test_results/analysis_metrics_noise_study_2.csv",
+      "test_results/analysis_metrics_noise_study_3.csv",
+      "test_results/analysis_metrics_noise_study_4.csv",
+      "test_results/analysis_metrics_noise_study_5.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-04-16T03:26:40",
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "devries",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "devries",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "devries",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/external_confids.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-04-16T06:31:04",
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "devries",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/external_confids.npz",
+      "test_results/external_confids_dist.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-04-16T09:08:13",
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "devries",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "devries",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 3.0,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew3",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew3",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 3.0,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 6.0,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 6.0,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 10.0,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 10.0,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 6.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 6.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 10.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 10.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 12.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 12.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 15.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 15.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 20.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 20.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 2.2,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 3.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew3",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew3",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 3.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 6.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 6.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 10.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 10.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 12.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 12.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 15.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 15.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 20.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 20.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 10.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 10.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 12.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 12.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 15.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 15.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 20.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "paradigm_pool",
+     "paradigm": "dg",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 20.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+     "seed_note": "single run label; one dependence block (v3 section 3.3)",
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    }
+   ],
+   "n_expected": 56,
+   "n_found": 56,
+   "n_with_config": 56,
+   "n_with_checkpoint": 56,
+   "n_with_native_outputs": 5,
+   "human_inspection_four_shift_outcomes": null,
+   "human_inspection_registered_suite_outputs": null,
+   "declared_by": null,
+   "declared_on": null,
+   "allowed_values": [
+    "never_computed",
+    "computed_not_viewed",
+    "viewed"
+   ]
+  },
+  "standalone_ce": {
+   "cells": [
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+     "seed": 270000,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 2,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+     "seed": 270001,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 3,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+     "seed": 270002,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 4,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+     "seed": 270003,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 5,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+     "seed": 270004,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 1,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+     "seed": 270005,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 2,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+     "seed": 270006,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 3,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+     "seed": 270007,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 4,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+     "seed": 270008,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar10",
+     "run_label": 5,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+     "seed": 270009,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar10_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar10\n    noise_study:\n    - corrupt_cifar10\n    in_class_study: []\n    new_class_study:\n    - cifar100\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+     "seed": 270000,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/raw_logits.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_new_class_study_cifar10_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_cifar10_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_proposed_mode.csv",
+      "test_results/analysis_metrics_noise_study_1.csv",
+      "test_results/analysis_metrics_noise_study_2.csv",
+      "test_results/analysis_metrics_noise_study_3.csv",
+      "test_results/analysis_metrics_noise_study_4.csv",
+      "test_results/analysis_metrics_noise_study_5.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-09-02T00:03:45",
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 2,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+     "seed": 270001,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 3,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+     "seed": 270002,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/raw_logits.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_new_class_study_cifar10_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_cifar10_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_proposed_mode.csv",
+      "test_results/analysis_metrics_noise_study_1.csv",
+      "test_results/analysis_metrics_noise_study_2.csv",
+      "test_results/analysis_metrics_noise_study_3.csv",
+      "test_results/analysis_metrics_noise_study_4.csv",
+      "test_results/analysis_metrics_noise_study_5.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-09-02T15:39:56",
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 4,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+     "seed": 270003,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/raw_logits.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_new_class_study_cifar10_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_cifar10_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_proposed_mode.csv",
+      "test_results/analysis_metrics_noise_study_1.csv",
+      "test_results/analysis_metrics_noise_study_2.csv",
+      "test_results/analysis_metrics_noise_study_3.csv",
+      "test_results/analysis_metrics_noise_study_4.csv",
+      "test_results/analysis_metrics_noise_study_5.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-09-02T18:40:35",
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 5,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+     "seed": 270004,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/raw_logits.npz"
+     ],
+     "other_test_files": [
+      "test_results/analysis_metrics_iid_study.csv",
+      "test_results/analysis_metrics_new_class_study_cifar10_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_cifar10_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_svhn_proposed_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_original_mode.csv",
+      "test_results/analysis_metrics_new_class_study_tinyimagenet_resize_proposed_mode.csv",
+      "test_results/analysis_metrics_noise_study_1.csv",
+      "test_results/analysis_metrics_noise_study_2.csv",
+      "test_results/analysis_metrics_noise_study_3.csv",
+      "test_results/analysis_metrics_noise_study_4.csv",
+      "test_results/analysis_metrics_noise_study_5.csv",
+      "test_results/analysis_metrics_val_tuning.csv",
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-09-02T21:44:37",
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 1,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+     "seed": 270005,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/external_confids_dist.npz",
+      "test_results/raw_logits.npz",
+      "test_results/raw_logits_dist.npz"
+     ],
+     "other_test_files": [
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-09-02T01:04:13",
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 2,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+     "seed": 270006,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 3,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+     "seed": 270007,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 4,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+     "seed": 270008,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "cifar100",
+     "run_label": 5,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+     "seed": 270009,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/cifar100_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [
+      "test_results/external_confids_dist.npz",
+      "test_results/raw_logits.npz",
+      "test_results/raw_logits_dist.npz"
+     ],
+     "other_test_files": [
+      "test_results/encoded_output.npz"
+     ],
+     "newest_output_mtime": "2026-09-05T13:57:03",
+     "query_studies_text": "iid_study: cifar100\n    noise_study:\n    - corrupt_cifar100\n    in_class_study: []\n    new_class_study:\n    - cifar10\n    - svhn\n    - tinyimagenet_resize",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+     "seed": 270000,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 2,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+     "seed": 270001,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 3,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+     "seed": 270002,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 4,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+     "seed": 270003,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 5,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+     "seed": 270004,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 1,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+     "seed": 270005,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 2,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+     "seed": 270006,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 3,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+     "seed": 270007,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 4,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+     "seed": 270008,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "supercifar100",
+     "run_label": 5,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+     "seed": 270009,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/supercifar_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: super_cifar100\n    noise_study: []\n    in_class_study: []\n    new_class_study: []",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+     "seed": 270000,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 2,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+     "seed": 270001,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 3,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+     "seed": 270002,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 4,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+     "seed": 270003,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 5,
+     "reward": 0.0,
+     "dropout": 0,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+     "seed": 270004,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 1,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+     "seed": 270005,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 2,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+     "seed": 270006,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 3,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+     "seed": 270007,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 4,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+     "seed": 270008,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    },
+    {
+     "component": "standalone_ce",
+     "paradigm": "ce",
+     "source": "tinyimagenet",
+     "run_label": 5,
+     "reward": 0.0,
+     "dropout": 1,
+     "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+     "seed": 270009,
+     "resolved_path": "/work/cniel/sw/FD_Shifts/project/experiments/tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+     "exists": true,
+     "has_config": true,
+     "checkpoints": [
+      "version_0/last.ckpt"
+     ],
+     "native_outputs": [],
+     "other_test_files": [],
+     "newest_output_mtime": null,
+     "query_studies_text": "iid_study: tiny-imagenet-200\n    noise_study: []\n    in_class_study: []\n    new_class_study:\n    - cifar10_64\n    - cifar100_64\n    - svhn_64",
+     "new_shift_token_in_config": false
+    }
+   ],
+   "n_expected": 40,
+   "n_found": 40,
+   "n_with_config": 40,
+   "n_with_checkpoint": 40,
+   "n_with_native_outputs": 6,
+   "human_inspection_four_shift_outcomes": null,
+   "human_inspection_registered_suite_outputs": null,
+   "declared_by": null,
+   "declared_on": null,
+   "allowed_values": [
+    "never_computed",
+    "computed_not_viewed",
+    "viewed"
+   ]
+  }
+ },
+ "extra_resnet18_dirs_not_in_panel": [
+  "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+  "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew3",
+  "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
+  "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew3"
+ ],
+ "n_found_total": 96
+}
