@@ -53,7 +53,9 @@ OUT = Path("rn18_handoff_replication/outputs")
 DIR_RN18 = OUT / "fourshift_rn18"
 DIR_P1 = OUT / "phase1_nc1"
 SEV = Path("pilot0/clip_severity_v2.csv")
-VGG_GLOB = "pilot0/icml_roster_b_coords/*confidnet_bbvgg13_do0_*.json"
+VGG_GLOB = "pilot0/icml_roster_b_coords/*confidnet_bbvgg13_do0_*.json"      # AUG-VIEW sensitivity (consumed roster-B records)
+DIR_VGG_DET = OUT / "fourshift_vgg_bridge"                                    # PRIMARY view (deterministic re-extraction)
+CRIT = Path("rn18_handoff_replication/simulations/development_critical_values.json")
 SHIFTS = ("mnist_new", "fashionmnist_new", "kmnist_new", "stl10_new")
 SEED_HO, ALPHA_SEL, ALPHA_LEVEL, EPS_R, MARGIN_LEVEL, TIE = 1211, 0.025, 0.025, 0.002, 0.01, 1e-12
 MIN_STRATUM, FINE_N = 5, 301
@@ -372,7 +374,20 @@ def load_dir(d: Path, key: str) -> list[dict]:
     return recs
 
 
+def vgg_table_det(axes: dict) -> pd.DataFrame:
+    """Primary comparator training table: the 20 backbones under the deterministic view."""
+    recs = []
+    import re
+    for r in load_dir(DIR_VGG_DET, "schema_fourshift"):
+        r["run_label"] = int(re.search(r"_run(\d+)_", r["model_path"]).group(1))
+        r["component"] = "vgg_bridge"; r["paradigm"] = "confidnet"; r["dropout"] = 0
+        recs.append(r)
+    assert len(recs) == 20, len(recs)
+    return add_geometry_percentile(cells_from_records(recs, axes, with_p10=False))
+
+
 def vgg_table(axes: dict) -> pd.DataFrame:
+    """AUG-VIEW sensitivity table: the consumed roster-B records (augmented train view)."""
     recs = []
     for p in sorted(glob.glob(VGG_GLOB)):
         r = json.load(open(p))
@@ -394,21 +409,33 @@ def run(b: int) -> None:
         ref = p1[r["slug"]]["deterministic_view"]["nc1_corrected"]
         assert abs(r["papyan"]["var_collapse"] - ref) <= 1e-6 * ref, (r["slug"], r["papyan"]["var_collapse"], ref)
     df = add_geometry_percentile(cells_from_records(recs, axes, with_p10=True))
-    vgg = vgg_table(axes)
+    vgg = vgg_table_det(axes)
+    vgg_aug = vgg_table(axes)
+    mults = json.loads(CRIT.read_text())["multipliers"]
+    m10, m5 = mults["SEL_Nf10"], mults["SEL_Nf5"]
+    ml10, ml5 = mults["LEVEL_Nf10"], mults["LEVEL_Nf5"]
+    assert None not in (m10, m5, ml10, ml5), "unlicensed family"
     den = {"n_records": len(recs), "n_cells": int(len(df)),
            "per_source_checkpoints": df.groupby("source").cell.nunique().to_dict(),
            "sets_per_source": {s: sorted(g.ood_set.unique()) for s, g in df.groupby("source")},
            "ce_families": sorted(df[df.component == "standalone_ce"].family.unique()),
-           "vgg_checkpoints": int(vgg.cell.nunique())}
+           "vgg_checkpoints_primary_view": int(vgg.cell.nunique()), "vgg_checkpoints_aug_view": int(vgg_aug.cell.nunique()),
+           "multipliers": mults}
     ce = df[df.component == "standalone_ce"]
     assert_families(ce, 10)
     comp_A = Comparators(vgg, "dA")
+    comp_A_aug = Comparators(vgg_aug, "dA")
+    ce0 = ce[ce.dropout == 0]
     report = {"denominators": den, "HO": ho_endpoint(df, b),
-              "SEL_ce": sel_endpoint(ce, comp_A),
+              "SEL_ce": sel_endpoint(ce, comp_A, mult=m10),
+              "SEL_ce_do0_sensitivity_Nf5": sel_endpoint(ce0, comp_A, mult=m5),
+              "SEL_ce_augview_comparators_sensitivity": sel_endpoint(ce, comp_A_aug, mult=m10),
               "SEL_paradigm_pool_descriptive": {"mean_regret_P00": float(regret(df[df.component == "paradigm_pool"].dA.values, choice_prob(df[df.component == "paradigm_pool"].M.values)).mean())},
-              "LEVEL_ce": level_endpoint(ce),
+              "LEVEL_ce": level_endpoint(ce, mult=ml10),
+              "LEVEL_ce_do0_sensitivity_Nf5": level_endpoint(ce0, mult=ml5),
+              "bridge_A_G": {"primary_view": rank_slope_stat(vgg), "aug_view": rank_slope_stat(vgg_aug)},
               "ORG_descriptive": org_descriptive(df), "E4": {"full": e4(df), "ce": e4(ce)},
-              "comparator_fits": comp_A.summary()}
+              "comparator_fits": {"primary_view": comp_A.summary(), "aug_view": comp_A_aug.summary()}}
     _write(report, "rn18_report")
     print(json.dumps({"HO_global": report["HO"]["global"], "SEL": report["SEL_ce"]["verdict"],
                       "LEVEL": report["LEVEL_ce"].get("verdict")}, indent=1))
