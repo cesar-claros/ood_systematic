@@ -1,0 +1,135 @@
+{
+ "licenses": {
+  "SEL_Nf10": {
+   "licensed": true,
+   "multiplier": 1.1,
+   "failed_scenarios": []
+  },
+  "SEL_Nf5": {
+   "licensed": true,
+   "multiplier": 1.1,
+   "failed_scenarios": []
+  },
+  "LEVEL_Nf10": {
+   "licensed": true,
+   "multiplier": 1.1,
+   "failed_scenarios": []
+  },
+  "LEVEL_Nf5": {
+   "licensed": true,
+   "multiplier": 1.1,
+   "failed_scenarios": []
+  }
+ },
+ "multipliers": {
+  "SEL_Nf10": 1.1,
+  "SEL_Nf5": 1.1,
+  "LEVEL_Nf10": 1.1,
+  "LEVEL_Nf5": 1.1
+ },
+ "seed": 2402,
+ "ho_operating_characteristics": [
+  {
+   "scenario": "geo_near_zero_spread",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-NOT-RETAINED": 0.6925,
+    "HO-RETAINED": 0.3075
+   },
+   "retained_rate": 0.3075,
+   "retained_upper": 0.3282453862055409
+  },
+  {
+   "scenario": "geo_clustered_ties",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-RETAINED": 1.0
+   },
+   "retained_rate": 1.0,
+   "retained_upper": 1.0
+  },
+  {
+   "scenario": "geo_one_extreme",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-RETAINED": 1.0
+   },
+   "retained_rate": 1.0,
+   "retained_upper": 1.0
+  },
+  {
+   "scenario": "geo_shared_measurement_error",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-RETAINED": 1.0
+   },
+   "retained_rate": 1.0,
+   "retained_upper": 1.0
+  },
+  {
+   "scenario": "null_geometry_dependent_variance",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-RETAINED": 1.0
+   },
+   "retained_rate": 1.0,
+   "retained_upper": 1.0
+  },
+  {
+   "scenario": "ho_all_left_censored",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-UNINFORMATIVE": 1.0
+   },
+   "retained_rate": 0.0,
+   "retained_upper": 0.0018427397934059364
+  },
+  {
+   "scenario": "ho_all_right_censored",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-UNINFORMATIVE": 1.0
+   },
+   "retained_rate": 0.0,
+   "retained_upper": 0.0018427397934059364
+  },
+  {
+   "scenario": "ho_reversed",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-NOT-RETAINED": 1.0
+   },
+   "retained_rate": 0.0,
+   "retained_upper": 0.0018427397934059364
+  },
+  {
+   "scenario": "ho_nonlinear_middle_crossing",
+   "held_out": false,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-RETAINED": 0.9975,
+    "HO-NOT-RETAINED": 0.0025
+   },
+   "retained_rate": 0.9975,
+   "retained_upper": 0.9991877740248061
+  },
+  {
+   "scenario": "int_ushape_clustered",
+   "held_out": true,
+   "reps": 2000,
+   "verdict_rates": {
+    "HO-NOT-RETAINED": 1.0
+   },
+   "retained_rate": 0.0,
+   "retained_upper": 0.0018427397934059364
+  }
+ ]
+}

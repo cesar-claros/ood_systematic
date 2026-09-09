@@ -1,0 +1,29 @@
+{
+ "N_f_fixed": {
+  "SEL_LEVEL": 10,
+  "ORG_descriptive": 5
+ },
+ "no_sample_size_selection": true,
+ "licenses": {
+  "SEL_Nf10": {
+   "licensed": true,
+   "multiplier": 1.1,
+   "failed_scenarios": []
+  },
+  "SEL_Nf5": {
+   "licensed": true,
+   "multiplier": 1.1,
+   "failed_scenarios": []
+  },
+  "LEVEL_Nf10": {
+   "licensed": true,
+   "multiplier": 1.1,
+   "failed_scenarios": []
+  },
+  "LEVEL_Nf5": {
+   "licensed": true,
+   "multiplier": 1.1,
+   "failed_scenarios": []
+  }
+ }
+}

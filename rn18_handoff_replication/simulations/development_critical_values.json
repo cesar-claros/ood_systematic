@@ -1,0 +1,10 @@
+{
+ "multipliers": {
+  "SEL_Nf10": 1.1,
+  "SEL_Nf5": 1.1,
+  "LEVEL_Nf10": 1.1,
+  "LEVEL_Nf5": 1.1
+ },
+ "rule": "smallest in (1.0, 1.1, 1.25, 1.5, 2.0) passing every non-held-out null/boundary scenario",
+ "seed": 2401
+}
