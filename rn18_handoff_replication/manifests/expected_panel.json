@@ -1,0 +1,967 @@
+{
+ "plan": "RN18 handoff-replication plan v3, section 3.3 panel of record (expected)",
+ "n_paradigm_pool": 56,
+ "n_standalone_ce": 40,
+ "cells": [
+  {
+   "component": "paradigm_pool",
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "devries",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "devries",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "devries",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "devries",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "devries",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/devries_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "devries",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/devries_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 3.0,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew3",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 3.0,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 6.0,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 6.0,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 10.0,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 10.0,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 6.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 6.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 10.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 10.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 12.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 12.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 15.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 15.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 20.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 20.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 2.2,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew2.2",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 3.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew3",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 3.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew3",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 6.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew6",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 6.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew6",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 10.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 10.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 12.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 12.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 15.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 15.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 20.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 20.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 10.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew10",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 10.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew10",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 12.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew12",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 12.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew12",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 15.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew15",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 15.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew15",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 20.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do0_run1_rew20",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "paradigm_pool",
+   "paradigm": "dg",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 20.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/dg_bbresnet18_do1_run1_rew20",
+   "seed_note": "single run label; one dependence block (v3 section 3.3)"
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+   "seed": 270000
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 2,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+   "seed": 270001
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 3,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+   "seed": 270002
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 4,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+   "seed": 270003
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 5,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+   "seed": 270004
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 1,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+   "seed": 270005
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 2,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+   "seed": 270006
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 3,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+   "seed": 270007
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 4,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+   "seed": 270008
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar10",
+   "run_label": 5,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar10_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+   "seed": 270009
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+   "seed": 270000
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 2,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+   "seed": 270001
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 3,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+   "seed": 270002
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 4,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+   "seed": 270003
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 5,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+   "seed": 270004
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 1,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+   "seed": 270005
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 2,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+   "seed": 270006
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 3,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+   "seed": 270007
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 4,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+   "seed": 270008
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "cifar100",
+   "run_label": 5,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "cifar100_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+   "seed": 270009
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+   "seed": 270000
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 2,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+   "seed": 270001
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 3,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+   "seed": 270002
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 4,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+   "seed": 270003
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 5,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+   "seed": 270004
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 1,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+   "seed": 270005
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 2,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+   "seed": 270006
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 3,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+   "seed": 270007
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 4,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+   "seed": 270008
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "supercifar100",
+   "run_label": 5,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "supercifar_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+   "seed": 270009
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run1_rew0",
+   "seed": 270000
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 2,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run2_rew0",
+   "seed": 270001
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 3,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run3_rew0",
+   "seed": 270002
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 4,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run4_rew0",
+   "seed": 270003
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 5,
+   "reward": 0.0,
+   "dropout": 0,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do0_run5_rew0",
+   "seed": 270004
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 1,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run1_rew0",
+   "seed": 270005
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 2,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run2_rew0",
+   "seed": 270006
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 3,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run3_rew0",
+   "seed": 270007
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 4,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run4_rew0",
+   "seed": 270008
+  },
+  {
+   "component": "standalone_ce",
+   "paradigm": "ce",
+   "source": "tinyimagenet",
+   "run_label": 5,
+   "reward": 0.0,
+   "dropout": 1,
+   "model_path": "tiny-imagenet-200_paper_sweep/ce_bbresnet18_do1_run5_rew0",
+   "seed": 270009
+  }
+ ]
+}
