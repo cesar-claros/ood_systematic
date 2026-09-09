@@ -166,8 +166,9 @@ def sim_cells(P: dict, N_f: int, rng, mu_so: np.ndarray) -> dict:
         dA = dA * 0.05
     if P["one_sign"]:
         dA = np.abs(dA)
-    aurocE = (0.98 if P["ceiling"] else 0.8) + 0.02 * rng.standard_normal(n)
-    aurocC = aurocE + dA
+    aurocE = np.clip((0.98 if P["ceiling"] else 0.8) + 0.02 * rng.standard_normal(n), 0.01, 0.99)
+    aurocC = np.clip(aurocE + dA, 0.01, 0.99)
+    dA = aurocC - aurocE                                     # the gap the reader measures
     pi = np.full(n, 0.5)
     if P["pi_varies"]:
         pi = np.array([0.3, 0.5, 0.6, 0.8])[s_idx]
@@ -185,8 +186,9 @@ def sim_cells(P: dict, N_f: int, rng, mu_so: np.ndarray) -> dict:
         if mode == "identical":
             preds[name] = M.copy()
         elif mode == "equivalent":
-            flip = rng.random(n) < 0.005
-            preds[name] = np.where(flip, -M, M)
+            acc = P["p_sign"] - 0.0005 / max(E_abs, 1e-9)              # E[D_b] = +0.0005, inside eps_R
+            ok = rng.random(n) < acc
+            preds[name] = np.where(ok, np.sign(dA), -np.sign(dA)) * np.abs(rng.normal(3, 1, n))
         else:
             acc = P["p_sign"]
             if mode == "boundary_superior":
@@ -204,8 +206,11 @@ def sim_cells(P: dict, N_f: int, rng, mu_so: np.ndarray) -> dict:
     dl = rng.normal(P["level_delta"], 0.02, n)
     e10 = np.abs(e00 - dl)
     sgn = np.where(rng.random(n) < 0.5, 1, -1)
-    predE00 = np.clip(aurocE + sgn * e00, 1e-6, 1 - 1e-6); predC00 = np.clip(aurocC + sgn * e00, 1e-6, 1 - 1e-6)
-    predE10 = np.clip(aurocE + sgn * e10, 1e-6, 1 - 1e-6); predC10 = np.clip(aurocC + sgn * e10, 1e-6, 1 - 1e-6)
+    emax = np.maximum(e00, e10)
+    sgn = np.where(np.maximum(aurocE, aurocC) + emax > 0.999, -1, np.where(np.minimum(aurocE, aurocC) - emax < 0.001, 1, sgn))
+    predE00 = aurocE + sgn * e00; predC00 = aurocC + sgn * e00
+    predE10 = aurocE + sgn * e10; predC10 = aurocC + sgn * e10
+    assert (predE00 > 0).all() and (predC00 < 1).all() and (predE10 > 0).all() and (predC10 < 1).all(), "prediction outside (0,1)"
     keep = np.ones(n, bool)
     if P["pi_one_source"]:
         keep &= s_idx != 3                                        # pi = 1 source: Delta^F undefined, cells dropped
@@ -287,27 +292,35 @@ def cp_lower(k: int, n: int, level=0.975) -> float:
 def truths(P: dict, N_f: int, seed: int, mu_so) -> dict:
     """High-precision reference truths from the DGP (archived)."""
     rng = np.random.default_rng([seed, 999])
-    reps = max(1, REF_CELLS // (N_f * 16))
-    Ds = {n: [] for n in NAMES}; dl = []
-    for _ in range(reps):
-        Pk = dict(P, best_k=0)
-        c = sim_cells(Pk, N_f, rng, mu_so)
-        keep = c["keep"] & np.isfinite(c["dA"])
-        r00 = regret(c["dA"][keep], choice_prob(c["M"][keep]))
-        for n in NAMES:
-            Ds[n].append(float(np.mean(regret(c["dA"][keep], choice_prob(c["preds"][n][keep])) - r00)))
-        dl.append(float(np.mean(c["e00"][keep] - c["e10"][keep])))
-    D = {n: float(np.mean(v)) for n, v in Ds.items()}
+    ks = range(len(NAMES)) if P["comp_mode"] == "rotating_best" else [0]
+    reps = max(1, REF_CELLS // (N_f * 16 * len(ks)))
+    Ds = {k: {n: [] for n in NAMES} for k in ks}; dl = []
+    pa = lambda l: 1 - np.exp(l)
+    for k in ks:
+        for _ in range(reps):
+            c = sim_cells(dict(P, best_k=k), N_f, rng, mu_so)
+            keep = c["keep"] & np.isfinite(c["dA"])
+            r00 = regret(c["dA"][keep], choice_prob(c["M"][keep]))
+            for n in NAMES:
+                Ds[k][n].append(float(np.mean(regret(c["dA"][keep], choice_prob(c["preds"][n][keep])) - r00)))
+            kp = keep & np.isfinite(c["lC10"]) & np.isfinite(c["lE10"])
+            e00 = (np.abs(pa(c["lE00"][kp]) - c["aurocE"][kp]) + np.abs(pa(c["lC00"][kp]) - c["aurocC"][kp])) / 2
+            e10 = (np.abs(pa(c["lE10"][kp]) - c["aurocE"][kp]) + np.abs(pa(c["lC10"][kp]) - c["aurocC"][kp])) / 2
+            dl.append(float(np.mean(e00 - e10)))
+    D_by_k = {k: {n: float(np.mean(v)) for n, v in Ds[k].items()} for k in ks}
+    D = D_by_k[0]
     nominal = {"boundary_superior": EPS_R, "p00_advantage": 0.005}.get(P["comp_mode"])
-    for n in D:
-        target = nominal if nominal is not None else (1.5 * EPS_R if (P["comp_mode"] == "reference_off_margin" and n == REFERENCE) else
-                                                      0.0 if P["comp_mode"] in ("exchangeable", "reference_off_margin", "identical") else None)
-        if target is not None and abs(D[n] - target) < 5e-4:
-            D[n] = target
+    for k in D_by_k:
+        for n in D_by_k[k]:
+            target = nominal if nominal is not None else (1.5 * EPS_R if (P["comp_mode"] == "reference_off_margin" and n == REFERENCE) else
+                                                          0.0 if P["comp_mode"] == "identical" else None)
+            if target is not None and abs(D_by_k[k][n] - target) < 5e-4:
+                D_by_k[k][n] = target
     ld = float(np.mean(dl))
     if abs(ld - P["level_delta"]) < 5e-4:
         ld = float(P["level_delta"])
-    return {"D": D, "level_delta": ld, "snap_rule": "reference truth snapped to the nominal DGP value when within 5e-4"}
+    return {"D": D, "D_by_k": D_by_k, "level_delta": ld,
+            "snap_rule": "boundary/identical truths snapped to the nominal value when within 5e-4; measured-path level delta; exchangeable D unsnapped"}
 
 
 def run_inferential(sc: dict, N_f: int, seed: int, reps: int, mults=MULTS, check_reader: int = 50) -> dict:
@@ -315,15 +328,18 @@ def run_inferential(sc: dict, N_f: int, seed: int, reps: int, mults=MULTS, check
     rng = np.random.default_rng([seed, hash(sc["name"]) % (2 ** 31), N_f])
     mu_so = 0.03 * np.random.default_rng([7, hash(sc["name"]) % (2 ** 31)]).standard_normal((4, 4))
     tr = truths(P, N_f, seed, mu_so)
-    D_true, dl_true = tr["D"], tr["level_delta"]
+    dl_true = tr["level_delta"]
+    D_by_k = tr["D_by_k"]
     sel_false = {m: 0 for m in mults}; sel_cov = {m: 0 for m in mults}; sel_deg = 0
     lvl_false = {m: 0 for m in mults}; lvl_cov = {m: 0 for m in mults}; lvl_incomplete = 0
     sel_claims = {m: {"superior": 0, "inferior": 0, "equivalent": 0} for m in mults}
     lvl_claims = {m: {"improvement": 0, "worsening": 0, "equivalent": 0, "one_point": 0} for m in mults}
     hw = []
-    t_ok_sel = all(D_true[n] > EPS_R for n in NAMES)
     for rep in range(reps):
-        Pk = dict(P, best_k=rep % len(NAMES))
+        kk = rep % len(NAMES) if P["comp_mode"] == "rotating_best" else 0
+        D_true = D_by_k[kk]
+        t_ok_sel = all(D_true[n] > EPS_R for n in NAMES)
+        Pk = dict(P, best_k=kk)
         c = sim_cells(Pk, N_f, rng, mu_so)
         try:
             if P["duplicate_family"]:
@@ -391,12 +407,12 @@ def run_inferential(sc: dict, N_f: int, seed: int, reps: int, mults=MULTS, check
                 assert rl["verdict"].startswith("INELIGIBLE"), rl
     n_sel = reps - sel_deg if not P["duplicate_family"] else reps
     out = {"scenario": sc["name"], "held_out": sc["held_out"], "N_f": N_f, "seed": seed, "reps": reps,
-           "truth": {"D": D_true, "level_delta": dl_true},
+           "truth": {"D": D_by_k[0], "D_by_k": D_by_k, "level_delta": dl_true},
            "SEL": {"degenerate_or_declared": sel_deg,
                    "per_mult": {str(m): {"false_claim_rate": sel_false[m] / reps, "false_claim_upper": cp_upper(sel_false[m], reps),
                                          "coverage": sel_cov[m] / max(reps - sel_deg, 1), "coverage_lower": cp_lower(sel_cov[m], max(reps - sel_deg, 1)),
                                          "claims": {k: v / reps for k, v in sel_claims[m].items()}} for m in mults},
-                   "median_half_width_mult1": float(np.nanmedian(hw)) if hw else None},
+                   "median_half_width_mult1": (float(np.nanmedian(hw)) if hw and not np.all(np.isnan(hw)) else None)},
            "LEVEL": {"incomplete_declared": lvl_incomplete,
                      "per_mult": {str(m): {"false_claim_rate": lvl_false[m] / reps, "false_claim_upper": cp_upper(lvl_false[m], reps),
                                            "coverage": lvl_cov[m] / max(reps - lvl_incomplete, 1), "coverage_lower": cp_lower(lvl_cov[m], max(reps - lvl_incomplete, 1)),
@@ -483,6 +499,20 @@ def stage(name: str, reps: int, reps_ho: int, frozen_mults: dict | None) -> dict
     return res
 
 
+def declared_by_design(name: str, fam: str) -> bool:
+    P = next(s for s in scenarios() if s["name"] == name)["params"]
+    if fam == "SEL":
+        return P["comp_mode"] == "identical" or P["duplicate_family"]
+    return P["undefined_p10"] or P["duplicate_family"]
+
+
+def _passes(r: dict, fam: str, m: float, alpha: float, cov_nom: float) -> bool:
+    pm = r[fam]["per_mult"][str(m)]
+    if declared_by_design(r["scenario"], fam):
+        return pm["false_claim_rate"] == 0.0
+    return pm["false_claim_upper"] <= alpha and pm["coverage_lower"] >= cov_nom
+
+
 def select_multipliers(dev: dict) -> dict:
     out = {}
     for fam, alpha, cov_nom in (("SEL", ALPHA_SEL, 1 - ALPHA_SEL), ("LEVEL", ALPHA_LEVEL, 1 - ALPHA_LEVEL)):
@@ -493,8 +523,7 @@ def select_multipliers(dev: dict) -> dict:
                 for r in dev["inferential"]:
                     if r["N_f"] != N_f:
                         continue
-                    pm = r[fam]["per_mult"][str(m)]
-                    if pm["false_claim_upper"] > alpha or pm["coverage_lower"] < cov_nom:
+                    if not _passes(r, fam, m, alpha, cov_nom):
                         ok = False
                         break
                 if ok:
@@ -516,8 +545,7 @@ def licenses(audit: dict, mults: dict) -> dict:
             for r in audit["inferential"]:
                 if r["N_f"] != N_f:
                     continue
-                pm = r[fam]["per_mult"][str(m)]
-                if pm["false_claim_upper"] > alpha or pm["coverage_lower"] < cov_nom:
+                if not _passes(r, fam, m, alpha, cov_nom):
                     fails.append(r["scenario"])
                 nonest = (r[fam].get("degenerate_or_declared", 0) + r[fam].get("incomplete_declared", 0)) / r["reps"]
                 if nonest >= 0.01 and not any(k in r["scenario"] for k in ("identical", "duplicate", "undefined", "nonfinite", "pi_one")):
