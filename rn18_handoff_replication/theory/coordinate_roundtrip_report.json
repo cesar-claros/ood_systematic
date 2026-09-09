@@ -1,0 +1,7803 @@
+{
+ "summary": {
+  "n_grid": 216,
+  "alignment_selected_vs_max": {
+   "min": -0.0,
+   "max": 0.0636
+  },
+  "logit_over_L_par": {
+   "min": 0.866025,
+   "max": 1.0,
+   "note": "decoder scale g = L/R with rotated rows gives L cos(theta) at the unperturbed radius; eta draws perturb further"
+  },
+  "theta_realized_minus_requested_deg": {
+   "min": -0.0,
+   "max": 0.0,
+   "note": "own-class rotation by a random direction per row versus the constructor's full-span complement"
+  },
+  "s_dict_realized_over_requested": {
+   "min": 1.0,
+   "max": 1.0,
+   "note": "eta_std = radius_cv clamp [0, 0.5]; the exact constructor has zero spread so eta = 0 here"
+  },
+  "clamps_ever_active": []
+ },
+ "rows": [
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.0532,
+    "a_other_max": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0032,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.022786,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.074357,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.01073
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.01073,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.05,
+    "a_other_max": 0.027265,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": -0.001985,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 10,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": -0.085676,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.245521
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.245521,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 5.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 5.0,
+    "radius_cv": 0.0,
+    "s_dict": 5.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 10.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 10.0,
+    "radius_cv": 0.0,
+    "s_dict": 10.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": -0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.1136,
+    "a_other_max": 0.108837,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.0636,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.105955,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 0.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.040709,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 10.0,
+    "L_base": 10.0,
+    "theta_from_sd": 0.0,
+    "head_complement_fraction": 0.0
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": 0.0,
+    "logit_over_L_par": 1.0,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.0,
+    "head_complement_fraction_requested": 0.0
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 6.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 9.945219,
+    "L_base": 10.0,
+    "theta_from_sd": 0.10472,
+    "head_complement_fraction": 0.00882
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -0.054781,
+    "logit_over_L_par": 0.994522,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.00882,
+    "head_complement_fraction_requested": 0.010926
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.05,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.089977,
+    "a_other_max": 0.080465,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": 0.039977,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.3,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.3,
+    "a_other_max": 0.083392,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 0.5,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 0.5,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  },
+  {
+   "request": {
+    "C": 100,
+    "D": 512,
+    "R": 24.0,
+    "theta_deg": 30.0,
+    "a": 0.9,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "L_par": 10.0
+   },
+   "active_clamps": [],
+   "realized": {
+    "R": 24.0,
+    "radius_cv": 0.0,
+    "s_dict": 24.0,
+    "a_max": 0.9,
+    "a_other_max": 0.030399,
+    "gamma": 1.0,
+    "rho": 2.0,
+    "logit_scale": 8.660254,
+    "L_base": 10.0,
+    "theta_from_sd": 0.523599,
+    "head_complement_fraction": 0.201814
+   },
+   "discrepancy": {
+    "alignment_selected_vs_max": -0.0,
+    "logit_measured_vs_unrotated_scale": -1.339746,
+    "logit_over_L_par": 0.866025,
+    "theta_realized_minus_requested_deg": 0.0,
+    "radius_cv_injected_by_eta_draw": 0.0,
+    "s_dict_realized_over_requested": 1.0,
+    "head_complement_fraction_realized": 0.201814,
+    "head_complement_fraction_requested": 0.25
+   }
+  }
+ ]
+}

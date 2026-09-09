@@ -1,0 +1,165 @@
+{
+ "plan": "RN18 handoff-replication plan v3: deterministic-view re-extraction of the 20 consumed VGG dropout-off ConfidNet backbones (v2 section 5.1 bridge under both views)",
+ "cells": [
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "model_path": "cifar100_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "model_path": "cifar100_paper_sweep/confidnet_bbvgg13_do0_run2_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "model_path": "cifar100_paper_sweep/confidnet_bbvgg13_do0_run3_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "model_path": "cifar100_paper_sweep/confidnet_bbvgg13_do0_run4_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar100",
+   "model_path": "cifar100_paper_sweep/confidnet_bbvgg13_do0_run5_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "model_path": "cifar10_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "model_path": "cifar10_paper_sweep/confidnet_bbvgg13_do0_run2_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "model_path": "cifar10_paper_sweep/confidnet_bbvgg13_do0_run3_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "model_path": "cifar10_paper_sweep/confidnet_bbvgg13_do0_run4_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "cifar10",
+   "model_path": "cifar10_paper_sweep/confidnet_bbvgg13_do0_run5_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "model_path": "supercifar_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "model_path": "supercifar_paper_sweep/confidnet_bbvgg13_do0_run2_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "model_path": "supercifar_paper_sweep/confidnet_bbvgg13_do0_run3_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "model_path": "supercifar_paper_sweep/confidnet_bbvgg13_do0_run4_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "supercifar100",
+   "model_path": "supercifar_paper_sweep/confidnet_bbvgg13_do0_run5_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do0_run1_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do0_run2_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do0_run3_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do0_run4_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  },
+  {
+   "component": "vgg_bridge",
+   "paradigm": "confidnet",
+   "source": "tinyimagenet",
+   "model_path": "tiny-imagenet-200_paper_sweep/confidnet_bbvgg13_do0_run5_rew2.2",
+   "dropout": 0,
+   "mechanically_eligible": true
+  }
+ ]
+}

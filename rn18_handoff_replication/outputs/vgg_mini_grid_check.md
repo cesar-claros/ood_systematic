@@ -1,0 +1,112 @@
+# vgg_mini_grid_check
+
+```
+{
+ "n_cells": 80,
+ "HO_dK": {
+  "cifar10": {
+   "n_checkpoints": 5,
+   "n_sets": 4,
+   "tertile_sizes": {
+    "strong": 1,
+    "middle": 2,
+    "weak": 2
+   },
+   "verdict": "HO-INELIGIBLE",
+   "reason": "tertile below 5"
+  },
+  "cifar100": {
+   "n_checkpoints": 5,
+   "n_sets": 4,
+   "tertile_sizes": {
+    "strong": 1,
+    "middle": 2,
+    "weak": 2
+   },
+   "verdict": "HO-INELIGIBLE",
+   "reason": "tertile below 5"
+  },
+  "supercifar100": {
+   "n_checkpoints": 5,
+   "n_sets": 4,
+   "tertile_sizes": {
+    "strong": 1,
+    "middle": 2,
+    "weak": 2
+   },
+   "verdict": "HO-INELIGIBLE",
+   "reason": "tertile below 5"
+  },
+  "tinyimagenet": {
+   "n_checkpoints": 5,
+   "n_sets": 4,
+   "tertile_sizes": {
+    "strong": 1,
+    "middle": 2,
+    "weak": 2
+   },
+   "verdict": "HO-INELIGIBLE",
+   "reason": "tertile below 5"
+  }
+ },
+ "in_sample_regret": {
+  "always_energy": 0.029205000000000002,
+  "always_ctm": 0.007213750000000002,
+  "vgg_kid_isotonic": 0.0022287499999999994,
+  "vgg_fd_isotonic": 0.0022287499999999994,
+  "vgg_source_shift_mean": 0.0022287499999999994,
+  "vgg_geometry_severity_ridge": 0.0052375000000000034,
+  "vgg_matched_scalar_ridge": 0.0026687500000000023,
+  "vgg_no_target_batch_ridge": 0.004096250000000001,
+  "vgg_source_majority": 0.004096250000000001
+ },
+ "regret_P00": 0.01896625,
+ "org_bridge_A_G": -0.001478,
+ "fits": {
+  "vgg_geometry_severity_ridge": {
+   "lambda": 10.0,
+   "cv_losses": {
+    "0.0001": 0.001230544602407013,
+    "0.001": 0.001230541718425619,
+    "0.01": 0.0012305129070332606,
+    "0.1": 0.001230227605741492,
+    "1.0": 0.001227629249961061,
+    "10.0": 0.0012143770180766999
+   }
+  },
+  "vgg_matched_scalar_ridge": {
+   "lambda": 0.0001,
+   "cv_losses": {
+    "0.0001": 0.0006202676805690365,
+    "0.001": 0.0006210132569474194,
+    "0.01": 0.0006238369262680349,
+    "0.1": 0.0006302314737357201,
+    "1.0": 0.0006635855569136134,
+    "10.0": 0.0009490327833837317
+   }
+  },
+  "vgg_no_target_batch_ridge": {
+   "lambda": 10.0,
+   "cv_losses": {
+    "0.0001": 0.001429376755753756,
+    "0.001": 0.0014141538274670407,
+    "0.01": 0.0013910020809534632,
+    "0.1": 0.0013843656088782558,
+    "1.0": 0.0013833599157311235,
+    "10.0": 0.0013822624997759164
+   }
+  },
+  "source_majority": {
+   "cifar10": -1.0,
+   "cifar100": 1.0,
+   "supercifar100": -1.0,
+   "tinyimagenet": 1.0
+  },
+  "folds": "leave-one-VGG-checkpoint-out (seed reuse across sources not audited)"
+ },
+ "e4": {
+  "spearman_absM_absdG_all": -0.17671534733751973,
+  "spearman_absM_absdG_material": -0.32467532467532473
+ }
+}
+```
