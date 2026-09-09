@@ -358,7 +358,7 @@ def run_inferential(sc: dict, N_f: int, seed: int, reps: int, mults=MULTS, check
                     ivs[n] = None
                 else:
                     q = student.ppf(1 - ALPHA_EACH / 2, N - 1) * m * se
-                    ivs[n] = [est - q, est + q]
+                    ivs[n] = [round(est - q, 5), round(est + q, 5)]        # reader rounds to 5 decimals
             v = sel_verdict(ivs)
             false = ((v.startswith("PRACTICALLY SUPERIOR") and not t_ok_sel)
                      or (v.startswith("PRACTICALLY INFERIOR") and not D_true[REFERENCE] < -EPS_R)
@@ -379,7 +379,7 @@ def run_inferential(sc: dict, N_f: int, seed: int, reps: int, mults=MULTS, check
         else:
             for m in mults:
                 q = student.ppf(1 - ALPHA_LEVEL / 2, fl["N"] - 1) * m * fl["se"]
-                iv = [fl["delta"] - q, fl["delta"] + q]
+                iv = [round(fl["delta"] - q, 5), round(fl["delta"] + q, 5)]  # reader rounds to 5 decimals
                 lv = level_verdict(iv)
                 false = ((lv["verdict"] == "resolved improvement" and not dl_true > 0)
                          or (lv["verdict"] == "resolved worsening" and not dl_true < 0)
@@ -396,13 +396,13 @@ def run_inferential(sc: dict, N_f: int, seed: int, reps: int, mults=MULTS, check
             rs = sel_endpoint(df, FixedComparators(), mult=1.0)
             fast_ivs = {}
             for n, (est, se) in fs["D"].items():
-                fast_ivs[n] = None if se <= 0 else [est - student.ppf(1 - ALPHA_EACH / 2, N - 1) * se,
-                                                   est + student.ppf(1 - ALPHA_EACH / 2, N - 1) * se]
+                qq = student.ppf(1 - ALPHA_EACH / 2, N - 1) * se
+                fast_ivs[n] = None if se <= 0 else [round(est - qq, 5), round(est + qq, 5)]
             assert rs["verdict"] == sel_verdict(fast_ivs), ("reader/fast SEL mismatch", sc["name"], rs["verdict"])
             rl = level_endpoint(df, mult=1.0)
             if not fl.get("incomplete"):
                 q = student.ppf(1 - ALPHA_LEVEL / 2, fl["N"] - 1) * fl["se"]
-                assert rl["verdict"] == level_verdict([fl["delta"] - q, fl["delta"] + q])["verdict"], ("reader/fast LEVEL mismatch", sc["name"])
+                assert rl["verdict"] == level_verdict([round(fl["delta"] - q, 5), round(fl["delta"] + q, 5)])["verdict"], ("reader/fast LEVEL mismatch", sc["name"])
             else:
                 assert rl["verdict"].startswith("INELIGIBLE"), rl
     n_sel = reps - sel_deg if not P["duplicate_family"] else reps
