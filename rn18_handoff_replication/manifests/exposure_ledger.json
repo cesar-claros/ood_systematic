@@ -2182,8 +2182,8 @@
    "n_with_checkpoint": 40,
    "n_with_native_outputs": 6,
    "human_inspection_four_shift_outcomes": "never_computed",
-   "human_inspection_registered_suite_outputs": null,
-   "declared_by": "Claude (asserted fields) / owner (pending field)",
+   "human_inspection_registered_suite_outputs": "viewed",
+   "declared_by": "owner (registered-suite field); Claude (asserted fields)",
    "declared_on": "2026-09-08",
    "allowed_values": [
     "never_computed",
@@ -2191,7 +2191,8 @@
     "viewed"
    ],
    "four_shift_basis": "no new-shift token in any config (asserted by phase 0); no ResNet-18 record in any extraction output directory (asserted locally 2026-09-08)",
-   "registered_suite_note": "6 of 40 runs have native raw_logits.npz dated 2026-09-02 (train_test mode); owner declaration pending; registered-suite outputs enter no v3 endpoint"
+   "registered_suite_note": "6 of 40 runs have native raw_logits.npz dated 2026-09-02 (train_test mode); owner declaration pending; registered-suite outputs enter no v3 endpoint",
+   "registered_suite_basis": "owner declaration 2026-09-08: only the end-of-run accuracy numbers of the train_test runs were looked at; no detector score, OOD outcome, or gap was opened; registered-suite outputs enter no v3 endpoint"
   }
  },
  "extra_resnet18_dirs_not_in_panel": [
