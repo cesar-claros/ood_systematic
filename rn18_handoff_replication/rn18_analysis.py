@@ -168,8 +168,8 @@ def ho_source(sub: pd.DataFrame, axis: str, b: int) -> dict:
         s2 = sub[sub.cell != c]
         ck_del[c] = bool(ordering_retained(_curves(s2, _thirds(s2), axis, 0, rng)))
     out["n_checkpoint_deletions_retained"] = [int(sum(ck_del.values())), len(ck_del)]
-    out["composition"] = {k: sub[sub.cell.isin(v)].drop_duplicates("cell")
-                          .groupby(["paradigm", "dropout"]).size().rename(lambda x: str(x)).to_dict()
+    out["composition"] = {k: {f"{par}/do{do}": int(n) for (par, do), n in
+                              sub[sub.cell.isin(v)].drop_duplicates("cell").groupby(["paradigm", "dropout"]).size().items()}
                           for k, v in strata.items()}
     ok = out["retained_full"] and sum(dele.values()) >= n_sets - 1 and all(ck_del.values())
     out["verdict"] = ("HO-UNINFORMATIVE" if not out["informative"] else "HO-RETAINED" if ok else "HO-NOT-RETAINED")
