@@ -31,7 +31,13 @@ balancing seed 20260827, frozen coordinate and P10 code) and ADDS:
   buffers), epoch and global step if the checkpoint records them;
 - training membership under the loaded config (sampler type, size,
   index digest; the deterministic view uses the configured membership);
-- covariances in float64 (within-class, OOD global, OOD residual).
+- covariances in float64 (within-class, OOD global, OOD residual);
+- the ID-TEST feature model (test within-class covariance, test class
+  means, test-feature collapse, test/train isotropic scale ratio) so the
+  Gaussian diagnostics can fit the ID model on test features as a declared
+  variant (F4: the train-feature model overstates separation);
+- environment provenance per record (fd-shifts version/origin, torch, numpy,
+  CUDA, extractor sha256).
 
 The version-1 JSON fields are reproduced unchanged (same helper) so the
 two extractions can be compared field by field. Outputs go to a NEW
@@ -237,10 +243,23 @@ def extract_one(cell: dict, root: Path, out_dir: Path, use_cuda: bool) -> None:
         return {"Energy": hs_["Energy"], "MSR": hs_["MSR"], "MLS": hs_["MLS"], "CTM": ctm(h64, proto_unc),
                 "Maha": maha(h64), "fDBD": fdbd(h64, g, w_np, train_mean), "_logits": g}
 
+    env = {}
+    try:
+        import fd_shifts as _fd, torch as _t, numpy as _np
+        env = {"fd_shifts_version": getattr(_fd, "__version__", None), "fd_shifts_file": str(getattr(_fd, "__file__", None)),
+               "torch": _t.__version__, "numpy": _np.__version__, "cuda": (_t.version.cuda if use_cuda else None),
+               "extractor_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+        try:
+            import importlib.metadata as _md
+            env["fd_shifts_dist"] = str(_md.distribution("fd-shifts").read_text("direct_url.json") or "")[:300]
+        except Exception:  # noqa: BLE001
+            pass
+    except Exception as exc:  # noqa: BLE001
+        env = {"error": str(exc)}
     rec = {"schema_fourshift": 1, "schema_fourshift_v2": SCHEMA_V2, **cell, "resolved_model_path": model_path, "slug": slug,
            "source": source, "study": study_name, "n_classes": n_classes, "dim": int(fm.global_mean.shape[0]), "view": "deterministic",
            "geometry": geometry_record(w_np, b_np, fm), "papyan": papyan_metrics(w_np, fm), "ood": {},
-           "v2": {"checkpoint": ckpt_id, "train_membership": membership, "identity_tolerance": IDENTITY_TOL,
+           "v2": {"checkpoint": ckpt_id, "train_membership": membership, "environment": env, "identity_tolerance": IDENTITY_TOL,
                   "balance_seed": BALANCE_SEED, "ood_unrounded": {}}}
     arrays = {"w": w_np, "b": b_np, "proto_unc": proto_unc, "global_mean": fm.global_mean,
               "class_means_centered": fm.class_means, "sigma_w": fm.sigma_w.astype(np.float64), "train_indices": tr_idx}
@@ -258,6 +277,14 @@ def extract_one(cell: dict, root: Path, out_dir: Path, use_cuda: bool) -> None:
     assert len(h_id) == len_full - offset, (len(h_id), len_full, offset)
     full_targets = np.asarray(getattr(ds_full, "targets", getattr(ds_full, "labels", None)), dtype=np.int64)
     canon_ok = bool(full_targets is not None and len(full_targets) == len_full and np.array_equal(full_targets[offset:], y_id))
+    # test-feature ID model inputs (F4 diagnostics: the frozen ID model is the TRAIN-feature model;
+    # the stored ID-test residual scale is 2-4x the training scale, so the test within-class covariance
+    # and the test-feature collapse are stored to fit the ID model on test features as a declared variant)
+    fm_test = fit_feature_model(h_id, y_id, n_classes)
+    rec_test_model = {"nc1_var_collapse_test_features": float(papyan_metrics(w_np, fm_test)["var_collapse"]),
+                      "sigma_iso_test": float(fm_test.sigma_iso), "sigma_iso_train": float(fm.sigma_iso),
+                      "test_over_train_sigma_iso": float(fm_test.sigma_iso / max(fm.sigma_iso, 1e-300)),
+                      "class_mean_radius_test": float(fm_test.radius), "class_mean_radius_train": float(fm.radius)}
     sc_id = scores_for(h_id)
     logits_id = sc_id.pop("_logits")
     res_id = (logits_id.argmax(1) != y_id).astype(float)
@@ -267,7 +294,11 @@ def extract_one(cell: dict, root: Path, out_dir: Path, use_cuda: bool) -> None:
                             "label_sequence_sha256": digest(y_id), "order_matches_test_split": canon_ok,
                             "id_error_rate_unrounded": float(res_id.mean())}
     arrays.update({"id__labels": y_id, "id__correct": (1 - res_id).astype(np.int8), "id__logits": logits_id.astype(np.float64),
-                   "id__ids": (offset + np.arange(len(h_id))).astype(np.int64)})
+                   "id__ids": (offset + np.arange(len(h_id))).astype(np.int64),
+                   "id__sigma_w_test": fm_test.sigma_w.astype(np.float64), "id__class_means_centered_test": fm_test.class_means.astype(np.float64),
+                   "id__global_mean_test": fm_test.global_mean.astype(np.float64)})
+    rec["v2"]["id_test_feature_model"] = rec_test_model
+    del fm_test
     for s in SCORE_NAMES:
         arrays[f"id__score__{s}"] = np.asarray(sc_id[s], np.float64)
     del ev, h_id
