@@ -1,0 +1,585 @@
+# ICML E1/E3 methodological reanalysis (post-outcome, descriptive)
+
+```
+{
+ "label": "METHODOLOGICAL REANALYSIS (post-outcome, descriptive; nominal 95% two-sided; no simulation license)",
+ "registered_readout": {
+  "path": "/Users/cesarclaros/Documents/Obsidian/Research/02 Projects/Systematic_OOD/code/nc_csf_predictivity/outputs/track1/icml_campaign_report.json",
+  "unchanged": true
+ },
+ "E1_roster_b": {
+  "K": {
+   "ckpt5": {
+    "label": "METHODOLOGICAL REANALYSIS (post-outcome, descriptive; nominal 95% two-sided; no simulation license)",
+    "registered_reproduced": {
+     "diff_point": -0.1387,
+     "diff_ci95_percentile_no_refit": [
+      -0.2158,
+      -0.0636
+     ],
+     "n_material": 346,
+     "n_checkpoints_material": 184
+    },
+    "point_refit_full_panel": -0.1387283236994219,
+    "checkpoint_bootstrap_with_refit": {
+     "B": 2000,
+     "ci95_percentile": [
+      -0.22291597369700372,
+      -0.07529728741555826
+     ],
+     "n_nonfinite": 0,
+     "unit": "checkpoint (seed reuse across configurations not audited)"
+    },
+    "family_bootstrap_with_refit": {
+     "B": 2000,
+     "N_f": 5,
+     "ci95_percentile": [
+      -0.17014925373134326,
+      -0.10644257703081228
+     ],
+     "n_nonfinite": 0,
+     "unit": "run label (all its checkpoints)",
+     "caveat": "five-unit bootstrap: 126 distinct resamples; percentile bounds are coarse"
+    },
+    "family_jackknife_t4": {
+     "estimate": -0.1387283236994219,
+     "se": 0.027884656091426218,
+     "N_f": 5,
+     "ci": [
+      -0.21614854061458605,
+      -0.06130810678425774
+     ],
+     "df": 4,
+     "nominal": 0.95,
+     "loo": {
+      "run1": -0.11827956989247312,
+      "run2": -0.1316725978647687,
+      "run3": -0.14492753623188404,
+      "run4": -0.1223021582733812,
+      "run5": -0.15555555555555556
+     },
+     "not_estimable": null
+    },
+    "per_family_material_sign_accuracy_full_panel_fit": {
+     "run1": {
+      "n_material": 67,
+      "theory_sign_acc": 0.5522388059701493,
+      "severity_sign_acc": 0.7164179104477612
+     },
+     "run2": {
+      "n_material": 65,
+      "theory_sign_acc": 0.5692307692307692,
+      "severity_sign_acc": 0.7076923076923077
+     },
+     "run3": {
+      "n_material": 70,
+      "theory_sign_acc": 0.5714285714285714,
+      "severity_sign_acc": 0.6857142857142857
+     },
+     "run4": {
+      "n_material": 68,
+      "theory_sign_acc": 0.5588235294117647,
+      "severity_sign_acc": 0.7058823529411765
+     },
+     "run5": {
+      "n_material": 76,
+      "theory_sign_acc": 0.631578947368421,
+      "severity_sign_acc": 0.7631578947368421
+     }
+    }
+   },
+   "loso": {
+    "label": "METHODOLOGICAL REANALYSIS (post-outcome, descriptive; nominal 95% two-sided; no simulation license)",
+    "registered_reproduced": {
+     "diff_point": -0.0145,
+     "diff_ci95_percentile_no_refit": [
+      -0.0945,
+      0.0669
+     ],
+     "n_material": 346,
+     "n_checkpoints_material": 184
+    },
+    "point_refit_full_panel": -0.014450867052023031,
+    "checkpoint_bootstrap_with_refit": {
+     "B": 2000,
+     "ci95_percentile": [
+      -0.1845302795031056,
+      0.04145476935365768
+     ],
+     "n_nonfinite": 0,
+     "unit": "checkpoint (seed reuse across configurations not audited)"
+    },
+    "family_bootstrap_with_refit": {
+     "B": 2000,
+     "N_f": 5,
+     "ci95_percentile": [
+      -0.15362318840579714,
+      0.005555555555555536
+     ],
+     "n_nonfinite": 0,
+     "unit": "run label (all its checkpoints)",
+     "caveat": "five-unit bootstrap: 126 distinct resamples; percentile bounds are coarse"
+    },
+    "family_jackknife_t4": {
+     "estimate": -0.014450867052023031,
+     "se": 0.10024338693298948,
+     "N_f": 5,
+     "ci": [
+      -0.2927711280305701,
+      0.26386939392652403
+     ],
+     "df": 4,
+     "nominal": 0.95,
+     "loo": {
+      "run1": -0.0035842293906810374,
+      "run2": -0.014234875444839812,
+      "run3": -0.021739130434782594,
+      "run4": -0.010791366906474753,
+      "run5": -0.13703703703703696
+     },
+     "not_estimable": null
+    },
+    "per_family_material_sign_accuracy_full_panel_fit": {
+     "run1": {
+      "n_material": 67,
+      "theory_sign_acc": 0.5522388059701493,
+      "severity_sign_acc": 0.6119402985074627
+     },
+     "run2": {
+      "n_material": 65,
+      "theory_sign_acc": 0.5692307692307692,
+      "severity_sign_acc": 0.5846153846153846
+     },
+     "run3": {
+      "n_material": 70,
+      "theory_sign_acc": 0.5714285714285714,
+      "severity_sign_acc": 0.5571428571428572
+     },
+     "run4": {
+      "n_material": 68,
+      "theory_sign_acc": 0.5588235294117647,
+      "severity_sign_acc": 0.5882352941176471
+     },
+     "run5": {
+      "n_material": 76,
+      "theory_sign_acc": 0.631578947368421,
+      "severity_sign_acc": 0.618421052631579
+     }
+    }
+   }
+  },
+  "F": {
+   "ckpt5": {
+    "label": "METHODOLOGICAL REANALYSIS (post-outcome, descriptive; nominal 95% two-sided; no simulation license)",
+    "registered_reproduced": {
+     "diff_point": -0.078,
+     "diff_ci95_percentile_no_refit": [
+      -0.1653,
+      0.0029
+     ],
+     "n_material": 346,
+     "n_checkpoints_material": 184
+    },
+    "point_refit_full_panel": -0.07803468208092479,
+    "checkpoint_bootstrap_with_refit": {
+     "B": 2000,
+     "ci95_percentile": [
+      -0.19422722159730035,
+      0.024339484914277048
+     ],
+     "n_nonfinite": 0,
+     "unit": "checkpoint (seed reuse across configurations not audited)"
+    },
+    "family_bootstrap_with_refit": {
+     "B": 2000,
+     "N_f": 5,
+     "ci95_percentile": [
+      -0.1574344023323615,
+      -0.014285714285714235
+     ],
+     "n_nonfinite": 0,
+     "unit": "run label (all its checkpoints)",
+     "caveat": "five-unit bootstrap: 126 distinct resamples; percentile bounds are coarse"
+    },
+    "family_jackknife_t4": {
+     "estimate": -0.07803468208092479,
+     "se": 0.05839804534166012,
+     "N_f": 5,
+     "ci": [
+      -0.24017364922289583,
+      0.08410428506104625
+     ],
+     "df": 4,
+     "nominal": 0.95,
+     "loo": {
+      "run1": -0.02508960573476704,
+      "run2": -0.02491103202846978,
+      "run3": 0.0,
+      "run4": -0.0539568345323741,
+      "run5": -0.08518518518518514
+     },
+     "not_estimable": null
+    },
+    "per_family_material_sign_accuracy_full_panel_fit": {
+     "run1": {
+      "n_material": 67,
+      "theory_sign_acc": 0.5522388059701493,
+      "severity_sign_acc": 0.6268656716417911
+     },
+     "run2": {
+      "n_material": 65,
+      "theory_sign_acc": 0.5692307692307692,
+      "severity_sign_acc": 0.6461538461538462
+     },
+     "run3": {
+      "n_material": 70,
+      "theory_sign_acc": 0.5714285714285714,
+      "severity_sign_acc": 0.7142857142857143
+     },
+     "run4": {
+      "n_material": 68,
+      "theory_sign_acc": 0.5588235294117647,
+      "severity_sign_acc": 0.6617647058823529
+     },
+     "run5": {
+      "n_material": 76,
+      "theory_sign_acc": 0.631578947368421,
+      "severity_sign_acc": 0.631578947368421
+     }
+    }
+   },
+   "loso": {
+    "label": "METHODOLOGICAL REANALYSIS (post-outcome, descriptive; nominal 95% two-sided; no simulation license)",
+    "registered_reproduced": {
+     "diff_point": 0.0578,
+     "diff_ci95_percentile_no_refit": [
+      -0.0232,
+      0.1376
+     ],
+     "n_material": 346,
+     "n_checkpoints_material": 184
+    },
+    "point_refit_full_panel": 0.05780346820809257,
+    "checkpoint_bootstrap_with_refit": {
+     "B": 2000,
+     "ci95_percentile": [
+      -0.052655075187969975,
+      0.13178653725980302
+     ],
+     "n_nonfinite": 0,
+     "unit": "checkpoint (seed reuse across configurations not audited)"
+    },
+    "family_bootstrap_with_refit": {
+     "B": 2000,
+     "N_f": 5,
+     "ci95_percentile": [
+      0.02686567164179099,
+      0.10335195530726249
+     ],
+     "n_nonfinite": 0,
+     "unit": "run label (all its checkpoints)",
+     "caveat": "five-unit bootstrap: 126 distinct resamples; percentile bounds are coarse"
+    },
+    "family_jackknife_t4": {
+     "estimate": 0.05780346820809257,
+     "se": 0.025271119062701897,
+     "N_f": 5,
+     "ci": [
+      -0.01236040661641677,
+      0.1279673430326019
+     ],
+     "df": 4,
+     "nominal": 0.95,
+     "loo": {
+      "run1": 0.06451612903225801,
+      "run2": 0.06405693950177938,
+      "run3": 0.04347826086956519,
+      "run4": 0.06115107913669071,
+      "run5": 0.033333333333333326
+     },
+     "not_estimable": null
+    },
+    "per_family_material_sign_accuracy_full_panel_fit": {
+     "run1": {
+      "n_material": 67,
+      "theory_sign_acc": 0.5522388059701493,
+      "severity_sign_acc": 0.5223880597014925
+     },
+     "run2": {
+      "n_material": 65,
+      "theory_sign_acc": 0.5692307692307692,
+      "severity_sign_acc": 0.5384615384615384
+     },
+     "run3": {
+      "n_material": 70,
+      "theory_sign_acc": 0.5714285714285714,
+      "severity_sign_acc": 0.5428571428571428
+     },
+     "run4": {
+      "n_material": 68,
+      "theory_sign_acc": 0.5588235294117647,
+      "severity_sign_acc": 0.5147058823529411
+     },
+     "run5": {
+      "n_material": 76,
+      "theory_sign_acc": 0.631578947368421,
+      "severity_sign_acc": 0.4868421052631579
+     }
+    }
+   }
+  }
+ },
+ "E3_roster_c": {
+  "label": "METHODOLOGICAL REANALYSIS (post-outcome, descriptive; nominal 95% two-sided; no simulation license)",
+  "registered_reproduced": {
+   "diff_point": 0.0273,
+   "diff_ci95_percentile_checkpoints": [
+    0.0184,
+    0.0364
+   ],
+   "n_checkpoints": 140,
+   "unit": "checkpoint"
+  },
+  "n_positive_contributions": [
+   126,
+   140
+  ],
+  "per_family": {
+   "run1": {
+    "n_checkpoints": 25,
+    "mean_diff": 0.02564161594627786,
+    "min_diff": -0.18677151652603713,
+    "max_diff": 0.10555580406706397
+   },
+   "run2": {
+    "n_checkpoints": 26,
+    "mean_diff": 0.028362780999019035,
+    "min_diff": -0.013928245844079479,
+    "max_diff": 0.20680422986695218
+   },
+   "run3": {
+    "n_checkpoints": 29,
+    "mean_diff": 0.0314853623076919,
+    "min_diff": -0.09581247367874435,
+    "max_diff": 0.1825300627986248
+   },
+   "run4": {
+    "n_checkpoints": 24,
+    "mean_diff": 0.02754492430869929,
+    "min_diff": -0.046445525024183754,
+    "max_diff": 0.18984184694401665
+   },
+   "run5": {
+    "n_checkpoints": 36,
+    "mean_diff": 0.02414376743499538,
+    "min_diff": -0.1020277108984024,
+    "max_diff": 0.1640037723830724
+   }
+  },
+  "family_bootstrap": {
+   "B": 2000,
+   "N_f": 5,
+   "ci95_percentile": [
+    0.025190277242288894,
+    0.029838400184062586
+   ],
+   "statistic": "mean of per-checkpoint differences over the resampled families' checkpoints",
+   "caveat": "5-unit bootstrap: coarse support"
+  },
+  "family_jackknife_t": {
+   "estimate": 0.02729858587587945,
+   "se": 0.001436520787617741,
+   "N_f": 5,
+   "ci": [
+    0.02331016476658329,
+    0.03128700698517561
+   ],
+   "df": 4,
+   "nominal": 0.95,
+   "loo": {
+    "run1": 0.027658796730140666,
+    "run2": 0.027055874707444107,
+    "run3": 0.026204743384685213,
+    "run4": 0.027247619303571897,
+    "run5": 0.02839063841310855
+   },
+   "not_estimable": null
+  }
+ },
+ "E3_roster_a": {
+  "label": "METHODOLOGICAL REANALYSIS (post-outcome, descriptive; nominal 95% two-sided; no simulation license)",
+  "registered_reproduced": {
+   "diff_point": 0.0024,
+   "diff_ci95_percentile_checkpoints": [
+    0.0009,
+    0.0041
+   ],
+   "n_checkpoints": 6,
+   "unit": "checkpoint"
+  },
+  "n_positive_contributions": [
+   6,
+   6
+  ],
+  "per_family": {
+   "seed0": {
+    "n_checkpoints": 2,
+    "mean_diff": 0.00297979936632687,
+    "min_diff": 0.0003885578674674983,
+    "max_diff": 0.005571040865186241
+   },
+   "seed1": {
+    "n_checkpoints": 2,
+    "mean_diff": 0.0017890152404030774,
+    "min_diff": 0.0003976638965564605,
+    "max_diff": 0.003180366584249694
+   },
+   "seed2": {
+    "n_checkpoints": 2,
+    "mean_diff": 0.002450602561275203,
+    "min_diff": 0.0006000116454348003,
+    "max_diff": 0.004301193477115606
+   }
+  },
+  "family_bootstrap": {
+   "B": 2000,
+   "N_f": 3,
+   "ci95_percentile": [
+    0.0017890152404030774,
+    0.0028034004313096474
+   ],
+   "statistic": "mean of per-checkpoint differences over the resampled families' checkpoints",
+   "caveat": "3-unit bootstrap: coarse support"
+  },
+  "family_jackknife_t": {
+   "estimate": 0.00240647238933505,
+   "se": 0.0003444572119991215,
+   "N_f": 3,
+   "ci": [
+    0.0009243926258451409,
+    0.0038885521528249593
+   ],
+   "df": 2,
+   "nominal": 0.95,
+   "loo": {
+    "seed0": 0.00211980890083914,
+    "seed1": 0.0027152009638010365,
+    "seed2": 0.0023844073033649736
+   },
+   "not_estimable": null
+  },
+  "six_contributions": [
+   {
+    "cell": "cifar100__cifar100_resnet18_32x32_base_e100_lr0.1_default__s0",
+    "source": "cifar100",
+    "family": "seed0",
+    "n_cells": 6,
+    "mae_P00": 0.19159999947055192,
+    "mae_P10": 0.19121144160308443,
+    "diff": 0.0003885578674674983
+   },
+   {
+    "cell": "cifar100__cifar100_resnet18_32x32_base_e100_lr0.1_default__s1",
+    "source": "cifar100",
+    "family": "seed1",
+    "n_cells": 6,
+    "mae_P00": 0.18869999591791617,
+    "mae_P10": 0.1883023320213597,
+    "diff": 0.0003976638965564605
+   },
+   {
+    "cell": "cifar100__cifar100_resnet18_32x32_base_e100_lr0.1_default__s2",
+    "source": "cifar100",
+    "family": "seed2",
+    "n_cells": 6,
+    "mae_P00": 0.19046660124503778,
+    "mae_P10": 0.18986658959960298,
+    "diff": 0.0006000116454348003
+   },
+   {
+    "cell": "cifar10__cifar10_resnet18_32x32_base_e100_lr0.1_default__s0",
+    "source": "cifar10",
+    "family": "seed0",
+    "n_cells": 6,
+    "mae_P00": 0.09460054356101345,
+    "mae_P10": 0.08902950269582721,
+    "diff": 0.005571040865186241
+   },
+   {
+    "cell": "cifar10__cifar10_resnet18_32x32_base_e100_lr0.1_default__s1",
+    "source": "cifar10",
+    "family": "seed1",
+    "n_cells": 6,
+    "mae_P00": 0.09233149278007809,
+    "mae_P10": 0.08915112619582839,
+    "diff": 0.003180366584249694
+   },
+   {
+    "cell": "cifar10__cifar10_resnet18_32x32_base_e100_lr0.1_default__s2",
+    "source": "cifar10",
+    "family": "seed2",
+    "n_cells": 6,
+    "mae_P00": 0.09879128786256096,
+    "mae_P10": 0.09449009438544535,
+    "diff": 0.004301193477115606
+   }
+  ],
+  "t_interval_over_six_checkpoints": {
+   "mean": 0.00240647238933505,
+   "se": 0.0009232905801395001,
+   "ci": [
+    3.30783950143361e-05,
+    0.004779866383655764
+   ],
+   "df": 5,
+   "nominal": 0.95
+  },
+  "exact_sign_count": {
+   "positive": 6,
+   "of": 6,
+   "two_sided_sign_test_p": 0.03125
+  },
+  "seed_index_grouping": {
+   "note": "s0/s1/s2 across the two datasets are separate trainings; grouped only as a sensitivity",
+   "jackknife_t2": {
+    "estimate": 0.00240647238933505,
+    "se": 0.0003444572119991215,
+    "N_f": 3,
+    "ci": [
+     0.0009243926258451409,
+     0.0038885521528249593
+    ],
+    "df": 2,
+    "nominal": 0.95,
+    "loo": {
+     "seed0": 0.00211980890083914,
+     "seed1": 0.0027152009638010365,
+     "seed2": 0.0023844073033649736
+    },
+    "not_estimable": null
+   }
+  }
+ },
+ "family_structure": {
+  "roster_b": {
+   "run1": 224,
+   "run2": 224,
+   "run3": 224,
+   "run4": 224,
+   "run5": 224
+  },
+  "roster_c": {
+   "run5": 36,
+   "run3": 29,
+   "run2": 26,
+   "run1": 25,
+   "run4": 24
+  },
+  "roster_a": {
+   "seed0": 2,
+   "seed1": 2,
+   "seed2": 2
+  }
+ }
+}
+```
