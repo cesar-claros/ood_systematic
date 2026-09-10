@@ -1,5 +1,5 @@
 {
- "git_head_at_run": "074c6864017f7bbd6ca007a8d5c89ddfa811251a",
+ "git_head_at_run": "be7e3ffc28037965bd0a27a691abef5c5da94be7",
  "checks": {
   "reader_of_record_discrepancy": {
    "frozen": "038cf0446f3e576fdccfc9021a685be76e7aba933715ba148a39fa58e28066a1",
@@ -11,7 +11,7 @@
    "n_checked": 28,
    "mismatches": []
   },
-  "reader_v2_sha256": "9181d0e7d6c9beacbee6b9d1563acd727ecc62b39823442e671f6888fe8add4c",
+  "reader_v2_sha256": "6f993c3a1cba4d21caee4469b2694ad5e668b74e3468f6a5b13b9a92b0550db6",
   "inventory:fourshift_rn18": {
    "n": 96,
    "extra": [],
@@ -624,7 +624,25 @@
    "LEVEL_Nf10": 1.1,
    "LEVEL_Nf5": 1.1
   },
-  "license_v2": "ABSENT: readout withheld (repair item P1-B pending)",
+  "license_v2": {
+   "path": "rn18_handoff_replication/simulations/qualification_report_v2.json",
+   "sha256": "5a7264c58aa50e134ca7c456ffed0351bc906ec45a9c6f49a0ca2ff48872fddb",
+   "seed": 2404,
+   "licensed": {
+    "SEL_Nf5": 2.0
+   },
+   "unlicensed": {
+    "SEL_Nf10": [
+     "metric_almost_all_ties"
+    ],
+    "LEVEL_Nf10": [
+     "null_level_bounded_beta_family"
+    ],
+    "LEVEL_Nf5": [
+     "null_level_bounded_beta_family"
+    ]
+   }
+  },
   "key_set": {
    "n_expected": 384,
    "n_present": 384,

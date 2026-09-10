@@ -1,0 +1,318 @@
+{
+ "version": 2,
+ "licenses": {
+  "SEL_Nf10": {
+   "licensed": false,
+   "multiplier": null,
+   "reason": "no multiplier passed development",
+   "failed_scenarios": [
+    "metric_almost_all_ties"
+   ]
+  },
+  "SEL_Nf5": {
+   "licensed": true,
+   "multiplier": 2.0,
+   "failed_scenarios": []
+  },
+  "LEVEL_Nf10": {
+   "licensed": false,
+   "multiplier": null,
+   "reason": "no multiplier passed development",
+   "failed_scenarios": [
+    "null_level_bounded_beta_family"
+   ]
+  },
+  "LEVEL_Nf5": {
+   "licensed": false,
+   "multiplier": null,
+   "reason": "no multiplier passed development",
+   "failed_scenarios": [
+    "null_level_bounded_beta_family"
+   ]
+  }
+ },
+ "multipliers": {
+  "SEL_Nf10": null,
+  "SEL_Nf5": 2.0,
+  "LEVEL_Nf10": null,
+  "LEVEL_Nf5": null
+ },
+ "seed": 2404,
+ "power": {
+  "Nf10": {
+   "SEL_superiority_power_at_0.005": 0.0,
+   "SEL_equivalence_power_at_0": 0.0,
+   "LEVEL_improvement_power_at_0.01": 1.0,
+   "LEVEL_one_point_power_at_0.02": 0.9998,
+   "LEVEL_improvement_power_two_clusters_0.011": 1.0,
+   "LEVEL_false_direction_bounded_beta_null": 0.0002
+  },
+  "Nf5": {
+   "SEL_superiority_power_at_0.005": 0.0,
+   "SEL_equivalence_power_at_0": 0.0,
+   "LEVEL_improvement_power_at_0.01": 0.9984,
+   "LEVEL_one_point_power_at_0.02": 0.7383,
+   "LEVEL_improvement_power_two_clusters_0.011": 0.9988,
+   "LEVEL_false_direction_bounded_beta_null": 0.0003
+  }
+ },
+ "ho_operating_characteristics": [
+  {
+   "scenario": "geo_near_zero_spread",
+   "scenario_key": 989269518,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-NOT-RETAINED": 0.8565,
+    "HO-RETAINED": 0.1435
+   },
+   "retained_rate": 0.1435,
+   "retained_upper": 0.1596367108440544,
+   "band_coverage_of_true_curve": {
+    "strong": 0.9,
+    "middle": 0.94,
+    "weak": 0.9
+   },
+   "band_b": 2000,
+   "seconds": 430.7
+  },
+  {
+   "scenario": "geo_clustered_ties",
+   "scenario_key": 3131112406,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-RETAINED": 1.0
+   },
+   "retained_rate": 1.0,
+   "retained_upper": 1.0,
+   "band_coverage_of_true_curve": {
+    "strong": 0.96,
+    "middle": 0.94,
+    "weak": 0.96
+   },
+   "band_b": 2000,
+   "seconds": 433.6
+  },
+  {
+   "scenario": "geo_one_extreme",
+   "scenario_key": 4102196769,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-RETAINED": 0.9995,
+    "HO-NOT-RETAINED": 0.0005
+   },
+   "retained_rate": 0.9995,
+   "retained_upper": 0.9999873411761314,
+   "band_coverage_of_true_curve": {
+    "strong": 0.98,
+    "middle": 0.98,
+    "weak": 1.0
+   },
+   "band_b": 2000,
+   "seconds": 431.4
+  },
+  {
+   "scenario": "geo_shared_measurement_error",
+   "scenario_key": 2234151452,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-RETAINED": 0.9995,
+    "HO-NOT-RETAINED": 0.0005
+   },
+   "retained_rate": 0.9995,
+   "retained_upper": 0.9999873411761314,
+   "band_coverage_of_true_curve": {
+    "strong": 1.0,
+    "middle": 0.94,
+    "weak": 0.98
+   },
+   "band_b": 2000,
+   "seconds": 431.9
+  },
+  {
+   "scenario": "null_geometry_dependent_variance",
+   "scenario_key": 1278192623,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-RETAINED": 0.9975,
+    "HO-NOT-RETAINED": 0.0025
+   },
+   "retained_rate": 0.9975,
+   "retained_upper": 0.9991877740248061,
+   "band_coverage_of_true_curve": {
+    "strong": 1.0,
+    "middle": 0.96,
+    "weak": 0.96
+   },
+   "band_b": 2000,
+   "seconds": 439.1
+  },
+  {
+   "scenario": "ho_all_left_censored",
+   "scenario_key": 1174675325,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-UNINFORMATIVE": 1.0
+   },
+   "retained_rate": 0.0,
+   "retained_upper": 0.0018427397934059364,
+   "band_coverage_of_true_curve": {
+    "strong": 0.92,
+    "middle": 0.94,
+    "weak": 0.88
+   },
+   "band_b": 2000,
+   "seconds": 426.8
+  },
+  {
+   "scenario": "ho_all_right_censored",
+   "scenario_key": 1558836106,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-UNINFORMATIVE": 1.0
+   },
+   "retained_rate": 0.0,
+   "retained_upper": 0.0018427397934059364,
+   "band_coverage_of_true_curve": {
+    "strong": 0.98,
+    "middle": 0.96,
+    "weak": 0.9
+   },
+   "band_b": 2000,
+   "seconds": 439.0
+  },
+  {
+   "scenario": "ho_reversed",
+   "scenario_key": 1469200737,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-NOT-RETAINED": 1.0
+   },
+   "retained_rate": 0.0,
+   "retained_upper": 0.0018427397934059364,
+   "band_coverage_of_true_curve": {
+    "strong": 1.0,
+    "middle": 0.9,
+    "weak": 0.98
+   },
+   "band_b": 2000,
+   "seconds": 438.6
+  },
+  {
+   "scenario": "ho_nonlinear_middle_crossing",
+   "scenario_key": 2869479246,
+   "held_out": false,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-RETAINED": 0.983,
+    "HO-NOT-RETAINED": 0.017
+   },
+   "retained_rate": 0.983,
+   "retained_upper": 0.9881990121026537,
+   "band_coverage_of_true_curve": {
+    "strong": 1.0,
+    "middle": 1.0,
+    "weak": 1.0
+   },
+   "band_b": 2000,
+   "seconds": 418.3
+  },
+  {
+   "scenario": "int_ushape_clustered",
+   "scenario_key": 1120778969,
+   "held_out": true,
+   "reps": 2000,
+   "reps_band": 50,
+   "per_example": {
+    "n_id": 800,
+    "n_ood": 400,
+    "pi": 0.3,
+    "arithmetic": "pilot0.extract_stage2_expansion.failure_augrc"
+   },
+   "verdict_rates": {
+    "HO-NOT-RETAINED": 0.9955,
+    "HO-RETAINED": 0.0045
+   },
+   "retained_rate": 0.0045,
+   "retained_upper": 0.00852514124099515,
+   "band_coverage_of_true_curve": {
+    "strong": 0.88,
+    "middle": 0.88,
+    "weak": 0.92
+   },
+   "band_b": 2000,
+   "seconds": 408.1
+  }
+ ],
+ "correction_of": "simulations/qualification_report.json (version 1, preserved)"
+}
