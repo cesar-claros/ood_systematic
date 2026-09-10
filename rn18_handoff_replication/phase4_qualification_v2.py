@@ -237,8 +237,9 @@ def sim_cells(P: dict, N_f: int, rng, mu_so: np.ndarray, calib: dict | None = No
     if P["one_sign"]:
         dA = np.abs(dA)
     base = 0.5 if P["beta_family_null"] else (0.98 if P["ceiling"] else P["base_auroc"])
-    aurocE = np.clip(base + 0.02 * rng.standard_normal(n), 0.01, 0.99)
-    aurocC = np.clip(aurocE + dA, 0.01, 0.99)
+    lo_a, hi_a = (0.2, 0.75) if P["beta_family_null"] else (0.01, 0.99)     # beta null: forecasts +0.2 (delta_f >= -0.018) must stay < 1
+    aurocE = np.clip(base + 0.02 * rng.standard_normal(n), lo_a, hi_a)
+    aurocC = np.clip(aurocE + dA, lo_a, hi_a)
     dA = aurocC - aurocE
     pi = np.full(n, 0.5)
     if P["pi_varies"]:
@@ -273,7 +274,7 @@ def sim_cells(P: dict, N_f: int, rng, mu_so: np.ndarray, calib: dict | None = No
         zeta = rng.uniform(-1e-3, 1e-3, n)
         predE00 = aurocE + 0.2; predC00 = aurocC + 0.2 + zeta
         predE10 = aurocE + 0.2 - delta_f[f_idx]; predC10 = aurocC + 0.2 - delta_f[f_idx] + zeta
-        assert (predC10 > 0).all() and (predC00 < 1).all() and (predE10 > 0).all()
+        assert (predC10 > 0).all() and (predE10 > 0).all() and (predC00 < 1).all() and (predC10 < 1).all() and (predE10 < 1).all()
 
         def forecast_pair(rng_, degenerate=False):                      # exchangeable clone: fresh zeta only
             z2 = rng_.uniform(-1e-3, 1e-3, n)
