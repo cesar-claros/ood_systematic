@@ -171,11 +171,12 @@ def validate(recs: list[dict], vgg_recs: list[dict], p1: dict, axes: dict, requi
     rep["checks"]["license_v2"] = None
     if QUAL_V2.exists():
         q2 = json.loads(QUAL_V2.read_text())
-        unl2 = {k: v for k, v in q2["licenses"].items() if not v.get("licensed")}
-        if unl2:
-            raise ValidationFailure("licenses_v2", unl2)
+        if set(q2.get("licenses", {})) != {"SEL_Nf10", "SEL_Nf5", "LEVEL_Nf10", "LEVEL_Nf5"}:
+            raise ValidationFailure("licenses_v2", {"families": sorted(q2.get("licenses", {}))})
+        # an unlicensed family is NOT fatal: the plan makes that endpoint descriptive (alpha unused)
         rep["checks"]["license_v2"] = {"path": str(QUAL_V2), "sha256": sha(QUAL_V2), "seed": q2.get("seed"),
-                                       "multipliers": {k: v["multiplier"] for k, v in q2["licenses"].items()}}
+                                       "licensed": {k: v["multiplier"] for k, v in q2["licenses"].items() if v.get("licensed")},
+                                       "unlicensed": {k: v.get("failed_scenarios") for k, v in q2["licenses"].items() if not v.get("licensed")}}
     elif require_v2_license:
         rep["checks"]["license_v2"] = "ABSENT: readout withheld (repair item P1-B pending)"
     # 4. complete expected key set
@@ -309,11 +310,30 @@ def level_verdict(iv) -> dict:
             "at_least_one_point": bool(iv[0] > MARGIN_LEVEL)}
 
 
-def sel_endpoint(ce: pd.DataFrame, comp: Comparators, mult: float, evidence: str) -> dict:
+UNLICENSED = "DESCRIPTIVE (family unlicensed by the version-2 qualification; interval at multiplier 1 is conditional on the approximate procedure)"
+
+
+def _license_fields(mult, evidence: str, failed) -> tuple[float, dict]:
+    if mult is None:
+        return 1.0, {"evidence_class": UNLICENSED, "declared_class": evidence, "license": {"licensed": False, "failed_scenarios": failed}}
+    return float(mult), {"evidence_class": evidence, "license": {"licensed": True, "multiplier": float(mult)}}
+
+
+def _unlicense(out: dict, licensed: bool) -> dict:
+    if not licensed and "verdict" in out:
+        out["verdict_if_licensed_at_multiplier_1"] = out["verdict"]
+        out["verdict"] = "NO LICENSE: descriptive"
+    return out
+
+
+def sel_endpoint(ce: pd.DataFrame, comp: Comparators, mult, evidence: str, failed=None) -> dict:
     """All-cell regret on Delta^A. No cell is dropped: a non-finite
-    required input makes the endpoint NOT ESTIMABLE (declared)."""
+    required input makes the endpoint NOT ESTIMABLE (declared). mult None =
+    unlicensed family: descriptive interval at multiplier 1, no claim."""
     fams = sorted(ce.family.unique())
-    out = {"evidence_class": evidence, "N_f": len(fams), "n_cells": int(len(ce)), "multiplier": mult}
+    licensed = mult is not None
+    mult, lic = _license_fields(mult, evidence, failed)
+    out = {**lic, "N_f": len(fams), "n_cells": int(len(ce)), "multiplier": mult}
     bad = ~(np.isfinite(ce.dA.values) & np.isfinite(ce.M.values))
     if bad.any():
         out.update(verdict="NOT ESTIMABLE (non-finite required input on the registered panel)",
@@ -346,7 +366,7 @@ def sel_endpoint(ce: pd.DataFrame, comp: Comparators, mult: float, evidence: str
                                  "ci": iv, "ci_display": display(iv), "not_estimable": jk.get("not_estimable")}
         ivs[n] = iv
     out["verdict"] = sel_verdict(ivs)
-    return out
+    return _unlicense(out, licensed)
 
 
 def _level_family_deltas(sub: pd.DataFrame) -> pd.Series:
@@ -359,8 +379,10 @@ def _level_family_deltas(sub: pd.DataFrame) -> pd.Series:
     return fam.e00 - fam.e10
 
 
-def level_endpoint(ce: pd.DataFrame, mult: float, evidence: str) -> dict:
-    out = {"evidence_class": evidence, "multiplier": mult}
+def level_endpoint(ce: pd.DataFrame, mult, evidence: str, failed=None) -> dict:
+    licensed = mult is not None
+    mult, lic = _license_fields(mult, evidence, failed)
+    out = {**lic, "multiplier": mult}
     need = ["l_E", "l_C", "l_E_p10", "l_C_p10", "aurocE", "aurocC"]
     if any(c not in ce for c in need):
         out.update(verdict="NOT ESTIMABLE (P10 block absent)"); return out
@@ -379,7 +401,7 @@ def level_endpoint(ce: pd.DataFrame, mult: float, evidence: str) -> dict:
     q = student.ppf(1 - ALPHA_LEVEL / 2, N - 1) * mult * se
     iv = [float(d.mean() - q), float(d.mean() + q)]
     out.update(ci=iv, ci_display=display(iv), **level_verdict(iv))
-    return out
+    return _unlicense(out, licensed)
 
 
 def org_descriptive(df: pd.DataFrame) -> dict:
@@ -504,8 +526,9 @@ def run(b: int, validate_only: bool) -> None:
         print("READOUT WITHHELD: simulations/qualification_report_v2.json is absent (repair item P1-B pending). "
               "Validation record written; no endpoint computed.")
         return
-    mults = json.loads(QUAL_V2.read_text())["licenses"]
-    m = {k: mults[k]["multiplier"] for k in ("SEL_Nf10", "SEL_Nf5", "LEVEL_Nf10", "LEVEL_Nf5")}
+    lic2 = json.loads(QUAL_V2.read_text())["licenses"]
+    m = {k: (lic2[k]["multiplier"] if lic2[k].get("licensed") else None) for k in ("SEL_Nf10", "SEL_Nf5", "LEVEL_Nf10", "LEVEL_Nf5")}
+    fl = {k: lic2[k].get("failed_scenarios") for k in m}
     df = add_geometry_percentile(cells_from_records(recs, axes, with_p10=True))
     vgg, vgg_aug = vgg_table_det(axes), vgg_table(axes)
     ce = df[df.component == "standalone_ce"]; ce0 = ce[ce.dropout == 0]
@@ -516,16 +539,16 @@ def run(b: int, validate_only: bool) -> None:
               "denominators": {"n_records": len(recs), "n_cells": int(len(df)),
                                "per_source_checkpoints": df.groupby("source").cell.nunique().to_dict(),
                                "ce_families": sorted(ce.family.unique()), "vgg_checkpoints_primary_view": int(vgg.cell.nunique()),
-                               "vgg_checkpoints_aug_view": int(vgg_aug.cell.nunique()), "multipliers_v2": m},
+                               "vgg_checkpoints_aug_view": int(vgg_aug.cell.nunique()), "multipliers_v2": m, "licenses_v2": lic2},
               "HO": ho,
-              "SEL_ce": sel_endpoint(ce, comp_A, m["SEL_Nf10"], EVIDENCE["SEL"]),
-              "SEL_ce_do0_sensitivity_Nf5": sel_endpoint(ce0, comp_A, m["SEL_Nf5"], EVIDENCE["sensitivity"]),
-              "SEL_ce_augview_comparators_sensitivity": sel_endpoint(ce, comp_A_aug, m["SEL_Nf10"], EVIDENCE["sensitivity"]),
+              "SEL_ce": sel_endpoint(ce, comp_A, m["SEL_Nf10"], EVIDENCE["SEL"], fl["SEL_Nf10"]),
+              "SEL_ce_do0_sensitivity_Nf5": sel_endpoint(ce0, comp_A, m["SEL_Nf5"], EVIDENCE["sensitivity"], fl["SEL_Nf5"]),
+              "SEL_ce_augview_comparators_sensitivity": sel_endpoint(ce, comp_A_aug, m["SEL_Nf10"], EVIDENCE["sensitivity"], fl["SEL_Nf10"]),
               "SEL_paradigm_pool_descriptive": {"evidence_class": EVIDENCE["ORG"],
                                                 "mean_regret_P00": float(np.nanmean(regret(pool.dA.values, choice_prob(pool.M.values)))),
                                                 "n_nonfinite": int((~np.isfinite(pool.M.values)).sum())},
-              "LEVEL_ce": level_endpoint(ce, m["LEVEL_Nf10"], EVIDENCE["LEVEL"]),
-              "LEVEL_ce_do0_sensitivity_Nf5": level_endpoint(ce0, m["LEVEL_Nf5"], EVIDENCE["sensitivity"]),
+              "LEVEL_ce": level_endpoint(ce, m["LEVEL_Nf10"], EVIDENCE["LEVEL"], fl["LEVEL_Nf10"]),
+              "LEVEL_ce_do0_sensitivity_Nf5": level_endpoint(ce0, m["LEVEL_Nf5"], EVIDENCE["sensitivity"], fl["LEVEL_Nf5"]),
               "bridge_A_G": {"evidence_class": EVIDENCE["bridge"], "primary_view": rank_slope_stat(vgg), "aug_view": rank_slope_stat(vgg_aug)},
               "ORG_descriptive": org_descriptive(df),
               "E4": {"evidence_class": EVIDENCE["E4"], "full": e4(df), "ce": e4(ce)},
@@ -580,6 +603,12 @@ def self_test() -> None:
     assert level_verdict(iv)["verdict"] == "unresolved direction" and display(iv)[0] == 0.0
     assert level_verdict([1e-7, 0.02])["verdict"] == "resolved improvement"
     # (e) the validator's fail-closed cases are exercised in tests/test_rn18_reader_v2_20260909.py
+    # (g) an unlicensed family is descriptive: interval at multiplier 1, no claim, rule outcome kept as information
+    un = level_endpoint(ce, None, EVIDENCE["LEVEL"], ["null_level_bounded_beta_family"])
+    assert un["verdict"] == "NO LICENSE: descriptive" and un["verdict_if_licensed_at_multiplier_1"] == "resolved improvement" and un["multiplier"] == 1.0
+    assert not un["license"]["licensed"] and un["evidence_class"].startswith("DESCRIPTIVE")
+    us = sel_endpoint(ce, comp, None, EVIDENCE["SEL"], ["metric_almost_all_ties"])
+    assert us["verdict"] == "NO LICENSE: descriptive" and "verdict_if_licensed_at_multiplier_1" in us
     # (f) the comparator dump reproduces the reference ridge prediction from saved coefficients
     dump = comparator_dump(comp, vg.assign(component="vgg_bridge"))
     r = dump["ridge"][REFERENCE]; row = ce.iloc[[0]]
