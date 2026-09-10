@@ -397,6 +397,48 @@ def org_descriptive(df: pd.DataFrame) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Comparator specification dump (P2: coefficients, scalers, folds, schema).
+# ---------------------------------------------------------------------------
+
+def comparator_dump(comp: Comparators, train: pd.DataFrame) -> dict:
+    """Everything needed to re-apply the nine frozen comparators without
+    refitting: ridge coefficients on standardized features, the per-fold
+    standardization is refit inside CV but the FINAL fit's scalers are the
+    ones applied; leave-one-checkpoint-out fold identities; the feature
+    schema; the per-source isotonic tables; the source-shift mean table;
+    the majority table. Two inherited rules are recorded as discrepancies
+    with the protocol text (status-review F11): the within-source geometry
+    percentile is computed on the full panel before the CE subset and is
+    not recomputed inside CV folds or after target deletions; the majority
+    baseline selects material cells by the AUGRC gap dG while predicting
+    the AUROC gap dA. The comparators stay as frozen (pre-registered); a
+    reconciled version would be a new, separately declared comparator set."""
+    from heldout_theory_validation import severity_only
+    out = {"folds": {"rule": "leave-one-VGG-checkpoint-out", "fold_ids": sorted(train.cell.unique())},
+           "indicator_sources": list(comp.ind_sources), "reference_source": next(s for s in ("cifar10", "cifar100", "supercifar100", "tinyimagenet") if (train.source == s).any()),
+           "ridge": {}, "isotonic": {}, "source_shift_mean": {f"{s}|{e}": float(v) for (s, e), v in comp.mean_table.items()},
+           "source_majority": comp.majority,
+           "rule_discrepancies_with_protocol": [
+               "geometry percentile g_pct computed per source on the full panel before the CE subset; not recomputed within CV folds or after target deletions",
+               "majority baseline selects material cells by |dG| >= 0.01 (AUGRC gap) while the target metric is dA (AUROC gap); fallbacks: non-zero-target majority, then global, then Energy"]}
+    for name, (fit, cont, inter, lam, losses) in comp.fits.items():
+        feats = list(cont) + (["dK*g_pct"] if inter else [])
+        out["ridge"][name] = {"features": feats, "lambda": lam, "cv_losses": {str(k): float(v) for k, v in losses.items()},
+                              "scaler_mean": fit["mu"].tolist(), "scaler_sd": [None if not np.isfinite(v) else float(v) for v in fit["sd"]],
+                              "beta": {"intercept": float(fit["beta"][0]),
+                                       "source_indicators": dict(zip(comp.ind_sources, fit["beta"][1:1 + len(comp.ind_sources)].tolist())),
+                                       "standardized_features": dict(zip(feats, fit["beta"][1 + len(comp.ind_sources):].tolist()))}}
+    for col, nm in (("dK", "vgg_kid_isotonic"), ("dF", "vgg_fd_isotonic")):
+        out["isotonic"][nm] = {}
+        for src, g in train.groupby("source"):
+            tr = g.rename(columns={col: "d", comp.target_col: "gap"})
+            ds = np.unique(tr.d.values)
+            fitted = severity_only(tr, pd.DataFrame({"d": ds}))
+            out["isotonic"][nm][src] = {"d": ds.tolist(), "fitted_gap": fitted.tolist()}
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Correction record: mechanical comparison with the readout of record.
 # ---------------------------------------------------------------------------
 
@@ -487,7 +529,8 @@ def run(b: int, validate_only: bool) -> None:
               "bridge_A_G": {"evidence_class": EVIDENCE["bridge"], "primary_view": rank_slope_stat(vgg), "aug_view": rank_slope_stat(vgg_aug)},
               "ORG_descriptive": org_descriptive(df),
               "E4": {"evidence_class": EVIDENCE["E4"], "full": e4(df), "ce": e4(ce)},
-              "comparator_fits": {"primary_view": comp_A.summary(), "aug_view": comp_A_aug.summary()}}
+              "comparator_fits": {"primary_view": comp_A.summary(), "aug_view": comp_A_aug.summary()},
+              "comparator_specification": {"primary_view": comparator_dump(comp_A, vgg), "aug_view": comparator_dump(comp_A_aug, vgg_aug)}}
     report["correction_record"] = correction_record(report)
     (OUT / "rn18_report_v2.json").write_text(json.dumps(report, indent=1, default=str))
     (OUT / "rn18_report_v2.md").write_text("# rn18_report_v2\n\n```\n" + json.dumps(report, indent=1, default=str) + "\n```\n")
@@ -537,6 +580,14 @@ def self_test() -> None:
     assert level_verdict(iv)["verdict"] == "unresolved direction" and display(iv)[0] == 0.0
     assert level_verdict([1e-7, 0.02])["verdict"] == "resolved improvement"
     # (e) the validator's fail-closed cases are exercised in tests/test_rn18_reader_v2_20260909.py
+    # (f) the comparator dump reproduces the reference ridge prediction from saved coefficients
+    dump = comparator_dump(comp, vg.assign(component="vgg_bridge"))
+    r = dump["ridge"][REFERENCE]; row = ce.iloc[[0]]
+    feats = r["features"]; x = row[feats].to_numpy(float)[0]
+    sd = np.array([np.inf if v is None else v for v in r["scaler_sd"]]); z = (x - np.array(r["scaler_mean"])) / sd
+    ind = np.array([float(row.source.iloc[0] == s_) for s_ in dump["indicator_sources"]])
+    pred = r["beta"]["intercept"] + ind @ np.array(list(r["beta"]["source_indicators"].values())) + z @ np.array(list(r["beta"]["standardized_features"].values()))
+    assert abs(pred - comp.predict(REFERENCE, row)[0]) < 1e-9, (pred, comp.predict(REFERENCE, row)[0])
     print("[rn18-analysis-v2] self-test PASS: planted panel verdicts, NaN prediction -> NOT ESTIMABLE, "
           "non-finite input -> NOT ESTIMABLE, zero SE -> NOT ESTIMABLE, full-precision decisions")
 
