@@ -69,6 +69,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from functools import lru_cache
+
 from scipy.stats import beta as beta_dist, norm, t as student
 
 _CODE_ROOT = Path(__file__).resolve().parents[1]
@@ -203,7 +205,8 @@ def _inside(auroc, err):
     hi = auroc + np.abs(err) > 0.999
     lo = auroc - np.abs(err) < 0.001
     e = np.where(hi, -np.abs(err), np.where(lo, np.abs(err), err))
-    return auroc + e, e
+    pred = np.clip(auroc + e, 0.001, 0.999)                 # an error beyond both bounds is clipped (heavy tails)
+    return pred, pred - auroc
 
 
 def _shrink(P, calib, fam_do):
@@ -368,7 +371,7 @@ def fast_level(c: dict) -> dict:
     need = [c["lE00"], c["lC00"], c["lE10"], c["lC10"], c["aurocE"], c["aurocC"]]
     if not all(np.isfinite(a).all() for a in need):
         return {"state": "NOT ESTIMABLE (non-finite required input on the registered panel)"}
-    pa = lambda l: 1 - np.exp(l)
+    pa = lambda l: np.clip(1 - np.exp(l), 0.0, 1.0)         # the reader's pred_auroc
     e00 = (np.abs(pa(c["lE00"]) - c["aurocE"]) + np.abs(pa(c["lC00"]) - c["aurocC"])) / 2
     e10 = (np.abs(pa(c["lE10"]) - c["aurocE"]) + np.abs(pa(c["lC10"]) - c["aurocC"])) / 2
     d = e00 - e10
@@ -380,6 +383,11 @@ def fast_level(c: dict) -> dict:
     return {"state": None, "N": N, "delta": float(fd.mean()), "se": se, "family_deltas": fd.to_numpy()}
 
 
+@lru_cache(maxsize=None)
+def tq(alpha: float, df: int) -> float:
+    return float(student.ppf(1 - alpha / 2, df))
+
+
 def sel_intervals(fs: dict, m: float) -> dict:
     ivs = {}
     for n, v in fs["D"].items():
@@ -387,13 +395,13 @@ def sel_intervals(fs: dict, m: float) -> dict:
             ivs[n] = None
         else:
             est, se = v
-            q = student.ppf(1 - ALPHA_EACH / 2, fs["N"] - 1) * m * se
+            q = tq(ALPHA_EACH, fs["N"] - 1) * m * se
             ivs[n] = [est - q, est + q]
     return ivs
 
 
 def level_interval(fl: dict, m: float) -> list:
-    q = student.ppf(1 - R.ALPHA_LEVEL / 2, fl["N"] - 1) * m * fl["se"]
+    q = tq(R.ALPHA_LEVEL, fl["N"] - 1) * m * fl["se"]
     return [fl["delta"] - q, fl["delta"] + q]
 
 
@@ -454,7 +462,7 @@ def _D_of(sample, name, q=None, k=None, fix=False):
 
 
 def _level_of(sample, N_f):
-    pa = lambda l: 1 - np.exp(l)
+    pa = lambda l: np.clip(1 - np.exp(l), 0.0, 1.0)
     e00 = (np.abs(pa(sample["lE00"]) - sample["aurocE"]) + np.abs(pa(sample["lC00"]) - sample["aurocC"])) / 2
     e10 = (np.abs(pa(sample["lE10"]) - sample["aurocE"]) + np.abs(pa(sample["lC10"]) - sample["aurocC"])) / 2
     d = e00 - e10
@@ -538,7 +546,10 @@ def run_inferential(sc: dict, N_f: int, seed: int, reps: int, mults=MULTS) -> di
     P = sc["params"]; name = sc["name"]; key = skey(name)
     rng = np.random.default_rng([seed, key, N_f])
     mu_so = 0.03 * np.random.default_rng([7, key]).standard_normal((4, 4))
+    t_start = time.time()
+    print(f"[worker] {name} N_f={N_f}: calibrating", file=sys.stderr, flush=True)
     calib, tr = calibrate(P, N_f, seed, mu_so)
+    print(f"[worker] {name} N_f={N_f}: calibrated in {time.time() - t_start:.0f}s; {reps} reps", file=sys.stderr, flush=True)
     dl_true = 0.0 if tr["exact"]["level_delta_exact_zero"] else tr["level_delta"]
     mode = P["comp_mode"]
     cnt = {m: {"sel_false": 0, "sel_cov": 0, "sel_cov_n": 0, "lvl_false": 0, "lvl_cov": 0,
@@ -546,6 +557,8 @@ def run_inferential(sc: dict, N_f: int, seed: int, reps: int, mults=MULTS) -> di
     declared = {"validator": 0, "sel_not_estimable": 0, "lvl_not_estimable": 0, "comparators_not_estimable": {n: 0 for n in NAMES}}
     hw_sel, hw_lvl, fam_deltas = [], [], []
     for rep in range(reps):
+        if rep and rep % 2000 == 0:
+            print(f"[worker] {name} N_f={N_f}: rep {rep} ({time.time() - t_start:.0f}s)", file=sys.stderr, flush=True)
         kk = rep % len(FITTED) if mode == "rotating_best" else 0
         c = sim_cells(P, N_f, rng, mu_so, calib, kk)
         st = panel_state(c)
@@ -724,7 +737,10 @@ def run_ho(sc: dict, seed: int, reps: int, reps_band: int, b_declared: int = 200
     rng = np.random.default_rng([seed, key, 3])
     counts, cover = {}, {"strong": 0, "middle": 0, "weak": 0, "n": 0}
     t0 = time.time()
+    print(f"[worker] {sc['name']} HO: {reps} per-example reps", file=sys.stderr, flush=True)
     for i in range(reps):
+        if i and i % 500 == 0:
+            print(f"[worker] {sc['name']} HO: rep {i} ({time.time() - t0:.0f}s)", file=sys.stderr, flush=True)
         sub, truth = sim_ho_source_examples(P, rng)
         if i < reps_band:
             res = ho_source(sub, "dK", b=b_declared)
