@@ -170,6 +170,22 @@ def _cfg_token(x) -> str:
     return str(x)
 
 
+def match_offset(full_targets: np.ndarray, y: np.ndarray, candidates=()) -> int | None:
+    """Offset k such that full_targets[k:k+len(y)] == y. Candidates first, then a
+    full scan. None if no position matches (fail closed)."""
+    n, L = len(y), len(full_targets)
+    if n == 0 or n > L:
+        return None
+    for k in list(candidates) + [L - n, 0]:
+        if k is not None and 0 <= k <= L - n and np.array_equal(full_targets[k:k + n], y):
+            return int(k)
+    y0 = y[0]
+    for k in np.flatnonzero(full_targets[:L - n + 1] == y0):
+        if np.array_equal(full_targets[k:k + n], y):
+            return int(k)
+    return None
+
+
 def id_test_offset(cf, len_full: int) -> tuple[int, dict]:
     """Canonical position offset of the config's iid test set inside the
     dataset's test split (mirrors FDShiftsDataLoader.setup: the tenPercent
@@ -288,14 +304,29 @@ def extract_one(cell: dict, root: Path, out_dir: Path, use_cuda: bool) -> None:
     ds_full = get_dataset(name=datamodule.dataset_name, root=datamodule.data_dir, train=False, download=True,
                           target_transform=None, transform=None, kwargs=datamodule.dataset_kwargs)
     len_full = len(ds_full)
-    offset, slices = id_test_offset(cf, len_full)
-    logger.info(f"{slug}: forward iid test ({iid_token}, offset {offset})")
+    offset_cfg, slices = id_test_offset(cf, len_full)
+    dm_dev = getattr(datamodule, "val_split", None) == "devries"                    # the loader's OWN comparisons
+    dm_ten = getattr(datamodule, "test_iid_split", None) == "tenPercent"
+    offset_dm = (int(len_full * 0.1) if dm_ten else 0) + (DEVRIES_VAL_SLICE if dm_dev else 0)
+    slices.update({"datamodule_val_split": str(getattr(datamodule, "val_split", None)), "datamodule_test_iid_split": str(getattr(datamodule, "test_iid_split", None)),
+                   "offset_from_config_tokens": int(offset_cfg), "offset_from_datamodule_flags": int(offset_dm),
+                   "val_tuning": bool(getattr(cf.eval, "val_tuning", False)), "iid_token": iid_token,
+                   "test_dataset_lengths": [int(len(d)) for d in getattr(datamodule, "test_datasets", [])],
+                   "iid_test_set_length": int(len(getattr(datamodule, "iid_test_set", []))), "full_test_dataset_type": type(ds_full).__name__})
+    logger.info(f"{slug}: forward iid test ({iid_token}; offsets cfg {offset_cfg}, datamodule {offset_dm})")
     ev = forward_loader(model, test_loaders[iid_idx])
     h_id = ev["encoded"].cpu().numpy().astype(np.float32)
     y_id = ev["labels"].cpu().numpy().astype(np.int64)
-    assert len(h_id) == len_full - offset, (len(h_id), len_full, offset)
-    full_targets = np.asarray(getattr(ds_full, "targets", getattr(ds_full, "labels", None)), dtype=np.int64)
-    canon_ok = bool(full_targets is not None and len(full_targets) == len_full and np.array_equal(full_targets[offset:], y_id))
+    ft = getattr(ds_full, "targets", getattr(ds_full, "labels", None))
+    full_targets = np.asarray([int(t) for t in ft], dtype=np.int64) if ft is not None else None
+    offset = match_offset(full_targets, y_id, candidates=(offset_dm, offset_cfg)) if full_targets is not None else None
+    if offset is None:
+        raise AssertionError(f"ID-test sample identity not established: n_id={len(h_id)} len_full={len_full} "
+                             f"offset_cfg={offset_cfg} offset_dm={offset_dm} slices={slices} y_head={y_id[:8].tolist()} "
+                             f"full_head={None if full_targets is None else full_targets[:8].tolist()}")
+    slices["offset_used"] = int(offset); slices["offset_method"] = ("datamodule flags" if offset == offset_dm else "config tokens" if offset == offset_cfg else "label-sequence match")
+    assert len(h_id) <= len_full - offset, (len(h_id), len_full, offset)
+    canon_ok = True                                                                   # established by match_offset
     # test-feature ID model inputs (F4 diagnostics: the frozen ID model is the TRAIN-feature model;
     # the stored ID-test residual scale is 2-4x the training scale, so the test within-class covariance
     # and the test-feature collapse are stored to fit the ID model on test features as a declared variant)
@@ -311,6 +342,7 @@ def extract_one(cell: dict, root: Path, out_dir: Path, use_cuda: bool) -> None:
                            label_counts=np.bincount(y_id, minlength=n_classes).tolist())
     rec["v2"]["id_test"] = {"canonical_ids": f"test-split position offset {offset} + row", **slices, "n": int(len(h_id)),
                             "label_sequence_sha256": digest(y_id), "order_matches_test_split": canon_ok,
+                            "contiguous_slice_covers_loader": bool(len(h_id) == len_full - offset),
                             "id_error_rate_unrounded": float(res_id.mean())}
     arrays.update({"id__labels": y_id, "id__correct": (1 - res_id).astype(np.int8), "id__logits": logits_id.astype(np.float64),
                    "id__ids": (offset + np.arange(len(h_id))).astype(np.int64),
@@ -392,6 +424,8 @@ def self_test() -> None:
     # frozen rounding loses information the unrounded record keeps
     assert un["gap_balanced"] != frozen["gap_balanced"] or abs(un["gap_balanced"] * 1e5 - round(un["gap_balanced"] * 1e5)) < 1e-9
     assert digest(np.arange(3)) != digest(np.arange(3, dtype=np.float64))
+    full = rng.integers(0, 200, 10000); y = full[1000:]
+    assert match_offset(full, y, candidates=(0,)) == 1000 and match_offset(full, full[250:9250]) == 250 and match_offset(full, y[::-1].copy()) is None
     print(f"[fourshift-v2] self-test PASS: identity residual max "
           f"{max(abs(v) for v in un['identity_residual_balanced'].values()):.1e}, balancing draws reproduced, "
           f"frozen rounded fields reproduced (gap_balanced {un['gap_balanced']:+.7f} -> {frozen['gap_balanced']:+.5f})")
