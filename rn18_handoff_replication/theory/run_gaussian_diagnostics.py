@@ -24,7 +24,10 @@ a CENTERED variant of G1-MC (all means and prototypes translated by the
 global mean; covariances unchanged), reported as the change it induces.
 
 Panels: --panel-dir fourshift_rn18 (version-1 records, float32 covariances:
-labeled PRELIMINARY) or fourshift_v2_rn18 (version-2, float64).
+labeled PRELIMINARY) or fourshift_v2_rn18 (version-2, float64). --id-model
+test fits the ID model on the ID-test features stored by extractor v2
+(test class means and test within-class covariance; the CTM prototypes stay
+the training means because that is the frozen scorer) as a declared variant.
 
 Usage (from code/):
     python rn18_handoff_replication/theory/run_gaussian_diagnostics.py --self-test
@@ -75,12 +78,18 @@ def branch_switch_rate(means, S, P, key: int, n: int = 2048) -> float:
     return float(np.mean(rates))
 
 
-def diagnose_set(rec: dict, z, cname: str, n: int, batches: int) -> dict:
+def diagnose_set(rec: dict, z, cname: str, n: int, batches: int, id_model: str = "train") -> dict:
     o = rec["ood"][cname]
     W, b = z["w"].astype(np.float64), z["b"].astype(np.float64)
-    proto = z["proto_unc"].astype(np.float64)
+    proto = z["proto_unc"].astype(np.float64)                      # raw CTM prototypes: TRAIN class means (frozen scorer)
     P = _norm_rows(proto)
-    id_means = [proto[c] for c in range(len(proto))]
+    if id_model == "test":                                        # ID model fitted on the ID-TEST features (version-2 records)
+        id_cm = z["id__class_means_centered_test"].astype(np.float64) + z["id__global_mean_test"].astype(np.float64)
+        id_means = [id_cm[c] for c in range(len(id_cm))]
+        sigma_w_key = "id__sigma_w_test"
+    else:
+        id_means = [proto[c] for c in range(len(proto))]
+        sigma_w_key = "sigma_w"
     counts = np.asarray(rec["iid_test"]["label_counts"], float); id_w = (counts / counts.sum()).tolist()
     R = float(rec["geometry"]["class_mean_radius"]); gm = z["global_mean"].astype(np.float64)
     out = {"observed": {"Energy": float(o["auroc_id_vs_ood_Energy"]), "CTM": float(o["auroc_id_vs_ood_CTM"])}}
@@ -88,7 +97,8 @@ def diagnose_set(rec: dict, z, cname: str, n: int, batches: int) -> dict:
     out["dictionary"] = {"Energy": pred_auroc(l_e), "CTM": pred_auroc(l_c)}
     out["origin_ratio_norm_gm_over_R"] = float(np.linalg.norm(gm) / R)
     key = cell_key(rec["slug"], cname)
-    covs = {"sigma_w": z["sigma_w"], "cov_glob": z[f"set__{cname}__cov_glob"], "cov_res": z[f"set__{cname}__cov_res"]}
+    covs = {"sigma_w": z[sigma_w_key], "cov_glob": z[f"set__{cname}__cov_glob"], "cov_res": z[f"set__{cname}__cov_res"]}
+    out["id_model"] = id_model
     out["covariance_dtype"] = {k: str(v.dtype) for k, v in covs.items()}
     S = {}
     for k, v in covs.items():
@@ -156,7 +166,7 @@ def summarize(cells: list[dict]) -> dict:
     return summ
 
 
-def run(panel_dir: str, n: int, batches: int, limit: int | None) -> None:
+def run(panel_dir: str, n: int, batches: int, limit: int | None, id_model: str = "train") -> None:
     d = OUT / panel_dir
     files = sorted(p for p in d.glob("*.json") if not p.name.startswith("FAILED_"))
     if limit:
@@ -169,11 +179,11 @@ def run(panel_dir: str, n: int, batches: int, limit: int | None) -> None:
             if cname not in rec["ood"] or "error" in rec["ood"][cname]:
                 continue
             cells.append({"slug": rec["slug"], "source": rec["source"], "component": rec.get("component"), "set": cname,
-                          "diag": diagnose_set(rec, z, cname, n, batches)})
+                          "diag": diagnose_set(rec, z, cname, n, batches, id_model)})
         print(f"[gauss-diag] {i}/{len(files)} {rec['slug']} ({time.time() - t0:.0f}s)", flush=True)
-    rep = {"label": LABEL, "panel_dir": panel_dir, "preliminary_float32_covariances": prelim, "n": n, "batches": batches, "master_seed": MASTER,
+    rep = {"label": LABEL, "panel_dir": panel_dir, "preliminary_float32_covariances": prelim, "id_model": id_model, "n": n, "batches": batches, "master_seed": MASTER,
            "summary": summarize(cells), "cells": cells}
-    tag = panel_dir.replace("fourshift_", "")
+    tag = panel_dir.replace("fourshift_", "") + ("" if id_model == "train" else f"_idmodel_{id_model}")
     (OUT / f"gaussian_diagnostics_{tag}.json").write_text(json.dumps(rep, indent=1, default=str))
     (OUT / f"gaussian_diagnostics_{tag}.md").write_text(f"# Gaussian/Taylor diagnostics ({panel_dir}; {'PRELIMINARY float32' if prelim else 'float64'})\n\n```\n"
                                                        + json.dumps(rep["summary"], indent=1, default=str) + "\n```\n")
@@ -196,6 +206,9 @@ def self_test() -> None:
     out = diagnose_set(rec, z, "mnist_new", n=512, batches=4)
     for k in ("G0_MC", "G1_MC", "A0_TAYLOR", "A1_TAYLOR", "G1_MC_centered", "branch_switch", "errors"):
         assert k in out, k
+    z["id__class_means_centered_test"] = proto - gm + 0.3; z["id__global_mean_test"] = gm; z["id__sigma_w_test"] = 0.4 * np.eye(D)
+    out_t = diagnose_set(rec, z, "mnist_new", n=512, batches=4, id_model="test")
+    assert out_t["id_model"] == "test" and out_t["G1_MC"]["Energy"] != out["G1_MC"]["Energy"]
     assert 0 <= out["G1_MC"]["Energy"] <= 1 and out["errors"]["Energy"]["mismatch_G1_vs_observed"] >= 0
     z2 = dict(z); z2["sigma_w"] = np.diag(np.r_[np.ones(D - 1), -1e-3])
     assert "psd_rejected" in diagnose_set(rec, z2, "mnist_new", 128, 2)
@@ -211,9 +224,10 @@ def main() -> None:
     ap.add_argument("--n", type=int, default=4096)
     ap.add_argument("--batches", type=int, default=20)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--id-model", choices=("train", "test"), default="train", dest="id_model")
     ap.add_argument("--self-test", action="store_true", dest="self_test")
     a = ap.parse_args()
-    self_test() if a.self_test else run(a.panel_dir, a.n, a.batches, a.limit)
+    self_test() if a.self_test else run(a.panel_dir, a.n, a.batches, a.limit, a.id_model)
 
 
 if __name__ == "__main__":
