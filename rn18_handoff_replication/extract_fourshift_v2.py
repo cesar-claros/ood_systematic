@@ -156,12 +156,31 @@ def state_dict_digest(sd: dict) -> str:
     return h.hexdigest()
 
 
+def _cfg_token(x) -> str:
+    """Config values may be plain strings or (str, Enum) members; FD-Shifts compares them with ==,
+    which succeeds for str-enums while str() gives 'Class.member' on Python 3.11. Use the value."""
+    if x is None:
+        return "None"
+    v = getattr(x, "value", None)
+    if isinstance(v, str):
+        return v
+    n = getattr(x, "name", None)
+    if isinstance(n, str) and not isinstance(x, str):
+        return n
+    return str(x)
+
+
 def id_test_offset(cf, len_full: int) -> tuple[int, dict]:
     """Canonical position offset of the config's iid test set inside the
-    dataset's test split (mirrors FDShiftsDataLoader.setup)."""
-    pre = int(len_full * 0.1) if str(getattr(cf.test, "iid_set_split", "")) == "tenPercent" else 0
-    dev = DEVRIES_VAL_SLICE if str(cf.trainer.val_split.name if hasattr(cf.trainer.val_split, "name") else cf.trainer.val_split) == "devries" else 0
-    return pre + dev, {"tenPercent_pre_slice": pre, "devries_val_slice": dev, "test_split_length": int(len_full)}
+    dataset's test split (mirrors FDShiftsDataLoader.setup: the tenPercent
+    pre-slice removes the first 10 percent, then the devries validation
+    slice removes the first 1000)."""
+    iid_raw = _cfg_token(getattr(cf.test, "iid_set_split", None))
+    vs_raw = _cfg_token(getattr(cf.trainer, "val_split", None))
+    pre = int(len_full * 0.1) if iid_raw == "tenPercent" else 0
+    dev = DEVRIES_VAL_SLICE if vs_raw == "devries" else 0
+    return pre + dev, {"tenPercent_pre_slice": pre, "devries_val_slice": dev, "test_split_length": int(len_full),
+                       "iid_set_split_raw": iid_raw, "val_split_raw": vs_raw}
 
 
 # ---------------------------------------------------------------------------
