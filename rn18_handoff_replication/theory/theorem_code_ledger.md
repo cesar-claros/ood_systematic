@@ -15,4 +15,6 @@
 | Delete-family jackknife SE and t reference | approximately independent families | approximate inference candidate | `icml_campaign_analysis`-style jackknife | qualified only in the enumerated simulations (phase 4) |
 | Partial conjunction 2 p_(3) | valid marginal p-values | exact under stated validity | retired with DIST | n/a |
 
-Every approximate row is written as approximate in the manuscript; no entry claims exactness outside its stated model.
+Repair record 2026-09-09: the previous closing sentence of this ledger asserted that every approximate row was written as approximate in the manuscript; that was false (the union bound was called the ID error rate, the Energy and Mahalanobis AUROCs were written as equalities, and Theorem 1(i) was stated for every profile with a given maximum alignment). After the 2026-09-09 repair the manuscript states the fixed-index surrogate and its switching bound on the canonical single-alignment profile, records the tied-profile counterexample (exact MLS AUROC 0.290 at gamma a = 1 for C = 3, a = 1/2, gamma = 2, s = 4), writes Energy and Mahalanobis as approximations, and calls the union bound a bound. Verified by `tests/test_thm_norm_repair_20260909.py`.
+
+| MLS chance crossing (Theorem 1(i)) | canonical single-alignment profile; fixed-index surrogate | exact for the surrogate; coupling bound p_ID + p_OOD for the exact score; FALSE for tied profiles | manuscript theorems.tex after repair | counterexample and bound reproduced in tests/test_thm_norm_repair_20260909.py |
