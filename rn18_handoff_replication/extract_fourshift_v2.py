@@ -186,6 +186,56 @@ def match_offset(full_targets: np.ndarray, y: np.ndarray, candidates=()) -> int 
     return None
 
 
+def _sample_keys(ds):
+    """Per-example keys of a dataset: file paths for ImageFolder-style datasets
+    (`samples` or `imgs` lists of (path, target)); None otherwise."""
+    for attr in ("samples", "imgs"):
+        lst = getattr(ds, attr, None)
+        if isinstance(lst, (list, tuple)) and lst and isinstance(lst[0], (list, tuple)):
+            return [str(x[0]) for x in lst]
+    return None
+
+
+def canonical_ids(ds_loader, ds_full, y_loader: np.ndarray, full_targets, candidates=()) -> tuple[np.ndarray | None, str]:
+    """Canonical index of every loader example inside the full test split.
+    1. Subset indices (recursively); 2. file-path mapping (ImageFolder-style);
+    3. contiguous offset confirmed by the label sequence. None = not established."""
+    ds, idx = ds_loader, None
+    while hasattr(ds, "indices") and hasattr(ds, "dataset"):
+        sub = np.asarray(list(ds.indices), dtype=np.int64)
+        idx = sub if idx is None else sub[idx]
+        ds = ds.dataset
+    if idx is not None and len(idx) == len(y_loader):
+        return idx, "subset indices"
+    kl, kf = _sample_keys(ds_loader), _sample_keys(ds_full)
+    if kl is not None and kf is not None and len(kl) == len(y_loader):
+        pos = {k: i for i, k in enumerate(kf)}
+        if all(k in pos for k in kl):
+            ids = np.asarray([pos[k] for k in kl], dtype=np.int64)
+            if len(set(ids.tolist())) == len(ids):
+                return ids, "file-path mapping"
+    if full_targets is not None:
+        off = match_offset(full_targets, y_loader, candidates)
+        if off is not None:
+            return off + np.arange(len(y_loader), dtype=np.int64), "contiguous offset (label-sequence match)"
+    return None, "not established"
+
+
+def tinyimagenet_val_partition(targets_full: np.ndarray, seed: int = 12345, val_proportion: float = 0.1) -> tuple[set, set]:
+    """Replicates FDShiftsDataLoader.setup for val_split == 'tinyimagenet_val'
+    (per-class np.random.choice under np.random.seed(12345)); the global
+    numpy RNG state is saved and restored around the replication."""
+    state = np.random.get_state()
+    try:
+        np.random.seed(seed)
+        size_per_class = int((len(targets_full) / len(np.unique(targets_full))) * val_proportion)
+        idx_val = set([x for y in np.unique(targets_full)
+                       for x in (np.random.choice(np.argwhere(targets_full == y).squeeze(), size=size_per_class, replace=False))])
+    finally:
+        np.random.set_state(state)
+    return idx_val, set(range(len(targets_full))) - idx_val
+
+
 def id_test_offset(cf, len_full: int) -> tuple[int, dict]:
     """Canonical position offset of the config's iid test set inside the
     dataset's test split (mirrors FDShiftsDataLoader.setup: the tenPercent
@@ -319,14 +369,22 @@ def extract_one(cell: dict, root: Path, out_dir: Path, use_cuda: bool) -> None:
     y_id = ev["labels"].cpu().numpy().astype(np.int64)
     ft = getattr(ds_full, "targets", getattr(ds_full, "labels", None))
     full_targets = np.asarray([int(t) for t in ft], dtype=np.int64) if ft is not None else None
-    offset = match_offset(full_targets, y_id, candidates=(offset_dm, offset_cfg)) if full_targets is not None else None
-    if offset is None:
-        raise AssertionError(f"ID-test sample identity not established: n_id={len(h_id)} len_full={len_full} "
+    ids, id_method = canonical_ids(getattr(datamodule, "iid_test_set", test_loaders[iid_idx].dataset), ds_full, y_id, full_targets, candidates=(offset_dm, offset_cfg))
+    if ids is None or (full_targets is not None and not np.array_equal(full_targets[ids], y_id)):
+        raise AssertionError(f"ID-test sample identity not established ({id_method}): n_id={len(h_id)} len_full={len_full} "
                              f"offset_cfg={offset_cfg} offset_dm={offset_dm} slices={slices} y_head={y_id[:8].tolist()} "
                              f"full_head={None if full_targets is None else full_targets[:8].tolist()}")
-    slices["offset_used"] = int(offset); slices["offset_method"] = ("datamodule flags" if offset == offset_dm else "config tokens" if offset == offset_cfg else "label-sequence match")
-    assert len(h_id) <= len_full - offset, (len(h_id), len_full, offset)
-    canon_ok = True                                                                   # established by match_offset
+    slices["id_method"] = id_method
+    contiguous = bool(np.array_equal(ids, ids[0] + np.arange(len(ids))))
+    offset = int(ids[0]) if contiguous else None
+    slices["offset_used"] = offset; slices["contiguous"] = contiguous
+    if str(getattr(datamodule, "val_split", None)) == "tinyimagenet_val" and full_targets is not None:
+        idx_val, idx_test = tinyimagenet_val_partition(full_targets)
+        slices["tinyimagenet_val_replication"] = {"n_val": len(idx_val), "n_test": len(idx_test),
+                                                  "loader_ids_equal_replicated_test_set": bool(set(ids.tolist()) == idx_test),
+                                                  "loader_order_is_ascending": bool(np.all(np.diff(ids) > 0))}
+        assert slices["tinyimagenet_val_replication"]["loader_ids_equal_replicated_test_set"], slices["tinyimagenet_val_replication"]
+    canon_ok = True                                                                   # established by canonical_ids + label check
     # test-feature ID model inputs (F4 diagnostics: the frozen ID model is the TRAIN-feature model;
     # the stored ID-test residual scale is 2-4x the training scale, so the test within-class covariance
     # and the test-feature collapse are stored to fit the ID model on test features as a declared variant)
@@ -340,12 +398,12 @@ def extract_one(cell: dict, root: Path, out_dir: Path, use_cuda: bool) -> None:
     res_id = (logits_id.argmax(1) != y_id).astype(float)
     rec["iid_test"] = dict(estimate_ood_coords(h_id, fm), n=int(len(h_id)), id_error_rate=float(res_id.mean()),
                            label_counts=np.bincount(y_id, minlength=n_classes).tolist())
-    rec["v2"]["id_test"] = {"canonical_ids": f"test-split position offset {offset} + row", **slices, "n": int(len(h_id)),
+    rec["v2"]["id_test"] = {"canonical_ids": "array id__ids in the npz: index of each loader example in the full test split", **slices, "n": int(len(h_id)),
                             "label_sequence_sha256": digest(y_id), "order_matches_test_split": canon_ok,
-                            "contiguous_slice_covers_loader": bool(len(h_id) == len_full - offset),
+                            "contiguous_slice_covers_loader": bool(contiguous and len(h_id) == len_full - ids[0]),
                             "id_error_rate_unrounded": float(res_id.mean())}
     arrays.update({"id__labels": y_id, "id__correct": (1 - res_id).astype(np.int8), "id__logits": logits_id.astype(np.float64),
-                   "id__ids": (offset + np.arange(len(h_id))).astype(np.int64),
+                   "id__ids": ids.astype(np.int64),
                    "id__sigma_w_test": fm_test.sigma_w.astype(np.float64), "id__class_means_centered_test": fm_test.class_means.astype(np.float64),
                    "id__global_mean_test": fm_test.global_mean.astype(np.float64)})
     rec["v2"]["id_test_feature_model"] = rec_test_model
@@ -424,6 +482,24 @@ def self_test() -> None:
     # frozen rounding loses information the unrounded record keeps
     assert un["gap_balanced"] != frozen["gap_balanced"] or abs(un["gap_balanced"] * 1e5 - round(un["gap_balanced"] * 1e5)) < 1e-9
     assert digest(np.arange(3)) != digest(np.arange(3, dtype=np.float64))
+    class DS:
+        def __init__(self, samples): self.samples = samples; self.targets = [t for _, t in samples]
+    full_t = np.repeat(np.arange(200), 50); fullds = DS([(f"img{i}.jpg", int(t)) for i, t in enumerate(full_t)])
+    idx_val, idx_test = tinyimagenet_val_partition(full_t)
+    assert len(idx_val) == 1000 and len(idx_test) == 9000
+    loader_ids = sorted(idx_test); loaderds = DS([fullds.samples[i] for i in loader_ids])
+    ids, how = canonical_ids(loaderds, fullds, np.asarray(loaderds.targets), full_t)
+    assert how == "file-path mapping" and np.array_equal(ids, np.asarray(loader_ids)) and set(ids.tolist()) == idx_test
+    idx_val2, _ = tinyimagenet_val_partition(full_t); assert idx_val2 == idx_val, "partition replication not deterministic"
+    class Sub:
+        def __init__(self, dataset, indices): self.dataset, self.indices = dataset, indices
+    ids2, how2 = canonical_ids(Sub(fullds, list(range(1000, 10000))), fullds, full_t[1000:], full_t)
+    assert how2 == "subset indices" and ids2[0] == 1000
+    class Arr:
+        def __init__(self, t): self.targets = list(t)
+    ids3, how3 = canonical_ids(Arr(full_t[1000:]), Arr(full_t), full_t[1000:], full_t, candidates=(1000,))
+    assert how3.startswith("contiguous") and ids3[0] == 1000
+    st0 = np.random.get_state(); tinyimagenet_val_partition(full_t); assert np.random.get_state()[1].tolist() == st0[1].tolist(), "global RNG state not restored"
     full = rng.integers(0, 200, 10000); y = full[1000:]
     assert match_offset(full, y, candidates=(0,)) == 1000 and match_offset(full, full[250:9250]) == 250 and match_offset(full, y[::-1].copy()) is None
     print(f"[fourshift-v2] self-test PASS: identity residual max "
