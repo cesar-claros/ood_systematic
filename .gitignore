@@ -113,7 +113,7 @@ pilot0/repair_phase1_stats/*.npz
 rn18_handoff_replication/outputs/fourshift_rn18
 rn18_handoff_replication/outputs/fourshift_vgg_bridge
 # version-2 lossless extraction: per-example arrays stay out of git (JSON summaries are tracked)
-rn18_handoff_replication/outputs/fourshift_v2_*/*.npz
+rn18_handoff_replication/outputs/fourshift_v2_*/
 
 
 # Exception to the *.sh rule: the Pool A extraction runner must sync to the HPC
