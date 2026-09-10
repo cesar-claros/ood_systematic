@@ -1,0 +1,29 @@
+{
+ "multipliers": {
+  "SEL_Nf10": null,
+  "SEL_Nf5": 2.0,
+  "LEVEL_Nf10": null,
+  "LEVEL_Nf5": null
+ },
+ "rule": "smallest in (1.0, 1.1, 1.25, 1.5, 2.0) passing every non-held-out scenario",
+ "seed": 2403,
+ "power": {
+  "Nf10": {
+   "SEL_superiority_power_at_0.005": 0.0,
+   "SEL_equivalence_power_at_0": 0.0,
+   "LEVEL_improvement_power_at_0.01": 1.0,
+   "LEVEL_one_point_power_at_0.02": 0.9998,
+   "LEVEL_improvement_power_two_clusters_0.011": 1.0,
+   "LEVEL_false_direction_bounded_beta_null": 0.0006
+  },
+  "Nf5": {
+   "SEL_superiority_power_at_0.005": 0.0,
+   "SEL_equivalence_power_at_0": 0.0,
+   "LEVEL_improvement_power_at_0.01": 0.9985,
+   "LEVEL_one_point_power_at_0.02": 0.7438,
+   "LEVEL_improvement_power_two_clusters_0.011": 0.9976,
+   "LEVEL_false_direction_bounded_beta_null": 0.0007
+  }
+ },
+ "note": "recomputed from development_results_v2.json after the declared-not-estimable rule fix (commit follows); values unchanged"
+}

@@ -790,8 +790,10 @@ def _passes(r: dict, fam: str, m: float, alpha: float, cov_nom: float) -> bool:
     if exp.get("validator"):
         return d["validator"] == reps and pm["false_claim_rate"] == 0.0
     if exp.get("not_estimable"):
+        # NOT ESTIMABLE whenever a required input is non-finite; a replication with no undefined
+        # cell (possible at 10% per cell on 80 cells) is legitimately inferential and must not claim falsely
         key = "sel_not_estimable" if fam == "SEL" else "lvl_not_estimable"
-        return d[key] == reps and pm["false_claim_rate"] == 0.0
+        return d[key] + r[fam]["n_inferential"] == reps and d[key] > 0 and pm["false_claim_rate"] == 0.0
     comp = exp["comparator_not_estimable"]
     ok = d["comparators_not_estimable"][comp] == r[fam]["n_inferential"] and pm["false_claim_rate"] == 0.0
     if exp.get("regular_otherwise"):
