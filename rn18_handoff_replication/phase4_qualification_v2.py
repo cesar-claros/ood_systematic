@@ -84,6 +84,9 @@ from rn18_handoff_replication.rn18_analysis import FINE_N, ho_source
 
 SIM = Path("rn18_handoff_replication/simulations")
 SEED_DEV, SEED_AUDIT = 2403, 2404
+SEEDS_V3 = (2405, 2406)                 # amendment: tie-regime scope ladder, fresh seeds
+MANIFEST_VERSION = 2
+TIE_LADDER = (0.0, 0.1, 0.25, 0.5, 0.9)
 MULTS = (1.0, 1.1, 1.25, 1.5, 2.0)
 N_FS = (10, 5)
 SOURCES = ("cifar10", "cifar100", "supercifar100", "tinyimagenet")
@@ -163,8 +166,19 @@ def scenarios() -> list[dict]:
     add("dep_dropout_two_clusters", "correction", level_target=0.011, dropout_ratio=2.1)
     add("pred_p00_degenerate_always_ctm", "correction", comp_mode="degenerate_ctm", p00_bias=0.3)
     add("dist_family_outlier", "correction", family_outlier=True)
-    assert len(S) == 47 and sum(s["held_out"] for s in S) == 3
+    if MANIFEST_VERSION >= 3:                                   # amendment (2026-09-11): tie-regime scope ladder
+        add("metric_ties_0.1", "tie_ladder", ties_frac=0.1)
+        add("metric_ties_0.25", "tie_ladder", ties_frac=0.25)
+        add("metric_ties_0.5", "tie_ladder", ties_frac=0.5)
+        assert len(S) == 50 and sum(s["held_out"] for s in S) == 3
+    else:
+        assert len(S) == 47 and sum(s["held_out"] for s in S) == 3
     return S
+
+
+def tie_level(sc_or_params) -> float:
+    P = sc_or_params.get("params", sc_or_params)
+    return float(P.get("ties_frac", 0.0))
 
 
 # ---------------------------------------------------------------------------
@@ -807,31 +821,56 @@ def _nonest_ok(r: dict, fam: str) -> bool:
     return (r["reps"] - r[fam]["n_inferential"]) / r["reps"] < 0.01
 
 
+def _all_pass(rs, fam, m, alpha):
+    return all(_passes(r, fam, m, alpha, 1 - alpha) and _nonest_ok(r, fam) for r in rs)
+
+
 def select_multipliers(dev: dict) -> dict:
-    out = {}
+    """Version 2 rule: smallest multiplier passing every non-held-out scenario.
+    Version 3 (amendment 2026-09-11): for SEL the tie-ladder scenarios define a
+    SCOPE: tau* is the largest ladder level such that some multiplier passes
+    every scenario with tie fraction <= tau* (lower levels included); the
+    multiplier is the smallest such one and the license is declared over
+    panels whose frozen-arm tie fraction is <= tau*. LEVEL does not use the
+    margin; its rule is unchanged."""
+    out, scope = {}, {}
     for fam, alpha in (("SEL", R.ALPHA_SEL), ("LEVEL", R.ALPHA_LEVEL)):
         for N_f in N_FS:
-            chosen = None
-            for m in MULTS:
-                if all(_passes(r, fam, m, alpha, 1 - alpha) and _nonest_ok(r, fam) for r in dev["inferential"] if r["N_f"] == N_f):
-                    chosen = m; break
-            out[f"{fam}_Nf{N_f}"] = chosen
+            rs = [r for r in dev["inferential"] if r["N_f"] == N_f]
+            if fam == "SEL" and MANIFEST_VERSION >= 3:
+                chosen, tau = None, None
+                for level in TIE_LADDER:
+                    sub = [r for r in rs if tie_level(r["params"]) <= level]
+                    m_ok = next((m for m in MULTS if _all_pass(sub, fam, m, alpha)), None)
+                    if m_ok is None:
+                        break
+                    chosen, tau = m_ok, level
+                out[f"{fam}_Nf{N_f}"] = chosen; scope[f"{fam}_Nf{N_f}"] = tau
+            else:
+                out[f"{fam}_Nf{N_f}"] = next((m for m in MULTS if _all_pass(rs, fam, m, alpha)), None)
+    out["_scope_max_tie_fraction"] = scope
     return out
 
 
 def licenses(audit: dict, mults: dict) -> dict:
     out = {}
+    scope = mults.get("_scope_max_tie_fraction", {})
     for fam, alpha in (("SEL", R.ALPHA_SEL), ("LEVEL", R.ALPHA_LEVEL)):
         for N_f in N_FS:
-            m = mults.get(f"{fam}_Nf{N_f}")
+            key = f"{fam}_Nf{N_f}"
+            m = mults.get(key)
+            tau = scope.get(key) if (fam == "SEL" and MANIFEST_VERSION >= 3) else None
+            rs = [r for r in audit["inferential"] if r["N_f"] == N_f and (tau is None or tie_level(r["params"]) <= tau)]
             if m is None:
-                out[f"{fam}_Nf{N_f}"] = {"licensed": False, "multiplier": None, "reason": "no multiplier passed development",
-                                         "failed_scenarios": [r["scenario"] for r in audit["inferential"] if r["N_f"] == N_f
-                                                              and not _passes(r, fam, MULTS[-1], alpha, 1 - alpha)]}
+                out[key] = {"licensed": False, "multiplier": None, "reason": "no multiplier passed development",
+                            "failed_scenarios": [r["scenario"] for r in audit["inferential"] if r["N_f"] == N_f and not _passes(r, fam, MULTS[-1], alpha, 1 - alpha)]}
                 continue
-            fails = [r["scenario"] for r in audit["inferential"] if r["N_f"] == N_f and not _passes(r, fam, m, alpha, 1 - alpha)]
-            fails += [r["scenario"] + " (non-estimable >= 1%)" for r in audit["inferential"] if r["N_f"] == N_f and not _nonest_ok(r, fam)]
-            out[f"{fam}_Nf{N_f}"] = {"licensed": not fails, "multiplier": m, "failed_scenarios": fails}
+            fails = [r["scenario"] for r in rs if not _passes(r, fam, m, alpha, 1 - alpha)]
+            fails += [r["scenario"] + " (non-estimable >= 1%)" for r in rs if not _nonest_ok(r, fam)]
+            out[key] = {"licensed": not fails, "multiplier": m, "failed_scenarios": fails}
+            if tau is not None:
+                out[key]["scope"] = {"max_tie_fraction": tau, "rule": "licensed for panels whose frozen-arm tie fraction is <= max_tie_fraction (amendment 2026-09-11)",
+                                     "excluded_ladder_levels": [lv for lv in TIE_LADDER if lv > tau]}
     return out
 
 
@@ -856,16 +895,18 @@ def _job(args):
     return (kind, run_ho(sc, seed, reps_ho, reps_band) if kind == "ho" else run_inferential(sc, N_f, seed, reps))
 
 
-def stage(name: str, reps: int, reps_ho: int, reps_band: int, workers: int = 1) -> dict:
+def stage(name: str, reps: int, reps_ho: int, reps_band: int, workers: int = 1, skip_ho: bool = False) -> dict:
     from concurrent.futures import ProcessPoolExecutor, as_completed
-    seed = SEED_DEV if name == "dev" else SEED_AUDIT
-    res = {"stage": name, "seed": seed, "reps": reps, "reps_ho": reps_ho, "reps_band": reps_band, "workers": workers, "inferential": [], "ho": []}
+    seed = (SEED_DEV if name == "dev" else SEED_AUDIT) if MANIFEST_VERSION < 3 else (SEEDS_V3[0] if name == "dev" else SEEDS_V3[1])
+    res = {"stage": name, "manifest_version": MANIFEST_VERSION, "seed": seed, "reps": reps, "reps_ho": reps_ho, "reps_band": reps_band, "workers": workers,
+           "inferential": [], "ho": [], "ho_carried_from_version_2": skip_ho}
     jobs = []
     for sc in scenarios():
         if name == "dev" and sc["held_out"]:
             continue
         if sc["params"]["ho"] is not None:
-            jobs.append(("ho", sc, seed, reps, reps_ho, reps_band, None))
+            if not skip_ho:
+                jobs.append(("ho", sc, seed, reps, reps_ho, reps_band, None))
         else:
             for N_f in N_FS:
                 jobs.append(("inf", sc, seed, reps, reps_ho, reps_band, N_f))
@@ -952,36 +993,44 @@ def main() -> None:
     ap.add_argument("--reps-ho", type=int, default=2000)
     ap.add_argument("--reps-band", type=int, default=50)
     ap.add_argument("--workers", type=int, default=1)
+    ap.add_argument("--manifest-version", type=int, choices=(2, 3), default=2, dest="mv")
+    ap.add_argument("--skip-ho", action="store_true", dest="skip_ho", help="version 3: carry the version-2 HO operating characteristics (HO fixtures have no tie parameter)")
     args = ap.parse_args()
     if args.self_test:
         self_test(); return
+    global MANIFEST_VERSION
+    MANIFEST_VERSION = args.mv
+    V = f"v{MANIFEST_VERSION}"
+    seeds = {"dev": SEED_DEV, "audit": SEED_AUDIT} if MANIFEST_VERSION < 3 else {"dev": SEEDS_V3[0], "audit": SEEDS_V3[1]}
     SIM.mkdir(parents=True, exist_ok=True)
     if args.write_manifest:
-        man = {"plan": "v3 section 7.2 + correction 2026-09-09 (status-review F2, F11)", "version": 2, "n_scenarios": 47,
-               "held_out": [s["name"] for s in scenarios() if s["held_out"]], "seeds": {"dev": SEED_DEV, "audit": SEED_AUDIT},
-               "scenario_keys": {s["name"]: skey(s["name"]) for s in scenarios()}, "multipliers": MULTS, "N_f": N_FS,
+        man = {"plan": "v3 section 7.2 + correction 2026-09-09 (status-review F2, F11)" + ("" if MANIFEST_VERSION < 3 else " + tie-regime scope amendment 2026-09-11"),
+               "version": MANIFEST_VERSION, "n_scenarios": len(scenarios()), "held_out": [s["name"] for s in scenarios() if s["held_out"]], "seeds": seeds,
+               "scenario_keys": {s["name"]: skey(s["name"]) for s in scenarios()}, "multipliers": MULTS, "N_f": N_FS, "tie_ladder": (TIE_LADDER if MANIFEST_VERSION >= 3 else None),
                "reps_inferential": 10000, "reps_ho": 2000, "reps_band_at_declared_b": 50, "reference_cells": REF_REPS * 160,
                "reader": "rn18_analysis_v2.py", "scenarios": scenarios()}
         text = json.dumps(man, indent=1, default=str)
-        (SIM / "design_manifest_v2.json").write_text(text)
-        print("design_manifest_v2.json sha256", hashlib.sha256(text.encode()).hexdigest())
+        (SIM / f"design_manifest_{V}.json").write_text(text)
+        print(f"design_manifest_{V}.json sha256", hashlib.sha256(text.encode()).hexdigest())
         return
     if args.stage == "dev":
-        dev = stage("dev", args.reps, args.reps_ho, args.reps_band, args.workers)
+        dev = stage("dev", args.reps, args.reps_ho, args.reps_band, args.workers, args.skip_ho)
         mults = select_multipliers(dev)
-        (SIM / "development_results_v2.json").write_text(json.dumps(dev, indent=1, default=str))
-        (SIM / "development_critical_values_v2.json").write_text(json.dumps({"multipliers": mults, "rule": f"smallest in {MULTS} passing every non-held-out scenario",
-                                                                             "seed": SEED_DEV, "power": power_report(dev, mults)}, indent=1))
+        (SIM / f"development_results_{V}.json").write_text(json.dumps(dev, indent=1, default=str))
+        (SIM / f"development_critical_values_{V}.json").write_text(json.dumps({"multipliers": mults, "rule": f"smallest in {MULTS} passing every non-held-out scenario" + ("" if MANIFEST_VERSION < 3 else " within the SEL tie scope"),
+                                                                               "seed": seeds["dev"], "power": power_report(dev, mults)}, indent=1))
         print("multipliers:", mults)
     elif args.stage == "audit":
-        mults = json.loads((SIM / "development_critical_values_v2.json").read_text())["multipliers"]
-        audit = stage("audit", args.reps, args.reps_ho, args.reps_band, args.workers)
+        mults = json.loads((SIM / f"development_critical_values_{V}.json").read_text())["multipliers"]
+        audit = stage("audit", args.reps, args.reps_ho, args.reps_band, args.workers, args.skip_ho)
+        if args.skip_ho:
+            audit["ho"] = json.loads((SIM / "audit_results_v2.json").read_text())["ho"]
         lic = licenses(audit, mults)
-        (SIM / "audit_results_v2.json").write_text(json.dumps(audit, indent=1, default=str))
-        (SIM / "qualification_report_v2.json").write_text(json.dumps({"version": 2, "licenses": lic, "multipliers": mults, "seed": SEED_AUDIT,
-                                                                        "power": power_report(audit, mults), "ho_operating_characteristics": audit["ho"],
-                                                                        "correction_of": "simulations/qualification_report.json (version 1, preserved)"}, indent=1, default=str))
-        (SIM / "sample_size_decision_v2.json").write_text(json.dumps({"N_f_fixed": {"SEL_LEVEL": 10, "ORG_descriptive": 5}, "no_sample_size_selection": True, "licenses": lic}, indent=1))
+        (SIM / f"audit_results_{V}.json").write_text(json.dumps(audit, indent=1, default=str))
+        (SIM / f"qualification_report_{V}.json").write_text(json.dumps({"version": MANIFEST_VERSION, "licenses": lic, "multipliers": mults, "seed": seeds["audit"],
+                                                                          "power": power_report(audit, mults), "ho_operating_characteristics": audit["ho"],
+                                                                          "correction_of": "simulations/qualification_report.json (version 1, preserved)" + ("" if MANIFEST_VERSION < 3 else "; version 2 preserved; version 3 = tie-regime scope amendment 2026-09-11")}, indent=1, default=str))
+        (SIM / f"sample_size_decision_{V}.json").write_text(json.dumps({"N_f_fixed": {"SEL_LEVEL": 10, "ORG_descriptive": 5}, "no_sample_size_selection": True, "licenses": lic}, indent=1))
         print(json.dumps(lic, indent=1))
 
 

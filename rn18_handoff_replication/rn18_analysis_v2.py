@@ -76,7 +76,7 @@ ROOT = Path("rn18_handoff_replication")
 FREEZE = ROOT / "FREEZE.json"
 PANEL = ROOT / "manifests/expected_panel.json"
 QUAL_V1 = ROOT / "simulations/qualification_report.json"
-QUAL_V2 = ROOT / "simulations/qualification_report_v2.json"
+QUAL_V2 = ROOT / "simulations/qualification_report_v2.json"          # default license; --license overrides (e.g. the amended version 3)
 AUDIT_V1 = ROOT / "simulations/audit_results.json"
 REPORT_V1 = OUT / "rn18_report.json"
 READER_OF_RECORD_SHA = "c50c47fa8ff2b230" + ""     # prefix; full value checked below
@@ -174,9 +174,10 @@ def validate(recs: list[dict], vgg_recs: list[dict], p1: dict, axes: dict, requi
         if set(q2.get("licenses", {})) != {"SEL_Nf10", "SEL_Nf5", "LEVEL_Nf10", "LEVEL_Nf5"}:
             raise ValidationFailure("licenses_v2", {"families": sorted(q2.get("licenses", {}))})
         # an unlicensed family is NOT fatal: the plan makes that endpoint descriptive (alpha unused)
-        rep["checks"]["license_v2"] = {"path": str(QUAL_V2), "sha256": sha(QUAL_V2), "seed": q2.get("seed"),
+        rep["checks"]["license_v2"] = {"path": str(QUAL_V2), "version": q2.get("version"), "sha256": sha(QUAL_V2), "seed": q2.get("seed"),
                                        "licensed": {k: v["multiplier"] for k, v in q2["licenses"].items() if v.get("licensed")},
-                                       "unlicensed": {k: v.get("failed_scenarios") for k, v in q2["licenses"].items() if not v.get("licensed")}}
+                                       "unlicensed": {k: v.get("failed_scenarios") for k, v in q2["licenses"].items() if not v.get("licensed")},
+                                       "scopes": {k: v.get("scope") for k, v in q2["licenses"].items() if v.get("scope")}}
     elif require_v2_license:
         rep["checks"]["license_v2"] = "ABSENT: readout withheld (repair item P1-B pending)"
     # 4. complete expected key set
@@ -513,11 +514,11 @@ def _load_all():
     return axes, recs, vgg_recs, p1
 
 
-def run(b: int, validate_only: bool) -> None:
+def run(b: int, validate_only: bool, out_stem: str = "rn18_report_v2") -> None:
     axes, recs, vgg_recs, p1 = _load_all()
     val = validate(recs, vgg_recs, p1, axes)
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "rn18_report_v2_validation.json").write_text(json.dumps(val, indent=1, default=str))
+    (OUT / f"{out_stem}_validation.json").write_text(json.dumps(val, indent=1, default=str))
     print(json.dumps({k: (v if k != "checks" else {kk: ("ok" if isinstance(vv, dict) else vv) for kk, vv in v.items()})
                       for k, v in val.items()}, indent=1, default=str))
     if validate_only:
@@ -532,6 +533,17 @@ def run(b: int, validate_only: bool) -> None:
     df = add_geometry_percentile(cells_from_records(recs, axes, with_p10=True))
     vgg, vgg_aug = vgg_table_det(axes), vgg_table(axes)
     ce = df[df.component == "standalone_ce"]; ce0 = ce[ce.dropout == 0]
+    # scoped licenses (amendment 2026-09-11): a SEL license declared over panels with frozen-arm tie fraction <= tau*
+    applicability = {}
+    for k, panel in (("SEL_Nf10", ce), ("SEL_Nf5", ce0)):
+        sc = lic2[k].get("scope")
+        if sc and m[k] is not None:
+            p00 = choice_prob(panel.M.values)
+            tie_frac = float(np.mean(p00 == 0.5)) if np.isfinite(p00).all() else float("nan")
+            ok = bool(np.isfinite(tie_frac) and tie_frac <= sc["max_tie_fraction"])
+            applicability[k] = {"observed_tie_fraction": tie_frac, "max_tie_fraction": sc["max_tie_fraction"], "within_scope": ok}
+            if not ok:
+                m[k] = None; fl[k] = [f"OUT OF SCOPE: observed tie fraction {tie_frac:.4f} > {sc['max_tie_fraction']}"]
     comp_A, comp_A_aug = Comparators(vgg, "dA"), Comparators(vgg_aug, "dA")
     pool = df[df.component == "paradigm_pool"]
     ho = ho_endpoint(df, b); ho["evidence_class"] = EVIDENCE["HO"]
@@ -539,7 +551,8 @@ def run(b: int, validate_only: bool) -> None:
               "denominators": {"n_records": len(recs), "n_cells": int(len(df)),
                                "per_source_checkpoints": df.groupby("source").cell.nunique().to_dict(),
                                "ce_families": sorted(ce.family.unique()), "vgg_checkpoints_primary_view": int(vgg.cell.nunique()),
-                               "vgg_checkpoints_aug_view": int(vgg_aug.cell.nunique()), "multipliers_v2": m, "licenses_v2": lic2},
+                               "vgg_checkpoints_aug_view": int(vgg_aug.cell.nunique()), "multipliers_v2": m, "licenses_v2": lic2,
+                               "license_file": str(QUAL_V2), "scope_applicability": applicability},
               "HO": ho,
               "SEL_ce": sel_endpoint(ce, comp_A, m["SEL_Nf10"], EVIDENCE["SEL"], fl["SEL_Nf10"]),
               "SEL_ce_do0_sensitivity_Nf5": sel_endpoint(ce0, comp_A, m["SEL_Nf5"], EVIDENCE["sensitivity"], fl["SEL_Nf5"]),
@@ -555,8 +568,8 @@ def run(b: int, validate_only: bool) -> None:
               "comparator_fits": {"primary_view": comp_A.summary(), "aug_view": comp_A_aug.summary()},
               "comparator_specification": {"primary_view": comparator_dump(comp_A, vgg), "aug_view": comparator_dump(comp_A_aug, vgg_aug)}}
     report["correction_record"] = correction_record(report)
-    (OUT / "rn18_report_v2.json").write_text(json.dumps(report, indent=1, default=str))
-    (OUT / "rn18_report_v2.md").write_text("# rn18_report_v2\n\n```\n" + json.dumps(report, indent=1, default=str) + "\n```\n")
+    (OUT / f"{out_stem}.json").write_text(json.dumps(report, indent=1, default=str))
+    (OUT / f"{out_stem}.md").write_text(f"# {out_stem}\n\n```\n" + json.dumps(report, indent=1, default=str) + "\n```\n")
     print(json.dumps({"HO_global": report["HO"]["global"], "SEL": report["SEL_ce"]["verdict"],
                       "LEVEL": report["LEVEL_ce"].get("verdict"),
                       "conclusions_changed": report["correction_record"]["conclusions_changed"]}, indent=1, default=str))
@@ -626,11 +639,16 @@ def main() -> None:
     ap.add_argument("--b", type=int, default=2000)
     ap.add_argument("--self-test", action="store_true", dest="self_test")
     ap.add_argument("--validate-only", action="store_true", dest="validate_only")
+    ap.add_argument("--license", type=Path, default=None, help="license file (default simulations/qualification_report_v2.json)")
+    ap.add_argument("--out", default="rn18_report_v2", help="output stem under outputs/ (default rn18_report_v2)")
     args = ap.parse_args()
     if args.self_test:
         self_test()
     else:
-        run(args.b, args.validate_only)
+        global QUAL_V2
+        if args.license is not None:
+            QUAL_V2 = args.license
+        run(args.b, args.validate_only, args.out)
 
 
 if __name__ == "__main__":

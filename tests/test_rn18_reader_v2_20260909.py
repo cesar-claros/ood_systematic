@@ -65,6 +65,8 @@ def scratch(tmp_path, monkeypatch):
     monkeypatch.setattr(v2, "QUAL_V1", root / "simulations/qualification_report.json")
     monkeypatch.setattr(v2, "QUAL_V2", root / "simulations/qualification_report_v2.json")
     monkeypatch.setattr(v2, "AUDIT_V1", root / "simulations/audit_results.json")
+    for extra in ("qualification_report_v2.json", "qualification_report_v3.json"):   # the withheld path needs no version-2 license present
+        (root / "simulations" / extra).unlink(missing_ok=True)
     return root
 
 
@@ -80,7 +82,7 @@ def test_validator_passes_on_untampered_copy(scratch):
     assert rep["checks"]["key_set"] == {"n_expected": 384, "n_present": 384, "missing": 0, "extra": 0, "bad_fields": 0}
     assert rep["checks"]["denominators"]["rn18_records"] == 96 and rep["checks"]["families"]["n"] == 10
     assert "reader_of_record_discrepancy" in rep["checks"]            # the recorded c7d1b98 serialization fix
-    assert rep["checks"]["license_v2"] is None or "ABSENT" in str(rep["checks"]["license_v2"])
+    assert "ABSENT" in str(rep["checks"]["license_v2"])
 
 
 @needs_artifacts
@@ -168,3 +170,18 @@ def test_decisions_use_full_precision():
     assert v2.sel_verdict(ivs).startswith("PRACTICALLY SUPERIOR")
     ivs[v2.REFERENCE] = [0.0019999, 0.01]
     assert v2.sel_verdict(ivs) == "UNRESOLVED"
+
+
+@needs_artifacts
+def test_scoped_license_applicability(scratch):
+    """A scoped SEL license applies only when the panel's frozen-arm tie fraction is within scope."""
+    lic = {"version": 3, "seed": 2406, "licenses": {
+        "SEL_Nf10": {"licensed": True, "multiplier": 1.1, "failed_scenarios": [], "scope": {"max_tie_fraction": 0.25, "rule": "test"}},
+        "SEL_Nf5": {"licensed": True, "multiplier": 2.0, "failed_scenarios": []},
+        "LEVEL_Nf10": {"licensed": False, "multiplier": None, "failed_scenarios": ["null_level_bounded_beta_family"]},
+        "LEVEL_Nf5": {"licensed": False, "multiplier": None, "failed_scenarios": ["null_level_bounded_beta_family"]}}}
+    (scratch / "simulations/qualification_report_v3.json").write_text(json.dumps(lic))
+    v2.QUAL_V2 = scratch / "simulations/qualification_report_v3.json"
+    axes, recs, vgg, p1 = _load()
+    rep = v2.validate(recs, vgg, p1, axes)
+    assert rep["checks"]["license_v2"]["scopes"]["SEL_Nf10"]["max_tie_fraction"] == 0.25
