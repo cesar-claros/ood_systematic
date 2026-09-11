@@ -1,0 +1,47 @@
+{
+ "N_f_fixed": {
+  "SEL_LEVEL": 10,
+  "ORG_descriptive": 5
+ },
+ "no_sample_size_selection": true,
+ "licenses": {
+  "SEL_Nf10": {
+   "licensed": true,
+   "multiplier": 1.5,
+   "failed_scenarios": [],
+   "scope": {
+    "max_tie_fraction": 0.5,
+    "rule": "licensed for panels whose frozen-arm tie fraction is <= max_tie_fraction (amendment 2026-09-11)",
+    "excluded_ladder_levels": [
+     0.9
+    ]
+   }
+  },
+  "SEL_Nf5": {
+   "licensed": true,
+   "multiplier": 2.0,
+   "failed_scenarios": [],
+   "scope": {
+    "max_tie_fraction": 0.9,
+    "rule": "licensed for panels whose frozen-arm tie fraction is <= max_tie_fraction (amendment 2026-09-11)",
+    "excluded_ladder_levels": []
+   }
+  },
+  "LEVEL_Nf10": {
+   "licensed": false,
+   "multiplier": null,
+   "reason": "no multiplier passed development",
+   "failed_scenarios": [
+    "null_level_bounded_beta_family"
+   ]
+  },
+  "LEVEL_Nf5": {
+   "licensed": false,
+   "multiplier": null,
+   "reason": "no multiplier passed development",
+   "failed_scenarios": [
+    "null_level_bounded_beta_family"
+   ]
+  }
+ }
+}
