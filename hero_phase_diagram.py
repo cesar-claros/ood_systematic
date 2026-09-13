@@ -283,6 +283,59 @@ def panel_heldout(ax) -> None:
               title="held-out source", title_fontsize=6.4)
 
 
+
+# Restructured 2026-09-12 (evaluation of 2026-09-11, section 6): panel C shows
+# the PROSPECTIVE verdict on the four unseen shift families and the four
+# ResNet-18 source verdicts, instead of the historical fixed-suite regression.
+# Sources: nc_csf_predictivity/outputs/track1/icml_campaign_report.json (E1,
+# registered AUGRC target), rn18_handoff_replication/outputs/
+# target_aligned_audit.json (AUROC target; refit-bootstrap intervals),
+# rn18_report_v2.json (HO verdicts).
+PROSPECTIVE = {
+    "targets": ["AUGRC gap\n(registered)", "AUROC gap\n(theory)"],
+    "frozen": [0.578, 0.518], "severity": [0.717, 0.697],
+    "diff": ["$-0.14$\n[$-0.22, -0.08$]", "$-0.18$\n[$-0.23, -0.12$]"],
+    "n_material": [346, 904],
+}
+RN18_VERDICTS = {  # per source, registered AUGRC target / AUROC target
+    "sources": ["CIFAR-10", "CIFAR-100", "SuperCIFAR-100", "Tiny-ImageNet"],
+    "AUGRC": ["U", "R", "U", "U"], "AUROC": ["R", "N", "N", "N"],
+}
+
+
+def panel_prospective(ax) -> None:
+    """Panel C: left, material-cell winner accuracy of the frozen closed forms
+    against the severity baseline refitted inside every bootstrap replicate,
+    on the four shift families never used before (280 VGG-13 checkpoints),
+    for the registered target and for the theory's target; right, the
+    ResNet-18 replication's per-source ordering verdicts under both targets
+    (R retained, N informative but not retained, U uninformative)."""
+    x = np.array([0.0, 0.95]); width = 0.34
+    ax.bar(x - width / 2, PROSPECTIVE["frozen"], width, color=VIRIDIS(0.85), label="frozen closed forms")
+    ax.bar(x + width / 2, PROSPECTIVE["severity"], width, color=VIRIDIS(0.45), label="severity baseline (refit)")
+    for i in range(2):
+        ax.annotate(PROSPECTIVE["diff"][i], xy=(x[i], max(PROSPECTIVE["frozen"][i], PROSPECTIVE["severity"][i]) + 0.025), ha="center", fontsize=5.6)
+        ax.annotate(f"n={PROSPECTIVE['n_material'][i]}", xy=(x[i], 0.03), ha="center", fontsize=5.6, color="white")
+    ax.plot([-0.55, 1.5], [0.5, 0.5], color="black", linewidth=0.6, linestyle=":")
+    ax.set_xticks(x); ax.set_xticklabels(PROSPECTIVE["targets"], fontsize=6.6)
+    ax.set_ylim(0, 1.0); ax.set_xlim(-0.55, 4.3)
+    ax.set_ylabel("winner accuracy on material cells\n(4 unseen shift families, 280 ckpts)", fontsize=7.0)
+    ax.legend(fontsize=5.8, loc="upper left", frameon=False, bbox_to_anchor=(-0.02, 1.02), handlelength=1.2)
+    # right: ResNet-18 per-source verdict grid
+    x0, cell_w, cell_h, y0 = 2.75, 0.62, 0.105, 0.82
+    colors = {"R": VIRIDIS(0.25), "N": VIRIDIS(0.7), "U": "0.85"}
+    ax.annotate("ResNet-18 replication (96 ckpts)", xy=(x0 + cell_w, y0 + cell_h * 1.25), ha="center", fontsize=6.2)
+    for j, tgt in enumerate(("AUGRC", "AUROC")):
+        ax.annotate(tgt, xy=(x0 + (j + 0.5) * cell_w, y0 + cell_h * 0.45), ha="center", fontsize=6.0)
+        for i, src in enumerate(RN18_VERDICTS["sources"]):
+            v = RN18_VERDICTS[tgt][i]; y = y0 - (i + 1) * cell_h
+            ax.add_patch(plt.Rectangle((x0 + j * cell_w, y), cell_w, cell_h, facecolor=colors[v], edgecolor="white", linewidth=1.0, clip_on=False))
+            ax.annotate(v, xy=(x0 + (j + 0.5) * cell_w, y + cell_h / 2), ha="center", va="center", fontsize=7.0, color="white" if v != "U" else "0.3", fontweight="bold")
+            if j == 0:
+                ax.annotate(src, xy=(x0 - 0.05, y + cell_h / 2), ha="right", va="center", fontsize=5.6)
+    ax.annotate("R retained, N not retained,\nU uninformative (no crossing)", xy=(x0 + cell_w, y0 - 4.75 * cell_h), ha="center", va="top", fontsize=5.6)
+
+
 def panel_c(ax, curves_path=None, xlabel=None) -> None:
     """Audit-11 + severity-amendment panel B: the pooled first-handoff
     curve and the CIFAR-100 case-study strata, read from the precomputed
@@ -352,8 +405,8 @@ def main() -> None:
     # visible); B = the empirical geometry-ordered pattern; C = the held-out
     # verdict with per-source heterogeneity. The self-duality surface moves
     # to its own figure (appendix).
-    fig = plt.figure(figsize=(11.6, 3.5))
-    gs = fig.add_gridspec(1, 4, width_ratios=[1.15, 0.05, 1.2, 1.0],
+    fig = plt.figure(figsize=(12.6, 3.5))
+    gs = fig.add_gridspec(1, 4, width_ratios=[1.1, 0.05, 1.15, 1.45],
                           wspace=0.45)
     ax_a = fig.add_subplot(gs[0, 0])
     ax_cb = fig.add_subplot(gs[0, 1])
@@ -369,12 +422,12 @@ def main() -> None:
 
     print("panel B (pooled + case study) ...")
     panel_c(ax_b)
-    ax_b.set_title("B. Pooled handoff + CIFAR-100 strata (KID)",
-                   fontsize=10, loc="left")
+    ax_b.set_title("B. Pooled handoff + CIFAR-100 strata",
+                   fontsize=9.5, loc="left")
 
-    print("panel C (held-out verdict) ...")
-    panel_heldout(ax_c)
-    ax_c.set_title("C. Held-out validation", fontsize=10, loc="left")
+    print("panel C (prospective verdict) ...")
+    panel_prospective(ax_c)
+    ax_c.set_title("C. Prospective verdict, RN18 replication", fontsize=9.5, loc="left")
 
     cbar = fig.colorbar(pcm, cax=ax_cb)
     cbar.set_label("CTM advantage (AUROC)", fontsize=8)
