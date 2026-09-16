@@ -110,20 +110,37 @@ def synthetic_data(n_cls, n_fit, n_val, n_test, n_ood, seed, img=32):
     return {"fit": (x_fit, y_fit), "val": (x_val, y_val), "test": (x_te, y_te)}, {"shift": x_shift, "noise": x_noise}
 
 
-def cifar100_data(n_cls, n_fit, n_val, n_test, n_ood, seed, root):
-    """HPC path. Images are kept as uint8 tensors at native size (CIFAR/SVHN 32 px, DTD resized to 224 px) and resized plus
-    normalized on the device per batch, so host memory stays at a few hundred megabytes instead of tens of gigabytes."""
+def _first(candidates, ctor):
+    """Return (dataset, path) for the first candidate root the torchvision constructor accepts."""
+    for r in candidates:
+        if not r: continue
+        try: return ctor(r), r
+        except Exception: continue
+    return None, None
+
+
+def cifar100_data(n_cls, n_fit, n_val, n_test, n_ood, seed, root, provenance: dict):
+    """HPC path. Resolves each set in torchvision layout under --data-root first, then in the FD-Shifts layout under
+    $DATASET_ROOT_DIR (SVHN as a torchvision root under svhn/; Textures as the bare dtd/images ImageFolder). Images are kept as
+    uint8 tensors at native size (CIFAR/SVHN 32 px, DTD resized to 224 px) and resized plus normalized on the device per batch."""
+    import os
     import torchvision, torchvision.transforms as T  # noqa: E401
-    to_u8 = T.Compose([T.PILToTensor()]); to_u8_224 = T.Compose([T.Resize(224), T.CenterCrop(224), T.PILToTensor()])
-    tr = torchvision.datasets.CIFAR100(root, train=True, download=False, transform=to_u8); te = torchvision.datasets.CIFAR100(root, train=False, download=False, transform=to_u8)
+    fd = os.environ.get("DATASET_ROOT_DIR"); to_u8 = T.Compose([T.PILToTensor()]); to_u8_224 = T.Compose([T.Resize(224), T.CenterCrop(224), T.PILToTensor()])
+    tr, p_tr = _first([root, fd, fd and os.path.join(fd, "cifar100")], lambda r: torchvision.datasets.CIFAR100(r, train=True, download=False, transform=to_u8))
+    if tr is None: raise FileNotFoundError(f"CIFAR-100 (torchvision layout) not found under {root} or $DATASET_ROOT_DIR={fd}")
+    te = torchvision.datasets.CIFAR100(p_tr, train=False, download=False, transform=to_u8); provenance["cifar100_root"] = p_tr
     g = np.random.default_rng(seed); idx = g.permutation(len(tr)); fit_idx, val_idx = idx[:n_fit], idx[n_fit:n_fit + n_val]
-    stack = lambda ds, ii: (torch.stack([ds[i][0] for i in ii]), torch.tensor([ds[i][1] for i in ii]))
+    stack = lambda ds, ii: (torch.stack([ds[i][0] for i in ii]), torch.tensor([int(ds[i][1]) for i in ii]))
     ood = {}
-    for name, ctor, tfm in [("svhn", lambda: torchvision.datasets.SVHN(root, split="test", download=False, transform=to_u8), None),
-                            ("dtd", lambda: torchvision.datasets.DTD(root, split="test", download=False, transform=to_u8_224), None)]:
-        try:
-            ds = ctor(); jj = g.permutation(len(ds))[:n_ood]; ood[name] = torch.stack([ds[i][0] for i in jj])
-        except Exception as e: print(f"OOD set {name} unavailable: {e}")
+    ds, p = _first([root, fd and os.path.join(fd, "svhn"), fd], lambda r: torchvision.datasets.SVHN(r, split="test", download=False, transform=to_u8))
+    if ds is not None: jj = g.permutation(len(ds))[:n_ood]; ood["svhn"] = torch.stack([ds[i][0] for i in jj]); provenance["svhn_root"] = p
+    else: print("OOD set svhn unavailable under --data-root or $DATASET_ROOT_DIR/svhn")
+    ds, p = _first([root], lambda r: torchvision.datasets.DTD(r, split="test", download=False, transform=to_u8_224))
+    if ds is None:
+        ds, p = _first([fd and os.path.join(fd, "dtd", "images"), os.path.join(root, "dtd", "images"), fd and os.path.join(fd, "textures", "images")],
+                       lambda r: torchvision.datasets.ImageFolder(r, transform=to_u8_224) if os.path.isdir(r) else (_ for _ in ()).throw(FileNotFoundError(r)))
+    if ds is not None: jj = g.permutation(len(ds))[:n_ood]; ood["dtd"] = torch.stack([ds[i][0] for i in jj]); provenance["dtd_root"] = p
+    else: print("OOD set dtd unavailable (torchvision DTD under --data-root, or dtd/images ImageFolder under $DATASET_ROOT_DIR)")
     return {"fit": stack(tr, fit_idx), "val": stack(tr, val_idx), "test": stack(te, g.permutation(len(te))[:n_test])}, ood
 
 
@@ -237,7 +254,8 @@ def main():
 
     t0 = time.perf_counter()
     if a.data == "synthetic": splits, ood = synthetic_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed)
-    else: splits, ood = cifar100_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed, a.data_root)
+    else:
+        ledger["data_provenance"] = {}; splits, ood = cifar100_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed, a.data_root, ledger["data_provenance"])
     n_cls = int(splits["fit"][1].max()) + 1; ids = {k: np.arange(len(v[0])) for k, v in splits.items()}; tick("data", t0, n_cls=n_cls)
 
     t0 = time.perf_counter(); backbone = build_backbone(a.backbone).to(dev)
