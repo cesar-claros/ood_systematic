@@ -283,7 +283,7 @@ def main():
         t0 = time.perf_counter(); hf = feats["fit"].numpy().astype(np.float64); yf = splits["fit"][1].numpy()
         fm = fit_feature_model(hf, yf, n_cls); pap = papyan_metrics(w_raw.numpy(), fm)
         m = {"step": step, **{f"nc_{k}": v for k, v in pap.items()}, "residue_energy_projector": d3.residue_energy_projector(hf, yf, n_cls),
-             "id_test_acc": float((model.head((feats["test"] - mu) / sd).argmax(1) == splits["test"][1]).float().mean())}
+             "id_test_acc": float(((((feats["test"] - mu) / sd) @ model.head.weight.detach().cpu().T + model.head.bias.detach().cpu()).argmax(1) == splits["test"][1]).float().mean())}
         if step == 0: ref["fit"] = hf
         else:
             m["paired_cka_fit"] = float(d3.paired_linear_cka(ref["fit"], hf, ids["fit"], ids["fit"]) if "paired_linear_cka" in dir(d3) else np.nan)
