@@ -201,7 +201,14 @@ def extract(model, x, batch, device, backbone="toy", amp=False):
     return torch.cat(out)
 
 
-AMP_DTYPE = torch.bfloat16 if (torch.cuda.is_available() and torch.cuda.is_bf16_supported()) else torch.float16
+def _bf16_native() -> bool:
+    """True only for native bf16 (compute capability 8.0+, e.g. A100); recent PyTorch reports emulated bf16 as supported on V100."""
+    if not torch.cuda.is_available(): return False
+    try: return bool(torch.cuda.is_bf16_supported(including_emulation=False))
+    except TypeError: return torch.cuda.get_device_capability()[0] >= 8
+
+
+AMP_DTYPE = torch.bfloat16 if _bf16_native() else torch.float16
 
 
 def principal_angle_cos(h_ref, h_cur, k):
