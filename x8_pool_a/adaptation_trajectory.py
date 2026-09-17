@@ -144,6 +144,50 @@ def cifar100_data(n_cls, n_fit, n_val, n_test, n_ood, seed, root, provenance: di
     return {"fit": stack(tr, fit_idx), "val": stack(tr, val_idx), "test": stack(te, g.permutation(len(te))[:n_test])}, ood
 
 
+TASKB = {"pets": ("OxfordIIITPet", {"train": {"split": "trainval"}, "test": {"split": "test"}}),
+         "food101": ("Food101", {"train": {"split": "train"}, "test": {"split": "test"}}),
+         "flowers102": ("Flowers102", {"train": {"split": "train"}, "test": {"split": "test"}}),
+         "eurosat": ("EuroSAT", None)}
+
+
+def torchvision_task_data(name, n_fit, n_val, n_test, n_ood, seed, root, provenance: dict):
+    """Task-B candidates (Oxford-IIIT Pets, Food-101, Flowers-102, EuroSAT) in torchvision layout under --data-root, images as
+    uint8 at 224 px (resize shorter side, center crop). EuroSAT has no official split: a seeded 80/20 split is made and recorded.
+    OOD sets resolve exactly as for cifar100 (SVHN, Textures)."""
+    import os
+    import torchvision, torchvision.transforms as T  # noqa: E401
+    cls_name, splits_kw = TASKB[name]; ctor = getattr(torchvision.datasets, cls_name)
+    to_u8_224 = T.Compose([T.Resize(224), T.CenterCrop(224), T.PILToTensor()]); g = np.random.default_rng(seed)
+    if splits_kw is None:
+        full = ctor(root, download=False, transform=to_u8_224); idx = g.permutation(len(full)); n_te = len(full) // 5
+        te_idx, tr_idx = idx[:n_te], idx[n_te:]; tr = te = full; provenance[f"{name}_split"] = "seeded 80/20 of the single EuroSAT set"
+    else:
+        tr = ctor(root, download=False, transform=to_u8_224, **splits_kw["train"]); te = ctor(root, download=False, transform=to_u8_224, **splits_kw["test"])
+        tr_idx = g.permutation(len(tr)); te_idx = g.permutation(len(te))
+    provenance[f"{name}_root"] = root; provenance[f"{name}_n_train_total"] = int(len(tr_idx)); provenance[f"{name}_n_test_total"] = int(len(te_idx))
+    n_val = min(n_val, len(tr_idx) // 5); fit_idx, val_idx = tr_idx[:min(n_fit, len(tr_idx) - n_val)], tr_idx[len(tr_idx) - n_val:]
+    stack = lambda ds, ii: (torch.stack([ds[i][0] for i in ii]), torch.tensor([int(ds[i][1]) for i in ii]))
+    splits = {"fit": stack(tr, fit_idx), "val": stack(tr, val_idx), "test": stack(te, te_idx[:n_test])}
+    ood = load_ood_sets(n_ood, g, root, provenance)
+    return splits, ood
+
+
+def load_ood_sets(n_ood, g, root, provenance):
+    import os
+    import torchvision, torchvision.transforms as T  # noqa: E401
+    fd = os.environ.get("DATASET_ROOT_DIR"); to_u8 = T.Compose([T.PILToTensor()]); to_u8_224 = T.Compose([T.Resize(224), T.CenterCrop(224), T.PILToTensor()]); ood = {}
+    ds, p = _first([root, fd and os.path.join(fd, "svhn"), fd], lambda r: torchvision.datasets.SVHN(r, split="test", download=False, transform=to_u8))
+    if ds is not None: jj = g.permutation(len(ds))[:n_ood]; ood["svhn"] = torch.stack([ds[i][0] for i in jj]); provenance["svhn_root"] = p
+    else: print("OOD set svhn unavailable under --data-root or $DATASET_ROOT_DIR/svhn")
+    ds, p = _first([root], lambda r: torchvision.datasets.DTD(r, split="test", download=False, transform=to_u8_224))
+    if ds is None:
+        ds, p = _first([fd and os.path.join(fd, "dtd", "images"), os.path.join(root, "dtd", "images"), fd and os.path.join(fd, "textures", "images")],
+                       lambda r: torchvision.datasets.ImageFolder(r, transform=to_u8_224) if os.path.isdir(r) else (_ for _ in ()).throw(FileNotFoundError(r)))
+    if ds is not None: jj = g.permutation(len(ds))[:n_ood]; ood["dtd"] = torch.stack([ds[i][0] for i in jj]); provenance["dtd_root"] = p
+    else: print("OOD set dtd unavailable (torchvision DTD under --data-root, or dtd/images ImageFolder under $DATASET_ROOT_DIR)")
+    return ood
+
+
 IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1); IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
 
 
@@ -242,7 +286,7 @@ def rank_normalize(scores_fit, scores):
 # ----------------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--backbone", default="toy"); ap.add_argument("--data", default="synthetic"); ap.add_argument("--data-root", default=str(pathlib.Path.home() / "data"))
+    ap.add_argument("--backbone", default="toy"); ap.add_argument("--data", default="synthetic", choices=["synthetic", "cifar100", "pets", "food101", "flowers102", "eurosat"]); ap.add_argument("--data-root", default=str(pathlib.Path.home() / "data"))
     ap.add_argument("--method", choices=["full", "lora"], default="lora"); ap.add_argument("--lora-rank", type=int, default=8); ap.add_argument("--lora-alpha", type=float, default=16)
     ap.add_argument("--lora-pattern", default=r"attn\.(qkv|proj)$"); ap.add_argument("--lr", type=float, default=1e-4); ap.add_argument("--steps", type=int, default=30)
     ap.add_argument("--checkpoints", default="0,15,30"); ap.add_argument("--batch", type=int, default=32); ap.add_argument("--seed", type=int, default=0)
@@ -254,8 +298,10 @@ def main():
 
     t0 = time.perf_counter()
     if a.data == "synthetic": splits, ood = synthetic_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed)
-    else:
+    elif a.data == "cifar100":
         ledger["data_provenance"] = {}; splits, ood = cifar100_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed, a.data_root, ledger["data_provenance"])
+    else:
+        ledger["data_provenance"] = {}; splits, ood = torchvision_task_data(a.data, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed, a.data_root, ledger["data_provenance"])
     n_cls = int(splits["fit"][1].max()) + 1; ids = {k: np.arange(len(v[0])) for k, v in splits.items()}; tick("data", t0, n_cls=n_cls)
 
     t0 = time.perf_counter(); backbone = build_backbone(a.backbone).to(dev)
