@@ -341,6 +341,7 @@ def rescore(a):
             sd_ = torch.load(run / f"ckpt_step{step}.pt", map_location=dev); missing, unexpected = model.load_state_dict(sd_, strict=False)
             if unexpected: raise SystemExit(f"unexpected keys in checkpoint {step}: {unexpected[:5]}")
         model.eval(); feats_ood = {k: extract(model, v, a.batch, dev, cfg["backbone"], a.amp) for k, v in ood.items()}
+        np.savez_compressed(run / f"rescore_features_{tag}_step{step}.npz", **{f"ood_{k}": v.numpy() for k, v in feats_ood.items()})
         h = {k: to_t(z[f"{k}_h"]) for k in ("fit", "val", "test")}; y = {k: torch.from_numpy(z[f"{k}_y"]).long() for k in ("fit", "val", "test")}
         w_raw = (model.head.weight / model.sd).detach().cpu(); b = model.head.bias.detach().cpu(); mu, sd = model.mu.cpu(), model.sd.cpu()
         all_confs, hp = fit_detectors(h["fit"].to(dev), y["fit"].to(dev), h["val"].to(dev), y["val"].to(dev), w_raw.to(dev), b.to(dev), mu.to(dev), sd.to(dev), n_cls, dev)

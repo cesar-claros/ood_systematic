@@ -21,8 +21,12 @@ def summarize(run: pathlib.Path) -> pd.DataFrame:
         id_norm = np.linalg.norm(test, axis=1); id_med = np.median(id_norm); id_d2 = ((test - mu) ** 2).sum(1).mean()
         rows.append({"step": step, "set": "ID_test", "n": len(test), "norm_mean": id_norm.mean(), "norm_median": id_med, "norm_cv": id_norm.std() / id_norm.mean(),
                      "ratio_to_id_mean": 1.0, "frac_below_id_median": 0.5, "dist2_to_id_mean": id_d2, "dist2_ratio": 1.0})
-        for k in [k for k in z.files if k.startswith("ood_")]:
-            o = z[k].astype(np.float64); n = np.linalg.norm(o, axis=1); d2 = ((o - mu) ** 2).sum(1).mean()
+        extra = {}
+        for rf in run.glob(f"rescore_features_*_step{step}.npz"):
+            zr = np.load(rf); extra.update({k: zr[k] for k in zr.files if k.startswith("ood_")})
+        sets = {k: z[k] for k in z.files if k.startswith("ood_")}; sets.update(extra)
+        for k, arr in sets.items():
+            o = arr.astype(np.float64); n = np.linalg.norm(o, axis=1); d2 = ((o - mu) ** 2).sum(1).mean()
             rows.append({"step": step, "set": k[4:], "n": len(o), "norm_mean": n.mean(), "norm_median": np.median(n), "norm_cv": n.std() / n.mean(),
                          "ratio_to_id_mean": n.mean() / id_norm.mean(), "frac_below_id_median": float((n < id_med).mean()), "dist2_to_id_mean": d2, "dist2_ratio": d2 / id_d2})
     df = pd.DataFrame(rows); df.to_csv(run / "norm_trajectories.csv", index=False); return df
