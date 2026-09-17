@@ -282,7 +282,10 @@ def main():
         w_raw = (model.head.weight / model.sd).detach().cpu(); b = model.head.bias.detach().cpu(); mu, sd = model.mu.cpu(), model.sd.cpu()
         t0 = time.perf_counter(); hf = feats["fit"].numpy().astype(np.float64); yf = splits["fit"][1].numpy()
         fm = fit_feature_model(hf, yf, n_cls); pap = papyan_metrics(w_raw.numpy(), fm)
+        norms = np.linalg.norm(hf, axis=1); norms_c = np.linalg.norm(hf - fm.class_means[yf] - hf.mean(0) if hasattr(fm, "class_means") else hf - hf.mean(0), axis=1)
         m = {"step": step, **{f"nc_{k}": v for k, v in pap.items()}, "residue_energy_projector": d3.residue_energy_projector(hf, yf, n_cls),
+             "feat_norm_mean": float(norms.mean()), "feat_norm_cv": float(norms.std() / norms.mean()),
+             "within_class_radius_mean": float(norms_c.mean()), "within_class_radius_cv": float(norms_c.std() / norms_c.mean()),
              "id_test_acc": float(((((feats["test"] - mu) / sd) @ model.head.weight.detach().cpu().T + model.head.bias.detach().cpu()).argmax(1) == splits["test"][1]).float().mean())}
         if step == 0: ref["fit"] = hf
         else:
