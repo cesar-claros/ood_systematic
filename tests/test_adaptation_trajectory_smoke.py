@@ -14,8 +14,9 @@ def test_trajectory_driver_runs(tmp_path):
            "--steps", "6", "--checkpoints", "0,3,6", "--n-fit", "120", "--n-val", "80", "--n-test", "60", "--n-ood", "60", "--out", str(out)]
     subprocess.run(cmd, check=True, cwd=CODE, capture_output=True, timeout=600)
     rows = pd.read_csv(out / "outcomes.csv"); meas = pd.read_csv(out / "measurements.csv")
-    assert rows.detector.nunique() == 20 and set(rows.variant) == {"adapted", "reference", "combined"}
+    assert rows.detector.nunique() == 20 and set(rows.variant) == {"adapted", "reference", "combined", "combined_w25", "combined_w75"}
     assert set(rows.step) == {0, 3, 6} and rows.groupby(["step", "variant"]).size().min() == 40
+    assert {"cm_cka_ref", "cc_cka_ref", "bc_overlap_ref"} <= set(meas.columns)
     assert {"residue_energy_projector", "nc_var_collapse", "paired_cka_fit", "total_drift_fit", "id_test_acc"} <= set(meas.columns)
     assert (out / "ledger.json").exists() and (out / "ckpt_step6.pt").exists() and (out / "features_step0.npz").exists()
     assert rows.auroc_allid.between(0, 1).all()

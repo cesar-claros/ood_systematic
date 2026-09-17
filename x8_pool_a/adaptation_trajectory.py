@@ -29,6 +29,7 @@ CODE_DIR = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(CODE_DIR)); sys.path.insert(0, str(CODE_DIR / "x8_pool_a")); sys.path.insert(0, str(CODE_DIR / "pilot0"))
 import pool_a_csfs as csf  # noqa: E402
 import descriptors_v3 as d3  # noqa: E402
+import retention as rt  # noqa: E402
 from geometry import fit_feature_model, papyan_metrics  # noqa: E402
 from src.rc_stats import RiskCoverageStats  # noqa: E402
 
@@ -161,6 +162,28 @@ def torchvision_task_data(name, n_fit, n_val, n_test, n_ood, seed, root, provena
     splits = {"fit": stack(tr, fit_idx), "val": stack(tr, val_idx), "test": stack(te, te_idx[:n_test])}
     ood = load_ood_sets(n_ood, g, root, provenance, names)
     return splits, ood
+
+
+def imagenet200_data(n_fit, n_val, n_test, n_ood, seed, root, provenance: dict, names=("ninco", "ssb_hard", "inaturalist", "dtd")):
+    """OpenOOD ImageNet-200 as a task: train/test image lists under $DATASET_ROOT_DIR/openood/data/benchmark_imglist/imagenet200,
+    images under images_largescale. Images stored as uint8 at 224 px. The companion project inspected ImageNet-200 outcomes for four
+    detectors; disclosed exposure."""
+    import os
+    import torchvision.transforms as T
+    from PIL import Image
+    fd = os.environ["DATASET_ROOT_DIR"]; base = os.path.join(fd, "openood", "data"); to_u8_224 = T.Compose([T.Resize(224), T.CenterCrop(224), T.PILToTensor()])
+    def read(lst):
+        items = []
+        for l in open(os.path.join(base, "benchmark_imglist", "imagenet200", lst)).read().splitlines():
+            if l.strip(): rel, lab = l.rsplit(" ", 1); items.append((os.path.join(base, "images_largescale", rel), int(lab)))
+        return items
+    tr, te = read("train_imagenet200.txt"), read("test_imagenet200.txt"); g = np.random.default_rng(seed)
+    tr_idx = g.permutation(len(tr)); te_idx = g.permutation(len(te))[:n_test]; n_val = min(n_val, len(tr) // 5)
+    fit_idx, val_idx = tr_idx[:min(n_fit, len(tr) - n_val)], tr_idx[len(tr) - n_val:]
+    load = lambda items, ii: (torch.stack([to_u8_224(Image.open(items[i][0]).convert("RGB")) for i in ii]), torch.tensor([items[i][1] for i in ii]))
+    provenance.update({"imagenet200_list_root": base, "imagenet200_n_train_total": len(tr), "imagenet200_n_test_total": len(te)})
+    splits = {"fit": load(tr, fit_idx), "val": load(tr, val_idx), "test": load(te, te_idx)}
+    return splits, load_ood_sets(n_ood, g, root, provenance, names)
 
 
 def load_ood_sets(n_ood, g, root, provenance, names=("svhn", "dtd")):
@@ -338,6 +361,7 @@ def rescore(a):
         model = Classifier(backbone, probe["mu"].detach(), probe["sd"].detach(), probe["W"].detach(), probe["b"].detach()).to(dev)
         if step > 0:
             if cfg["method"] == "lora": apply_lora(model.backbone, cfg["lora_rank"], cfg["lora_alpha"], cfg["lora_pattern"]); model.to(dev)
+            # partial and full arms load their saved weights into the freshly built model below
             sd_ = torch.load(run / f"ckpt_step{step}.pt", map_location=dev); missing, unexpected = model.load_state_dict(sd_, strict=False)
             if unexpected: raise SystemExit(f"unexpected keys in checkpoint {step}: {unexpected[:5]}")
         model.eval(); feats_ood = {k: extract(model, v, a.batch, dev, cfg["backbone"], a.amp) for k, v in ood.items()}
@@ -353,8 +377,9 @@ def rescore(a):
                 variants = {"adapted": (c_te[det], c_ood[det])}
                 if step > 0:
                     variants["reference"] = (ref["c_te"][det], ref["c_ood"][name][det])
-                    comb = lambda s_ref, s_cur, d=det: 0.5 * rank_normalize(ref["c_fit"][d], s_ref) + 0.5 * rank_normalize(c_fit[d], s_cur)
-                    variants["combined"] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]))
+                    for w, tag_w in ((0.5, "combined"), (0.25, "combined_w25"), (0.75, "combined_w75")):   # w = weight on the frozen reference
+                        comb = lambda s_ref, s_cur, d=det, w=w: w * rank_normalize(ref["c_fit"][d], s_ref) + (1 - w) * rank_normalize(c_fit[d], s_cur)
+                        variants[tag_w] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]))
                 for var, (s_id, s_ood) in variants.items():
                     rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "auroc_allid": auroc(s_id, s_ood),
                                  "augrc_allid": augrc(np.concatenate([s_id, s_ood]), np.concatenate([np.zeros(len(s_id)), np.ones(len(s_ood))])),
@@ -370,8 +395,8 @@ def rescore(a):
 # ----------------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--backbone", default="toy"); ap.add_argument("--data", default="synthetic", choices=["synthetic", "cifar100", "pets", "food101", "flowers102", "eurosat"]); ap.add_argument("--ood", default="svhn,dtd", help="comma list: svhn, dtd, cifar100, cifar10, food101, flowers102, pets, eurosat, or any image folder under $DATASET_ROOT_DIR (places365, iSUN, LSUN, LSUN_resize)"); ap.add_argument("--data-root", default=str(pathlib.Path.home() / "data"))
-    ap.add_argument("--method", choices=["full", "lora"], default="lora"); ap.add_argument("--lora-rank", type=int, default=8); ap.add_argument("--lora-alpha", type=float, default=16)
+    ap.add_argument("--backbone", default="toy"); ap.add_argument("--data", default="synthetic", choices=["synthetic", "cifar100", "pets", "food101", "flowers102", "eurosat", "imagenet200"]); ap.add_argument("--ood", default="svhn,dtd", help="comma list: svhn, dtd, cifar100, cifar10, food101, flowers102, pets, eurosat, or any image folder under $DATASET_ROOT_DIR (places365, iSUN, LSUN, LSUN_resize)"); ap.add_argument("--data-root", default=str(pathlib.Path.home() / "data"))
+    ap.add_argument("--method", choices=["full", "lora", "partial"], default="lora"); ap.add_argument("--train-last-blocks", type=int, default=2, help="partial method: number of final transformer blocks trained (plus the final norm and the head)"); ap.add_argument("--lora-rank", type=int, default=8); ap.add_argument("--lora-alpha", type=float, default=16)
     ap.add_argument("--lora-pattern", default=r"attn\.(qkv|proj)$"); ap.add_argument("--lr", type=float, default=1e-4); ap.add_argument("--steps", type=int, default=30)
     ap.add_argument("--checkpoints", default="0,15,30"); ap.add_argument("--batch", type=int, default=32); ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--n-cls", type=int, default=5); ap.add_argument("--n-fit", type=int, default=400); ap.add_argument("--n-val", type=int, default=200)
@@ -386,6 +411,8 @@ def main():
     if a.data == "synthetic": splits, ood = synthetic_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed)
     elif a.data == "cifar100":
         ledger["data_provenance"] = {}; splits, ood = cifar100_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed, a.data_root, ledger["data_provenance"], tuple(a.ood.split(",")))
+    elif a.data == "imagenet200":
+        ledger["data_provenance"] = {}; splits, ood = imagenet200_data(a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed, a.data_root, ledger["data_provenance"], tuple(a.ood.split(",")))
     else:
         ledger["data_provenance"] = {}; splits, ood = torchvision_task_data(a.data, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed, a.data_root, ledger["data_provenance"], tuple(a.ood.split(",")))
     n_cls = int(splits["fit"][1].max()) + 1; ids = {k: np.arange(len(v[0])) for k, v in splits.items()}; tick("data", t0, n_cls=n_cls)
@@ -401,6 +428,13 @@ def main():
         n_lora = apply_lora(model.backbone, a.lora_rank, a.lora_alpha, a.lora_pattern); model.to(dev)
         params = [p for n, p in model.named_parameters() if p.requires_grad and (".A" in n or ".B" in n or n.startswith("head"))]
         ledger["lora_modules"] = n_lora
+    elif a.method == "partial":
+        for p_ in model.backbone.parameters(): p_.requires_grad_(False)
+        blocks = list(model.backbone.blocks)[-a.train_last_blocks:]
+        for blk in blocks:
+            for p_ in blk.parameters(): p_.requires_grad_(True)
+        for p_ in model.backbone.norm.parameters(): p_.requires_grad_(True)
+        params = [p_ for p_ in model.parameters() if p_.requires_grad]; ledger["trained_blocks"] = a.train_last_blocks
     else: params = list(model.parameters())
     ledger["trainable_params"] = int(sum(p.numel() for p in params)); ledger["total_params"] = int(sum(p.numel() for p in model.parameters()))
     opt = torch.optim.AdamW(params, lr=a.lr, weight_decay=0.01); scaler = torch.amp.GradScaler("cuda", enabled=bool(a.amp and dev.startswith("cuda") and AMP_DTYPE == torch.float16))
@@ -421,8 +455,9 @@ def main():
              "id_test_acc": float(((((feats["test"] - mu) / sd) @ model.head.weight.detach().cpu().T + model.head.bias.detach().cpu()).argmax(1) == splits["test"][1]).float().mean())}
         if step == 0: ref["fit"] = hf
         else:
-            m["paired_cka_fit"] = float(d3.paired_linear_cka(ref["fit"], hf, ids["fit"], ids["fit"]) if "paired_linear_cka" in dir(d3) else np.nan)
+            m["paired_cka_fit"] = float(d3.paired_linear_cka(ref["fit"], hf, ids["fit"], ids["fit"]))
             m["total_drift_fit"] = float(np.linalg.norm(hf - ref["fit"]) / np.linalg.norm(ref["fit"])); m["principal_angle_cos_fit"] = principal_angle_cos(ref["fit"], hf, max(1, n_cls - 1))
+            m.update(rt.retention_record(ref["fit"], yf, ids["fit"], hf, yf, ids["fit"], n_cls))   # cm_cka_ref, cc_cka_ref, bc_overlap_ref
         meas.append(m); tick(f"measure@{step}", t0)
         t0 = time.perf_counter(); all_confs, hp = fit_detectors(feats["fit"].to(dev), splits["fit"][1].to(dev), feats["val"].to(dev), splits["val"][1].to(dev), w_raw.to(dev), b.to(dev), mu.to(dev), sd.to(dev), n_cls, dev)
         tick(f"fit_detectors@{step}", t0, **hp)
@@ -434,8 +469,9 @@ def main():
                 variants = {"adapted": (c_te[det], c_ood[det])}
                 if step > 0:
                     variants["reference"] = (ref["c_te"][det], ref["c_ood"][name][det])
-                    comb = lambda s_ref, s_cur, d=det: 0.5 * rank_normalize(ref["c_fit"][d], s_ref) + 0.5 * rank_normalize(c_fit[d], s_cur)
-                    variants["combined"] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]))
+                    for w, tag_w in ((0.5, "combined"), (0.25, "combined_w25"), (0.75, "combined_w75")):   # w = weight on the frozen reference
+                        comb = lambda s_ref, s_cur, d=det, w=w: w * rank_normalize(ref["c_fit"][d], s_ref) + (1 - w) * rank_normalize(c_fit[d], s_cur)
+                        variants[tag_w] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]))
                 for var, (s_id, s_ood) in variants.items():
                     resid_all = np.concatenate([np.zeros(len(s_id)), np.ones(len(s_ood))]); conf_all = np.concatenate([s_id, s_ood])
                     rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "auroc_allid": auroc(s_id, s_ood),
@@ -454,7 +490,7 @@ def main():
         step += 1
         ledger.setdefault("train_seconds", 0.0); ledger["train_seconds"] += time.perf_counter() - t0
         if step in cps:
-            torch.save({k: v.cpu() for k, v in model.state_dict().items() if a.method == "full" or ".A" in k or ".B" in k or k.startswith("head") or k in ("mu", "sd")}, out / f"ckpt_step{step}.pt")
+            torch.save({k: v.cpu() for k, v in model.state_dict().items() if a.method == "full" or ".A" in k or ".B" in k or k.startswith("head") or k in ("mu", "sd") or (a.method == "partial" and (k.startswith("backbone.norm") or any(k.startswith(f"backbone.blocks.{i}.") for i in range(len(model.backbone.blocks) - a.train_last_blocks, len(model.backbone.blocks)))))}, out / f"ckpt_step{step}.pt")
             ledger["last_loss"] = float(loss.detach()); evaluate(step)
     import pandas as pd
     pd.DataFrame(rows).to_csv(out / "outcomes.csv", index=False); pd.DataFrame(meas).to_csv(out / "measurements.csv", index=False)
