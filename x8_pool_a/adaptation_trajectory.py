@@ -174,9 +174,22 @@ def load_ood_sets(n_ood, g, root, provenance, names=("svhn", "dtd")):
                "pets": lambda r: torchvision.datasets.OxfordIIITPet(r, split="test", download=False, transform=to_u8_224),
                "eurosat": lambda r: torchvision.datasets.EuroSAT(r, download=False, transform=to_u8_224)}
     folder = lambda r: torchvision.datasets.ImageFolder(r, transform=to_u8_224) if os.path.isdir(r) else (_ for _ in ()).throw(FileNotFoundError(r))
-    for name in names:
-        ds, p = None, None
-        if name == "svhn":
+    WILD = {"n02114367", "n02114548", "n02114712", "n02114855", "n02115641", "n02115913", "n02116738", "n02117135", "n02119022", "n02119789",
+            "n02120079", "n02120505", "n02125311", "n02127052", "n02128385", "n02128757", "n02128925", "n02129165", "n02129604", "n02130308"}  # wolves, coyote, dingo, dhole, hunting dog, hyena, foxes, big cats
+    OPENOOD = {"ssb_hard", "ninco", "inaturalist", "openimage_o"}
+    for entry in names:
+        ds, p = None, None; name, path = (entry.split("=", 1) + [None])[:2] if "=" in entry else (entry, None)
+        if path:
+            if name == "imagenet_wild_carnivores":
+                def wild(r):
+                    d = torchvision.datasets.ImageFolder(r, transform=to_u8_224); keep = {i for i, c in enumerate(d.classes) if c in WILD}
+                    if not keep: raise FileNotFoundError("no wild-carnivore synset folders under " + r)
+                    d.samples = [t for t in d.samples if t[1] in keep]; d.targets = [t[1] for t in d.samples]; return d
+                ds, p = _first([path], wild)
+            else: ds, p = _first([path], folder)
+        elif name in OPENOOD:
+            ds, p = _first([fd and os.path.join(fd, "openood", "data", "images_largescale", name), os.path.join(root, name)], folder)
+        elif name == "svhn":
             ds, p = _first([root, fd and os.path.join(fd, "svhn"), fd], lambda r: torchvision.datasets.SVHN(r, split="test", download=False, transform=to_u8))
         elif name == "dtd":
             ds, p = _first([root], lambda r: torchvision.datasets.DTD(r, split="test", download=False, transform=to_u8_224))
@@ -190,7 +203,7 @@ def load_ood_sets(n_ood, g, root, provenance, names=("svhn", "dtd")):
                 for v in {name, name.lower(), name.upper(), name.capitalize(), "iSUN" if name.lower() == "isun" else name, "LSUN_resize" if name.lower() in ("lsun_resize", "lsunresize") else name}:
                     cands += [os.path.join(base, v), os.path.join(base, v, "images"), os.path.join(base, v, "test")]
             ds, p = _first(cands, folder)
-        if ds is None: print(f"OOD set {name} unavailable (torchvision test split under --data-root, or an image folder under $DATASET_ROOT_DIR)"); continue
+        if ds is None: print(f"OOD set {name} unavailable (torchvision test split under --data-root, an image folder under $DATASET_ROOT_DIR, an OpenOOD large-scale set, or name=path)"); continue
         jj = g.permutation(len(ds))[:n_ood]; ood[name] = torch.stack([ds[i][0] for i in jj]); provenance[f"{name}_root"] = p; provenance[f"{name}_n_total"] = int(len(ds))
     return ood
 
@@ -290,6 +303,54 @@ def rank_normalize(scores_fit, scores):
     s = np.sort(scores_fit); return np.searchsorted(s, scores, side="right") / len(s)
 
 
+
+def rescore(a):
+    """Rescore a finished run's checkpoints on new OOD sets: ID features from the saved npz files, heads from the saved checkpoints,
+    detectors refit under the same rule, new-OOD features extracted with the reconstructed model. Writes outcomes_rescore_<tag>.csv."""
+    run = pathlib.Path(a.rescore); L = json.load(open(run / "ledger.json")); cfg = L["config"]; dev = a.device
+    names = tuple(a.ood.split(",")); tag = "_".join(n.split("=")[0] for n in names); n_ood = a.n_ood or cfg["n_ood"]
+    prov = {}; g = np.random.default_rng(cfg["seed"])
+    if a.backbone == "toy" and "synthetic_noise" in names: ood = {"synthetic_noise": torch.randn(n_ood, 3, 32, 32, generator=torch.Generator().manual_seed(7)) * 2}
+    else: ood = load_ood_sets(n_ood, g, a.data_root, prov, names)
+    if not ood: raise SystemExit("no OOD set resolved")
+    steps = sorted(int(p.stem.split("step")[1]) for p in run.glob("features_step*.npz")); rows = []; ref = {}
+    z0 = np.load(run / "features_step0.npz"); n_cls = int(z0["fit_y"].max()) + 1
+    to_t = lambda x: torch.from_numpy(np.ascontiguousarray(x)).float()
+    probe = csf.train_probe(to_t(z0["fit_h"]).to(dev), torch.from_numpy(z0["fit_y"]).long().to(dev), n_cls, seed=cfg["seed"])
+    t_all = time.perf_counter()
+    for step in steps:
+        z = np.load(run / f"features_step{step}.npz"); backbone = build_backbone(cfg["backbone"]).to(dev)
+        model = Classifier(backbone, probe["mu"].detach(), probe["sd"].detach(), probe["W"].detach(), probe["b"].detach()).to(dev)
+        if step > 0:
+            if cfg["method"] == "lora": apply_lora(model.backbone, cfg["lora_rank"], cfg["lora_alpha"], cfg["lora_pattern"]); model.to(dev)
+            sd_ = torch.load(run / f"ckpt_step{step}.pt", map_location=dev); missing, unexpected = model.load_state_dict(sd_, strict=False)
+            if unexpected: raise SystemExit(f"unexpected keys in checkpoint {step}: {unexpected[:5]}")
+        model.eval(); feats_ood = {k: extract(model, v, a.batch, dev, cfg["backbone"], a.amp) for k, v in ood.items()}
+        h = {k: to_t(z[f"{k}_h"]) for k in ("fit", "val", "test")}; y = {k: torch.from_numpy(z[f"{k}_y"]).long() for k in ("fit", "val", "test")}
+        w_raw = (model.head.weight / model.sd).detach().cpu(); b = model.head.bias.detach().cpu(); mu, sd = model.mu.cpu(), model.sd.cpu()
+        all_confs, hp = fit_detectors(h["fit"].to(dev), y["fit"].to(dev), h["val"].to(dev), y["val"].to(dev), w_raw.to(dev), b.to(dev), mu.to(dev), sd.to(dev), n_cls, dev)
+        c_fit, _ = all_confs(h["fit"].to(dev)); c_te, pred_te = all_confs(h["test"].to(dev)); correct = (pred_te.cpu() == y["test"]).numpy()
+        if step == 0: ref["c_fit"], ref["c_te"], ref["c_ood"] = c_fit, c_te, {k: all_confs(v.to(dev))[0] for k, v in feats_ood.items()}
+        for name, ho in feats_ood.items():
+            c_ood, _ = all_confs(ho.to(dev))
+            for det in c_te:
+                variants = {"adapted": (c_te[det], c_ood[det])}
+                if step > 0:
+                    variants["reference"] = (ref["c_te"][det], ref["c_ood"][name][det])
+                    comb = lambda s_ref, s_cur, d=det: 0.5 * rank_normalize(ref["c_fit"][d], s_ref) + 0.5 * rank_normalize(c_fit[d], s_cur)
+                    variants["combined"] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]))
+                for var, (s_id, s_ood) in variants.items():
+                    rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "auroc_allid": auroc(s_id, s_ood),
+                                 "augrc_allid": augrc(np.concatenate([s_id, s_ood]), np.concatenate([np.zeros(len(s_id)), np.ones(len(s_ood))])),
+                                 "augrc_correct_only": augrc(np.concatenate([s_id[correct], s_ood]), np.concatenate([np.zeros(correct.sum()), np.ones(len(s_ood))])),
+                                 "id_failure_augrc": augrc(s_id, (~correct).astype(float))})
+        print(f"rescored step {step}: {len(rows)} rows so far ({time.perf_counter() - t_all:.0f} s)")
+    import pandas as pd
+    out = run / f"outcomes_rescore_{tag}.csv"; pd.DataFrame(rows).to_csv(out, index=False)
+    json.dump({"ood": names, "n_ood": n_ood, "provenance": prov, "seconds": round(time.perf_counter() - t_all, 1)}, open(run / f"rescore_{tag}.json", "w"), indent=1)
+    df = pd.DataFrame(rows); print(df[df.variant == "adapted"].groupby(["ood_set", "step"]).auroc_allid.agg(["mean", "max"]).round(3).to_string()); print("wrote", out)
+
+
 # ----------------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
@@ -298,12 +359,14 @@ def main():
     ap.add_argument("--lora-pattern", default=r"attn\.(qkv|proj)$"); ap.add_argument("--lr", type=float, default=1e-4); ap.add_argument("--steps", type=int, default=30)
     ap.add_argument("--checkpoints", default="0,15,30"); ap.add_argument("--batch", type=int, default=32); ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--n-cls", type=int, default=5); ap.add_argument("--n-fit", type=int, default=400); ap.add_argument("--n-val", type=int, default=200)
-    ap.add_argument("--n-test", type=int, default=200); ap.add_argument("--n-ood", type=int, default=200); ap.add_argument("--out", required=True); ap.add_argument("--device", default="cpu"); ap.add_argument("--amp", action="store_true", help="mixed precision on CUDA: bf16 where supported (A100), else fp16 with loss scaling (V100)")
+    ap.add_argument("--n-test", type=int, default=200); ap.add_argument("--n-ood", type=int, default=None); ap.add_argument("--out", required=True); ap.add_argument("--device", default="cpu"); ap.add_argument("--rescore", default=None, help="path of a finished run directory: rescore its checkpoints on the --ood sets and exit"); ap.add_argument("--amp", action="store_true", help="mixed precision on CUDA: bf16 where supported (A100), else fp16 with loss scaling (V100)")
     a = ap.parse_args(); torch.manual_seed(a.seed); np.random.seed(a.seed); dev = a.device
+    if a.rescore: return rescore(a)
     out = pathlib.Path(a.out); out.mkdir(parents=True, exist_ok=True); ledger = {"config": vars(a), "stages": []}
     def tick(stage, t0, **extra): ledger["stages"].append({"stage": stage, "seconds": round(time.perf_counter() - t0, 3), **extra})
 
     t0 = time.perf_counter()
+    a.n_ood = a.n_ood or 200
     if a.data == "synthetic": splits, ood = synthetic_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed)
     elif a.data == "cifar100":
         ledger["data_provenance"] = {}; splits, ood = cifar100_data(a.n_cls, a.n_fit, a.n_val, a.n_test, a.n_ood, a.seed, a.data_root, ledger["data_provenance"], tuple(a.ood.split(",")))
