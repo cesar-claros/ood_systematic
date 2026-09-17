@@ -16,15 +16,17 @@ export TORCH_HOME="${TORCH_HOME:-$HOME/.cache/torch}"
 
 OUT_ROOT="$EXPERIMENT_ROOT_DIR/adaptation_pilot"
 IMAGENET_VAL="${IMAGENET_VAL:-$DATASET_ROOT_DIR/openood/data/images_largescale/imagenet_1k/val}"
-OOD="imagenet_wild_carnivores=$IMAGENET_VAL,ninco,ssb_hard,inaturalist"
-TAG="imagenet_wild_carnivores_ninco_ssb_hard_inaturalist"
+OOD="${OOD:-imagenet_wild_carnivores}"          # default: the within-family set built from the OpenOOD ImageNet image list
+TAG="$(echo "$OOD" | tr "," "_" | sed "s/=[^,]*//g")"
+N_OOD="${N_OOD:-1000}"                         # 20 classes x 50 validation images
 
-echo "[$(date)] task B rescore start; ImageNet val folder: $IMAGENET_VAL"
-[ -d "$IMAGENET_VAL" ] || echo "[warn] $IMAGENET_VAL not found; the wild-carnivore set will be skipped (set IMAGENET_VAL=<path> to override)"
+IMGLIST="$DATASET_ROOT_DIR/openood/data/benchmark_imglist/imagenet/test_imagenet.txt"
+echo "[$(date)] task B rescore start; OOD=$OOD; n_ood=$N_OOD; image list: $IMGLIST"
+[ -f "$IMGLIST" ] || echo "[warn] $IMGLIST not found; the wild-carnivore set will be skipped"
 for RUN in B_lora_seed0 B_lora_seed1 B_full_seed0 B_full_seed1; do
   if [ -f "$OUT_ROOT/$RUN/outcomes_rescore_$TAG.csv" ]; then echo "[$(date)] $RUN already rescored, skipping"; continue; fi
   echo "[$(date)] $RUN start"
-  python x8_pool_a/adaptation_trajectory.py --rescore "$OUT_ROOT/$RUN" --ood "$OOD" --n-ood 3669 --data-root data \
+  python x8_pool_a/adaptation_trajectory.py --rescore "$OUT_ROOT/$RUN" --ood "$OOD" --n-ood "$N_OOD" --data-root data \
     --device cuda --amp --out unused > "rescore_${RUN}.log" 2>&1
   STATUS=$?
   if [ $STATUS -ne 0 ]; then echo "[$(date)] $RUN FAILED (exit $STATUS); see rescore_${RUN}.log"; else echo "[$(date)] $RUN done"; fi

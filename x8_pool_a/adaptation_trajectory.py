@@ -179,7 +179,22 @@ def load_ood_sets(n_ood, g, root, provenance, names=("svhn", "dtd")):
     OPENOOD = {"ssb_hard", "ninco", "inaturalist", "openimage_o"}
     for entry in names:
         ds, p = None, None; name, path = (entry.split("=", 1) + [None])[:2] if "=" in entry else (entry, None)
-        if path:
+        if name == "imagenet_wild_carnivores" and (path is None or path.endswith(".txt")):
+            # OpenOOD image list route: benchmark_imglist/imagenet/test_imagenet.txt lines are "<relative path> <label>", relative to
+            # images_largescale; ImageNet-1k class indices 269-280 (wolves, coyote, dingo, dhole, hunting dog, hyena, foxes) and 286-293 (big cats).
+            from PIL import Image
+            WILD_IDX = set(range(269, 281)) | set(range(286, 294))
+            lst = path or (fd and os.path.join(fd, "openood", "data", "benchmark_imglist", "imagenet", "test_imagenet.txt"))
+            img_root = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(lst))), "images_largescale") if lst else None
+            class ImglistDS:
+                def __init__(self, lst, img_root):
+                    self.items = [(os.path.join(img_root, l.rsplit(" ", 1)[0]), int(l.rsplit(" ", 1)[1])) for l in open(lst).read().splitlines() if l.strip() and int(l.rsplit(" ", 1)[1]) in WILD_IDX]
+                    if not self.items: raise FileNotFoundError("no wild-carnivore labels in " + lst)
+                def __len__(self): return len(self.items)
+                def __getitem__(self, i): pth, lab = self.items[i]; return to_u8_224(Image.open(pth).convert("RGB")), lab
+            ds, p = _first([lst] if lst and os.path.exists(lst) else [], lambda r: ImglistDS(r, img_root))
+            if ds is None: print(f"OOD set {name} unavailable: image list not found at {lst}"); continue
+        elif path:
             if name == "imagenet_wild_carnivores":
                 def wild(r):
                     d = torchvision.datasets.ImageFolder(r, transform=to_u8_224); keep = {i for i, c in enumerate(d.classes) if c in WILD}
