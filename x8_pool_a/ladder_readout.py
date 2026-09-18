@@ -34,7 +34,10 @@ def load_runs(root: pathlib.Path):
 
 
 def main(root):
+    # Missing metric cells (NaN AUROC, written by the driver when a raw score was nonfinite) must never enter a maximum silently.
     runs = load_runs(root); rows = []
+    n_missing = sum(int(o.auroc_allid.isna().sum()) for o, _, _ in runs.values())
+    if n_missing: print(f"WARNING: {n_missing} missing AUROC cells (nonfinite raw scores); every maximum below ignores them, so the stopping statistic is not certified until they are resolved\n")
     for name, (o, m, cfg) in runs.items():
         task, arm = cfg["data"], f'{cfg["method"]}_{cfg.get("lora_rank") if cfg["method"] == "lora" else cfg["lr"]}'
         acc0 = m.id_test_acc.loc[0]

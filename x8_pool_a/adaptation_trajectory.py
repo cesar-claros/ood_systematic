@@ -259,8 +259,12 @@ def preprocess(x: torch.Tensor, backbone: str) -> torch.Tensor:
 
 # ----------------------------------------------------------------------------- metrics
 def auroc(pos: np.ndarray, neg: np.ndarray) -> float:
-    """AUROC with ties at half credit; pos = ID scores (higher = more ID), neg = OOD scores."""
-    s = np.concatenate([pos, neg]); r = s.argsort().argsort().astype(float)
+    """AUROC with ties at half credit; pos = ID scores (higher = more ID), neg = OOD scores. Rejects nonfinite inputs."""
+    pos = np.asarray(pos, dtype=float).ravel(); neg = np.asarray(neg, dtype=float).ravel()
+    if len(pos) == 0 or len(neg) == 0: raise ValueError("auroc: both score arrays must be nonempty")
+    nf_id, nf_ood = int((~np.isfinite(pos)).sum()), int((~np.isfinite(neg)).sum())
+    if nf_id or nf_ood: raise ValueError(f"auroc: nonfinite scores (ID {nf_id}, OOD {nf_ood})")
+    s = np.concatenate([pos, neg])
     # average ranks for ties
     order = np.argsort(s); ss = s[order]; ranks = np.empty(len(s)); i = 0
     while i < len(s):
@@ -271,7 +275,16 @@ def auroc(pos: np.ndarray, neg: np.ndarray) -> float:
 
 
 def augrc(conf: np.ndarray, resid: np.ndarray) -> float:
-    return float(RiskCoverageStats(confids=conf, residuals=resid.astype(float)).augrc)
+    """AUGRC of a confidence against 0/1 residuals. Rejects nonfinite confidences."""
+    conf = np.asarray(conf, dtype=float).ravel(); resid = np.asarray(resid, dtype=float).ravel()
+    nf = int((~np.isfinite(conf)).sum())
+    if nf: raise ValueError(f"augrc: {nf} nonfinite confidences")
+    return float(RiskCoverageStats(confids=conf, residuals=resid).augrc)
+
+
+def nonfinite_counts(s_id, s_ood):
+    """Counts of nonfinite raw scores in one variant; the metrics reject them, so scoring records NaN plus these counts."""
+    return int((~np.isfinite(np.asarray(s_id, dtype=float))).sum()), int((~np.isfinite(np.asarray(s_ood, dtype=float))).sum())
 
 
 def fit_detectors(h_fit, y_fit, h_val, y_val, w_raw, b, mu, sd, n_cls, device):
@@ -355,12 +368,18 @@ def rescore(a):
     else:
         ood = load_ood_sets(n_ood, g, a.data_root, prov, names)
         if a.interp_alpha:   # interpolated encoders need the ID images again (their features are not saved)
-            if cfg["data"] == "cifar100": id_imgs, _ = cifar100_data(cfg["n_cls"], cfg["n_fit"], cfg["n_val"], cfg["n_test"], 1, cfg["seed"], a.data_root, {}, ())
-            elif cfg["data"] == "imagenet200": id_imgs, _ = imagenet200_data(cfg["n_fit"], cfg["n_val"], cfg["n_test"], 1, cfg["seed"], a.data_root, {}, ())
-            else: id_imgs, _ = torchvision_task_data(cfg["data"], cfg["n_fit"], cfg["n_val"], cfg["n_test"], 1, cfg["seed"], a.data_root, {}, ())
+            # The loaders draw the ID permutations and the OOD samples from one generator (CIFAR-100 draws the test permutation after the
+            # OOD sampling), so the run's own OOD names and count are passed to reproduce the stream; the labels are checked below.
+            o_names, o_n = tuple(cfg["ood"].split(",")), cfg["n_ood"]
+            if cfg["data"] == "cifar100": id_imgs, _ = cifar100_data(cfg["n_cls"], cfg["n_fit"], cfg["n_val"], cfg["n_test"], o_n, cfg["seed"], a.data_root, {}, o_names)
+            elif cfg["data"] == "imagenet200": id_imgs, _ = imagenet200_data(cfg["n_fit"], cfg["n_val"], cfg["n_test"], o_n, cfg["seed"], a.data_root, {}, o_names)
+            else: id_imgs, _ = torchvision_task_data(cfg["data"], cfg["n_fit"], cfg["n_val"], cfg["n_test"], o_n, cfg["seed"], a.data_root, {}, o_names)
     if not ood: raise SystemExit("no OOD set resolved")
     steps = sorted(int(p.stem.split("step")[1]) for p in run.glob("features_step*.npz")); rows = []; ref = {}
     z0 = np.load(run / "features_step0.npz"); n_cls = int(z0["fit_y"].max()) + 1
+    if id_imgs is not None:   # reloaded ID splits must be the run's own, in the saved order: labels must agree with the saved features
+        for k in ("fit", "val", "test"):
+            if not np.array_equal(np.asarray(id_imgs[k][1]), np.asarray(z0[f"{k}_y"])): raise SystemExit(f"interpolation rescore: reloaded {k} labels differ from the saved features, so the ID split is not aligned; aborting")
     to_t = lambda x: torch.from_numpy(np.ascontiguousarray(x)).float()
     probe = csf.train_probe(to_t(z0["fit_h"]).to(dev), torch.from_numpy(z0["fit_y"]).long().to(dev), n_cls, seed=cfg["seed"])
     t_all = time.perf_counter()
@@ -411,7 +430,10 @@ def rescore(a):
                         variants[tag_w] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]), correct)
                     for alpha, (c_te_i, corr_i, c_ood_i) in interp_scores.items(): variants[f"wise_a{alpha:g}"] = (c_te_i[det], c_ood_i[name][det], corr_i)
                 for var, (s_id, s_ood, corr) in variants.items():
-                    rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "auroc_allid": auroc(s_id, s_ood),
+                    nf_id, nf_ood = nonfinite_counts(s_id, s_ood)
+                    if nf_id or nf_ood:   # invalid raw scores: no metric is computed; the readouts must treat NaN as missing, never as a value
+                        rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "nonfinite_id": nf_id, "nonfinite_ood": nf_ood, "auroc_allid": np.nan, "augrc_allid": np.nan, "augrc_correct_only": np.nan, "id_failure_augrc": np.nan}); continue
+                    rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "nonfinite_id": 0, "nonfinite_ood": 0, "auroc_allid": auroc(s_id, s_ood),
                                  "augrc_allid": augrc(np.concatenate([s_id, s_ood]), np.concatenate([np.zeros(len(s_id)), np.ones(len(s_ood))])),
                                  "augrc_correct_only": augrc(np.concatenate([s_id[corr], s_ood]), np.concatenate([np.zeros(corr.sum()), np.ones(len(s_ood))])),
                                  "id_failure_augrc": augrc(s_id, (~corr).astype(float))})
@@ -504,7 +526,10 @@ def main():
                         variants[tag_w] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]))
                 for var, (s_id, s_ood) in variants.items():
                     resid_all = np.concatenate([np.zeros(len(s_id)), np.ones(len(s_ood))]); conf_all = np.concatenate([s_id, s_ood])
-                    rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "auroc_allid": auroc(s_id, s_ood),
+                    nf_id, nf_ood = nonfinite_counts(s_id, s_ood)
+                    if nf_id or nf_ood:   # invalid raw scores: no metric is computed; the readouts must treat NaN as missing, never as a value
+                        rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "nonfinite_id": nf_id, "nonfinite_ood": nf_ood, "auroc_allid": np.nan, "augrc_allid": np.nan, "augrc_correct_only": np.nan, "id_failure_augrc": np.nan}); continue
+                    rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "nonfinite_id": 0, "nonfinite_ood": 0, "auroc_allid": auroc(s_id, s_ood),
                                  "augrc_allid": augrc(conf_all, resid_all), "augrc_correct_only": augrc(np.concatenate([s_id[correct], s_ood]), np.concatenate([np.zeros(correct.sum()), np.ones(len(s_ood))])),
                                  "id_failure_augrc": augrc(s_id, (~correct).astype(float))})
         tick(f"score@{step}", t0, n_rows=len(rows)); model.train()
