@@ -36,6 +36,11 @@ def load_runs(root: pathlib.Path):
 def main(root):
     # Missing metric cells (NaN AUROC, written by the driver when a raw score was nonfinite) must never enter a maximum silently.
     runs = load_runs(root); rows = []
+    # pNML is excluded from every maximum: its score is numerically unstable when the validation set has more rows than feature
+    # dimensions (the kernel-range residual is float noise, so the recorded GPU values and a CPU recomputation differ by up to 0.9;
+    # validity audit of 2026-09-18). Pass --keep-pnml to reproduce the original readout of 2026-09-17.
+    if not KEEP_PNML:
+        runs = {k: (o[o.detector != "pNML"].reset_index(drop=True), m, c) for k, (o, m, c) in runs.items()}; print("pNML excluded from all maxima (numerically unstable; see score_validity audit)\n")
     n_missing = sum(int(o.auroc_allid.isna().sum()) for o, _, _ in runs.values())
     if n_missing: print(f"WARNING: {n_missing} missing AUROC cells (nonfinite raw scores); every maximum below ignores them, so the stopping statistic is not certified until they are resolved\n")
     for name, (o, m, cfg) in runs.items():
@@ -73,5 +78,8 @@ def main(root):
     print("## Per-arm summary (mean over checkpoints)\n"); print(df.groupby(["task", "arm", "shift"]).agg(loss=("loss", "mean"), acc_delta=("acc_delta", "mean"), one_minus_cc=("one_minus_cc", "mean"), one_minus_cka=("one_minus_cka", "mean")).round(4).to_string())
 
 
+KEEP_PNML = False
+
 if __name__ == "__main__":
+    KEEP_PNML = "--keep-pnml" in sys.argv[2:]
     main(pathlib.Path(sys.argv[1]))
