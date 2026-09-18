@@ -348,8 +348,16 @@ def rescore(a):
     run = pathlib.Path(a.rescore); L = json.load(open(run / "ledger.json")); cfg = L["config"]; dev = a.device
     names = tuple(a.ood.split(",")); tag = "_".join(n.split("=")[0] for n in names); n_ood = a.n_ood or cfg["n_ood"]
     prov = {}; g = np.random.default_rng(cfg["seed"])
-    if a.backbone == "toy" and "synthetic_noise" in names: ood = {"synthetic_noise": torch.randn(n_ood, 3, 32, 32, generator=torch.Generator().manual_seed(7)) * 2}
-    else: ood = load_ood_sets(n_ood, g, a.data_root, prov, names)
+    id_imgs = None
+    if a.backbone == "toy" and "synthetic_noise" in names:
+        ood = {"synthetic_noise": torch.randn(n_ood, 3, 32, 32, generator=torch.Generator().manual_seed(7)) * 2}
+        if a.interp_alpha: id_imgs, _ = synthetic_data(cfg["n_cls"], cfg["n_fit"], cfg["n_val"], cfg["n_test"], cfg["n_ood"], cfg["seed"])
+    else:
+        ood = load_ood_sets(n_ood, g, a.data_root, prov, names)
+        if a.interp_alpha:   # interpolated encoders need the ID images again (their features are not saved)
+            if cfg["data"] == "cifar100": id_imgs, _ = cifar100_data(cfg["n_cls"], cfg["n_fit"], cfg["n_val"], cfg["n_test"], 1, cfg["seed"], a.data_root, {}, ())
+            elif cfg["data"] == "imagenet200": id_imgs, _ = imagenet200_data(cfg["n_fit"], cfg["n_val"], cfg["n_test"], 1, cfg["seed"], a.data_root, {}, ())
+            else: id_imgs, _ = torchvision_task_data(cfg["data"], cfg["n_fit"], cfg["n_val"], cfg["n_test"], 1, cfg["seed"], a.data_root, {}, ())
     if not ood: raise SystemExit("no OOD set resolved")
     steps = sorted(int(p.stem.split("step")[1]) for p in run.glob("features_step*.npz")); rows = []; ref = {}
     z0 = np.load(run / "features_step0.npz"); n_cls = int(z0["fit_y"].max()) + 1
@@ -366,25 +374,47 @@ def rescore(a):
             if unexpected: raise SystemExit(f"unexpected keys in checkpoint {step}: {unexpected[:5]}")
         model.eval(); feats_ood = {k: extract(model, v, a.batch, dev, cfg["backbone"], a.amp) for k, v in ood.items()}
         np.savez_compressed(run / f"rescore_features_{tag}_step{step}.npz", **{f"ood_{k}": v.numpy() for k, v in feats_ood.items()})
+        alphas = [float(x) for x in a.interp_alpha.split(",") if x.strip()] if step > 0 else []
+        interp = {}
+        for alpha in alphas:   # WiSE-FT-style interpolation: theta = (1 - alpha) * reference + alpha * adapted (LoRA: the delta is scaled)
+            mi = Classifier(build_backbone(cfg["backbone"]).to(dev), probe["mu"].detach(), probe["sd"].detach(), probe["W"].detach(), probe["b"].detach()).to(dev)
+            if cfg["method"] == "lora":
+                apply_lora(mi.backbone, cfg["lora_rank"], cfg["lora_alpha"], cfg["lora_pattern"]); mi.to(dev); mi.load_state_dict(sd_, strict=False)
+                with torch.no_grad():
+                    for n_, p_ in mi.named_parameters():
+                        if n_.endswith(".B"): p_.mul_(alpha)
+                    for n_ in ("weight", "bias"): getattr(mi.head, n_).copy_((1 - alpha) * (probe["W"] if n_ == "weight" else probe["b"]).to(dev) + alpha * sd_[f"head.{n_}"].to(dev))
+            else:
+                ref_sd = mi.state_dict()
+                with torch.no_grad(): mi.load_state_dict({k: ((1 - alpha) * ref_sd[k] + alpha * sd_[k].to(dev)) if k in sd_ and ref_sd[k].dtype.is_floating_point else ref_sd[k] for k in ref_sd})
+            mi.eval(); interp[alpha] = mi
         h = {k: to_t(z[f"{k}_h"]) for k in ("fit", "val", "test")}; y = {k: torch.from_numpy(z[f"{k}_y"]).long() for k in ("fit", "val", "test")}
         w_raw = (model.head.weight / model.sd).detach().cpu(); b = model.head.bias.detach().cpu(); mu, sd = model.mu.cpu(), model.sd.cpu()
         all_confs, hp = fit_detectors(h["fit"].to(dev), y["fit"].to(dev), h["val"].to(dev), y["val"].to(dev), w_raw.to(dev), b.to(dev), mu.to(dev), sd.to(dev), n_cls, dev)
         c_fit, _ = all_confs(h["fit"].to(dev)); c_te, pred_te = all_confs(h["test"].to(dev)); correct = (pred_te.cpu() == y["test"]).numpy()
         if step == 0: ref["c_fit"], ref["c_te"], ref["c_ood"] = c_fit, c_te, {k: all_confs(v.to(dev))[0] for k, v in feats_ood.items()}
+        interp_scores = {}
+        for alpha, mi in interp.items():   # interpolated encoder: extract its own ID and OOD features, refit detectors under the same rule
+            hi = {k: extract(mi, id_imgs[k][0], a.batch, dev, cfg["backbone"], a.amp) for k in ("fit", "val", "test")}
+            wi = (mi.head.weight / mi.sd).detach().cpu(); bi = mi.head.bias.detach().cpu()
+            ac_i, _ = fit_detectors(hi["fit"].to(dev), y["fit"].to(dev), hi["val"].to(dev), y["val"].to(dev), wi.to(dev), bi.to(dev), mi.mu.cpu().to(dev), mi.sd.cpu().to(dev), n_cls, dev)
+            c_te_i, pred_i = ac_i(hi["test"].to(dev)); corr_i = (pred_i.cpu() == y["test"]).numpy()
+            interp_scores[alpha] = (c_te_i, corr_i, {k: ac_i(extract(mi, v, a.batch, dev, cfg["backbone"], a.amp).to(dev))[0] for k, v in ood.items()})
         for name, ho in feats_ood.items():
             c_ood, _ = all_confs(ho.to(dev))
             for det in c_te:
-                variants = {"adapted": (c_te[det], c_ood[det])}
+                variants = {"adapted": (c_te[det], c_ood[det], correct)}
                 if step > 0:
-                    variants["reference"] = (ref["c_te"][det], ref["c_ood"][name][det])
+                    variants["reference"] = (ref["c_te"][det], ref["c_ood"][name][det], correct)
                     for w, tag_w in ((0.5, "combined"), (0.25, "combined_w25"), (0.75, "combined_w75")):   # w = weight on the frozen reference
                         comb = lambda s_ref, s_cur, d=det, w=w: w * rank_normalize(ref["c_fit"][d], s_ref) + (1 - w) * rank_normalize(c_fit[d], s_cur)
-                        variants[tag_w] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]))
-                for var, (s_id, s_ood) in variants.items():
+                        variants[tag_w] = (comb(ref["c_te"][det], c_te[det]), comb(ref["c_ood"][name][det], c_ood[det]), correct)
+                    for alpha, (c_te_i, corr_i, c_ood_i) in interp_scores.items(): variants[f"wise_a{alpha:g}"] = (c_te_i[det], c_ood_i[name][det], corr_i)
+                for var, (s_id, s_ood, corr) in variants.items():
                     rows.append({"step": step, "ood_set": name, "detector": det, "variant": var, "auroc_allid": auroc(s_id, s_ood),
                                  "augrc_allid": augrc(np.concatenate([s_id, s_ood]), np.concatenate([np.zeros(len(s_id)), np.ones(len(s_ood))])),
-                                 "augrc_correct_only": augrc(np.concatenate([s_id[correct], s_ood]), np.concatenate([np.zeros(correct.sum()), np.ones(len(s_ood))])),
-                                 "id_failure_augrc": augrc(s_id, (~correct).astype(float))})
+                                 "augrc_correct_only": augrc(np.concatenate([s_id[corr], s_ood]), np.concatenate([np.zeros(corr.sum()), np.ones(len(s_ood))])),
+                                 "id_failure_augrc": augrc(s_id, (~corr).astype(float))})
         print(f"rescored step {step}: {len(rows)} rows so far ({time.perf_counter() - t_all:.0f} s)")
     import pandas as pd
     out = run / f"outcomes_rescore_{tag}.csv"; pd.DataFrame(rows).to_csv(out, index=False)
@@ -400,7 +430,7 @@ def main():
     ap.add_argument("--lora-pattern", default=r"attn\.(qkv|proj)$"); ap.add_argument("--lr", type=float, default=1e-4); ap.add_argument("--steps", type=int, default=30)
     ap.add_argument("--checkpoints", default="0,15,30"); ap.add_argument("--batch", type=int, default=32); ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--n-cls", type=int, default=5); ap.add_argument("--n-fit", type=int, default=400); ap.add_argument("--n-val", type=int, default=200)
-    ap.add_argument("--n-test", type=int, default=200); ap.add_argument("--n-ood", type=int, default=None); ap.add_argument("--out", required=True); ap.add_argument("--device", default="cpu"); ap.add_argument("--rescore", default=None, help="path of a finished run directory: rescore its checkpoints on the --ood sets and exit"); ap.add_argument("--amp", action="store_true", help="mixed precision on CUDA: bf16 where supported (A100), else fp16 with loss scaling (V100)")
+    ap.add_argument("--n-test", type=int, default=200); ap.add_argument("--n-ood", type=int, default=None); ap.add_argument("--out", required=True); ap.add_argument("--device", default="cpu"); ap.add_argument("--rescore", default=None, help="path of a finished run directory: rescore its checkpoints on the --ood sets and exit"); ap.add_argument("--interp-alpha", default="", help="rescore only: comma list of interpolation coefficients; evaluates WiSE-FT-style weight interpolation between the reference (alpha 0) and the checkpoint (alpha 1) as extra variants wise_a<alpha>"); ap.add_argument("--amp", action="store_true", help="mixed precision on CUDA: bf16 where supported (A100), else fp16 with loss scaling (V100)")
     a = ap.parse_args(); torch.manual_seed(a.seed); np.random.seed(a.seed); dev = a.device
     if a.rescore: return rescore(a)
     out = pathlib.Path(a.out); out.mkdir(parents=True, exist_ok=True); ledger = {"config": vars(a), "stages": []}
