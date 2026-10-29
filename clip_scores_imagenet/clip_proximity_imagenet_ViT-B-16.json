@@ -1,0 +1,137 @@
+{
+  "imagenet": {
+    "global": {
+      "knn_mean": 0.6777677536010742,
+      "knn_median": 0.6715078353881836,
+      "fid": 0.007439274962484304,
+      "kid_mean": 8.659125204903973e-06,
+      "kid_std": 2.1127012499970504e-06
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.287127286195755,
+      "text_alignment_median": 0.2911161184310913,
+      "img_centroid_dist_mean": 0.6429464221000671,
+      "img_centroid_dist_median": 0.6356426477432251
+    }
+  },
+  "imagenet_o": {
+    "global": {
+      "knn_mean": 0.8190080523490906,
+      "knn_median": 0.8220993280410767,
+      "fid": 0.16711155900018265,
+      "kid_mean": 0.00026799298772344214,
+      "kid_std": 1.4125920912336466e-05
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.23889081180095673,
+      "text_alignment_median": 0.2376966029405594,
+      "img_centroid_dist_mean": 0.8177167177200317,
+      "img_centroid_dist_median": 0.8220354318618774
+    }
+  },
+  "inaturalist": {
+    "global": {
+      "knn_mean": 0.7201953530311584,
+      "knn_median": 0.720008373260498,
+      "fid": 0.5570934060454329,
+      "kid_mean": 0.0014152761453622808,
+      "kid_std": 2.0204271052811474e-05
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.24523022770881653,
+      "text_alignment_median": 0.24443885684013367,
+      "img_centroid_dist_mean": 0.7514375448226929,
+      "img_centroid_dist_median": 0.7552502155303955
+    }
+  },
+  "ninco": {
+    "global": {
+      "knn_mean": 0.7438905835151672,
+      "knn_median": 0.7451418042182922,
+      "fid": 0.22972040300753915,
+      "kid_mean": 0.00033437020795364704,
+      "kid_std": 1.6953216889869297e-05
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.261866956949234,
+      "text_alignment_median": 0.2654724717140198,
+      "img_centroid_dist_mean": 0.7342959046363831,
+      "img_centroid_dist_median": 0.7351280450820923
+    }
+  },
+  "openimage_o": {
+    "global": {
+      "knn_mean": 0.8113104701042175,
+      "knn_median": 0.7997055053710938,
+      "fid": 0.26221872570796567,
+      "kid_mean": 0.0006844855689429519,
+      "kid_std": 1.8513708987739266e-05
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.23827986419200897,
+      "text_alignment_median": 0.23635020852088928,
+      "img_centroid_dist_mean": 0.8231809139251709,
+      "img_centroid_dist_median": 0.8195927143096924
+    }
+  },
+  "places": {
+    "global": {
+      "knn_mean": 0.7963495850563049,
+      "knn_median": 0.8045119047164917,
+      "fid": 0.3358808352467211,
+      "kid_mean": 0.0007073416532911292,
+      "kid_std": 1.532370196746172e-05
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.23953530192375183,
+      "text_alignment_median": 0.23787644505500793,
+      "img_centroid_dist_mean": 0.8044227957725525,
+      "img_centroid_dist_median": 0.8157600164413452
+    }
+  },
+  "ssb_hard": {
+    "global": {
+      "knn_mean": 0.7496667504310608,
+      "knn_median": 0.7462151050567627,
+      "fid": 0.16863826517986777,
+      "kid_mean": 0.00041445288179875917,
+      "kid_std": 1.6306804243746828e-05
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.262449711561203,
+      "text_alignment_median": 0.2644054889678955,
+      "img_centroid_dist_mean": 0.7338453531265259,
+      "img_centroid_dist_median": 0.7292652130126953
+    }
+  },
+  "sun": {
+    "global": {
+      "knn_mean": 0.7928320169448853,
+      "knn_median": 0.7991350293159485,
+      "fid": 0.41702436099115525,
+      "kid_mean": 0.0007640543517837273,
+      "kid_std": 1.7523532166211666e-05
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.23428456485271454,
+      "text_alignment_median": 0.2321140021085739,
+      "img_centroid_dist_mean": 0.8049934506416321,
+      "img_centroid_dist_median": 0.8116955757141113
+    }
+  },
+  "texture": {
+    "global": {
+      "knn_mean": 0.8120573163032532,
+      "knn_median": 0.816577136516571,
+      "fid": 0.4190177590344296,
+      "kid_mean": 0.0010413731039847108,
+      "kid_std": 2.7629065121617763e-05
+    },
+    "class_aware": {
+      "text_alignment_mean": 0.24515759944915771,
+      "text_alignment_median": 0.24517711997032166,
+      "img_centroid_dist_mean": 0.8256723284721375,
+      "img_centroid_dist_median": 0.8315578699111938
+    }
+  }
+}
