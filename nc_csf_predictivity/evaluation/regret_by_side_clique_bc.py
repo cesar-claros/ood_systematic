@@ -12,6 +12,14 @@ Inputs:
 Outputs:
   outputs/figures/regret_by_side_clique_bc_xarch.{pdf,png}
   outputs/figures/regret_by_side_clique_bc_lopo.{pdf,png}
+
+With --regime-free: xarch only, bars for the regime-free NC-only and
+NC + source arms (outputs/regimefree_wilcoxon/xarch_aggregate.csv) and the
+best baseline, no figure title:
+  outputs/figures/regret_by_side_regime_free_xarch.{pdf,png}
+With --regime-free --roster22: the same for the 22-CSF heads and baselines
+(outputs/newcsf_heads/{aggregate,baseline_aggregate}.csv):
+  outputs/figures/regret_by_side_22csf_xarch.{pdf,png}
 """
 from __future__ import annotations
 
@@ -36,6 +44,11 @@ CONFIG_LABELS = {"source": "NC + source", "n_classes": "NC + n_classes",
 CONFIG_COLORS = {"source": "#2ca02c", "n_classes": "#1f77b4",
                  "none": "#9467bd"}
 BASELINE_COLOR = "#d62728"
+REGIME_FREE_ARMS = ["none_nr_marginal", "source_nr_marginal"]
+REGIME_FREE_LABELS = {"none_nr_marginal": "NC only",
+                      "source_nr_marginal": "NC + source"}
+REGIME_FREE_COLORS = {"none_nr_marginal": CONFIG_COLORS["none"],
+                      "source_nr_marginal": CONFIG_COLORS["source"]}
 
 
 def load_predictor_aggregate(out_root: Path, split: str, config: str
@@ -47,12 +60,16 @@ def load_predictor_aggregate(out_root: Path, split: str, config: str
     return pq.read_table(p).to_pandas()
 
 
-def best_baseline(out_root: Path, split: str, regime: str, side: str
-                  ) -> tuple[str, float, float, float] | None:
+def load_baselines(out_root: Path, split: str) -> pd.DataFrame | None:
+    """Baseline aggregate written by baselines.py for one split (20-CSF roster)."""
     p = (out_root / "track1" / split / "baselines" / "aggregate.parquet")
-    if not p.exists():
+    return pq.read_table(p).to_pandas() if p.exists() else None
+
+
+def best_baseline(bl: pd.DataFrame | None, regime: str, side: str
+                  ) -> tuple[str, float, float, float] | None:
+    if bl is None:
         return None
-    bl = pq.read_table(p).to_pandas()
     bl = bl[(bl["comparator_kind"] == "baseline")
             & (bl["regime"] == regime) & (bl["side"] == side)]
     if bl.empty:
@@ -62,23 +79,36 @@ def best_baseline(out_root: Path, split: str, regime: str, side: str
             float(row["regret_raw_ci_lo"]), float(row["regret_raw_ci_hi"]))
 
 
-def plot_split(out_root: Path, split: str, fig_dir: Path) -> None:
-    aggs = {c: load_predictor_aggregate(out_root, split, c) for c in CONFIGS}
+def load_regime_free_aggregates(path: Path) -> dict[str, pd.DataFrame]:
+    """Per-arm aggregates (regimefree_wilcoxon.py or newcsf_heads.py layout)."""
+    agg = pd.read_csv(path)
+    return {arm: agg[agg["arm"] == arm] for arm in REGIME_FREE_ARMS}
 
+
+def plot_split(baselines: pd.DataFrame | None, aggs: dict[str, pd.DataFrame | None],
+               labels: dict[str, str], colors: dict[str, str], out_base: Path,
+               suptitle: str | None) -> None:
+    """Three side panels of mean set-regret bars: predictor arms + best baseline.
+
+    Args:
+        baselines: Baseline aggregate (baselines.py layout) for the best-baseline
+            bar of each cell.
+        aggs: Arm name -> per-(regime, side) aggregate in the clique_bc layout.
+        labels: Arm name -> legend label.
+        colors: Arm name -> bar colour.
+        out_base: Output path without extension (.pdf and .png are written).
+        suptitle: Figure title, or None for no title.
+    """
     fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharey=False)
 
-    bar_w = 0.18
+    n_bars = len(aggs) + 1
+    bar_w = 0.72 / n_bars
     x_centers = np.arange(len(REGIMES))
-    config_offsets = {
-        "source":    -1.5 * bar_w,
-        "n_classes": -0.5 * bar_w,
-        "none":       0.5 * bar_w,
-        "baseline":   1.5 * bar_w,
-    }
+    offsets = (np.arange(n_bars) - (n_bars - 1) / 2) * bar_w
+    config_offsets = dict(zip([*aggs, "baseline"], offsets))
 
     for ax, side in zip(axes, SIDES):
-        # NC predictor bars per config
-        for cfg in CONFIGS:
+        for cfg in aggs:
             agg = aggs.get(cfg)
             if agg is None:
                 continue
@@ -94,13 +124,13 @@ def plot_split(out_root: Path, split: str, fig_dir: Path) -> None:
                 means.append(m); lo.append(m - l); hi.append(h - m)
             ax.bar(x_centers + config_offsets[cfg], means, bar_w,
                    yerr=[lo, hi], capsize=3,
-                   label=CONFIG_LABELS[cfg], color=CONFIG_COLORS[cfg],
+                   label=labels[cfg], color=colors[cfg],
                    edgecolor="black", linewidth=0.5)
 
         # Baseline bar (best per cell)
         bl_means, bl_lo, bl_hi, bl_names = [], [], [], []
         for regime in REGIMES:
-            res = best_baseline(out_root, split, regime, side)
+            res = best_baseline(baselines, regime, side)
             if res is None:
                 bl_means.append(np.nan); bl_lo.append(0); bl_hi.append(0); bl_names.append("")
                 continue
@@ -127,30 +157,52 @@ def plot_split(out_root: Path, split: str, fig_dir: Path) -> None:
         ax.grid(axis="y", alpha=0.3)
         ax.legend(loc="upper right", fontsize=8)
 
-    split_label = ("xarch — VGG13 → ResNet18 (cross-architecture)"
-                   if split == "xarch"
-                   else "lopo — leave-one-paradigm-out (cross-paradigm)")
-    fig.suptitle(f"Clique (b+c) headline predictor vs baselines — {split_label}\n"
-                 "Per-CSF binary, L2 Cs=50, class_weighted, per-arch NC std, "
-                 "clique label rule",
-                 fontsize=11, y=1.02)
+    if suptitle is not None:
+        fig.suptitle(suptitle, fontsize=11, y=1.02)
     plt.tight_layout()
-    base = fig_dir / f"regret_by_side_clique_bc_{split}"
-    fig.savefig(str(base) + ".pdf", bbox_inches="tight")
-    fig.savefig(str(base) + ".png", bbox_inches="tight", dpi=150)
+    fig.savefig(str(out_base) + ".pdf", bbox_inches="tight")
+    fig.savefig(str(out_base) + ".png", bbox_inches="tight", dpi=150)
     plt.close(fig)
-    print(f"  wrote {base}.pdf")
+    print(f"  wrote {out_base}.pdf")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--out-root", default=str(DEFAULT_OUT_ROOT))
+    parser.add_argument("--regime-free", action="store_true",
+                        help="plot the regime-free arms (xarch only, no title)")
+    parser.add_argument("--roster22", action="store_true",
+                        help="with --regime-free: the 22-CSF heads and baselines "
+                             "of evaluation/newcsf_heads.py")
     args = parser.parse_args()
     out_root = Path(args.out_root)
     fig_dir = out_root / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
+    if args.regime_free:
+        if args.roster22:
+            aggs = load_regime_free_aggregates(out_root / "newcsf_heads" / "aggregate.csv")
+            baselines = pd.read_csv(out_root / "newcsf_heads" / "baseline_aggregate.csv")
+            name = "regret_by_side_22csf_xarch"
+        else:
+            aggs = load_regime_free_aggregates(
+                out_root / "regimefree_wilcoxon" / "xarch_aggregate.csv")
+            baselines = load_baselines(out_root, "xarch")
+            name = "regret_by_side_regime_free_xarch"
+        plot_split(baselines, aggs, REGIME_FREE_LABELS, REGIME_FREE_COLORS,
+                   fig_dir / name, suptitle=None)
+        return
     for split in SPLITS:
-        plot_split(out_root, split, fig_dir)
+        split_label = ("xarch — VGG13 → ResNet18 (cross-architecture)"
+                       if split == "xarch"
+                       else "lopo — leave-one-paradigm-out (cross-paradigm)")
+        plot_split(load_baselines(out_root, split),
+                   {c: load_predictor_aggregate(out_root, split, c)
+                    for c in CONFIGS},
+                   CONFIG_LABELS, CONFIG_COLORS,
+                   fig_dir / f"regret_by_side_clique_bc_{split}",
+                   suptitle=(f"Clique (b+c) headline predictor vs baselines — "
+                             f"{split_label}\nPer-CSF binary, L2 Cs=50, "
+                             "class_weighted, per-arch NC std, clique label rule"))
 
 
 if __name__ == "__main__":

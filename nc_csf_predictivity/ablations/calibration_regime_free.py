@@ -20,7 +20,8 @@ Feature configs mirror the originals minus regime:
 
 Outputs:
   outputs/ablations/calib_cliques_regime_free/track1/<split>/<config>_<variant>/
-    preds.parquet, coefficients.parquet
+    preds.parquet, coefficients.parquet (one row per csf x input feature,
+    intercept included, same layout as calibration_features_clique.py)
   outputs/25_ablation_regime_free.md
 """
 from __future__ import annotations
@@ -98,6 +99,14 @@ def feature_columns_nr(config: str) -> list[str]:
     raise ValueError(config)
 
 
+def feature_names_nr(pipe: Pipeline, config: str) -> list[str]:
+    """Model input names after preprocessing, aligned with the coefficients."""
+    if config == "source_nr":
+        ohe = pipe.named_steps["preprocess"].named_transformers_["cat"]
+        return list(NC_PRIMARY) + list(ohe.get_feature_names_out(["source"]))
+    return list(NC_PRIMARY)
+
+
 def build_train_nr(long_df: pd.DataFrame, label_df: pd.DataFrame,
                    train_model_ids: list[str], config: str, variant: str
                    ) -> tuple[pd.DataFrame | None, pd.DataFrame | None, list[str]]:
@@ -156,8 +165,13 @@ def build_test_nr(long_df: pd.DataFrame, test_model_ids: list[str], config: str
 
 def run_config_variant(long_df: pd.DataFrame, label_df: pd.DataFrame,
                        split: str, out_root: Path, config: str,
-                       variant: str) -> int:
-    """Train per-CSF heads for one (split, config, variant); write preds."""
+                       variant: str, ablation_root: str = ABLATION_ROOT) -> int:
+    """Train per-CSF heads for one (split, config, variant); write preds.
+
+    `ablation_root` (relative to out_root) selects where preds and
+    coefficients go, so other label sets (e.g. the 22-CSF roster) reuse
+    this exact protocol.
+    """
     sp = pq.read_table(out_root / "splits" / f"{split}.parquet").to_pandas()
     pred_pieces, coef_pieces = [], []
     for fold_id, fold_grp in sp.groupby("fold_id"):
@@ -193,15 +207,17 @@ def run_config_variant(long_df: pd.DataFrame, label_df: pd.DataFrame,
                     "label_rule": "clique",
                     "config": f"{config}_{variant}",
                 }))
-            coef_pieces.append({
-                "csf": csf, "fold_id": fold_id, "fold_label": fold_label,
-                "split_name": split, "config": f"{config}_{variant}",
-                "chosen_C": float(clf.C_[0]),
-                "intercept": float(clf.intercept_[0]),
-            })
+            names = ["(intercept)"] + feature_names_nr(pipe, config)
+            values = np.r_[clf.intercept_[0], clf.coef_[0]]
+            coef_pieces.extend(
+                {"csf": csf, "feature": name, "coefficient": float(value),
+                 "chosen_C": float(clf.C_[0]), "fold_id": fold_id,
+                 "fold_label": fold_label, "split_name": split,
+                 "config": f"{config}_{variant}", "label_rule": "clique"}
+                for name, value in zip(names, values))
     if not pred_pieces:
         return 0
-    out_dir = out_root / ABLATION_ROOT / "track1" / split / f"{config}_{variant}"
+    out_dir = out_root / ablation_root / "track1" / split / f"{config}_{variant}"
     out_dir.mkdir(parents=True, exist_ok=True)
     write_parquet(pd.concat(pred_pieces, ignore_index=True),
                   out_dir / "preds.parquet")

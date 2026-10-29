@@ -56,6 +56,7 @@ HEAD_SIDE_CSFS = [
 FEATURE_SIDE_CSFS = [
     "CTM", "fDBD", "KPCA RecError global", "Maha", "NeCo",
     "NNGuide", "PCA RecError global", "Residual", "ViM",
+    "MahaPP", "NCI",
 ]
 N_CLASSES_MAP = {
     "cifar10": 10, "supercifar100": 19, "cifar100": 100, "tinyimagenet": 200,

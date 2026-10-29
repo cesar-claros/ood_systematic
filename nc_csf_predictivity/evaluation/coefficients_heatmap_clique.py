@@ -15,6 +15,10 @@ Splits: xarch + lopo (the two transfer headlines).
 
 Outputs (per split × config):
   outputs/figures/clique_coefficients_heatmap_<split>_<config>.{pdf,png}
+
+With --regime-free: the xarch regime-free predictors of
+ablations/calibration_regime_free.py (none_nr_marginal, source_nr_marginal):
+  outputs/figures/clique_coefficients_heatmap_xarch_<config>.{pdf,png}
 """
 from __future__ import annotations
 
@@ -42,9 +46,14 @@ HEAD_SIDE_CSFS = [
 FEATURE_SIDE_CSFS = [
     "CTM", "fDBD", "KPCA RecError global", "Maha", "NeCo",
     "NNGuide", "PCA RecError global", "Residual", "ViM",
+    "MahaPP", "NCI",
 ]
 SPLITS = ["xarch", "lopo"]
 CONFIGS = ["source", "n_classes", "none"]
+REGIME_FREE_CONFIGS = {
+    "none_nr_marginal": "NC only",
+    "source_nr_marginal": "NC + source one-hot",
+}
 
 
 def order_features(present: list[str]) -> list[str]:
@@ -133,10 +142,28 @@ def plot_heatmap(coefs: pd.DataFrame, title: str, out_base: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--out-root", default=str(DEFAULT_OUT_ROOT))
+    parser.add_argument("--regime-free", action="store_true",
+                        help="plot the regime-free xarch predictors instead")
+    parser.add_argument("--roster22", action="store_true",
+                        help="with --regime-free: the 22-CSF heads of "
+                             "evaluation/newcsf_heads.py")
     args = parser.parse_args()
     out_root = Path(args.out_root)
     fig_dir = out_root / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.regime_free:
+        root = (out_root / "newcsf_heads" if args.roster22
+                else out_root / "ablations" / "calib_cliques_regime_free")
+        suffix = "_22csf" if args.roster22 else ""
+        for config, config_label in REGIME_FREE_CONFIGS.items():
+            cp = root / "track1" / "xarch" / config / "coefficients.parquet"
+            title = ("Per-CSF logistic coefficients (clique label rule, no regime "
+                     f"input)\n{config_label}; xarch — VGG13 → ResNet18, 1 fold")
+            base = fig_dir / f"clique_coefficients_heatmap_xarch_{config}{suffix}"
+            plot_heatmap(pq.read_table(cp).to_pandas(), title=title, out_base=base)
+            print(f"  wrote {base}.pdf")
+        return
 
     for split in SPLITS:
         for config in CONFIGS:

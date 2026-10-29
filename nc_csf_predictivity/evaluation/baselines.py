@@ -44,7 +44,7 @@ HEAD_SIDE_CSFS = {
 }
 FEATURE_SIDE_CSFS = {
     "PCA RecError global", "NeCo", "NNGuide", "CTM", "ViM", "Maha",
-    "fDBD", "KPCA RecError global", "Residual",
+    "fDBD", "KPCA RecError global", "Residual", "MahaPP", "NCI",
 }
 ALWAYS_BASELINES = ["MSR", "Energy", "MLS", "CTM", "fDBD", "NNGuide"]
 SIDES = ["all", "head", "feature"]
@@ -112,11 +112,13 @@ def bootstrap_mean_ci(values: np.ndarray, n_boot: int = N_BOOT,
 
 def compute_baselines_per_row(eval_long: pd.DataFrame, oracle_df: pd.DataFrame,
                               train_long: pd.DataFrame, id_col: str,
-                              all_csfs: list[str]) -> pd.DataFrame:
+                              all_csfs: list[str],
+                              always: list[str] = ALWAYS_BASELINES) -> pd.DataFrame:
     """eval_long: id_col, eval_dataset, regime, csf, raw_augrc.
     oracle_df: id_col, eval_dataset, regime, oracle/worst columns per side.
     train_long: same shape as eval_long but for training rows; used to pick
                 Oracle-on-train CSF per side.
+    always: CSFs that get an Always-X baseline (default: the paper's six).
     Returns long table per (id, eval_dataset, side, comparator_name)."""
     rows = []
 
@@ -153,7 +155,7 @@ def compute_baselines_per_row(eval_long: pd.DataFrame, oracle_df: pd.DataFrame,
 
         # Always-X baselines per row
         always_pieces = {}
-        for x in ALWAYS_BASELINES:
+        for x in always:
             if x not in side_set:
                 continue
             sub = (eval_side[eval_side["csf"] == x]

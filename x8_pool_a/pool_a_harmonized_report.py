@@ -3,7 +3,9 @@ report omitted, computed from the saved parquets (no refitting).
 
   1. Full GLiC-2-style tables (regime x source + pooled) with the
      harmonized BEST-FIXED baseline (value + name) next to NC+source and
-     NC only, at both rosters: 18 (submitted-comparable) and 21 (revision).
+     NC only, at both rosters: 18 (submitted-comparable) and 21 (revision),
+     and at 21 with heads trained on the 22-CSF VGG13 labels (MahaPP and NCI
+     heads, evaluation/newcsf_heads.labels_22).
      The submitted claim was NC-only beating best-fixed in every pooled
      cell (1.59/1.38/0.59 vs 5.84/7.07/1.20); this shows whether it
      survives the protocol upgrade.
@@ -33,6 +35,7 @@ from pool_a_analysis import (  # noqa: E402
     FEAT_CSFS, HEAD_CSFS, OUT_ROOT, pool_cliques_for)
 from calibration_features_clique import NC_PRIMARY, add_model_id  # noqa: E402
 from input_ablation_grid import REGIMES, evaluate, ssl_shortlists  # noqa: E402
+from newcsf_heads import labels_22  # noqa: E402
 
 SUBMITTED = {"source_nr": (4.96, 3.99, 5.07), "none_nr": (1.59, 1.38, 0.59)}
 SUBMITTED_BF = (5.84, 7.07, 1.20)
@@ -56,21 +59,23 @@ def main() -> None:
         for c in NC_PRIMARY:
             vgg_long.loc[sub_a.index, c] = (
                 (sub_a[c] - sub_a[c].mean()) / (sub_a[c].std() + 1e-12))
-    label_wide = (cliques.assign(label=cliques["in_top_clique"].astype(int))
-                  .pivot_table(index=["paradigm", "source", "dropout",
-                                      "reward", "regime"],
-                               columns="csf", values="label",
-                               aggfunc="first").reset_index().fillna(0))
-    csf_cols = [c for c in label_wide.columns if c not in
-                ["paradigm", "source", "dropout", "reward", "regime"]]
     vgg_models = (vgg_long[vgg_long["architecture"] == "VGG13"]
                   [["model_id", "paradigm", "source", "dropout", "reward"]
                    + NC_PRIMARY].drop_duplicates("model_id"))
-    tr_marginal = pd.DataFrame(
-        [{**m.to_dict(), "regime": r} for _, m in vgg_models.iterrows()
-         for r in REGIMES]).merge(
-        label_wide, on=["paradigm", "source", "dropout", "reward", "regime"],
-        how="inner")
+    cell = ["paradigm", "source", "dropout", "reward", "regime"]
+
+    def marginal_training(labels: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
+        """Regime-marginal VGG13 training rows and CSF columns for a label set."""
+        wide = (labels.pivot_table(index=cell, columns="csf", values="label",
+                                   aggfunc="first").reset_index().fillna(0))
+        rows = pd.DataFrame(
+            [{**m.to_dict(), "regime": r} for _, m in vgg_models.iterrows()
+             for r in REGIMES]).merge(wide, on=cell, how="inner")
+        return rows, [c for c in wide.columns if c not in cell]
+
+    tr_marginal, csf_cols = marginal_training(
+        cliques.assign(label=cliques["in_top_clique"].astype(int)))
+    tr_marginal22, csf_cols22 = marginal_training(labels_22(OUT_ROOT))
 
     long_df["model_id"] = (long_df["paradigm"] + "|" + long_df["source"]
                            + "|" + long_df["run"].astype(str))
@@ -83,10 +88,14 @@ def main() -> None:
     legacy18 = sorted(set(HEAD_CSFS + FEAT_CSFS))
     rosters = {
         "18 legacy (submitted-comparable)":
-            long_df[long_df["csf"].isin(legacy18)],
+            (long_df[long_df["csf"].isin(legacy18)], tr_marginal, csf_cols),
         "20 (+MahaPP/NCI in rows, no heads for them)":
-            long_df[long_df["csf"] != "KPCA RecError global"],
-        "21 (revision, no heads for new CSFs yet)": long_df,
+            (long_df[long_df["csf"] != "KPCA RecError global"], tr_marginal,
+             csf_cols),
+        "21 (revision, no heads for new CSFs yet)":
+            (long_df, tr_marginal, csf_cols),
+        "21 with MahaPP/NCI heads (revision, 22-CSF VGG13 labels)":
+            (long_df, tr_marginal22, csf_cols22),
     }
 
     lines = ["# Harmonized SSL selector vs best fixed (addendum to 41)\n\n",
@@ -95,14 +104,13 @@ def main() -> None:
              "NC only 1.59/1.38/0.59, best fixed 5.84/7.07/1.20 (pilot "
              "protocol, 18-CSF roster). W = beats the harmonized best "
              "fixed in that cell.\n"]
-    for roster_name, rows_r in rosters.items():
+    for roster_name, (rows_r, tr_r, cols_r) in rosters.items():
         fam = sorted(rows_r["csf"].unique())
         ood = rows_r[rows_r["regime"].isin(REGIMES)][
             ["model_id", "eval_dataset", "source", "regime", "csf", "augrc"]]
         results = {}
         for config in SUBMITTED:
-            sl = ssl_shortlists(config, models_df, tr_marginal, tr_marginal,
-                                csf_cols)
+            sl = ssl_shortlists(config, models_df, tr_r, tr_r, cols_r)
             results[config] = evaluate(ood, sl, always=fam)
         lines.append(f"\n## Roster {roster_name}\n\n"
                      "| Regime | Source | Best fixed CSF | NC+source | "

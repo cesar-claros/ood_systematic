@@ -59,11 +59,13 @@ class NCI:
                            method: str = "bo",
                            n_init: int = 20, n_iters: int = 80) -> None:
         """alpha selection on validation failure-AUGRC. method='bo' (the
-        harmonized protocol, 2026-08-08): Bayesian optimization over the
-        grid's span (0, 3e-2), alpha=0 (pure alignment) reachable, same BO
-        convention as the pipeline's other tuned CSFs (20+80,
-        random_state=1). method='grid': the original 7-point search, which
-        produced the first E-F benchmark scores."""
+        harmonized protocol): Bayesian optimization over the grid's span
+        (min(alphas), max(alphas)) = (1e-4, 1e-1) with the default grid
+        (since 94b377e; before it the span was (0, 3e-2) and alpha=0 was
+        reachable), same BO convention as the pipeline's other tuned CSFs
+        (20+80, random_state=1). method='grid': the 7-point search; the
+        first E-F benchmark scores used the pre-94b377e grid
+        (0, 1e-4, ..., 3e-2)."""
         logger.info(f"NCI: Fitting parameters (alpha via {method})...")
         self.train_mean = activations_train.mean(dim=0)
         if activations_val is None or logits_val is None or correct_val is None:

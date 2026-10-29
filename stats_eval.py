@@ -33,6 +33,7 @@ DISPLAY_RENAME = {
     "PCA RecError global": "PCA RecError",
     "MCD-KPCA RecError global": "MCD-KPCA RecError",
     "MCD-PCA RecError global": "MCD-PCA RecError",
+    "MahaPP": "Maha++",
 }
 
 ALL_PARADIGMS_CONFIGS = [
@@ -400,10 +401,10 @@ def _render_panels_grid(args, metric: list[str],
                 zorder=20, clip_on=False,
             ))
 
-        ax.set_title(label, fontsize=11)
+        ax.set_title(label, fontsize=11 * args.font_scale)
 
     handles = [mlines.Line2D([], [], color=c, marker='o', linestyle='None',
-                             markersize=8, label=g)
+                             markersize=8 * args.font_scale, label=g)
                for g, c in group_colors.items()
                if any(g in r["active_groups"] for _, _, r in panels)]
     side_handles = []
@@ -422,13 +423,15 @@ def _render_panels_grid(args, metric: list[str],
     if legend_handles:
         fig.legend(handles=legend_handles,
                    loc='lower center', ncol=len(legend_handles),
-                   bbox_to_anchor=(0.5, -0.04), frameon=False, fontsize=9)
+                   bbox_to_anchor=(0.5, -0.04), frameon=False,
+                   fontsize=9 * args.font_scale)
 
     grouping_label = (f', Grouping: {os.path.basename(args.clip_dir)}'
                       if args.clip_dir != 'clip_scores' else '')
-    fig.suptitle(f'{suptitle_prefix} '
-                 f'(Metrics={metric}{grouping_label})',
-                 fontsize=12, y=1.00)
+    if not args.no_suptitle:
+        fig.suptitle(f'{suptitle_prefix} '
+                     f'(Metrics={metric}{grouping_label})',
+                     fontsize=12 * args.font_scale, y=1.00)
     plt.tight_layout(rect=(0, 0.02, 1, 0.98))
 
     clip_suffix = (f'_{os.path.basename(args.clip_dir)}'
@@ -475,8 +478,16 @@ def main():
                         help="Drop the 'test' (ID / misclassification) regime from "
                              "all top-clique panels. Only affects --all-paradigms / "
                              "--all-backbones modes.")
+    parser.add_argument("--font-scale", type=float, default=1.0,
+                        help="Multiply all text sizes of the --all-paradigms / "
+                             "--all-backbones figure (default: 1.0)")
+    parser.add_argument("--no-suptitle", action="store_true",
+                        help="Omit the figure title of the --all-paradigms / "
+                             "--all-backbones figure")
 
     args = parser.parse_args()
+    plt.rcParams.update({"xtick.labelsize": 10 * args.font_scale,
+                         "ytick.labelsize": 10 * args.font_scale})
 
     if not args.all_paradigms and not args.all_backbones and args.backbone is None:
         parser.error("--backbone is required unless --all-paradigms or --all-backbones is set.")
