@@ -1,0 +1,252 @@
+{
+  "cifar10": {
+    "test": [
+      "GEN",
+      "PCE",
+      "Confidence",
+      "REN",
+      "PE"
+    ],
+    "near": [
+      "Energy",
+      "NeCo",
+      "MLS",
+      "NNGuide"
+    ],
+    "mid": [
+      "Energy"
+    ],
+    "far": [
+      "Energy",
+      "NNGuide",
+      "NeCo",
+      "CTM",
+      "MLS"
+    ],
+    "all": [
+      "Energy"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "Confidence",
+      "NNGuide",
+      "MLS",
+      "PCE",
+      "NeCo"
+    ],
+    "near": [
+      "NNGuide",
+      "NeCo",
+      "PCE",
+      "KPCA RecError global",
+      "MLS",
+      "PE",
+      "REN",
+      "Energy"
+    ],
+    "mid": [
+      "CTM",
+      "Energy",
+      "KPCA RecError global",
+      "GE",
+      "fDBD",
+      "PE"
+    ],
+    "far": [
+      "Energy",
+      "GE",
+      "fDBD",
+      "CTM",
+      "KPCA RecError global",
+      "PE",
+      "Confidence",
+      "NeCo"
+    ],
+    "all": [
+      "Energy",
+      "CTM",
+      "KPCA RecError global",
+      "GE",
+      "PE",
+      "NeCo"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "Confidence"
+    ],
+    "near": [
+      "NeCo",
+      "MLS",
+      "PE",
+      "Confidence",
+      "PCE",
+      "GE",
+      "Energy"
+    ],
+    "mid": [
+      "Energy",
+      "NeCo",
+      "GE",
+      "MLS",
+      "KPCA RecError global"
+    ],
+    "far": [
+      "Confidence",
+      "fDBD"
+    ],
+    "all": [
+      "NeCo",
+      "Energy",
+      "MLS",
+      "Confidence",
+      "GE"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "CTM"
+    ],
+    "near": [
+      "CTM"
+    ],
+    "mid": [
+      "CTM",
+      "fDBD"
+    ],
+    "far": [
+      "CTM",
+      "fDBD"
+    ],
+    "all": [
+      "CTM"
+    ]
+  },
+  "_ranks": {
+    "cifar10": {
+      "test": {
+        "GEN": 2.5,
+        "PCE": 2.8,
+        "Confidence": 3.6,
+        "REN": 3.8,
+        "PE": 4.5
+      },
+      "near": {
+        "Energy": 1.95,
+        "NeCo": 3.1,
+        "MLS": 3.25,
+        "NNGuide": 3.4
+      },
+      "mid": {
+        "Energy": 1.7
+      },
+      "far": {
+        "Energy": 2.7,
+        "NNGuide": 2.8,
+        "NeCo": 2.85,
+        "CTM": 3.3,
+        "MLS": 3.75
+      },
+      "all": {
+        "Energy": 2.0125
+      }
+    },
+    "supercifar100": {
+      "test": {
+        "Confidence": 3.0,
+        "NNGuide": 3.2,
+        "MLS": 3.8,
+        "PCE": 3.8,
+        "NeCo": 4.0
+      },
+      "near": {
+        "NNGuide": 4.35,
+        "NeCo": 5.45,
+        "PCE": 5.75,
+        "KPCA RecError global": 6.0,
+        "MLS": 6.15,
+        "PE": 6.25,
+        "REN": 7.2,
+        "Energy": 7.3
+      },
+      "mid": {
+        "CTM": 5.15,
+        "Energy": 6.325,
+        "KPCA RecError global": 7.05,
+        "GE": 7.525,
+        "fDBD": 8.0,
+        "PE": 8.2
+      },
+      "far": {
+        "Energy": 5.2,
+        "GE": 5.9,
+        "fDBD": 6.6,
+        "CTM": 6.8,
+        "KPCA RecError global": 7.5,
+        "PE": 7.7,
+        "Confidence": 9.0,
+        "NeCo": 9.0
+      },
+      "all": {
+        "Energy": 6.2875,
+        "CTM": 6.8875,
+        "KPCA RecError global": 6.9,
+        "GE": 7.3875,
+        "PE": 7.5875,
+        "NeCo": 8.0125
+      }
+    },
+    "cifar100": {
+      "test": {
+        "Confidence": 1.0
+      },
+      "near": {
+        "NeCo": 3.8,
+        "MLS": 4.3,
+        "PE": 5.1,
+        "Confidence": 5.5,
+        "PCE": 5.5,
+        "GE": 6.2,
+        "Energy": 6.7
+      },
+      "mid": {
+        "Energy": 3.65,
+        "NeCo": 4.95,
+        "GE": 5.2,
+        "MLS": 6.05,
+        "KPCA RecError global": 6.1
+      },
+      "far": {
+        "Confidence": 2.5,
+        "fDBD": 4.1
+      },
+      "all": {
+        "NeCo": 5.0375,
+        "Energy": 5.475,
+        "MLS": 5.9625,
+        "Confidence": 6.55,
+        "GE": 6.75
+      }
+    },
+    "tinyimagenet": {
+      "test": {
+        "CTM": 1.0
+      },
+      "near": {
+        "CTM": 1.12
+      },
+      "mid": {
+        "CTM": 1.5,
+        "fDBD": 1.9
+      },
+      "far": {
+        "CTM": 1.6,
+        "fDBD": 2.2
+      },
+      "all": {
+        "CTM": 1.275
+      }
+    }
+  }
+}

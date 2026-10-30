@@ -1,0 +1,224 @@
+{
+  "cifar10": {
+    "test": [
+      "GEN",
+      "MSR",
+      "PCE",
+      "PE"
+    ],
+    "near": [
+      "pNML",
+      "PCA RecError global",
+      "ViM"
+    ],
+    "mid": [
+      "KPCA RecError global"
+    ],
+    "far": [
+      "pNML",
+      "Residual",
+      "ViM"
+    ],
+    "all": [
+      "pNML",
+      "PCA RecError global"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "GEN",
+      "MSR",
+      "REN"
+    ],
+    "near": [
+      "NNGuide",
+      "GE",
+      "MLS",
+      "PE",
+      "ViM",
+      "fDBD",
+      "PCE"
+    ],
+    "mid": [
+      "KPCA RecError global",
+      "NNGuide",
+      "MSR"
+    ],
+    "far": [
+      "Residual",
+      "pNML"
+    ],
+    "all": [
+      "NNGuide"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "MSR",
+      "GEN",
+      "PCE",
+      "REN"
+    ],
+    "near": [
+      "ViM",
+      "fDBD",
+      "NeCo",
+      "CTM"
+    ],
+    "mid": [
+      "CTM",
+      "KPCA RecError global",
+      "GradNorm",
+      "fDBD",
+      "ViM"
+    ],
+    "far": [
+      "ViM",
+      "Residual",
+      "pNML",
+      "PCA RecError global"
+    ],
+    "all": [
+      "ViM",
+      "CTM",
+      "fDBD"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "MSR",
+      "GEN",
+      "PCE"
+    ],
+    "near": [
+      "GradNorm",
+      "PCE"
+    ],
+    "mid": [
+      "Residual",
+      "pNML",
+      "Maha",
+      "ViM"
+    ],
+    "far": [
+      "GradNorm"
+    ],
+    "all": [
+      "GradNorm",
+      "PCE",
+      "NeCo"
+    ]
+  },
+  "_ranks": {
+    "cifar10": {
+      "test": {
+        "GEN": 2.5,
+        "MSR": 2.8,
+        "PCE": 3.1,
+        "PE": 4.95
+      },
+      "near": {
+        "pNML": 2.15,
+        "PCA RecError global": 2.4,
+        "ViM": 2.55
+      },
+      "mid": {
+        "KPCA RecError global": 2.7
+      },
+      "far": {
+        "pNML": 1.8,
+        "Residual": 2.5,
+        "ViM": 2.725
+      },
+      "all": {
+        "pNML": 3.325,
+        "PCA RecError global": 4.4188
+      }
+    },
+    "supercifar100": {
+      "test": {
+        "GEN": 1.7,
+        "MSR": 2.7,
+        "REN": 3.4
+      },
+      "near": {
+        "NNGuide": 6.1,
+        "GE": 6.825,
+        "MLS": 7.25,
+        "PE": 7.775,
+        "ViM": 8.05,
+        "fDBD": 8.775,
+        "PCE": 8.95
+      },
+      "mid": {
+        "KPCA RecError global": 5.475,
+        "NNGuide": 5.475,
+        "MSR": 7.15
+      },
+      "far": {
+        "Residual": 1.65,
+        "pNML": 2.0
+      },
+      "all": {
+        "NNGuide": 5.8375
+      }
+    },
+    "cifar100": {
+      "test": {
+        "MSR": 1.9,
+        "GEN": 2.4,
+        "PCE": 2.8,
+        "REN": 3.1
+      },
+      "near": {
+        "ViM": 4.1,
+        "fDBD": 5.55,
+        "NeCo": 6.35,
+        "CTM": 6.6
+      },
+      "mid": {
+        "CTM": 5.775,
+        "KPCA RecError global": 6.3,
+        "GradNorm": 6.7,
+        "fDBD": 7.35,
+        "ViM": 7.675
+      },
+      "far": {
+        "ViM": 3.15,
+        "Residual": 5.3,
+        "pNML": 5.5,
+        "PCA RecError global": 5.6
+      },
+      "all": {
+        "ViM": 5.65,
+        "CTM": 6.2562,
+        "fDBD": 7.0187
+      }
+    },
+    "tinyimagenet": {
+      "test": {
+        "MSR": 1.65,
+        "GEN": 1.85,
+        "PCE": 2.8
+      },
+      "near": {
+        "GradNorm": 3.46,
+        "PCE": 3.98
+      },
+      "mid": {
+        "Residual": 1.5,
+        "pNML": 2.05,
+        "Maha": 3.2,
+        "ViM": 3.25
+      },
+      "far": {
+        "GradNorm": 1.7
+      },
+      "all": {
+        "GradNorm": 5.6312,
+        "PCE": 5.8812,
+        "NeCo": 6.7625
+      }
+    }
+  }
+}

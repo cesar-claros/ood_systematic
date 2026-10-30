@@ -1,0 +1,202 @@
+{
+  "cifar10": {
+    "test": [
+      "PCE",
+      "Confidence",
+      "MSR",
+      "REN",
+      "PE",
+      "GEN"
+    ],
+    "near": [
+      "Energy",
+      "MLS",
+      "NeCo"
+    ],
+    "mid": [
+      "Energy"
+    ],
+    "far": [
+      "Energy",
+      "NeCo",
+      "MLS",
+      "NNGuide"
+    ],
+    "all": [
+      "Energy"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "MLS",
+      "GEN",
+      "PCE",
+      "MSR",
+      "NNGuide"
+    ],
+    "near": [
+      "MLS",
+      "NNGuide",
+      "Energy",
+      "REN"
+    ],
+    "mid": [
+      "Energy"
+    ],
+    "far": [
+      "Energy",
+      "CTM",
+      "fDBD"
+    ],
+    "all": [
+      "Energy"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "MSR",
+      "GEN",
+      "CTM"
+    ],
+    "near": [
+      "MLS",
+      "NeCo"
+    ],
+    "mid": [
+      "Energy",
+      "MLS"
+    ],
+    "far": [
+      "fDBD",
+      "CTM",
+      "MLS",
+      "Energy"
+    ],
+    "all": [
+      "MLS",
+      "Energy"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "MSR",
+      "CTM",
+      "GEN"
+    ],
+    "near": [
+      "CTM"
+    ],
+    "mid": [
+      "CTM"
+    ],
+    "far": [
+      "CTM",
+      "GEN",
+      "REN"
+    ],
+    "all": [
+      "CTM"
+    ]
+  },
+  "_ranks": {
+    "cifar10": {
+      "test": {
+        "PCE": 4.05,
+        "Confidence": 4.1167,
+        "MSR": 4.5,
+        "REN": 4.75,
+        "PE": 4.8333,
+        "GEN": 4.8667
+      },
+      "near": {
+        "Energy": 3.1083,
+        "MLS": 3.6583,
+        "NeCo": 3.95
+      },
+      "mid": {
+        "Energy": 3.1417
+      },
+      "far": {
+        "Energy": 3.95,
+        "NeCo": 4.5833,
+        "MLS": 4.7167,
+        "NNGuide": 5.45
+      },
+      "all": {
+        "Energy": 3.3354
+      }
+    },
+    "supercifar100": {
+      "test": {
+        "MLS": 4.85,
+        "GEN": 5.0167,
+        "PCE": 5.0833,
+        "MSR": 5.6667,
+        "NNGuide": 6.45
+      },
+      "near": {
+        "MLS": 5.675,
+        "NNGuide": 5.725,
+        "Energy": 6.0,
+        "REN": 6.5083
+      },
+      "mid": {
+        "Energy": 6.4708
+      },
+      "far": {
+        "Energy": 6.2,
+        "CTM": 8.05,
+        "fDBD": 8.1
+      },
+      "all": {
+        "Energy": 6.2854
+      }
+    },
+    "cifar100": {
+      "test": {
+        "MSR": 3.15,
+        "GEN": 3.5,
+        "CTM": 4.4167
+      },
+      "near": {
+        "MLS": 4.75,
+        "NeCo": 6.1167
+      },
+      "mid": {
+        "Energy": 5.25,
+        "MLS": 5.7417
+      },
+      "far": {
+        "fDBD": 5.5833,
+        "CTM": 5.9167,
+        "MLS": 6.0167,
+        "Energy": 7.2167
+      },
+      "all": {
+        "MLS": 5.5625,
+        "Energy": 6.2771
+      }
+    },
+    "tinyimagenet": {
+      "test": {
+        "MSR": 2.5667,
+        "CTM": 2.65,
+        "GEN": 2.9833
+      },
+      "near": {
+        "CTM": 2.5267
+      },
+      "mid": {
+        "CTM": 2.8167
+      },
+      "far": {
+        "CTM": 3.1667,
+        "GEN": 3.9333,
+        "REN": 4.3333
+      },
+      "all": {
+        "CTM": 2.6792
+      }
+    }
+  }
+}

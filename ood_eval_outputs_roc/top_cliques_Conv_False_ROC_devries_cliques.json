@@ -1,0 +1,196 @@
+{
+  "cifar10": {
+    "test": [
+      "MSR",
+      "PCE",
+      "GEN"
+    ],
+    "near": [
+      "Energy"
+    ],
+    "mid": [
+      "Energy"
+    ],
+    "far": [
+      "Energy",
+      "NeCo",
+      "NNGuide"
+    ],
+    "all": [
+      "Energy"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "MSR",
+      "NeCo",
+      "MLS",
+      "PCE"
+    ],
+    "near": [
+      "NNGuide",
+      "NeCo",
+      "MLS",
+      "PE",
+      "GE",
+      "Energy",
+      "PCE",
+      "GEN"
+    ],
+    "mid": [
+      "Energy",
+      "GE"
+    ],
+    "far": [
+      "Energy",
+      "GE"
+    ],
+    "all": [
+      "Energy",
+      "GE"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "MSR",
+      "GEN",
+      "fDBD",
+      "PCE"
+    ],
+    "near": [
+      "NeCo",
+      "GE",
+      "MLS",
+      "PE",
+      "Energy"
+    ],
+    "mid": [
+      "Energy"
+    ],
+    "far": [
+      "fDBD"
+    ],
+    "all": [
+      "Energy",
+      "NeCo"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "CTM",
+      "fDBD"
+    ],
+    "near": [
+      "CTM"
+    ],
+    "mid": [
+      "CTM",
+      "NNGuide"
+    ],
+    "far": [
+      "CTM",
+      "fDBD"
+    ],
+    "all": [
+      "CTM"
+    ]
+  },
+  "_ranks": {
+    "cifar10": {
+      "test": {
+        "MSR": 2.25,
+        "PCE": 3.05,
+        "GEN": 4.6
+      },
+      "near": {
+        "Energy": 1.6
+      },
+      "mid": {
+        "Energy": 1.6
+      },
+      "far": {
+        "Energy": 1.65,
+        "NeCo": 3.65,
+        "NNGuide": 3.8
+      },
+      "all": {
+        "Energy": 1.6125
+      }
+    },
+    "supercifar100": {
+      "test": {
+        "MSR": 2.5,
+        "NeCo": 3.25,
+        "MLS": 3.55,
+        "PCE": 3.85
+      },
+      "near": {
+        "NNGuide": 5.15,
+        "NeCo": 6.05,
+        "MLS": 6.1,
+        "PE": 6.25,
+        "GE": 6.5,
+        "Energy": 6.6,
+        "PCE": 7.125,
+        "GEN": 7.275
+      },
+      "mid": {
+        "Energy": 3.725,
+        "GE": 4.625
+      },
+      "far": {
+        "Energy": 3.25,
+        "GE": 4.25
+      },
+      "all": {
+        "Energy": 4.325,
+        "GE": 5.0
+      }
+    },
+    "cifar100": {
+      "test": {
+        "MSR": 2.4,
+        "GEN": 3.2,
+        "fDBD": 3.35,
+        "PCE": 3.85
+      },
+      "near": {
+        "NeCo": 3.85,
+        "GE": 4.7,
+        "MLS": 4.75,
+        "PE": 5.3,
+        "Energy": 5.475
+      },
+      "mid": {
+        "Energy": 2.85
+      },
+      "far": {
+        "fDBD": 1.15
+      },
+      "all": {
+        "Energy": 3.7687,
+        "NeCo": 4.7313
+      }
+    },
+    "tinyimagenet": {
+      "test": {
+        "CTM": 2.05,
+        "fDBD": 2.6
+      },
+      "near": {
+        "CTM": 1.04
+      },
+      "mid": {
+        "CTM": 1.5,
+        "NNGuide": 2.3
+      },
+      "far": {
+        "CTM": 1.5,
+        "fDBD": 2.6
+      },
+      "all": {
+        "CTM": 1.2125
+      }
+    }
+  }
+}

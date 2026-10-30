@@ -1,0 +1,254 @@
+{
+  "cifar10": {
+    "test": [
+      "fDBD",
+      "Confidence",
+      "REN",
+      "MSR",
+      "PE",
+      "GEN",
+      "PCE"
+    ],
+    "near": [
+      "Confidence",
+      "MLS",
+      "NeCo",
+      "GE"
+    ],
+    "mid": [
+      "Confidence",
+      "MLS",
+      "NeCo"
+    ],
+    "far": [
+      "CTM",
+      "Maha"
+    ],
+    "all": [
+      "Confidence",
+      "CTM",
+      "MLS"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "GEN",
+      "Energy",
+      "CTM",
+      "NNGuide",
+      "REN"
+    ],
+    "near": [
+      "CTM",
+      "GEN",
+      "Energy",
+      "REN",
+      "Confidence",
+      "MLS"
+    ],
+    "mid": [
+      "CTM",
+      "MLS",
+      "MSR",
+      "Maha",
+      "Confidence",
+      "REN",
+      "GEN",
+      "pNML",
+      "Energy",
+      "Residual",
+      "NeCo"
+    ],
+    "far": [
+      "MLS",
+      "MSR",
+      "CTM",
+      "fDBD",
+      "Maha",
+      "NeCo",
+      "PCE",
+      "NNGuide"
+    ],
+    "all": [
+      "CTM",
+      "MLS",
+      "MSR"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "CTM",
+      "Confidence"
+    ],
+    "near": [
+      "CTM"
+    ],
+    "mid": [
+      "CTM",
+      "NNGuide",
+      "MSR",
+      "MLS"
+    ],
+    "far": [
+      "CTM",
+      "NNGuide"
+    ],
+    "all": [
+      "CTM",
+      "NNGuide"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "MSR",
+      "CTM"
+    ],
+    "near": [
+      "CTM",
+      "REN"
+    ],
+    "mid": [
+      "CTM",
+      "MLS",
+      "PCE",
+      "MSR",
+      "GEN"
+    ],
+    "far": [
+      "CTM",
+      "GEN",
+      "MSR",
+      "PCE"
+    ],
+    "all": [
+      "CTM"
+    ]
+  },
+  "_ranks": {
+    "cifar10": {
+      "test": {
+        "fDBD": 2.8,
+        "Confidence": 3.8,
+        "REN": 3.9,
+        "MSR": 5.1,
+        "PE": 5.3,
+        "GEN": 5.5,
+        "PCE": 5.6
+      },
+      "near": {
+        "Confidence": 1.8,
+        "MLS": 3.75,
+        "NeCo": 3.85,
+        "GE": 4.3
+      },
+      "mid": {
+        "Confidence": 2.65,
+        "MLS": 3.25,
+        "NeCo": 3.75
+      },
+      "far": {
+        "CTM": 2.1,
+        "Maha": 2.8
+      },
+      "all": {
+        "Confidence": 2.975,
+        "CTM": 4.05,
+        "MLS": 4.25
+      }
+    },
+    "supercifar100": {
+      "test": {
+        "GEN": 3.1,
+        "Energy": 3.8,
+        "CTM": 4.4,
+        "NNGuide": 4.5,
+        "REN": 4.6
+      },
+      "near": {
+        "CTM": 3.6,
+        "GEN": 4.2,
+        "Energy": 4.6,
+        "REN": 4.6,
+        "Confidence": 5.3,
+        "MLS": 5.8
+      },
+      "mid": {
+        "CTM": 7.2,
+        "MLS": 7.65,
+        "MSR": 8.05,
+        "Maha": 8.75,
+        "Confidence": 8.9,
+        "REN": 9.35,
+        "GEN": 9.55,
+        "pNML": 10.05,
+        "Energy": 10.25,
+        "Residual": 10.25,
+        "NeCo": 10.6
+      },
+      "far": {
+        "MLS": 5.7,
+        "MSR": 5.75,
+        "CTM": 6.5,
+        "fDBD": 7.3,
+        "Maha": 8.3,
+        "NeCo": 8.4,
+        "PCE": 9.6,
+        "NNGuide": 10.2
+      },
+      "all": {
+        "CTM": 6.125,
+        "MLS": 6.7,
+        "MSR": 7.3375
+      }
+    },
+    "cifar100": {
+      "test": {
+        "CTM": 1.4,
+        "Confidence": 2.1
+      },
+      "near": {
+        "CTM": 1.0
+      },
+      "mid": {
+        "CTM": 3.9,
+        "NNGuide": 4.0,
+        "MSR": 4.05,
+        "MLS": 5.75
+      },
+      "far": {
+        "CTM": 1.8,
+        "NNGuide": 2.0
+      },
+      "all": {
+        "CTM": 2.65,
+        "NNGuide": 3.375
+      }
+    },
+    "tinyimagenet": {
+      "test": {
+        "MSR": 1.4,
+        "CTM": 2.2
+      },
+      "near": {
+        "CTM": 1.52,
+        "REN": 2.14
+      },
+      "mid": {
+        "CTM": 3.1,
+        "MLS": 4.5,
+        "PCE": 4.5,
+        "MSR": 4.6,
+        "GEN": 5.1
+      },
+      "far": {
+        "CTM": 2.2,
+        "GEN": 2.2,
+        "MSR": 3.2,
+        "PCE": 3.6
+      },
+      "all": {
+        "CTM": 2.0
+      }
+    }
+  }
+}

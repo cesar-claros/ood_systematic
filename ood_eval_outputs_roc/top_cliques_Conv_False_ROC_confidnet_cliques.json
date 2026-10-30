@@ -1,0 +1,214 @@
+{
+  "cifar10": {
+    "test": [
+      "Confidence",
+      "PCE",
+      "GEN"
+    ],
+    "near": [
+      "Energy",
+      "NeCo",
+      "NNGuide",
+      "MLS"
+    ],
+    "mid": [
+      "Energy"
+    ],
+    "far": [
+      "NNGuide",
+      "NeCo",
+      "Energy",
+      "MLS"
+    ],
+    "all": [
+      "Energy"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "Confidence",
+      "PCE"
+    ],
+    "near": [
+      "NNGuide",
+      "NeCo",
+      "MLS",
+      "PE",
+      "REN"
+    ],
+    "mid": [
+      "Energy",
+      "CTM",
+      "GE",
+      "KPCA RecError global",
+      "NeCo"
+    ],
+    "far": [
+      "fDBD",
+      "Energy",
+      "Confidence",
+      "GE",
+      "CTM",
+      "KPCA RecError global"
+    ],
+    "all": [
+      "Energy",
+      "GE",
+      "KPCA RecError global",
+      "NeCo",
+      "CTM"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "Confidence"
+    ],
+    "near": [
+      "NeCo",
+      "MLS",
+      "PE",
+      "GE",
+      "Energy"
+    ],
+    "mid": [
+      "Energy",
+      "NeCo"
+    ],
+    "far": [
+      "fDBD",
+      "Confidence"
+    ],
+    "all": [
+      "NeCo",
+      "Energy",
+      "MLS"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "fDBD",
+      "CTM"
+    ],
+    "near": [
+      "CTM"
+    ],
+    "mid": [
+      "CTM",
+      "fDBD"
+    ],
+    "far": [
+      "CTM",
+      "fDBD"
+    ],
+    "all": [
+      "CTM"
+    ]
+  },
+  "_ranks": {
+    "cifar10": {
+      "test": {
+        "Confidence": 2.4,
+        "PCE": 2.8,
+        "GEN": 3.75
+      },
+      "near": {
+        "Energy": 2.125,
+        "NeCo": 2.8,
+        "NNGuide": 2.95,
+        "MLS": 3.025
+      },
+      "mid": {
+        "Energy": 1.675
+      },
+      "far": {
+        "NNGuide": 2.55,
+        "NeCo": 2.575,
+        "Energy": 2.85,
+        "MLS": 3.525
+      },
+      "all": {
+        "Energy": 2.0812
+      }
+    },
+    "supercifar100": {
+      "test": {
+        "Confidence": 2.6,
+        "PCE": 3.2
+      },
+      "near": {
+        "NNGuide": 4.525,
+        "NeCo": 5.225,
+        "MLS": 5.675,
+        "PE": 6.05,
+        "REN": 7.125
+      },
+      "mid": {
+        "Energy": 5.9125,
+        "CTM": 6.05,
+        "GE": 7.1125,
+        "KPCA RecError global": 7.325,
+        "NeCo": 7.95
+      },
+      "far": {
+        "fDBD": 4.9,
+        "Energy": 5.65,
+        "Confidence": 7.15,
+        "GE": 7.3,
+        "CTM": 7.45,
+        "KPCA RecError global": 7.9
+      },
+      "all": {
+        "Energy": 6.2438,
+        "GE": 7.4437,
+        "KPCA RecError global": 7.525,
+        "NeCo": 7.5312,
+        "CTM": 7.8312
+      }
+    },
+    "cifar100": {
+      "test": {
+        "Confidence": 1.0
+      },
+      "near": {
+        "NeCo": 3.3,
+        "MLS": 4.05,
+        "PE": 5.15,
+        "GE": 5.4,
+        "Energy": 5.6
+      },
+      "mid": {
+        "Energy": 3.325,
+        "NeCo": 4.65
+      },
+      "far": {
+        "fDBD": 3.0,
+        "Confidence": 4.3
+      },
+      "all": {
+        "NeCo": 4.6063,
+        "Energy": 4.8875,
+        "MLS": 5.6437
+      }
+    },
+    "tinyimagenet": {
+      "test": {
+        "fDBD": 1.85,
+        "CTM": 2.2
+      },
+      "near": {
+        "CTM": 1.06
+      },
+      "mid": {
+        "CTM": 1.55,
+        "fDBD": 1.95
+      },
+      "far": {
+        "CTM": 1.3,
+        "fDBD": 2.3
+      },
+      "all": {
+        "CTM": 1.2125
+      }
+    }
+  }
+}

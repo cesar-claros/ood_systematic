@@ -371,10 +371,10 @@ Every command below runs from the repository root on CPU, unless marked GPU. The
 | Figure 1 | `python nc_csf_predictivity/evaluation/figure1_render_newcsf.py`, then the `stats_eval.py` commands in its docstring | `fig1_newcsf_sandbox/fig1_out/` |
 | App B NC1 sensitivity | `python nc_csf_predictivity/evaluation/nc1_corrected_panel.py`, then `python nc_csf_predictivity/evaluation/nc1_sensitivity.py` | `outputs/54_nc1_corrected.md`, `outputs/55_nc1_sensitivity.md` |
 | App E.2 Holm check | `python nc_csf_predictivity/evaluation/figure1_holm_check.py` | `outputs/56_figure1_holm_check.md` |
-| App E.3 FPR@95 cliques | `python rc_roc_clique_comparison.py` | see the script docstring |
+| App E.3 FPR@95 cliques | `python rc_roc_clique_comparison.py` (reads the committed clique JSONs in `ood_eval_outputs_{rc,roc,fpr}/`, which `stats_eval.py --filter-methods` exports) | printed table |
 | App F.2 ReAct and ASH-S | `python nc_csf_predictivity/evaluation/react_ash_table.py` | `outputs/51_react_ash.md` |
 | App G.1 partial Mantel | `python mantel_partial_convergence.py` | `mantel_partial_outputs/` |
-| App G.2 matched pairs | `python scripts/intervention_cliques.py`, `intervention_delta_tables.py`, `intervention_mantel_tests.py`, `intervention_sensitivity.py` (in this order; settings in `configs/intervention_config.yaml`) | `ood_eval_outputs/intervention_*/` |
+| App G.2 matched pairs | `python scripts/intervention_cliques.py --filter-methods --tag base`, then `python scripts/intervention_delta_tables.py`, `python scripts/intervention_mantel_tests.py`, and `python scripts/intervention_sensitivity.py` (settings in `configs/intervention_config.yaml`; PyYAML comes with the container) | `ood_eval_outputs/intervention_*/` |
 | App K CNN to ViT transfer | `python nc_csf_predictivity/evaluation/vit_transfer_22.py`, `python nc_csf_predictivity/evaluation/vit_loso.py` | `outputs/52_vit_transfer_22.md`, `outputs/53_vit_loso.md` |
 | App L self-supervised probes | GPU, a few hours: `bash x8_pool_a/run_pool_a_hpc.sh`. Then `python x8_pool_a/pool_a_harmonized.py --features-dir pool_a_features` and `python x8_pool_a/pool_a_harmonized_report.py` | `outputs/pool_a/42_pool_a_harmonized_tables.md` |
 | App M ImageNet | GPU, about 13 hours: `bash x9_imagenet/run_x9_sweep.sh` and `python x9_imagenet/clip_regimes.py`; their outputs are committed. Then `python x9_imagenet/phase3_transfer.py` | `outputs/50_imagenet_transfer.md` |

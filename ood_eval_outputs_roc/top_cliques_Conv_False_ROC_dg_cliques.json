@@ -1,0 +1,230 @@
+{
+  "cifar10": {
+    "test": [
+      "Confidence",
+      "PE",
+      "REN",
+      "fDBD",
+      "GEN",
+      "MSR",
+      "CTM",
+      "PCE",
+      "NNGuide"
+    ],
+    "near": [
+      "Confidence",
+      "MLS"
+    ],
+    "mid": [
+      "Confidence",
+      "CTM",
+      "MLS"
+    ],
+    "far": [
+      "CTM",
+      "Confidence",
+      "Maha"
+    ],
+    "all": [
+      "Confidence",
+      "CTM"
+    ]
+  },
+  "supercifar100": {
+    "test": [
+      "GEN",
+      "Energy",
+      "REN"
+    ],
+    "near": [
+      "Energy",
+      "CTM",
+      "GEN",
+      "REN",
+      "MLS"
+    ],
+    "mid": [
+      "MLS",
+      "MSR",
+      "Confidence",
+      "CTM",
+      "REN",
+      "GEN",
+      "Maha",
+      "Energy"
+    ],
+    "far": [
+      "MSR",
+      "MLS",
+      "Maha",
+      "Confidence",
+      "PCE"
+    ],
+    "all": [
+      "MLS",
+      "MSR",
+      "Confidence",
+      "CTM",
+      "GEN",
+      "REN"
+    ]
+  },
+  "cifar100": {
+    "test": [
+      "CTM"
+    ],
+    "near": [
+      "CTM"
+    ],
+    "mid": [
+      "CTM",
+      "MSR",
+      "NNGuide",
+      "MLS",
+      "Confidence"
+    ],
+    "far": [
+      "CTM",
+      "NNGuide",
+      "Confidence"
+    ],
+    "all": [
+      "CTM"
+    ]
+  },
+  "tinyimagenet": {
+    "test": [
+      "MSR"
+    ],
+    "near": [
+      "REN"
+    ],
+    "mid": [
+      "MLS"
+    ],
+    "far": [
+      "GEN",
+      "MSR",
+      "REN"
+    ],
+    "all": [
+      "REN",
+      "GEN"
+    ]
+  },
+  "_ranks": {
+    "cifar10": {
+      "test": {
+        "Confidence": 4.4,
+        "PE": 5.05,
+        "REN": 5.15,
+        "fDBD": 6.1,
+        "GEN": 6.25,
+        "MSR": 6.25,
+        "CTM": 6.3,
+        "PCE": 6.3,
+        "NNGuide": 7.0
+      },
+      "near": {
+        "Confidence": 2.25,
+        "MLS": 3.875
+      },
+      "mid": {
+        "Confidence": 3.25,
+        "CTM": 4.275,
+        "MLS": 4.275
+      },
+      "far": {
+        "CTM": 3.2,
+        "Confidence": 4.35,
+        "Maha": 5.35
+      },
+      "all": {
+        "Confidence": 3.275,
+        "CTM": 4.15
+      }
+    },
+    "supercifar100": {
+      "test": {
+        "GEN": 2.75,
+        "Energy": 3.1,
+        "REN": 4.0
+      },
+      "near": {
+        "Energy": 3.9,
+        "CTM": 4.0,
+        "GEN": 4.1,
+        "REN": 4.55,
+        "MLS": 5.25
+      },
+      "mid": {
+        "MLS": 7.55,
+        "MSR": 7.825,
+        "Confidence": 8.15,
+        "CTM": 8.8,
+        "REN": 8.975,
+        "GEN": 9.05,
+        "Maha": 9.075,
+        "Energy": 9.775
+      },
+      "far": {
+        "MSR": 5.825,
+        "MLS": 5.9,
+        "Maha": 7.9,
+        "Confidence": 8.0,
+        "PCE": 8.85
+      },
+      "all": {
+        "MLS": 6.5625,
+        "MSR": 7.0687,
+        "Confidence": 7.475,
+        "CTM": 7.75,
+        "GEN": 7.9125,
+        "REN": 8.2188
+      }
+    },
+    "cifar100": {
+      "test": {
+        "CTM": 1.5
+      },
+      "near": {
+        "CTM": 2.25
+      },
+      "mid": {
+        "CTM": 4.525,
+        "MSR": 4.575,
+        "NNGuide": 5.125,
+        "MLS": 5.325,
+        "Confidence": 5.85
+      },
+      "far": {
+        "CTM": 2.4,
+        "NNGuide": 2.65,
+        "Confidence": 3.1
+      },
+      "all": {
+        "CTM": 3.425
+      }
+    },
+    "tinyimagenet": {
+      "test": {
+        "MSR": 1.2
+      },
+      "near": {
+        "REN": 1.59
+      },
+      "mid": {
+        "MLS": 3.35
+      },
+      "far": {
+        "GEN": 1.7,
+        "MSR": 3.2,
+        "REN": 3.2
+      },
+      "all": {
+        "REN": 2.7313,
+        "GEN": 3.35
+      }
+    }
+  }
+}
