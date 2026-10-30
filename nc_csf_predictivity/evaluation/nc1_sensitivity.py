@@ -21,11 +21,18 @@ Decision rule (fixed before the run; documentation checklist, 2026-10-30):
   Verdict from C-raw and C-log: ROBUST if P1, P2, M1 hold for both; NOT
   ROBUST if P1 fails for both; PARTLY ROBUST otherwise. L-log is a control.
 
+Added after the first run: K-log, log10 of kappa = C NC1 / (C - 1)^2 with the
+corrected NC1. On a simplex ETF with within-class covariance sigma^2 I and
+class-mean norm R, kappa = (sigma / R)^2 at any C. K-log does not enter the
+verdict above; it is judged on its own by the same P1, P2, and M1.
+
 Gates (abort before any variant number is computed):
   GS  L-raw reproduces the stored 22-CSF ResNet18 predictions exactly and the
       stored 65/0 and 65/0 comparison counts.
   GM  L-raw reproduces the stored global Mantel r and p of every stratum.
   GC  every VGG13, ResNet18, and ViT model gets a corrected NC1.
+  GV  the four earlier variants reproduce the stored summary.csv (checked
+      before the outputs are overwritten).
 
 Run from `code/`. Outputs: outputs/nc1_sensitivity/{tests,summary,mantel}.csv,
 outputs/55_nc1_sensitivity.md
@@ -68,8 +75,10 @@ from regimefree_wilcoxon import (  # noqa: E402
 )
 
 CONFIG, VARIANT = "none_nr", "marginal"
-VARIANTS = {"L-raw": (False, False), "L-log": (False, True),
-            "C-raw": (True, False), "C-log": (True, True)}
+VARIANTS = {"L-raw": ("legacy", False), "L-log": ("legacy", True),
+            "C-raw": ("papyan", False), "C-log": ("papyan", True),
+            "K-log": ("kappa", True)}
+EARLIER_VARIANTS = ["L-raw", "L-log", "C-raw", "C-log"]
 COUNTS = ["reject_p", "reject_p_worse", "reject_p_mean", "reject_p_mean_worse"]
 REGIMES = ["near", "mid", "far"]
 STORED_COUNTS = {"reject_p": 65, "reject_p_worse": 0, "reject_p_mean": 65,
@@ -78,29 +87,35 @@ NC1_SOURCES = {"supercifar": "supercifar100"}
 TOL = 1e-12
 
 
-def nc1_values(nc1: pd.Series, corrected: pd.Series, use_corrected: bool,
-               log10: bool) -> pd.Series:
+def nc1_values(legacy: pd.Series, model_ids: pd.Series, name: str,
+               inputs: dict[str, pd.Series]) -> pd.Series:
     """The NC1 input of one variant.
+
+    Args:
+        legacy: Stored NC1 values.
+        model_ids: Model id of each value.
+        name: Variant name of VARIANTS.
+        inputs: Per-model values of the non-legacy NC1 definitions.
 
     Raises:
         RuntimeError: If a model has no corrected value (gate GC).
     """
-    values = nc1
-    if use_corrected:
-        values = corrected
+    source, log10 = VARIANTS[name]
+    values = legacy
+    if source != "legacy":
+        values = model_ids.map(inputs[source])
         if values.isna().any():
             raise RuntimeError(f"GC failed: {int(values.isna().sum())} models without "
                                "a corrected NC1")
     return np.log10(values) if log10 else values
 
 
-def predictor_variant(name: str, long_df: pd.DataFrame, corrected: pd.Series,
+def predictor_variant(name: str, long_df: pd.DataFrame, inputs: dict[str, pd.Series],
                       labels: pd.DataFrame, pool: dict, out_root: Path,
                       flips: np.ndarray) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Tests and random-set control of the NC-only heads for one NC1 variant."""
-    use_corrected, log10 = VARIANTS[name]
     long_v = long_df.assign(var_collapse=nc1_values(
-        long_df["var_collapse"], long_df["model_id"].map(corrected), use_corrected, log10))
+        long_df["var_collapse"], long_df["model_id"], name, inputs))
     root = f"nc1_sensitivity/{name}"
     run_config_variant(standardize_per_architecture(long_v, NC_PRIMARY), labels, SPLIT,
                        out_root, CONFIG, VARIANT, ablation_root=root)
@@ -125,21 +140,19 @@ def predictor_variant(name: str, long_df: pd.DataFrame, corrected: pd.Series,
     return tests, control
 
 
-def mantel_variant(name: str, nc: pd.DataFrame, corrected: pd.Series,
+def mantel_variant(name: str, nc: pd.DataFrame, inputs: dict[str, pd.Series],
                    stored: pd.DataFrame) -> pd.DataFrame:
     """Global and partial Mantel rows of every stratum for one NC1 variant.
 
     Raises:
         RuntimeError: If L-raw differs from the stored Mantel results (gate GM).
     """
-    use_corrected, log10 = VARIANTS[name]
     key = (nc["architecture"] + "|" + nc["study"].replace({"vit": "modelvit"}) + "|"
            + nc["dataset"].replace(NC1_SOURCES) + "|" + nc["run"].astype(str) + "|"
            + nc["dropout"].map({"True": "1", "False": "0"}) + "|"
            + nc["reward"].map(lambda r: f"{r:g}"))
     in_paper = nc["architecture"].isin(["VGG13", "ViT"])
-    value = nc1_values(nc.loc[in_paper, "var_collapse"],
-                       key[in_paper].map(corrected), use_corrected, log10)
+    value = nc1_values(nc.loc[in_paper, "var_collapse"], key[in_paper], name, inputs)
     nc_v = nc.copy()
     nc_v.loc[in_paper, "var_collapse"] = value
     rows = pd.DataFrame([r for backbone, study in STRATA
@@ -187,13 +200,31 @@ def verdict(table: pd.DataFrame) -> str:
     return "PARTLY ROBUST"
 
 
+def gate_earlier(table: pd.DataFrame, path: Path) -> None:
+    """GV: the four earlier variants reproduce the stored summary.
+
+    Raises:
+        RuntimeError: If a stored value differs.
+    """
+    stored = pd.read_csv(path).set_index("variant").loc[EARLIER_VARIANTS]
+    new = table.set_index("variant").loc[EARLIER_VARIANTS, stored.columns]
+    numeric = stored.select_dtypes("number").columns
+    dev = float((stored[numeric] - new[numeric]).abs().max().max())
+    flags = ["P1", "P2", "M1"]
+    if dev > 1e-9 or not stored[flags].astype(bool).equals(new[flags].astype(bool)):
+        raise RuntimeError(f"GV failed: max |d| {dev:.3g}")
+    print(f"GV: the four earlier variants reproduce the stored summary (max |d| {dev:.1e})")
+
+
 def main() -> None:
-    """Gates, four NC1 variants, criteria, verdict, and report."""
+    """Gates, five NC1 variants, criteria, verdict, and report."""
     out_root = Path(DEFAULT_OUT_ROOT)
     long_df, train_ids, test_ids, eval22, oracle22, _ = prepare_pool(out_root)
-    corrected = (pd.read_csv(out_root / "nc1_corrected" / "nc1_corrected.csv")
-                 .query("pool in ['VGG13', 'ResNet18', 'ViT']")
-                 .set_index("model_id")["nc1_corrected"])
+    panel = (pd.read_csv(out_root / "nc1_corrected" / "nc1_corrected.csv")
+             .query("pool in ['VGG13', 'ResNet18', 'ViT']").set_index("model_id"))
+    inputs = {"papyan": panel["nc1_corrected"],
+              "kappa": (panel["nc1_corrected"] * panel["n_classes"]
+                        / (panel["n_classes"] - 1) ** 2)}
     eval_test = eval22[eval22["model_id"].isin(test_ids)]
     oracle_test = oracle22[oracle22["model_id"].isin(test_ids)]
     pool = {"eval_test": eval_test, "oracle_test": oracle_test,
@@ -208,33 +239,45 @@ def main() -> None:
                                 / "partial_mantel_summary.csv")
     tests, controls, mantel = [], [], []
     for name in VARIANTS:
-        t, c = predictor_variant(name, long_df, corrected, labels, pool, out_root, flips)
+        t, c = predictor_variant(name, long_df, inputs, labels, pool, out_root, flips)
         tests.append(t)
         controls.append(c)
-        mantel.append(mantel_variant(name, nc, corrected, stored_mantel))
+        mantel.append(mantel_variant(name, nc, inputs, stored_mantel))
     tests, controls, mantel = map(pd.concat, (tests, controls, mantel))
     table = criteria(tests, mantel)
     result = verdict(table)
 
     csv_dir = out_root / "nc1_sensitivity"
-    csv_dir.mkdir(parents=True, exist_ok=True)
+    gate_earlier(table, csv_dir / "summary.csv")
+    kappa = table.set_index("variant").loc["K-log"]
     tests.to_csv(csv_dir / "tests.csv", index=False)
     table.to_csv(csv_dir / "summary.csv", index=False)
     mantel.to_csv(csv_dir / "mantel.csv", index=False)
     joint = controls[controls["side"] == "all"][["variant", "regime", "pred_mean",
                                                   "random_mean", "set_size", "p_mean_holm"]]
     partial = mantel[mantel["control"].isin(["(none, replication)", "iid_msr", "dataset"])]
+    sides = (tests[tests["comparator"] == "Always-CTM"]
+             .pivot_table(index=["side", "regime"], columns="variant", values="pred_mean")
+             [list(VARIANTS)].assign(always_ctm=tests[tests["comparator"] == "Always-CTM"]
+                                     .groupby(["side", "regime"])["baseline_mean"].first()))
     lines = ["# NC1 sensitivity of the headline predictor and the Mantel tests\n\n",
              "**Source:** `nc_csf_predictivity/evaluation/nc1_sensitivity.py` (decision "
              "rule in the docstring and the camera-ready checklist, fixed before the "
-             "run). Gates GS, GM, GC passed.\n\n",
-             f"**Verdict: {result}.**\n\n## Criteria\n\n```\n",
+             "run). Gates GS, GM, GC, GV passed.\n\n",
+             f"**Verdict from C-raw and C-log: {result}.**\n\n",
+             f"**K-log, judged on its own: P1 {kappa['P1']}, P2 {kappa['P2']}, "
+             f"M1 {kappa['M1']}.**\n\n## Criteria\n\n```\n",
              table.round(3).to_string(index=False), "\n```\n\n",
              "## Joint side: predictor vs size-matched random set\n\n```\n",
              joint.round(3).to_string(index=False), "\n```\n\n",
-             "## Mantel: no control, ID performance, source identity\n\n```\n",
+             "## Mean regret vs Always-CTM per side\n\n```\n",
+             sides.round(3).to_string(), "\n```\n\n",
+             "## Mantel r: no control, ID performance, source identity\n\n```\n",
              partial.pivot_table(index=["backbone", "study", "control"], columns="variant",
                                  values="r")[list(VARIANTS)].round(3).to_string(),
+             "\n```\n\n## Mantel p: same rows\n\n```\n",
+             partial.pivot_table(index=["backbone", "study", "control"], columns="variant",
+                                 values="p")[list(VARIANTS)].round(4).to_string(),
              "\n```\n"]
     (out_root / "55_nc1_sensitivity.md").write_text("".join(lines))
     print(f"verdict {result}; wrote {out_root / '55_nc1_sensitivity.md'}")
