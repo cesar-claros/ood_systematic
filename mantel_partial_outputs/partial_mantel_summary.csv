@@ -1,0 +1,27 @@
+backbone,study,n_blocks,control,r,p
+Conv,confidnet,20,"(none, replication)",0.6436227168305533,0.0001
+Conv,confidnet,20,"(none, partial-code path)",0.6436227168305533,0.0001
+Conv,confidnet,20,iid_msr,0.5805906517224473,0.0001
+Conv,confidnet,20,iid_mean,0.4585790446277502,0.0001
+Conv,confidnet,20,dataset,0.32615399634593983,0.0004
+Conv,confidnet,20,iid_msr+dataset,0.4691120367010045,0.0001
+Conv,devries,20,"(none, replication)",0.6792408266070935,0.0001
+Conv,devries,20,"(none, partial-code path)",0.6792408266070933,0.0001
+Conv,devries,20,iid_msr,0.6392639427142883,0.0001
+Conv,devries,20,iid_mean,0.6198662547136896,0.0001
+Conv,devries,20,dataset,0.47406730292620747,0.0001
+Conv,devries,20,iid_msr+dataset,0.6269589764760257,0.0001
+Conv,dg,20,"(none, replication)",0.30931323407127365,0.0034
+Conv,dg,20,"(none, partial-code path)",0.3093132340712736,0.0031
+Conv,dg,20,iid_msr,0.215586615959887,0.0102
+Conv,dg,20,iid_mean,0.23946288157510148,0.0089
+Conv,dg,20,dataset,-0.17489798886821073,0.9806
+Conv,dg,20,iid_msr+dataset,0.14945227146670992,0.056
+ViT,vit,20,"(none, replication)",0.5897037642103791,0.0001
+ViT,vit,20,"(none, partial-code path)",0.5897037642103791,0.0001
+ViT,vit,20,iid_msr,0.42891775370412594,0.0001
+ViT,vit,20,iid_mean,0.4249392091853716,0.0001
+ViT,vit,20,dataset,0.1886269105473345,0.0109
+ViT,vit,20,iid_msr+dataset,0.17879042779273538,0.0153
+ViT,vit,20,iid_msr+lr,0.1788969274293581,0.0204
+ViT,vit,20,iid_msr+lr+dataset,-0.04221572723721731,0.7239

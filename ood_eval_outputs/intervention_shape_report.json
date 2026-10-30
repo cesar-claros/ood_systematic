@@ -1,0 +1,21 @@
+{
+  "config_hash": "8334c40d5aef",
+  "config_version": "2026.04.20-20csf-sc100dg22excl",
+  "counts_observed": {
+    "total_slices": 224,
+    "per_source": {
+      "cifar10": 48,
+      "cifar100": 56,
+      "supercifar100": 72,
+      "tinyimagenet": 48
+    },
+    "h1_total_pairs": 158,
+    "h2_pairs": 27
+  },
+  "errors": {
+    "cliques": [],
+    "nc_metrics": [],
+    "deltas": []
+  },
+  "status": "ok"
+}

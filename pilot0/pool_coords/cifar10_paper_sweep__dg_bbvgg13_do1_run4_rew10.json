@@ -1,0 +1,199 @@
+{
+ "schema": 2,
+ "model_path": "cifar10_paper_sweep/dg_bbvgg13_do1_run4_rew10",
+ "slug": "cifar10_paper_sweep__dg_bbvgg13_do1_run4_rew10",
+ "study": "dg",
+ "source": "cifar10",
+ "n_classes": 10,
+ "dim": 512,
+ "n_train": 50000,
+ "iid_token": "test_1",
+ "ood_plan": {
+  "cifar100": {
+   "kind": "config",
+   "token": "test_3",
+   "raw": "cifar100"
+  },
+  "svhn": {
+   "kind": "config",
+   "token": "test_4",
+   "raw": "svhn"
+  },
+  "tinyimagenet": {
+   "kind": "config",
+   "token": "test_5",
+   "raw": "tinyimagenet_resize"
+  },
+  "lsun cropped": {
+   "kind": "custom",
+   "token": "test_6",
+   "raw": "lsun cropped"
+  },
+  "lsun resize": {
+   "kind": "custom",
+   "token": "test_7",
+   "raw": "lsun resize"
+  },
+  "isun": {
+   "kind": "custom",
+   "token": "test_8",
+   "raw": "isun"
+  },
+  "textures": {
+   "kind": "custom",
+   "token": "test_9",
+   "raw": "textures"
+  },
+  "places365": {
+   "kind": "custom",
+   "token": "test_10",
+   "raw": "places365"
+  }
+ },
+ "plan_notes": [
+  "config external 'corrupt_cifar10' (test_2) not in the paper suite; skipped"
+ ],
+ "geometry": {
+  "head_residual_fraction": 0.07080372515622094,
+  "logit_scale": 10.632968236954747,
+  "self_duality_papyan": 0.08544685463861282,
+  "self_duality_angle_mean_deg": 16.27844966083477,
+  "class_mean_radius": 6.8640935925481275,
+  "class_mean_radius_cv": 0.07923818304762693,
+  "sigma_iso": 0.15557696696219195,
+  "snr": 44.120243031966474,
+  "eig_max_over_mean": 215.02863498298618,
+  "effective_rank": 9.383672564700818,
+  "participation_ratio": 4.813207741108728
+ },
+ "papyan": {
+  "var_collapse": 0.15055609342497056,
+  "equinorm_uc": 0.07923818304762693,
+  "equinorm_wc": 0.029720880975439182,
+  "equiangular_uc": 0.1462642084619897,
+  "equiangular_wc": 0.1320223281316392,
+  "max_equiangular_uc": 0.12220857633079701,
+  "max_equiangular_wc": 0.10955934564340822,
+  "self_duality": 0.08544685463861282
+ },
+ "ood": {
+  "cifar100": {
+   "gamma": 0.4688531912586027,
+   "a": 0.44368184683244677,
+   "aligned_class": 3,
+   "top2_gap": 0.26685239269214056,
+   "rho": 1.4280654635585683,
+   "w_perp": 0.6929749852035759,
+   "n_eff_aligned": 1.3646048201122227,
+   "per_sample_a_mean": 0.6532954821468976,
+   "per_sample_norm_ratio_mean": 0.7700711786705983,
+   "n": 10000,
+   "loader": "config"
+  },
+  "svhn": {
+   "gamma": 0.7574645800196024,
+   "a": 0.5044176805976085,
+   "aligned_class": 3,
+   "top2_gap": 0.22919191458365645,
+   "rho": 0.835645810778831,
+   "w_perp": 0.5306838511481452,
+   "n_eff_aligned": 1.6900460924143585,
+   "per_sample_a_mean": 0.5098952639269452,
+   "per_sample_norm_ratio_mean": 0.7737333825828305,
+   "n": 26032,
+   "loader": "config"
+  },
+  "tinyimagenet": {
+   "gamma": 0.7476516598712679,
+   "a": 0.285606801499768,
+   "aligned_class": 3,
+   "top2_gap": 0.040318630485788376,
+   "rho": 0.8836388147329063,
+   "w_perp": 0.741531851122325,
+   "n_eff_aligned": 2.6704699887857677,
+   "per_sample_a_mean": 0.43986805338954044,
+   "per_sample_norm_ratio_mean": 0.776285356041666,
+   "n": 10000,
+   "loader": "config"
+  },
+  "lsun cropped": {
+   "gamma": 0.6597195346996428,
+   "a": 0.4820404901524671,
+   "aligned_class": 3,
+   "top2_gap": 0.30510141653374895,
+   "rho": 0.9360395694021504,
+   "w_perp": 0.6108614170708654,
+   "n_eff_aligned": 1.2279442750518648,
+   "per_sample_a_mean": 0.5307387401122456,
+   "per_sample_norm_ratio_mean": 0.7251481278551634,
+   "n": 10000,
+   "loader": "custom"
+  },
+  "lsun resize": {
+   "gamma": 0.7427299459515654,
+   "a": 0.218573995970338,
+   "aligned_class": 4,
+   "top2_gap": 0.010861163899022197,
+   "rho": 0.8564029522332137,
+   "w_perp": 0.7942405520221582,
+   "n_eff_aligned": 3.277085672149022,
+   "per_sample_a_mean": 0.40843719453252536,
+   "per_sample_norm_ratio_mean": 0.7662560421288122,
+   "n": 10000,
+   "loader": "custom"
+  },
+  "isun": {
+   "gamma": 0.7440846347936335,
+   "a": 0.22734572543798248,
+   "aligned_class": 3,
+   "top2_gap": 0.012872460080998405,
+   "rho": 0.8563137090898496,
+   "w_perp": 0.7945209465581838,
+   "n_eff_aligned": 2.9879948241503804,
+   "per_sample_a_mean": 0.40341552990345586,
+   "per_sample_norm_ratio_mean": 0.7671389108891935,
+   "n": 8925,
+   "loader": "custom"
+  },
+  "textures": {
+   "gamma": 0.6299664780236752,
+   "a": 0.5297479704522728,
+   "aligned_class": 3,
+   "top2_gap": 0.25385124563648975,
+   "rho": 1.1679970709972938,
+   "w_perp": 0.4758237687938365,
+   "n_eff_aligned": 1.6469706149446708,
+   "per_sample_a_mean": 0.5932414251233535,
+   "per_sample_norm_ratio_mean": 0.7709948019474405,
+   "n": 5640,
+   "loader": "custom"
+  },
+  "places365": {
+   "gamma": 0.4935926956819108,
+   "a": 0.2670194052381787,
+   "aligned_class": 3,
+   "top2_gap": 0.03582855578808791,
+   "rho": 1.3477261660375899,
+   "w_perp": 0.7346553172883853,
+   "n_eff_aligned": 2.142683297544344,
+   "per_sample_a_mean": 0.6123717475594723,
+   "per_sample_norm_ratio_mean": 0.7516388371861197,
+   "n": 10000,
+   "loader": "custom"
+  }
+ },
+ "iid_test": {
+  "gamma": 0.08796937895301628,
+  "a": 0.09299783843635613,
+  "aligned_class": 6,
+  "top2_gap": 0.01266132582930328,
+  "rho": 2.3331553223246932,
+  "w_perp": 0.9240864668174379,
+  "n_eff_aligned": 3.3481698296984135,
+  "per_sample_a_mean": 0.9019292123491313,
+  "per_sample_norm_ratio_mean": 1.0391053060850812,
+  "n": 9000
+ },
+ "suite_complete": true,
+ "runtime_sec": 27.6
+}

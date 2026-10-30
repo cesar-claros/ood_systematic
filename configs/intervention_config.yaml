@@ -1,0 +1,109 @@
+# Frozen spec for the intervention (H1/H2/H3/H4) analysis.
+# Any downstream script that consumes this config should refuse to run if the
+# data on disk does not match these expected shapes.
+
+version: "2026.04.20-20csf-sc100dg22excl"
+backbone: "VGG13"
+
+# ---------- CSF subset (post-filter) ----------
+# 20 base CSFs after: (1) dropping global/class variants (except PCA/KPCA
+# RecError global), (2) dropping CTMmean / CTMmeanOC / MCD-CTMmean / MCD-CTMmeanOC.
+csfs:
+  - CTM
+  - Confidence
+  - Energy
+  - GE
+  - GEN
+  - GradNorm
+  - KPCA RecError global
+  - MLS
+  - MSR
+  - Maha
+  - NNGuide
+  - NeCo
+  - PCA RecError global
+  - PCE
+  - PE
+  - REN
+  - Residual
+  - ViM
+  - fDBD
+  - pNML
+csfs_excluded_explicit:
+  - CTMmean
+  - CTMmeanOC
+  - MCD-CTMmean
+  - MCD-CTMmeanOC
+
+# ---------- NC metric subset ----------
+# 8 Papyan-style NC statistics used to build the z-scored NC vector.
+nc_metrics:
+  - var_collapse
+  - equinorm_uc
+  - equinorm_wc
+  - equiangular_uc
+  - equiangular_wc
+  - max_equiangular_uc
+  - max_equiangular_wc
+  - self_duality
+
+# ---------- Grid ----------
+sources: [cifar10, cifar100, supercifar100, tinyimagenet]
+# NC CSV uses 'supercifar' whereas clique JSONs use 'supercifar100'.
+nc_source_alias:
+  supercifar100: supercifar
+dropouts: [do0, do1]
+regimes: ["0", "1", "2", "3"]       # 0=ID, 1=near, 2=mid, 3=far
+regime_labels: {"0": ID, "1": near, "2": mid, "3": far}
+metrics_group: RC                    # AUGRC + AURC
+mcd: false
+
+# Paradigm entries produced by the cluster run (before analysis-time exclusion).
+paradigm_entries:
+  cifar10:       [confidnet, devries, "dg@2.2", "dg@3",  "dg@6", "dg@10"]
+  cifar100:      [confidnet, devries, "dg@6",   "dg@10", "dg@12", "dg@15", "dg@20"]
+  supercifar100: [confidnet, devries, "dg@2.2", "dg@3",  "dg@6", "dg@10", "dg@12", "dg@15", "dg@20"]
+  tinyimagenet:  [confidnet, devries, "dg@10",  "dg@12", "dg@15", "dg@20"]
+
+# ---------- Analysis-time exclusions ----------
+# supercifar100 × dg@2.2 is an NC-disruption regime: at reward=2.2 the DG model on a
+# 20-class superclass task over-abstains and class-mean geometry never forms
+# (var_collapse ≈ 1.46 vs ≤ 0.3 elsewhere). It drives a single outlier cluster that
+# disproportionately influences H1 on do1. Excluded from H1/H2 to keep the paradigm
+# dose-response in the healthy-training regime.
+paradigm_entries_excluded:
+  supercifar100: ["dg@2.2"]
+
+# Effective grid after applying paradigm_entries_excluded.
+paradigm_entries_effective:
+  cifar10:       [confidnet, devries, "dg@2.2", "dg@3",  "dg@6", "dg@10"]
+  cifar100:      [confidnet, devries, "dg@6",   "dg@10", "dg@12", "dg@15", "dg@20"]
+  supercifar100: [confidnet, devries, "dg@3",   "dg@6",  "dg@10", "dg@12", "dg@15", "dg@20"]
+  tinyimagenet:  [confidnet, devries, "dg@10",  "dg@12", "dg@15", "dg@20"]
+
+# ---------- Expected counts ----------
+# Pre-exclusion counts verify cluster output integrity.
+# Post-exclusion counts drive H1 / H2 delta-table sizes.
+expected:
+  # Raw cluster output
+  total_entries_raw: 28
+  total_slices: 224                    # 28 entries × 2 dropouts × 4 regimes
+  slices_per_source: {cifar10: 48, cifar100: 56, supercifar100: 72, tinyimagenet: 48}
+  # Post-exclusion (used by delta tables)
+  total_entries_effective: 27
+  h1_pairs_per_dropout: 79             # C(6,2)+C(7,2)+C(8,2)+C(6,2)
+  h1_total_pairs: 158
+  h2_pairs: 27                         # one per (source, effective entry)
+  n_methods_per_slice: 20
+  n_nc_runs_per_cell: 5                # runs 1..5 per (source, study, reward, dropout)
+
+# ---------- Analysis parameters ----------
+alpha: 0.05                            # Conover post-hoc
+stability_threshold: 0.60              # mean Jaccard over B bootstrap runs
+bootstrap_runs: 200
+mantel_permutations: 9999
+h1_threshold_rho: 0.40
+h1_pool_delta_max: 0.10                # pool do0+do1 iff |Δρ| ≤ 0.10
+h2_threshold_rho: 0.30
+h3_top_quartile: 0.25
+h3_delta_clique_threshold: 0.60
