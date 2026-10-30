@@ -96,7 +96,23 @@ def styles_grid(inclusion:np.array,other_dots_color:float,style_columns:dict):
     )
     return styles, cs
 #%%
-def plot_grid(member_df, other_dots_color:float = 0.18, color_dotline=None, ax=None, s:int=100, zorder:int=10):
+def _arc_points(col:int, y0:int, y1:int, bulge:float, n:int=200):
+    """Arc from (col, y0) to (col, y1) that bulges to the right of the column.
+
+    The arc is a superellipse whose exponent grows with the gap, so the arc is
+    near its full width one row from each end and clears the dots in between.
+    """
+    gap = y1 - y0
+    u = 1 - 2 / gap
+    exponent = 2.0
+    while (1 - u**exponent) ** (1 / exponent) < 0.87:
+        exponent += 0.5
+    t = np.sin(np.linspace(-np.pi / 2, np.pi / 2, n))
+    return (col + bulge * (1 - np.abs(t)**exponent) ** (1 / exponent),
+            (y0 + y1) / 2 + t * gap / 2)
+
+def plot_grid(member_df, other_dots_color:float = 0.18, color_dotline=None, ax=None, s:int=100, zorder:int=10,
+              arc_links:bool=False, other_s:int=50, arc_bulge:float=0.46, arc_lw:float=1.6):
     style_columns = {
         "facecolor": "facecolors",
         "edgecolor": "edgecolors",
@@ -122,7 +138,7 @@ def plot_grid(member_df, other_dots_color:float = 0.18, color_dotline=None, ax=N
         fig, ax = plt.subplots(1,1,figsize=(5,5))
     ax.scatter(
                 x, y,
-                s=s,
+                s=np.where(inclusion.ravel(), s, other_s) if arc_links else s,
                 zorder=zorder,
                 # facecolor='black',
                 **styles.rename(columns=style_columns),
@@ -136,14 +152,22 @@ def plot_grid(member_df, other_dots_color:float = 0.18, color_dotline=None, ax=N
     )
     
     line_data = line_data.join(cs)
-    ax.vlines(
-        line_data.index.values,
-        line_data["min"],
-        line_data["max"],
-        lw=2,
-        colors=line_data["color"],
-        zorder=5,
-    )
+    if arc_links:
+        # Link consecutive members; a link never crosses an unselected dot.
+        for col, color in line_data["color"].items():
+            rows = np.sort(y[idx][x[idx] == col])
+            for y0, y1 in zip(rows[:-1], rows[1:]):
+                xs, ys = ([col, col], [y0, y1]) if y1 - y0 == 1 else _arc_points(col, y0, y1, arc_bulge)
+                ax.plot(xs, ys, lw=arc_lw, color=color, zorder=5)
+    else:
+        ax.vlines(
+            line_data.index.values,
+            line_data["min"],
+            line_data["max"],
+            lw=2,
+            colors=line_data["color"],
+            zorder=5,
+        )
     # Ticks and axes
     ax.yaxis.set_ticks(np.arange(n_cats))
     ax.yaxis.set_ticklabels(

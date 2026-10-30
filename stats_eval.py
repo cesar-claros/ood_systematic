@@ -384,7 +384,7 @@ def _render_panels_grid(args, metric: list[str],
 
         mdf = r["members_all"]
         c_list = [group_colors.get(idx.split('->')[-1], 'black') for idx in mdf.index]
-        plot_grid(mdf, color_dotline=c_list, ax=ax, zorder=10)
+        plot_grid(mdf, color_dotline=c_list, ax=ax, zorder=10, arc_links=args.arc_links)
 
         counts = mdf.sum(axis=0)
         top3 = list(counts.sort_values(ascending=False).head(3).index)
@@ -484,6 +484,9 @@ def main():
     parser.add_argument("--no-suptitle", action="store_true",
                         help="Omit the figure title of the --all-paradigms / "
                              "--all-backbones figure")
+    parser.add_argument("--arc-links", action="store_true",
+                        help="Draw clique links of the --all-paradigms / --all-backbones "
+                             "figure as arcs that do not touch unselected CSFs")
 
     args = parser.parse_args()
     plt.rcParams.update({"xtick.labelsize": 10 * args.font_scale,

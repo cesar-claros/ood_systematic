@@ -516,7 +516,7 @@ Total disk footprint after the full pipeline: about 230 MB excluding any FD-Shif
 | Paper artifact | Script that produces it | Output location |
 | --- | --- | --- |
 | Figures 1 and 2 | see [Reproducing the final paper results](#reproducing-the-final-paper-results) | |
-| Figure 3 (OpenOOD comparison) | `stats_eval.py --clip-dir clip_scores_openood --metric-group RC` (1) | `ood_eval_outputs/top_cliques_all_paradigms_False_RC_clip_scores_openood.pdf` |
+| Appendix D OpenOOD comparison figure | `generate_openood_grouping.py`, then `stats_eval.py --all-paradigms --clip-dir clip_scores_openood --metric-group RC --filter-methods --arc-links` (1) | `ood_eval_outputs/top_cliques_all_paradigms_False_RC_clip_scores_openood.pdf` |
 | Appendix A hyperparameter tables | `retrieve_scores.py` | `scores_risk/hyperparameters_results_*.csv` |
 | Appendix B NC tables | `neural_collapse_eval.py` | `neural_collapse_metrics/nc_metrics_*.csv` |
 | Appendix D OOD grouping | `clip_clustering.py --latex` | `clip_scores/clip_distances_*.csv` plus printed LaTeX |
