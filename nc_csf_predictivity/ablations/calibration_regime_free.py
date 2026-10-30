@@ -108,7 +108,8 @@ def feature_names_nr(pipe: Pipeline, config: str) -> list[str]:
 
 
 def build_train_nr(long_df: pd.DataFrame, label_df: pd.DataFrame,
-                   train_model_ids: list[str], config: str, variant: str
+                   train_model_ids: list[str], config: str, variant: str,
+                   architectures: tuple[str, ...] = ("VGG13",)
                    ) -> tuple[pd.DataFrame | None, pd.DataFrame | None, list[str]]:
     """Training matrix without regime features.
 
@@ -118,13 +119,14 @@ def build_train_nr(long_df: pd.DataFrame, label_df: pd.DataFrame,
         train_model_ids: Model ids in the training fold.
         config: Regime-free feature config name.
         variant: 'marginal' (near/mid/far label rows) or 'pooled' ('all' rows).
+        architectures: Architectures whose models may enter the training pool.
 
     Returns:
         (X, Y, csf_cols); X has one row per (model, label regime) for the
         marginal variant and one row per model for the pooled variant.
     """
     nc_per_model = get_unique_models(long_df, "source")
-    pool = nc_per_model[(nc_per_model["architecture"] == "VGG13")
+    pool = nc_per_model[nc_per_model["architecture"].isin(architectures)
                         & nc_per_model["model_id"].isin(train_model_ids)]
     if pool.empty:
         return None, None, []

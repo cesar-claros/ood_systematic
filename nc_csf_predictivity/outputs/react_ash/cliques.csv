@@ -1,0 +1,73 @@
+wrapper,panel,source,regime,clique_22,clique_swapped,gained,lost,side_effects
+ReAct,confidnet,cifar10,near,"Energy, MLS, NNGuide, NeCo","Energy + ReAct, MLS + ReAct, NNGuide, NeCo",,,
+ASH (ash_s@65),confidnet,cifar10,near,"Energy, MLS, NNGuide, NeCo","Energy + ASH-S, MLS + ASH-S, NNGuide, NeCo",,,
+ReAct,confidnet,cifar10,mid,Energy,Energy + ReAct,,,
+ASH (ash_s@65),confidnet,cifar10,mid,Energy,Energy + ASH-S,,,
+ReAct,confidnet,cifar10,far,"Energy, MLS, NNGuide, NeCo","Energy + ReAct, MLS + ReAct, NNGuide, NeCo",,,
+ASH (ash_s@65),confidnet,cifar10,far,"Energy, MLS, NNGuide, NeCo",NNGuide,,"Energy, MLS",-NeCo
+ReAct,devries,cifar10,near,Energy,"Energy + ReAct, NCI, NNGuide, NeCo",,,"+NCI, +NNGuide, +NeCo"
+ASH (ash_s@65),devries,cifar10,near,Energy,Energy + ASH-S,,,
+ReAct,devries,cifar10,mid,Energy,Energy + ReAct,,,
+ASH (ash_s@65),devries,cifar10,mid,Energy,Energy + ASH-S,,,
+ReAct,devries,cifar10,far,"Energy, MLS, NeCo","Energy + ReAct, NNGuide, NeCo",,MLS,+NNGuide
+ASH (ash_s@65),devries,cifar10,far,"Energy, MLS, NeCo","Energy + ASH-S, MLS + ASH-S, NNGuide, NeCo",,,+NNGuide
+ReAct,dg,cifar10,near,"CTM, Energy, MLS, NNGuide","CTM, Energy + ReAct, NNGuide",,MLS,
+ASH (ash_s@65),dg,cifar10,near,"CTM, Energy, MLS, NNGuide","CTM, Energy + ASH-S, MLS + ASH-S, NNGuide",,,
+ReAct,dg,cifar10,mid,"CTM, Confidence","CTM, Confidence",,,
+ASH (ash_s@65),dg,cifar10,mid,"CTM, Confidence","CTM, Confidence",,,
+ReAct,dg,cifar10,far,"CTM, Energy, MLS, Maha, NNGuide","CTM, Energy + ReAct, Maha, NNGuide",,MLS,
+ASH (ash_s@65),dg,cifar10,far,"CTM, Energy, MLS, Maha, NNGuide","CTM, Energy + ASH-S, Maha, NNGuide",,MLS,
+ReAct,confidnet,cifar100,near,"Energy, GE, MLS, NNGuide, NeCo, PE","Energy + ReAct, GE + ReAct, MLS + ReAct, NeCo",,PE,-NNGuide
+ASH (ash_s@65),confidnet,cifar100,near,"Energy, GE, MLS, NNGuide, NeCo, PE","Energy + ASH-S, GE + ASH-S, MLS + ASH-S, NNGuide, NeCo",,PE,
+ReAct,confidnet,cifar100,mid,"Energy, NeCo",Energy + ReAct,,,-NeCo
+ASH (ash_s@65),confidnet,cifar100,mid,"Energy, NeCo","Energy + ASH-S, MLS + ASH-S, MahaPP, NNGuide, NeCo",MLS + ASH-S,,"+MahaPP, +NNGuide"
+ReAct,confidnet,cifar100,far,"NCI, fDBD","NCI, fDBD",,,
+ASH (ash_s@65),confidnet,cifar100,far,"NCI, fDBD","NCI, fDBD",,,
+ReAct,devries,cifar100,near,"CTM, MSR, NCI, NNGuide, PCE, PE, fDBD","Energy + ReAct, NCI, NNGuide, fDBD",Energy + ReAct,"MSR, PCE, PE",-CTM
+ASH (ash_s@65),devries,cifar100,near,"CTM, MSR, NCI, NNGuide, PCE, PE, fDBD","CTM, MSR + ASH-S, NCI, NNGuide, PCE + ASH-S, PE + ASH-S, fDBD",,,
+ReAct,devries,cifar100,mid,"NCI, fDBD","CTM, Energy + ReAct, MLS + ReAct, NCI, REN + ReAct, fDBD","Energy + ReAct, MLS + ReAct, REN + ReAct",,+CTM
+ASH (ash_s@65),devries,cifar100,mid,"NCI, fDBD","NCI, fDBD",,,
+ReAct,devries,cifar100,far,"NCI, fDBD","NCI, fDBD",,,
+ASH (ash_s@65),devries,cifar100,far,"NCI, fDBD","NCI, fDBD",,,
+ReAct,dg,cifar100,near,"CTM, GEN, GradNorm, MSR, NCI, NNGuide, NeCo, PCE, PE, REN, fDBD","Energy + ReAct, GE + ReAct, MLS + ReAct","Energy + ReAct, GE + ReAct, MLS + ReAct","GEN, GradNorm, MSR, PCE, PE, REN","-CTM, -NCI, -NNGuide, -NeCo, -fDBD"
+ASH (ash_s@65),dg,cifar100,near,"CTM, GEN, GradNorm, MSR, NCI, NNGuide, NeCo, PCE, PE, REN, fDBD","CTM, GEN + ASH-S, GradNorm + ASH-S, MSR + ASH-S, NCI, NNGuide, NeCo, PCE + ASH-S, PE + ASH-S, REN + ASH-S, fDBD",,,
+ReAct,dg,cifar100,mid,"NCI, NNGuide, fDBD","Energy + ReAct, MLS + ReAct","Energy + ReAct, MLS + ReAct",,"-NCI, -NNGuide, -fDBD"
+ASH (ash_s@65),dg,cifar100,mid,"NCI, NNGuide, fDBD","NCI, NNGuide, fDBD",,,
+ReAct,dg,cifar100,far,"NCI, fDBD","NCI, fDBD",,,
+ASH (ash_s@65),dg,cifar100,far,"NCI, fDBD","NCI, fDBD",,,
+ReAct,confidnet,supercifar,near,"Energy, GradNorm","Energy + ReAct, GE + ReAct, MLS + ReAct","GE + ReAct, MLS + ReAct",GradNorm,
+ASH (ash_s@65),confidnet,supercifar,near,"Energy, GradNorm","Energy + ASH-S, GradNorm + ASH-S, MLS + ASH-S",MLS + ASH-S,,
+ReAct,confidnet,supercifar,mid,CTM,"Energy + ReAct, GE + ReAct","Energy + ReAct, GE + ReAct",,-CTM
+ASH (ash_s@65),confidnet,supercifar,mid,CTM,"CTM, KPCA RecError",,,+KPCA RecError
+ReAct,confidnet,supercifar,far,"CTM, KPCA RecError, fDBD","CTM, Energy + ReAct, GE + ReAct, KPCA RecError, fDBD","Energy + ReAct, GE + ReAct",,
+ASH (ash_s@65),confidnet,supercifar,far,"CTM, KPCA RecError, fDBD","CTM, KPCA RecError, fDBD",,,
+ReAct,devries,supercifar,near,"Energy, GE, MLS, NeCo, PE","Energy + ReAct, GE + ReAct, MLS + ReAct, NeCo",,PE,
+ASH (ash_s@65),devries,supercifar,near,"Energy, GE, MLS, NeCo, PE","Energy + ASH-S, GE + ASH-S, MLS + ASH-S, NeCo",,PE,
+ReAct,devries,supercifar,mid,"Energy, GE","Energy + ReAct, GE + ReAct",,,
+ASH (ash_s@65),devries,supercifar,mid,"Energy, GE","CTM, Energy + ASH-S, GE + ASH-S, NeCo",,,"+CTM, +NeCo"
+ReAct,devries,supercifar,far,"CTM, KPCA RecError, ViM, fDBD","CTM, Energy + ReAct, KPCA RecError, ViM, fDBD",Energy + ReAct,,
+ASH (ash_s@65),devries,supercifar,far,"CTM, KPCA RecError, ViM, fDBD","CTM, KPCA RecError, ViM, fDBD",,,
+ReAct,dg,supercifar,near,"Energy, GE, MLS, NNGuide, NeCo","Energy + ReAct, GE + ReAct, MLS + ReAct, NNGuide, NeCo",,,
+ASH (ash_s@65),dg,supercifar,near,"Energy, GE, MLS, NNGuide, NeCo","Energy + ASH-S, GE + ASH-S, MLS + ASH-S, NNGuide, NeCo, PE + ASH-S",PE + ASH-S,,
+ReAct,dg,supercifar,mid,"Energy, GE, Maha, NeCo, Residual, pNML","Energy + ReAct, GE + ReAct",,,"-Maha, -NeCo, -Residual, -pNML"
+ASH (ash_s@65),dg,supercifar,mid,"Energy, GE, Maha, NeCo, Residual, pNML","Energy + ASH-S, GE + ASH-S, MLS + ASH-S, Maha, NeCo, Residual, ViM, pNML",MLS + ASH-S,,+ViM
+ReAct,dg,supercifar,far,"Maha, Residual","Maha, Residual",,,
+ASH (ash_s@65),dg,supercifar,far,"Maha, Residual","Maha, Residual",,,
+ReAct,confidnet,tinyimagenet,near,CTM,CTM,,,
+ASH (ash_s@65),confidnet,tinyimagenet,near,CTM,CTM,,,
+ReAct,confidnet,tinyimagenet,mid,CTM,"CTM, fDBD",,,+fDBD
+ASH (ash_s@65),confidnet,tinyimagenet,mid,CTM,"CTM, fDBD",,,+fDBD
+ReAct,confidnet,tinyimagenet,far,CTM,"CTM, fDBD",,,+fDBD
+ASH (ash_s@65),confidnet,tinyimagenet,far,CTM,CTM,,,
+ReAct,devries,tinyimagenet,near,CTM,CTM,,,
+ASH (ash_s@65),devries,tinyimagenet,near,CTM,CTM,,,
+ReAct,devries,tinyimagenet,mid,CTM,CTM,,,
+ASH (ash_s@65),devries,tinyimagenet,mid,CTM,CTM,,,
+ReAct,devries,tinyimagenet,far,"CTM, KPCA RecError, fDBD","CTM, KPCA RecError, fDBD",,,
+ASH (ash_s@65),devries,tinyimagenet,far,"CTM, KPCA RecError, fDBD","CTM, KPCA RecError, fDBD",,,
+ReAct,dg,tinyimagenet,near,CTM,CTM,,,
+ASH (ash_s@65),dg,tinyimagenet,near,CTM,CTM,,,
+ReAct,dg,tinyimagenet,mid,CTM,CTM,,,
+ASH (ash_s@65),dg,tinyimagenet,mid,CTM,CTM,,,
+ReAct,dg,tinyimagenet,far,"CTM, KPCA RecError, fDBD","CTM, KPCA RecError, fDBD",,,
+ASH (ash_s@65),dg,tinyimagenet,far,"CTM, KPCA RecError, fDBD","CTM, KPCA RecError, fDBD",,,
