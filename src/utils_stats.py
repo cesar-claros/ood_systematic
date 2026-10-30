@@ -379,13 +379,16 @@ def nemenyi_posthoc_from_pivot(pivot):
     ph.columns = pivot.columns
     return ph
 #%%
-def conover_posthoc_from_pivot(pivot):
+def conover_posthoc_from_pivot(pivot, p_adjust=None):
     """
-    Run Nemenyi posthoc on pivot (blocks × entities) required by scikit_posthocs.
+    Run Conover's Friedman posthoc on pivot (blocks × entities) required by scikit_posthocs.
+
+    p_adjust: None for unadjusted p-values (the paper's cliques), or a
+    statsmodels method name such as "holm" applied over all entity pairs.
     """
     # scikit_posthocs expects raw matrix
     data = pivot.values
-    ph = sp.posthoc_conover_friedman(data)
+    ph = sp.posthoc_conover_friedman(data, p_adjust=p_adjust)
     ph.index = pivot.columns
     ph.columns = pivot.columns
     return ph

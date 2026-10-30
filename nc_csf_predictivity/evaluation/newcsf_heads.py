@@ -273,12 +273,16 @@ def report(gates: list[str], agreement: str, label_counts: str,
     out_path.write_text("".join(lines))
 
 
-def main() -> None:
-    """Gates, 22-CSF heads, ResNet18 evaluation, and report."""
-    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument("--out-root", default=str(DEFAULT_OUT_ROOT))
-    out_root = Path(parser.parse_args().out_root)
+def prepare_pool(out_root: Path) -> tuple[pd.DataFrame, set[str], set[str],
+                                          pd.DataFrame, pd.DataFrame, list[str]]:
+    """Load the pool, run gates GA/GB/GC, and add the new-CSF rows.
 
+    Returns:
+        (long_df, train_ids, test_ids, eval22, oracle22, gate messages).
+
+    Raises:
+        RuntimeError: If a gate fails or the new-CSF rows are incomplete.
+    """
     long_df = add_model_id(load_parquet(
         out_root / "track1" / "dataset" / "long_harmonized.parquet"))
     split = load_parquet(out_root / "splits" / f"{SPLIT}.parquet")
@@ -318,6 +322,15 @@ def main() -> None:
     eval22 = pd.concat([eval20, new_rows[KEYS + ["csf", "raw_augrc"]]], ignore_index=True)
     oracle22 = oracle_table(eval22)
     gates.append(f"New-CSF coverage complete: {len(new_rows):,} MahaPP/NCI rows")
+    return long_df, train_ids, test_ids, eval22, oracle22, gates
+
+
+def main() -> None:
+    """Gates, 22-CSF heads, ResNet18 evaluation, and report."""
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--out-root", default=str(DEFAULT_OUT_ROOT))
+    out_root = Path(parser.parse_args().out_root)
+    long_df, train_ids, test_ids, eval22, oracle22, gates = prepare_pool(out_root)
 
     labels = labels_22(out_root)
     legacy = load_parquet(out_root / "track1" / "cliques" / "cliques.parquet")

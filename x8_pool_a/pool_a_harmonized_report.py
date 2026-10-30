@@ -45,6 +45,32 @@ SHORT = {"PCA RecError global": "PCA-RE",
          "KPCA RecError global": "KPCA-RE"}
 
 
+CELL = ["paradigm", "source", "dropout", "reward", "regime"]
+
+
+def standardized_vgg_models(vgg_long: pd.DataFrame) -> pd.DataFrame:
+    """One row per VGG13 model with NC z-scored within each architecture."""
+    vgg_long = vgg_long.copy()
+    for arch, sub_a in vgg_long.groupby("architecture"):
+        for c in NC_PRIMARY:
+            vgg_long.loc[sub_a.index, c] = (
+                (sub_a[c] - sub_a[c].mean()) / (sub_a[c].std() + 1e-12))
+    return (vgg_long[vgg_long["architecture"] == "VGG13"]
+            [["model_id", "paradigm", "source", "dropout", "reward"]
+             + NC_PRIMARY].drop_duplicates("model_id"))
+
+
+def marginal_training(vgg_models: pd.DataFrame, labels: pd.DataFrame
+                      ) -> tuple[pd.DataFrame, list[str]]:
+    """Regime-marginal VGG13 training rows and CSF columns for a label set."""
+    wide = (labels.pivot_table(index=CELL, columns="csf", values="label",
+                               aggfunc="first").reset_index().fillna(0))
+    rows = pd.DataFrame(
+        [{**m.to_dict(), "regime": r} for _, m in vgg_models.iterrows()
+         for r in REGIMES]).merge(wide, on=CELL, how="inner")
+    return rows, [c for c in wide.columns if c not in CELL]
+
+
 def main() -> None:
     out_dir = OUT_ROOT / "pool_a"
     long_df = pd.read_parquet(out_dir / "long_pool_a_harmonized.parquet")
@@ -55,27 +81,10 @@ def main() -> None:
         OUT_ROOT / "track1" / "dataset" / "long_harmonized.parquet")
     vgg_long = add_model_id(vgg_long)
     cliques = pool_cliques_for(("VGG13",), vgg_long)
-    for arch, sub_a in vgg_long.groupby("architecture"):
-        for c in NC_PRIMARY:
-            vgg_long.loc[sub_a.index, c] = (
-                (sub_a[c] - sub_a[c].mean()) / (sub_a[c].std() + 1e-12))
-    vgg_models = (vgg_long[vgg_long["architecture"] == "VGG13"]
-                  [["model_id", "paradigm", "source", "dropout", "reward"]
-                   + NC_PRIMARY].drop_duplicates("model_id"))
-    cell = ["paradigm", "source", "dropout", "reward", "regime"]
-
-    def marginal_training(labels: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
-        """Regime-marginal VGG13 training rows and CSF columns for a label set."""
-        wide = (labels.pivot_table(index=cell, columns="csf", values="label",
-                                   aggfunc="first").reset_index().fillna(0))
-        rows = pd.DataFrame(
-            [{**m.to_dict(), "regime": r} for _, m in vgg_models.iterrows()
-             for r in REGIMES]).merge(wide, on=cell, how="inner")
-        return rows, [c for c in wide.columns if c not in cell]
-
+    vgg_models = standardized_vgg_models(vgg_long)
     tr_marginal, csf_cols = marginal_training(
-        cliques.assign(label=cliques["in_top_clique"].astype(int)))
-    tr_marginal22, csf_cols22 = marginal_training(labels_22(OUT_ROOT))
+        vgg_models, cliques.assign(label=cliques["in_top_clique"].astype(int)))
+    tr_marginal22, csf_cols22 = marginal_training(vgg_models, labels_22(OUT_ROOT))
 
     long_df["model_id"] = (long_df["paradigm"] + "|" + long_df["source"]
                            + "|" + long_df["run"].astype(str))

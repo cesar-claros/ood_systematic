@@ -198,10 +198,19 @@ def covariate_sets_for(backbone: str) -> dict[str, list[str]]:
     return sets
 
 
-def run_stratum(backbone: str, study: str) -> list[dict]:
-    """Full + partial Mantel for one (backbone, paradigm) stratum."""
-    nc = load_nc_metrics("neural_collapse_metrics/nc_metrics.csv")
-    nc["dataset"] = nc["dataset"].replace({"supercifar": "supercifar100"})
+def run_stratum(backbone: str, study: str, nc: pd.DataFrame | None = None
+                ) -> list[dict]:
+    """Full + partial Mantel for one (backbone, paradigm) stratum.
+
+    Args:
+        backbone: Score-file backbone ("Conv" or "ViT").
+        study: Training paradigm of the stratum.
+        nc: NC metrics frame in the nc_metrics.csv layout; None loads the
+            stored legacy file.
+    """
+    if nc is None:
+        nc = load_nc_metrics("neural_collapse_metrics/nc_metrics.csv")
+    nc = nc.assign(dataset=nc["dataset"].replace({"supercifar": "supercifar100"}))
     scores = load_scores("scores_risk", "AUGRC", backbone, "False", DATASETS)
     scores = filter_methods(scores)
     scores = scores[scores["study"] == study]

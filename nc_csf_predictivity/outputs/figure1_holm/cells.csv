@@ -1,0 +1,65 @@
+panel,source,regime,unadjusted,holm,subset,identical,size_unadjusted,size_holm
+confidnet,cifar10,test,"Confidence, GEN, MSR, PCE","Confidence, GEN, MSR, PCE, REN",True,False,4,5
+confidnet,cifar10,near,"Energy, MLS, NNGuide, NeCo","Energy, MLS, NNGuide, NeCo",True,True,4,4
+confidnet,cifar10,mid,Energy,"Energy, MLS, NNGuide",True,False,1,3
+confidnet,cifar10,far,"Energy, MLS, NNGuide, NeCo","Energy, MLS, NNGuide, NeCo",True,True,4,4
+devries,cifar10,test,"Confidence, REN","Confidence, GEN, REN",True,False,2,3
+devries,cifar10,near,Energy,"Energy, MLS, NeCo",True,False,1,3
+devries,cifar10,mid,Energy,"Energy, MLS, NeCo",True,False,1,3
+devries,cifar10,far,"Energy, MLS, NeCo","Energy, MLS, NNGuide, NeCo",True,False,3,4
+dg,cifar10,test,"CTM, GEN, PCE, REN","CTM, GEN, MSR, PCE, REN",True,False,4,5
+dg,cifar10,near,"CTM, Energy, MLS, NNGuide","CTM, Confidence, Energy, MLS, NNGuide, NeCo",True,False,4,6
+dg,cifar10,mid,"CTM, Confidence","CTM, Confidence, PE",True,False,2,3
+dg,cifar10,far,"CTM, Energy, MLS, Maha, NNGuide","CTM, Energy, KPCA RecError, MLS, Maha, NNGuide, NeCo",True,False,5,7
+confidnet,cifar100,test,"GEN, MSR","GEN, MSR",True,True,2,2
+confidnet,cifar100,near,"Energy, GE, MLS, NNGuide, NeCo, PE","CTM, Confidence, Energy, GE, GEN, GradNorm, KPCA RecError, MLS, MSR, MahaPP, NCI, NNGuide, NeCo, PCE, PE, REN, fDBD",True,False,6,17
+confidnet,cifar100,mid,"Energy, NeCo","Energy, KPCA RecError, MLS, MahaPP, NCI, NNGuide, NeCo, fDBD",True,False,2,8
+confidnet,cifar100,far,"NCI, fDBD","NCI, fDBD",True,True,2,2
+devries,cifar100,test,"GEN, MSR","GEN, MSR",True,True,2,2
+devries,cifar100,near,"CTM, MSR, NCI, NNGuide, PCE, PE, fDBD","CTM, Energy, GEN, MLS, MSR, NCI, NNGuide, NeCo, PCE, PE, REN, fDBD",True,False,7,12
+devries,cifar100,mid,"NCI, fDBD","CTM, NCI, NNGuide, fDBD",True,False,2,4
+devries,cifar100,far,"NCI, fDBD","NCI, fDBD",True,True,2,2
+dg,cifar100,test,"GEN, MSR","GEN, MSR, PCE, REN, fDBD",True,False,2,5
+dg,cifar100,near,"CTM, GEN, GradNorm, MSR, NCI, NNGuide, NeCo, PCE, PE, REN, fDBD","CTM, Confidence, GE, GEN, GradNorm, KPCA RecError, MLS, MSR, NCI, NNGuide, NeCo, PCE, PE, REN, fDBD",True,False,11,15
+dg,cifar100,mid,"NCI, NNGuide, fDBD","CTM, Confidence, KPCA RecError, NCI, NNGuide, fDBD",True,False,3,6
+dg,cifar100,far,"NCI, fDBD","NCI, fDBD",True,True,2,2
+confidnet,supercifar,test,"CTM, NCI","CTM, NCI, REN",True,False,2,3
+confidnet,supercifar,near,"Energy, GradNorm","CTM, Energy, GE, GEN, GradNorm, MLS, MahaPP, NNGuide, NeCo, PE, REN",True,False,2,11
+confidnet,supercifar,mid,CTM,"CTM, Energy, KPCA RecError, MahaPP, pNML",True,False,1,5
+confidnet,supercifar,far,"CTM, KPCA RecError, fDBD","CTM, KPCA RecError, MahaPP, NCI, ViM, fDBD, pNML",True,False,3,7
+devries,supercifar,test,"CTM, KPCA RecError, NCI","CTM, Confidence, KPCA RecError, NCI",True,False,3,4
+devries,supercifar,near,"Energy, GE, MLS, NeCo, PE","CTM, Energy, GE, GradNorm, MLS, NeCo, PE",True,False,5,7
+devries,supercifar,mid,"Energy, GE","CTM, Energy, GE, KPCA RecError, MLS, MahaPP, NeCo, PE, ViM",True,False,2,9
+devries,supercifar,far,"CTM, KPCA RecError, ViM, fDBD","CTM, KPCA RecError, NCI, ViM, fDBD",True,False,4,5
+dg,supercifar,test,"CTM, NCI","CTM, Confidence, NCI",True,False,2,3
+dg,supercifar,near,"Energy, GE, MLS, NNGuide, NeCo","CTM, Energy, GE, GradNorm, MLS, NNGuide, NeCo, PE, REN",True,False,5,9
+dg,supercifar,mid,"Energy, GE, Maha, NeCo, Residual, pNML","CTM, Energy, GE, MLS, Maha, NeCo, Residual, ViM, pNML",True,False,6,9
+dg,supercifar,far,"Maha, Residual","Maha, Residual, ViM, fDBD",True,False,2,4
+confidnet,tinyimagenet,test,MSR,"GEN, MSR",True,False,1,2
+confidnet,tinyimagenet,near,CTM,CTM,True,True,1,1
+confidnet,tinyimagenet,mid,CTM,"CTM, fDBD",True,False,1,2
+confidnet,tinyimagenet,far,CTM,"CTM, fDBD",True,False,1,2
+devries,tinyimagenet,test,"GEN, MSR","GEN, MSR",True,True,2,2
+devries,tinyimagenet,near,CTM,CTM,True,True,1,1
+devries,tinyimagenet,mid,CTM,"CTM, NNGuide",True,False,1,2
+devries,tinyimagenet,far,"CTM, KPCA RecError, fDBD","CTM, KPCA RecError, fDBD",True,True,3,3
+dg,tinyimagenet,test,"CTM, MSR","CTM, MSR",True,True,2,2
+dg,tinyimagenet,near,CTM,CTM,True,True,1,1
+dg,tinyimagenet,mid,CTM,CTM,True,True,1,1
+dg,tinyimagenet,far,"CTM, KPCA RecError, fDBD","CTM, KPCA RecError, NCI, fDBD",True,False,3,4
+vit,cifar10,test,"GEN, KPCA RecError, MSR, NNGuide, PCE, PE","GEN, KPCA RecError, MSR, NNGuide, PCE, PE",True,True,6,6
+vit,cifar10,near,"MahaPP, PCA RecError, pNML","MahaPP, PCA RecError, ViM, pNML",True,False,3,4
+vit,cifar10,mid,"KPCA RecError, NCI, pNML","KPCA RecError, NCI, pNML",True,True,3,3
+vit,cifar10,far,"Residual, ViM, pNML","Residual, ViM, pNML",True,True,3,3
+vit,cifar100,test,"GEN, MSR, REN","GEN, MSR, PCE, REN",True,False,3,4
+vit,cifar100,near,"Maha, NeCo, ViM","Maha, NeCo, ViM",True,True,3,3
+vit,cifar100,mid,KPCA RecError,"KPCA RecError, NCI",True,False,1,2
+vit,cifar100,far,"Residual, ViM","Maha, Residual, ViM",True,False,2,3
+vit,supercifar,test,"GEN, MSR","GEN, MSR, REN",True,False,2,3
+vit,supercifar,near,"GE, MLS, MahaPP, NCI, NNGuide, ViM, pNML","Energy, GE, KPCA RecError, MLS, MSR, Maha, MahaPP, NCI, NNGuide, NeCo, PCA RecError, PCE, PE, Residual, ViM, fDBD, pNML",True,False,7,17
+vit,supercifar,mid,KPCA RecError,"GradNorm, KPCA RecError, NCI",True,False,1,3
+vit,supercifar,far,"Residual, pNML","Residual, pNML",True,True,2,2
+vit,tinyimagenet,test,"GEN, MSR","GEN, MSR",True,True,2,2
+vit,tinyimagenet,near,PE,"GE, GradNorm, PE",True,False,1,3
+vit,tinyimagenet,mid,"Residual, pNML","Maha, Residual, ViM, pNML",True,False,2,4
+vit,tinyimagenet,far,"GE, GradNorm","Energy, GE, GradNorm, NCI",True,False,2,4
