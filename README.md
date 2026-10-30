@@ -6,7 +6,7 @@ The repository covers the full pipeline from FD-Shifts pretrained checkpoints th
 
 ### Note on NC1
 
-The paper's NC1 is Papyan's NC1 divided by the number of classes, computed with the earlier pseudoinverse tolerance of `torch.linalg.pinv` (Appendix B). The main results use these stored values (`neural_collapse_metrics/` and `nc_csf_predictivity/outputs/track1/dataset/long_harmonized.parquet`). Since commit `77d87b2`, `src/neural_collapse.py` computes Papyan's NC1 with a fixed estimator (float64, hermitian, relative tolerance 1e-6), so a fresh extraction from checkpoints gives the corrected values of Appendix B and not the stored values. `nc_csf_predictivity/evaluation/nc1_sensitivity.py` reports the main results under both definitions.
+The paper's NC1 is Papyan's NC1 divided by the number of classes in every pool (Appendix B). VGG-13, ResNet-18, and ViT use the default float32 tolerance of `torch.linalg.pinv`; the self-supervised probes and the ImageNet models use a relative tolerance of 1e-6. The main results use these stored values (`neural_collapse_metrics/` and `nc_csf_predictivity/outputs/track1/dataset/long_harmonized.parquet`). Since commit `77d87b2`, `src/neural_collapse.py` computes Papyan's NC1 with a fixed estimator (float64, hermitian, relative tolerance 1e-6), so a fresh extraction from checkpoints gives the corrected values of Appendix B and not the stored values. `nc_csf_predictivity/evaluation/nc1_sensitivity.py` reports the main results under both definitions.
 
 ### Note on out-of-scope artifacts
 
