@@ -1,12 +1,16 @@
-# A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training Paradigm Shifts
+# A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training-Objective Shifts
 
-This repository contains the code and analysis pipeline for *A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training Paradigm Shifts*. The paper studies how the geometry of a learned representation (measured via Neural Collapse metrics) governs which Confidence Score Function (CSF) is competitive for OOD detection on a given trained classifier, and proposes a per-CSF logistic predictor that recommends a competitive shortlist of detectors for an unseen model without OOD validation data.
+This repository contains the code and analysis pipeline for *A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training-Objective Shifts* (NeurIPS 2026, Evaluations and Datasets track; [arXiv:2511.11934](https://arxiv.org/abs/2511.11934)). The paper studies how the geometry of a learned representation (measured via Neural Collapse metrics) relates to which Confidence Score Function (CSF) is competitive for OOD detection on a given trained classifier, and proposes a per-CSF logistic predictor that recommends a competitive shortlist of detectors for an unseen model without OOD validation data.
 
 The repository covers the full pipeline from FD-Shifts pretrained checkpoints through CSF fitting and evaluation, statistical analysis, Neural Collapse computation, CLIP-based OOD stratification, and the cross-architecture predictor used in Section 4.4. Reproducing every paper figure end to end takes one to two weeks of wall-clock time on a small GPU cluster (Appendix C). For reproducibility purposes, the heaviest intermediate artifacts are also published as zip archives (see [Quick reproduction with prebuilt archives](#quick-reproduction-with-prebuilt-archives)).
 
+### Note on NC1
+
+The paper's NC1 is Papyan's NC1 divided by the number of classes, computed with the earlier pseudoinverse tolerance of `torch.linalg.pinv` (Appendix B). The main results use these stored values (`neural_collapse_metrics/` and `nc_csf_predictivity/outputs/track1/dataset/long_harmonized.parquet`). Since commit `77d87b2`, `src/neural_collapse.py` computes Papyan's NC1 with a fixed estimator (float64, hermitian, relative tolerance 1e-6), so a fresh extraction from checkpoints gives the corrected values of Appendix B and not the stored values. `nc_csf_predictivity/evaluation/nc1_sensitivity.py` reports the main results under both definitions.
+
 ### Note on out-of-scope artifacts
 
-A few artifacts in this repository belong to a separate companion project on calibration and are not used by any result in this paper:
+A few artifacts in this repository belong to our AISTATS 2026 Calibration Workshop companion paper, *Bounding Worst-Case Calibration Error in OOD Detection Under Distribution Shift* ([OpenReview](https://openreview.net/forum?id=aZnAoyzssI)), and are not used by any result in this paper:
 
 - **`calibration_ood.py`, `recompute_metric.py`, and the `scores_calibration/` directory.** They are listed in the repository layout for completeness, but the pipeline does not invoke them and does not read from `scores_calibration/`. You can ignore them entirely.
 - **`stats_eval.py`** also supports calibration metric groups (`--metric-group CE` / `--metric-group CE_BOUND`) for that project. This paper only uses `--metric-group RC` (AURC / AUGRC), which is the only mode whose outputs feed Figures 1 and 3.
@@ -21,10 +25,13 @@ A few artifacts in this repository belong to a separate companion project on cal
 4. [Trained model checkpoints](#trained-model-checkpoints)
 5. [Quick reproduction with prebuilt archives](#quick-reproduction-with-prebuilt-archives)
 6. [Full pipeline reproduction](#full-pipeline-reproduction)
-7. [Reproducing the selector-transfer experiments](#reproducing-the-selector-transfer-experiments)
-8. [Expected folder structure after the full pipeline](#expected-folder-structure-after-the-full-pipeline)
-9. [Mapping paper figures and tables to scripts](#mapping-paper-figures-and-tables-to-scripts)
-10. [Citing FD-Shifts and external datasets](#citing-fd-shifts-and-external-datasets)
+7. [Reproducing the final paper results](#reproducing-the-final-paper-results)
+8. [Submission and author-response results](#submission-and-author-response-results)
+9. [Expected folder structure after the full pipeline](#expected-folder-structure-after-the-full-pipeline)
+10. [Mapping paper figures and tables to scripts](#mapping-paper-figures-and-tables-to-scripts)
+11. [License and provenance](#license-and-provenance)
+12. [Citation](#citation)
+13. [Citing FD-Shifts and external datasets](#citing-fd-shifts-and-external-datasets)
 
 ---
 
@@ -41,7 +48,14 @@ ood_systematic/
 |   |-- stats/                        # Holm-Wilcoxon tests
 |   `-- outputs/                      # generated parquets and figures (committed where small)
 |-- x8_pool_a/                        # self-supervised probe pool: frozen DINOv2/CLIP features,
-|                                     # linear probes, CSF evaluation, selector transfer (author response)
+|                                     # linear probes, CSF evaluation, selector transfer (Appendix L)
+|-- x9_imagenet/                      # ImageNet sweep over 47 timm models and the transfer (Appendix M)
+|-- x9_outputs/, x9_outputs_seed1/    # per-model ImageNet scores and NC metrics (committed)
+|-- clip_scores_imagenet/             # ImageNet CLIP regimes (committed)
+|-- scripts/intervention_*.py         # matched-pair analysis (Appendix G.2)
+|-- archived/nc_regime_analysis.py    # NC loading helpers imported by the Mantel scripts
+|-- fig1_newcsf_sandbox/fig1_out/     # rendered 22-CSF top-clique panels (Figure 1)
+|-- new_csfs_pilot_summary_long.csv.gz # Maha++, NCI, ReAct, and ASH-S rows of the 22-CSF roster
 |
 |-- csf_fit.py                        # Stage 1: fit CSFs on the validation split
 |-- csf_eval.py                       # Stage 2: evaluate CSFs on each OOD dataset
@@ -334,11 +348,44 @@ python -m nc_csf_predictivity.evaluation.coefficients_heatmap_clique
 python -m nc_csf_predictivity.evaluation.regret_by_side_clique_bc
 ```
 
-Wall-clock for Stage 7 is about thirty minutes to one hour on a single CPU machine: the bulk is the per-CSF L2 LogisticRegressionCV (Cs=50, cv=5, class-balanced) over twenty CSFs, three feature configurations (`source`, `n_classes`, `none`), and two splits (`xarch`, `lopo`).
+Wall-clock for Stage 7 is about thirty minutes to one hour on a single CPU machine: the bulk is the per-CSF L2 LogisticRegressionCV (Cs=50, cv=5, class-balanced) over twenty CSFs, three feature configurations (`source`, `n_classes`, `none`), and two splits (`xarch`, `lopo`). The final paper's heads use the 22-CSF roster; see the next section.
 
 ---
 
-## Reproducing the selector-transfer experiments
+## Reproducing the final paper results
+
+The final paper uses the regime-free NC-only heads with the 22-CSF roster. First unzip `scores_risk.zip`, `scores_risk_resnet18.zip`, `clip_scores.zip`, and `neural_collapse_metrics.zip` (see [Quick reproduction](#quick-reproduction-with-prebuilt-archives)), then run this once from the repository root:
+
+```bash
+gunzip -k new_csfs_pilot_summary_long.csv.gz
+```
+
+Every command below runs from the repository root on CPU, unless marked GPU. The scripts check gates before they write output: each gate compares a recomputed result with the stored one and aborts on a mismatch. Run the rows in this order, because later scripts read the outputs of earlier ones.
+
+| Paper artifact | Command | Report or output |
+| --- | --- | --- |
+| Sec 4.4, App H, App J: 22-CSF heads, Wilcoxon and mean tests | `python nc_csf_predictivity/evaluation/newcsf_heads.py` | `nc_csf_predictivity/outputs/49_newcsf_heads.md` |
+| Figure 2 | `python -m nc_csf_predictivity.evaluation.regret_by_side_clique_bc --regime-free --roster22` | `outputs/figures/regret_by_side_22csf_xarch.pdf` |
+| App H coefficient heatmaps | `python -m nc_csf_predictivity.evaluation.coefficients_heatmap_clique --regime-free --roster22` | `outputs/figures/clique_coefficients_heatmap_xarch_*_22csf.pdf` |
+| App H per-source tables | `python nc_csf_predictivity/evaluation/per_source_tables.py` | `outputs/57_per_source_tables.md` |
+| Figure 1 | `python nc_csf_predictivity/evaluation/figure1_render_newcsf.py`, then the `stats_eval.py` commands in its docstring | `fig1_newcsf_sandbox/fig1_out/` |
+| App B NC1 sensitivity | `python nc_csf_predictivity/evaluation/nc1_corrected_panel.py`, then `python nc_csf_predictivity/evaluation/nc1_sensitivity.py` | `outputs/54_nc1_corrected.md`, `outputs/55_nc1_sensitivity.md` |
+| App E.2 Holm check | `python nc_csf_predictivity/evaluation/figure1_holm_check.py` | `outputs/56_figure1_holm_check.md` |
+| App E.3 FPR@95 cliques | `python rc_roc_clique_comparison.py` | see the script docstring |
+| App F.2 ReAct and ASH-S | `python nc_csf_predictivity/evaluation/react_ash_table.py` | `outputs/51_react_ash.md` |
+| App G.1 partial Mantel | `python mantel_partial_convergence.py` | `mantel_partial_outputs/` |
+| App G.2 matched pairs | `python scripts/intervention_cliques.py`, `intervention_delta_tables.py`, `intervention_mantel_tests.py`, `intervention_sensitivity.py` (in this order; settings in `configs/intervention_config.yaml`) | `ood_eval_outputs/intervention_*/` |
+| App K CNN to ViT transfer | `python nc_csf_predictivity/evaluation/vit_transfer_22.py`, `python nc_csf_predictivity/evaluation/vit_loso.py` | `outputs/52_vit_transfer_22.md`, `outputs/53_vit_loso.md` |
+| App L self-supervised probes | GPU, a few hours: `bash x8_pool_a/run_pool_a_hpc.sh`. Then `python x8_pool_a/pool_a_harmonized.py --features-dir pool_a_features` and `python x8_pool_a/pool_a_harmonized_report.py` | `outputs/pool_a/42_pool_a_harmonized_tables.md` |
+| App M ImageNet | GPU, about 13 hours: `bash x9_imagenet/run_x9_sweep.sh` and `python x9_imagenet/clip_regimes.py`; their outputs are committed. Then `python x9_imagenet/phase3_transfer.py` | `outputs/50_imagenet_transfer.md` |
+
+Expected headline (VGG-13 to ResNet-18, joint side, near / mid / far): **0.93 / 0.88 / 0.50** against **2.08 / 3.56 / 2.57** for Always-CTM, 55-80% reductions, with 65 of 66 comparisons significant under both the Wilcoxon test and the mean test.
+
+---
+
+## Submission and author-response results
+
+This section covers the submitted version and the author response. The final paper does not use these numbers: they come from the 20-CSF roster, and most of them use the regime input.
 
 The NC-based selector is evaluated on three target pools: the held-out ResNet-18 pool (Section 4.4 of the paper), the fine-tuned ViT pool, and a self-supervised pool of frozen DINOv2/CLIP linear probes (the latter two produced for the NeurIPS 2026 author response). All three follow the same protocol. Per-CSF L2 logistic heads are trained on the 280 VGG-13 models, with the eight NC metrics z-scored within each architecture, a source one-hot, and an OOD-regime one-hot as features, and Friedman-Conover top-clique membership per (paradigm, source, dropout, reward, regime) cell as labels. The heads are then applied without retraining to each target model individually (each seed is its own test model, with NC values z-scored by the target family's own statistics). Predicted shortlists (head probability >= 0.5) are scored by per-(model, OOD dataset) set-regret against the per-row oracle, with empty shortlists imputed by the worst CSF on the side; the reference baselines are the best fixed CSF among {MSR, Energy, MLS, CTM, fDBD, NNGuide} on the same rows.
 
@@ -466,21 +513,55 @@ Total disk footprint after the full pipeline: about 230 MB excluding any FD-Shif
 
 | Paper artifact | Script that produces it | Output location |
 | --- | --- | --- |
-| Figure 1 (top-clique panels) | `stats_eval.py --all-paradigms --metric-group RC` (1) | `ood_eval_outputs/top_cliques_all_paradigms_False_RC.pdf` |
-| Figure 2 (cross-architecture regret) | `nc_csf_predictivity.evaluation.regret_by_side_clique_bc` | `nc_csf_predictivity/outputs/figures/regret_by_side_clique_bc_xarch.pdf` |
+| Figures 1 and 2 | see [Reproducing the final paper results](#reproducing-the-final-paper-results) | |
 | Figure 3 (OpenOOD comparison) | `stats_eval.py --clip-dir clip_scores_openood --metric-group RC` (1) | `ood_eval_outputs/top_cliques_all_paradigms_False_RC_clip_scores_openood.pdf` |
 | Appendix A hyperparameter tables | `retrieve_scores.py` | `scores_risk/hyperparameters_results_*.csv` |
 | Appendix B NC tables | `neural_collapse_eval.py` | `neural_collapse_metrics/nc_metrics_*.csv` |
-| Appendix D Table 6 (OOD grouping) | `clip_clustering.py --latex` | `clip_scores/clip_distances_*.csv` plus printed LaTeX |
-| Appendix D Table 7 (CLIP distances) | `clip_proximity.py` + `clip_clustering.py` | `clip_scores/` |
+| Appendix D OOD grouping | `clip_clustering.py --latex` | `clip_scores/clip_distances_*.csv` plus printed LaTeX |
+| Appendix D CLIP distances | `clip_proximity.py` + `clip_clustering.py` | `clip_scores/` |
 | Appendix D.1 robustness tables | `clip_robustness.py`, `clip_clustering_all_backbones.py` | `clip_robustness/` |
 | Appendix E worked example | `stats_eval_demo.py` | `ood_eval_outputs/6_0_posthoc_heatmap.pdf` |
-| Appendix F Tables 15, 16 | `projection_filtering_analysis.py` | `projection_analysis_outputs/` |
+| Appendix F paired-AUGRC tables | `projection_filtering_analysis.py` | `projection_analysis_outputs/` |
 | Appendix F clique substitutions | `projection_clique_analysis.py` | `projection_clique_outputs/` |
-| Appendix G Tables 18, 19 (Mantel) | `mantel_analysis.py` | `mantel_outputs_papyan/` |
-| Appendix H coefficient heatmaps | `nc_csf_predictivity.evaluation.coefficients_heatmap_clique` | `nc_csf_predictivity/outputs/figures/clique_coefficients_heatmap_xarch_{source,n_classes,none}.pdf` |
+| Appendix G Mantel tables | `mantel_analysis.py` | `mantel_outputs_papyan/` |
+| All other appendices | see [Reproducing the final paper results](#reproducing-the-final-paper-results) | |
 
 (1) Only the `--metric-group RC` invocations (AURC / AUGRC) of `stats_eval.py` feed this paper; the `--metric-group CE` / `CE_BOUND` modes compute calibration top cliques for a separate companion project.
+
+---
+
+## License and provenance
+
+The code in this repository is released under the MIT license (`LICENSE`). The other assets come from these sources:
+
+| Asset | Source | Terms |
+| --- | --- | --- |
+| CSF, evaluation, and training framework | Fork of FD-Shifts v0.1.1: https://github.com/cesar-claros/fd-shifts-0.1.1 (upstream: https://github.com/IML-DKFZ/fd-shifts) | Apache-2.0 |
+| VGG-13 and ViT checkpoints on CIFAR-10, CIFAR-100, and SuperCIFAR-100 | Released by the FD-Shifts authors; not retrained here | FD-Shifts terms |
+| VGG-13 and ViT checkpoints on TinyImageNet | Trained by us with the FD-Shifts code: https://zenodo.org/records/17316185 | CC BY 4.0 |
+| ResNet-18 checkpoints (56) | Trained by us with the FD-Shifts code: https://zenodo.org/records/19712370 | CC0 |
+| OOD evaluation sets | Copy for convenience: https://zenodo.org/records/17317862 | Each set keeps its original license |
+| ImageNet classifiers (47) | `timm` library | Apache-2.0 for the library; each model card states the weight terms |
+| DINOv2 and CLIP encoders | Public releases of their authors, CLIP through `open_clip` | See each release |
+
+`src/rc_stats.py` credits the source of its ROC convex-hull routine in a comment.
+
+---
+
+## Citation
+
+```bibtex
+@inproceedings{claros2026systematic,
+  title={A Systematic Analysis of Out-of-Distribution Detection Under Representation and Training-Objective Shifts},
+  author={Claros-Olivares, Claudio C. and Brockmeier, Austin J.},
+  booktitle={Advances in Neural Information Processing Systems (Evaluations and Datasets Track)},
+  year={2026},
+  eprint={2511.11934},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  url={https://arxiv.org/abs/2511.11934}
+}
+```
 
 ---
 
@@ -508,6 +589,6 @@ Please cite the FD-Shifts paper if you use their framework and the released chec
 }
 ```
 
-Please refer to their github page for more information on the FD-Shifts framework: [https://github.com/fd-shifts/fd-shifts.pytorch](https://github.com/fd-shifts/fd-shifts.pytorch)
+Please refer to their github page for more information on the FD-Shifts framework: [https://github.com/IML-DKFZ/fd-shifts](https://github.com/IML-DKFZ/fd-shifts)
 
-The image-classification benchmarks and OOD evaluation sets used here retain their original licenses; see the paper's "Licenses for existing assets" checklist entry for the full list of dataset citations (CIFAR-10/100, SuperCIFAR-100, TinyImageNet, iSUN, LSUN, SVHN, Places365, Textures/DTD).
+The image-classification benchmarks and OOD evaluation sets used here retain their original licenses; see the paper's "Licenses for existing assets" checklist entry for the full list of dataset citations (CIFAR-10/100, SuperCIFAR-100, TinyImageNet, iSUN, LSUN, SVHN, Places365, Textures/DTD); Appendix M of the paper cites the ImageNet-scale sets.
