@@ -381,6 +381,8 @@ Every command below runs from the repository root on CPU, unless marked GPU. The
 
 Expected headline (VGG-13 to ResNet-18, joint side, near / mid / far): **0.93 / 0.88 / 0.50** against **2.08 / 3.56 / 2.57** for Always-CTM, 55-80% reductions, with 65 of 66 comparisons significant under both the Wilcoxon test and the mean test.
 
+**Known variation in Appendix G.2.** `scripts/intervention_cliques.py` builds its bootstrap seeds with Python's `hash()`, which changes per process unless `PYTHONHASHSEED` is set, so the stability values differ between runs. Appendix G.2 of the paper reports the committed outputs in `ood_eval_outputs/intervention_*/`. In one clean rerun the top cliques of all 224 slices stayed identical, and one CIFAR-100 slice crossed the 0.6 stability threshold. As a result, H1 with dropout on CIFAR-100 moved from 0.82 to 0.80, its pooled p moved from 1.8e-4 to 2.0e-4, and H4 with dropout on the angular coordinates moved from 0.51-0.58 to 0.47-0.54. No H1, H2, or H3 verdict changed.
+
 ---
 
 ## Submission and author-response results
