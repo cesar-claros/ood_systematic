@@ -163,6 +163,35 @@ def build_test_nr(long_df: pd.DataFrame, test_model_ids: list[str], config: str
     return X, meta
 
 
+def fit_heads(X_tr: pd.DataFrame, Y_tr: pd.DataFrame, csf_cols: list[str],
+              config: str) -> dict[str, Pipeline]:
+    """One fitted regime-free logistic head per CSF.
+
+    CSFs whose labels are constant, or that have fewer than L2_CV positives
+    or negatives, get no head (they are never shortlisted).
+
+    Args:
+        X_tr, Y_tr, csf_cols: Training matrix, labels, and CSF names from
+            `build_train_nr`.
+        config: Regime-free feature config name.
+
+    Returns:
+        CSF name -> fitted pipeline.
+    """
+    heads = {}
+    for csf in [c for c in csf_cols if Y_tr[c].nunique() > 1]:
+        y = Y_tr[csf].values
+        if min(np.bincount(y, minlength=2)) < L2_CV:
+            continue
+        try:
+            pipe = build_pipeline_nr(config)
+            pipe.fit(X_tr, y)
+        except (ValueError, RuntimeError):
+            continue
+        heads[csf] = pipe
+    return heads
+
+
 def run_config_variant(long_df: pd.DataFrame, label_df: pd.DataFrame,
                        split: str, out_root: Path, config: str,
                        variant: str, ablation_root: str = ABLATION_ROOT) -> int:
@@ -183,15 +212,7 @@ def run_config_variant(long_df: pd.DataFrame, label_df: pd.DataFrame,
         X_te, meta_te = build_test_nr(long_df, test_ids, config)
         if X_tr is None or X_te is None or not csf_cols:
             continue
-        for csf in [c for c in csf_cols if Y_tr[c].nunique() > 1]:
-            y = Y_tr[csf].values
-            if min(np.bincount(y, minlength=2)) < L2_CV:
-                continue
-            try:
-                pipe = build_pipeline_nr(config)
-                pipe.fit(X_tr, y)
-            except (ValueError, RuntimeError):
-                continue
+        for csf, pipe in fit_heads(X_tr, Y_tr, csf_cols, config).items():
             proba = pipe.predict_proba(X_te)[:, 1]
             clf = pipe.named_steps["clf"]
             for regime in EVAL_REGIMES:
