@@ -355,7 +355,7 @@ def _render_panels_grid(args, metric: list[str],
     n = len(panels)
     fig, axes = plt.subplots(
         1, n,
-        figsize=(max(3.2 * n, 10), max(0.32 * len(display_csfs) + 2.5, 6)),
+        figsize=(args.fig_width or max(3.2 * n, 10), max(0.32 * len(display_csfs) + 2.5, 6)),
         sharey=True,
     )
     if n == 1:
@@ -487,6 +487,9 @@ def main():
     parser.add_argument("--arc-links", action="store_true",
                         help="Draw clique links of the --all-paradigms / --all-backbones "
                              "figure as arcs that do not touch unselected CSFs")
+    parser.add_argument("--fig-width", type=float, default=None,
+                        help="Width in inches of the --all-paradigms / --all-backbones "
+                             "figure (default: from the number of panels)")
 
     args = parser.parse_args()
     plt.rcParams.update({"xtick.labelsize": 10 * args.font_scale,

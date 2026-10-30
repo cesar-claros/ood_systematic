@@ -17,7 +17,7 @@ symlinked. Render from inside the sandbox with the paper's own plotting:
       --metric-group RC --filter-methods --output-dir fig1_out
   ../.venv/bin/python ../stats_eval.py --all-paradigms --metric-group RC \
       --filter-methods --output-dir fig1_out --font-scale 1.3 --no-suptitle \
-      --arc-links
+      --arc-links --fig-width 15.1
 
 The legacy rows are the paper's files verbatim, so every published clique is
 reproduced by construction (validated 48/48 against the published
