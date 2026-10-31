@@ -1,0 +1,79 @@
+backbone,study,n_blocks,control,r,p,roster
+Conv,confidnet,20,"(none, replication)",0.6436227168305533,0.0001,reported
+Conv,confidnet,20,"(none, partial-code path)",0.6436227168305533,0.0001,reported
+Conv,confidnet,20,iid_msr,0.5805906517224473,0.0001,reported
+Conv,confidnet,20,iid_mean,0.4585790446277502,0.0001,reported
+Conv,confidnet,20,dataset,0.32615399634593983,0.0004,reported
+Conv,confidnet,20,iid_msr+dataset,0.4691120367010045,0.0001,reported
+Conv,devries,20,"(none, replication)",0.6792408266070935,0.0001,reported
+Conv,devries,20,"(none, partial-code path)",0.6792408266070933,0.0001,reported
+Conv,devries,20,iid_msr,0.6392639427142883,0.0001,reported
+Conv,devries,20,iid_mean,0.6198662547136896,0.0001,reported
+Conv,devries,20,dataset,0.47406730292620747,0.0001,reported
+Conv,devries,20,iid_msr+dataset,0.6269589764760257,0.0001,reported
+Conv,dg,20,"(none, replication)",0.30931323407127365,0.0034,reported
+Conv,dg,20,"(none, partial-code path)",0.3093132340712736,0.0031,reported
+Conv,dg,20,iid_msr,0.215586615959887,0.0102,reported
+Conv,dg,20,iid_mean,0.23946288157510148,0.0089,reported
+Conv,dg,20,dataset,-0.17489798886821073,0.9806,reported
+Conv,dg,20,iid_msr+dataset,0.14945227146670992,0.056,reported
+ViT,vit,20,"(none, replication)",0.5897037642103791,0.0001,reported
+ViT,vit,20,"(none, partial-code path)",0.5897037642103791,0.0001,reported
+ViT,vit,20,iid_msr,0.42891775370412594,0.0001,reported
+ViT,vit,20,iid_mean,0.4249392091853716,0.0001,reported
+ViT,vit,20,dataset,0.1886269105473345,0.0109,reported
+ViT,vit,20,iid_msr+dataset,0.17879042779273538,0.0153,reported
+ViT,vit,20,iid_msr+lr,0.1788969274293581,0.0204,reported
+ViT,vit,20,iid_msr+lr+dataset,-0.04221572723721731,0.7239,reported
+Conv,confidnet,20,"(none, replication)",0.6838773399113596,0.0001,20
+Conv,confidnet,20,"(none, partial-code path)",0.6838773399113596,0.0001,20
+Conv,confidnet,20,iid_msr,0.6287617613047407,0.0001,20
+Conv,confidnet,20,iid_mean,0.5302213178706437,0.0001,20
+Conv,confidnet,20,dataset,0.4080718373145651,0.0001,20
+Conv,confidnet,20,iid_msr+dataset,0.5121731300224248,0.0001,20
+Conv,devries,20,"(none, replication)",0.6227093314224689,0.0001,20
+Conv,devries,20,"(none, partial-code path)",0.6227093314224689,0.0001,20
+Conv,devries,20,iid_msr,0.5739142203375973,0.0001,20
+Conv,devries,20,iid_mean,0.580936197460976,0.0001,20
+Conv,devries,20,dataset,0.3646578775660545,0.0002,20
+Conv,devries,20,iid_msr+dataset,0.49794094789645954,0.0001,20
+Conv,dg,20,"(none, replication)",0.3085237648535188,0.0029,20
+Conv,dg,20,"(none, partial-code path)",0.30852376485351873,0.0027,20
+Conv,dg,20,iid_msr,0.20611380524944936,0.0123,20
+Conv,dg,20,iid_mean,0.23405588703679653,0.0093,20
+Conv,dg,20,dataset,-0.18723387389710977,0.9903,20
+Conv,dg,20,iid_msr+dataset,0.14148152147627863,0.0597,20
+ViT,vit,20,"(none, replication)",0.6984630620478783,0.0001,20
+ViT,vit,20,"(none, partial-code path)",0.6984630620478786,0.0001,20
+ViT,vit,20,iid_msr,0.5775060921526399,0.0001,20
+ViT,vit,20,iid_mean,0.5793434925223154,0.0001,20
+ViT,vit,20,dataset,0.4042810785220275,0.0001,20
+ViT,vit,20,iid_msr+dataset,0.3985627131567924,0.0001,20
+ViT,vit,20,iid_msr+lr,0.34392756042837835,0.0002,20
+ViT,vit,20,iid_msr+lr+dataset,0.18071064789672636,0.0137,20
+Conv,confidnet,20,"(none, replication)",0.6303577240625926,0.0001,22
+Conv,confidnet,20,"(none, partial-code path)",0.6303577240625926,0.0001,22
+Conv,confidnet,20,iid_msr,0.5572355440318338,0.0001,22
+Conv,confidnet,20,iid_mean,0.4552761077356705,0.0001,22
+Conv,confidnet,20,dataset,0.3115876627569044,0.0004,22
+Conv,confidnet,20,iid_msr+dataset,0.3960209113949477,0.0001,22
+Conv,devries,20,"(none, replication)",0.6231496422180515,0.0001,22
+Conv,devries,20,"(none, partial-code path)",0.6231496422180514,0.0001,22
+Conv,devries,20,iid_msr,0.5604637179429582,0.0001,22
+Conv,devries,20,iid_mean,0.5745124412530273,0.0001,22
+Conv,devries,20,dataset,0.3690420430597797,0.0002,22
+Conv,devries,20,iid_msr+dataset,0.5050730180161133,0.0001,22
+Conv,dg,20,"(none, replication)",0.36922215589169555,0.0012,22
+Conv,dg,20,"(none, partial-code path)",0.3692221558916955,0.001,22
+Conv,dg,20,iid_msr,0.32221063160871777,0.0008,22
+Conv,dg,20,iid_mean,0.3414220050650408,0.0017,22
+Conv,dg,20,dataset,-0.0756742938803087,0.7985,22
+Conv,dg,20,iid_msr+dataset,0.36184302585723516,0.001,22
+ViT,vit,20,"(none, replication)",0.7041428996001363,0.0001,22
+ViT,vit,20,"(none, partial-code path)",0.7041428996001363,0.0001,22
+ViT,vit,20,iid_msr,0.592075527234633,0.0001,22
+ViT,vit,20,iid_mean,0.594971549812821,0.0001,22
+ViT,vit,20,dataset,0.4137910860409883,0.0002,22
+ViT,vit,20,iid_msr+dataset,0.4083565270484417,0.0002,22
+ViT,vit,20,iid_msr+lr,0.2776651209315929,0.0012,22
+ViT,vit,20,iid_msr+lr+dataset,0.08771177289726247,0.1429,22

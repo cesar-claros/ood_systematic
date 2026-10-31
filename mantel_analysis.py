@@ -19,6 +19,8 @@ to identify which NC properties most strongly predict method selection.
 """
 
 import os
+import sys
+from pathlib import Path
 import argparse
 import warnings
 
@@ -33,6 +35,7 @@ from src.utils_stats import HIGHER_BETTER
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # ── Reuse data-loading helpers from nc_regime_analysis ──────────────────────
+sys.path.insert(0, str(Path(__file__).resolve().parent / "archived"))
 from nc_regime_analysis import (
     NC_METRICS,
     load_nc_metrics,

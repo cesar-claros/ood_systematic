@@ -324,8 +324,10 @@ python stats_eval_demo.py --source cifar10 --backbone Conv --metric AURC --group
 python projection_filtering_analysis.py --output-dir projection_analysis_outputs
 python projection_clique_analysis.py --output-dir projection_clique_outputs
 
-# Appendix G Mantel test
-python mantel_analysis.py --output-dir mantel_outputs_papyan
+# Mantel test on the submission roster; see "Reproducing the final paper results" for the final one
+# (one run per stratum: Conv with confidnet, devries, dg; ViT with vit)
+python mantel_analysis.py --backbone Conv --study confidnet --filter-methods --papyan-only \
+    --score-metric AUGRC --ood-group --output-dir mantel_outputs_papyan
 ```
 
 ### Stage 7: NC-based predictor (Section 4.4 and Appendix H)
@@ -373,7 +375,7 @@ Every command below runs from the repository root on CPU, unless marked GPU. The
 | App E.2 Holm check | `python nc_csf_predictivity/evaluation/figure1_holm_check.py` | `outputs/56_figure1_holm_check.md` |
 | App E.3 FPR@95 cliques | `python rc_roc_clique_comparison.py` (reads the committed clique JSONs in `ood_eval_outputs_{rc,roc,fpr}/`, which `stats_eval.py --filter-methods` exports) | printed table |
 | App F.2 ReAct and ASH-S | `python nc_csf_predictivity/evaluation/react_ash_table.py` | `outputs/51_react_ash.md` |
-| App G.1 partial Mantel | `python mantel_partial_convergence.py` | `mantel_partial_outputs/` |
+| App G and App G.1 Mantel tests, App B Mantel clause | `python nc_csf_predictivity/evaluation/mantel_all_csfs.py` (needs the Figure 1 scores and `mantel_partial_outputs/`, committed) | `outputs/58_mantel_all_csfs.md` |
 | App G.2 matched pairs | `python scripts/intervention_cliques.py --filter-methods --tag base`, then `python scripts/intervention_delta_tables.py`, `python scripts/intervention_mantel_tests.py`, and `python scripts/intervention_sensitivity.py` (settings in `configs/intervention_config.yaml`; PyYAML comes with the container) | `ood_eval_outputs/intervention_*/` |
 | App K CNN to ViT transfer | `python nc_csf_predictivity/evaluation/vit_transfer_22.py`, `python nc_csf_predictivity/evaluation/vit_loso.py` | `outputs/52_vit_transfer_22.md`, `outputs/53_vit_loso.md` |
 | App L self-supervised probes | GPU, a few hours: `bash x8_pool_a/run_pool_a_hpc.sh`. Then `python x8_pool_a/pool_a_harmonized.py --features-dir pool_a_features` and `python x8_pool_a/pool_a_harmonized_report.py` | `outputs/pool_a/42_pool_a_harmonized_tables.md` |
@@ -525,7 +527,6 @@ Total disk footprint after the full pipeline: about 230 MB excluding any FD-Shif
 | Appendix E worked example | `stats_eval_demo.py` | `ood_eval_outputs/6_0_posthoc_heatmap.pdf` |
 | Appendix F paired-AUGRC tables | `projection_filtering_analysis.py` | `projection_analysis_outputs/` |
 | Appendix F clique substitutions | `projection_clique_analysis.py` | `projection_clique_outputs/` |
-| Appendix G Mantel tables | `mantel_analysis.py` | `mantel_outputs_papyan/` |
 | All other appendices | see [Reproducing the final paper results](#reproducing-the-final-paper-results) | |
 
 (1) Only the `--metric-group RC` invocations (AURC / AUGRC) of `stats_eval.py` feed this paper; the `--metric-group CE` / `CE_BOUND` modes compute calibration top cliques for a separate companion project.

@@ -1,0 +1,131 @@
+backbone,study,n_blocks,control,r,p,variant
+Conv,confidnet,20,"(none, replication)",0.6303577240625926,0.0001,L-raw
+Conv,confidnet,20,"(none, partial-code path)",0.6303577240625926,0.0001,L-raw
+Conv,confidnet,20,iid_msr,0.5572355440318338,0.0001,L-raw
+Conv,confidnet,20,iid_mean,0.4552761077356705,0.0001,L-raw
+Conv,confidnet,20,dataset,0.3115876627569044,0.0004,L-raw
+Conv,confidnet,20,iid_msr+dataset,0.3960209113949477,0.0001,L-raw
+Conv,devries,20,"(none, replication)",0.6231496422180515,0.0001,L-raw
+Conv,devries,20,"(none, partial-code path)",0.6231496422180514,0.0001,L-raw
+Conv,devries,20,iid_msr,0.5604637179429582,0.0001,L-raw
+Conv,devries,20,iid_mean,0.5745124412530273,0.0001,L-raw
+Conv,devries,20,dataset,0.3690420430597797,0.0002,L-raw
+Conv,devries,20,iid_msr+dataset,0.5050730180161133,0.0001,L-raw
+Conv,dg,20,"(none, replication)",0.36922215589169555,0.0012,L-raw
+Conv,dg,20,"(none, partial-code path)",0.3692221558916955,0.001,L-raw
+Conv,dg,20,iid_msr,0.32221063160871777,0.0008,L-raw
+Conv,dg,20,iid_mean,0.3414220050650408,0.0017,L-raw
+Conv,dg,20,dataset,-0.0756742938803087,0.7985,L-raw
+Conv,dg,20,iid_msr+dataset,0.36184302585723516,0.001,L-raw
+ViT,vit,20,"(none, replication)",0.7041428996001363,0.0001,L-raw
+ViT,vit,20,"(none, partial-code path)",0.7041428996001363,0.0001,L-raw
+ViT,vit,20,iid_msr,0.592075527234633,0.0001,L-raw
+ViT,vit,20,iid_mean,0.594971549812821,0.0001,L-raw
+ViT,vit,20,dataset,0.4137910860409883,0.0002,L-raw
+ViT,vit,20,iid_msr+dataset,0.4083565270484417,0.0002,L-raw
+ViT,vit,20,iid_msr+lr,0.2776651209315929,0.0012,L-raw
+ViT,vit,20,iid_msr+lr+dataset,0.08771177289726247,0.1429,L-raw
+Conv,confidnet,20,"(none, replication)",0.633412532148983,0.0001,L-log
+Conv,confidnet,20,"(none, partial-code path)",0.6334125321489831,0.0001,L-log
+Conv,confidnet,20,iid_msr,0.558306116292277,0.0001,L-log
+Conv,confidnet,20,iid_mean,0.45736868279909215,0.0001,L-log
+Conv,confidnet,20,dataset,0.317311544447597,0.0003,L-log
+Conv,confidnet,20,iid_msr+dataset,0.39829843320099595,0.0001,L-log
+Conv,devries,20,"(none, replication)",0.5924224285777252,0.0001,L-log
+Conv,devries,20,"(none, partial-code path)",0.5924224285777251,0.0001,L-log
+Conv,devries,20,iid_msr,0.5607385897614657,0.0001,L-log
+Conv,devries,20,iid_mean,0.5514872660298907,0.0001,L-log
+Conv,devries,20,dataset,0.315706123992005,0.0006,L-log
+Conv,devries,20,iid_msr+dataset,0.5260350267754411,0.0001,L-log
+Conv,dg,20,"(none, replication)",0.3398536033892647,0.0014,L-log
+Conv,dg,20,"(none, partial-code path)",0.3398536033892646,0.0016,L-log
+Conv,dg,20,iid_msr,0.2930162621462585,0.0016,L-log
+Conv,dg,20,iid_mean,0.308834052059269,0.0025,L-log
+Conv,dg,20,dataset,-0.12678968952132363,0.9259,L-log
+Conv,dg,20,iid_msr+dataset,0.31851389394674845,0.0032,L-log
+ViT,vit,20,"(none, replication)",0.6969223387597833,0.0001,L-log
+ViT,vit,20,"(none, partial-code path)",0.6969223387597833,0.0001,L-log
+ViT,vit,20,iid_msr,0.5799746136635308,0.0001,L-log
+ViT,vit,20,iid_mean,0.582429494832032,0.0001,L-log
+ViT,vit,20,dataset,0.4020644694767751,0.0002,L-log
+ViT,vit,20,iid_msr+dataset,0.3947477376792431,0.0002,L-log
+ViT,vit,20,iid_msr+lr,0.2534159530784111,0.0033,L-log
+ViT,vit,20,iid_msr+lr+dataset,0.06352807677997271,0.2135,L-log
+Conv,confidnet,20,"(none, replication)",0.5954260110907543,0.0001,C-raw
+Conv,confidnet,20,"(none, partial-code path)",0.5954260110907544,0.0001,C-raw
+Conv,confidnet,20,iid_msr,0.5288138680176352,0.0001,C-raw
+Conv,confidnet,20,iid_mean,0.425675646942943,0.0002,C-raw
+Conv,confidnet,20,dataset,0.24613510840666378,0.0034,C-raw
+Conv,confidnet,20,iid_msr+dataset,0.34776464706242866,0.0001,C-raw
+Conv,devries,20,"(none, replication)",0.7006180872325063,0.0001,C-raw
+Conv,devries,20,"(none, partial-code path)",0.7006180872325064,0.0001,C-raw
+Conv,devries,20,iid_msr,0.6416440518874253,0.0001,C-raw
+Conv,devries,20,iid_mean,0.6154875144359933,0.0001,C-raw
+Conv,devries,20,dataset,0.5035108159840745,0.0001,C-raw
+Conv,devries,20,iid_msr+dataset,0.6147591173357233,0.0001,C-raw
+Conv,dg,20,"(none, replication)",0.3477267409003417,0.0022,C-raw
+Conv,dg,20,"(none, partial-code path)",0.3477267409003416,0.0025,C-raw
+Conv,dg,20,iid_msr,0.252531137072556,0.0069,C-raw
+Conv,dg,20,iid_mean,0.28008395991102747,0.0077,C-raw
+Conv,dg,20,dataset,-0.11308664648637981,0.8619,C-raw
+Conv,dg,20,iid_msr+dataset,0.2352759823255113,0.0183,C-raw
+ViT,vit,20,"(none, replication)",0.731832796895956,0.0001,C-raw
+ViT,vit,20,"(none, partial-code path)",0.731832796895956,0.0001,C-raw
+ViT,vit,20,iid_msr,0.6215722318968947,0.0001,C-raw
+ViT,vit,20,iid_mean,0.6273407188172779,0.0001,C-raw
+ViT,vit,20,dataset,0.4668944849404273,0.0001,C-raw
+ViT,vit,20,iid_msr+dataset,0.4569821492499966,0.0001,C-raw
+ViT,vit,20,iid_msr+lr,0.3400662865672205,0.0003,C-raw
+ViT,vit,20,iid_msr+lr+dataset,0.17651166980593788,0.0179,C-raw
+Conv,confidnet,20,"(none, replication)",0.6019415353254154,0.0001,C-log
+Conv,confidnet,20,"(none, partial-code path)",0.6019415353254155,0.0001,C-log
+Conv,confidnet,20,iid_msr,0.5356804507877575,0.0001,C-log
+Conv,confidnet,20,iid_mean,0.4327636031378201,0.0002,C-log
+Conv,confidnet,20,dataset,0.2583434333872701,0.0023,C-log
+Conv,confidnet,20,iid_msr+dataset,0.35900701747402936,0.0001,C-log
+Conv,devries,20,"(none, replication)",0.7068317640577658,0.0001,C-log
+Conv,devries,20,"(none, partial-code path)",0.7068317640577657,0.0001,C-log
+Conv,devries,20,iid_msr,0.6366927818915035,0.0001,C-log
+Conv,devries,20,iid_mean,0.5943045300734365,0.0001,C-log
+Conv,devries,20,dataset,0.5142964397033176,0.0001,C-log
+Conv,devries,20,iid_msr+dataset,0.6013232603974352,0.0001,C-log
+Conv,dg,20,"(none, replication)",0.3233130162715486,0.0034,C-log
+Conv,dg,20,"(none, partial-code path)",0.3233130162715486,0.003,C-log
+Conv,dg,20,iid_msr,0.21916296226661386,0.0123,C-log
+Conv,dg,20,iid_mean,0.24505460618342922,0.0114,C-log
+Conv,dg,20,dataset,-0.1555782603774034,0.9399,C-log
+Conv,dg,20,iid_msr+dataset,0.18243068868747292,0.0469,C-log
+ViT,vit,20,"(none, replication)",0.7557208335893801,0.0001,C-log
+ViT,vit,20,"(none, partial-code path)",0.75572083358938,0.0001,C-log
+ViT,vit,20,iid_msr,0.6490664728643425,0.0001,C-log
+ViT,vit,20,iid_mean,0.6547440712439572,0.0001,C-log
+ViT,vit,20,dataset,0.5150261477615669,0.0001,C-log
+ViT,vit,20,iid_msr+dataset,0.5026359646635911,0.0001,C-log
+ViT,vit,20,iid_msr+lr,0.34814221100922543,0.0003,C-log
+ViT,vit,20,iid_msr+lr+dataset,0.19433711484205615,0.0111,C-log
+Conv,confidnet,20,"(none, replication)",0.6312264023070903,0.0001,K-log
+Conv,confidnet,20,"(none, partial-code path)",0.6312264023070903,0.0001,K-log
+Conv,confidnet,20,iid_msr,0.556789979244275,0.0001,K-log
+Conv,confidnet,20,iid_mean,0.4555458251153578,0.0001,K-log
+Conv,confidnet,20,dataset,0.31321533014489344,0.0004,K-log
+Conv,confidnet,20,iid_msr+dataset,0.39568978801544685,0.0001,K-log
+Conv,devries,20,"(none, replication)",0.6097923802942324,0.0001,K-log
+Conv,devries,20,"(none, partial-code path)",0.6097923802942324,0.0001,K-log
+Conv,devries,20,iid_msr,0.5751860426815516,0.0001,K-log
+Conv,devries,20,iid_mean,0.5629129722649335,0.0001,K-log
+Conv,devries,20,dataset,0.3458566722912145,0.0003,K-log
+Conv,devries,20,iid_msr+dataset,0.5444247363884649,0.0001,K-log
+Conv,dg,20,"(none, replication)",0.3416854200501752,0.0013,K-log
+Conv,dg,20,"(none, partial-code path)",0.3416854200501752,0.0016,K-log
+Conv,dg,20,iid_msr,0.294162767772548,0.0014,K-log
+Conv,dg,20,iid_mean,0.30869650869238324,0.0027,K-log
+Conv,dg,20,dataset,-0.12360144817519339,0.9219,K-log
+Conv,dg,20,iid_msr+dataset,0.31980675967605143,0.0029,K-log
+ViT,vit,20,"(none, replication)",0.6964945638323623,0.0001,K-log
+ViT,vit,20,"(none, partial-code path)",0.6964945638323623,0.0001,K-log
+ViT,vit,20,iid_msr,0.5786090496039354,0.0001,K-log
+ViT,vit,20,iid_mean,0.5811821169092309,0.0001,K-log
+ViT,vit,20,dataset,0.4020140957287498,0.0002,K-log
+ViT,vit,20,iid_msr+dataset,0.39411162058785987,0.0002,K-log
+ViT,vit,20,iid_msr+lr,0.2473884302708696,0.0038,K-log
+ViT,vit,20,iid_msr+lr+dataset,0.05796992168994955,0.2345,K-log
