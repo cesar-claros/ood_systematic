@@ -59,7 +59,7 @@ HEAD_SIDE_CSFS = {
 }
 FEATURE_SIDE_CSFS = {
     "PCA RecError global", "NeCo", "NNGuide", "CTM", "ViM", "Maha",
-    "fDBD", "KPCA RecError global", "Residual",
+    "fDBD", "KPCA RecError global", "Residual", "MahaPP", "NCI",
 }
 # Background tint per side for the all-paradigms grid.
 SIDE_BG_COLOR = {"head": "#a6cde4", "feature": "#f3e2cc"}
@@ -388,6 +388,8 @@ def _render_panels_grid(args, metric: list[str],
 
         counts = mdf.sum(axis=0)
         top3 = list(counts.sort_values(ascending=False).head(3).index)
+        if args.top3_ties:
+            top3 = list(counts[counts >= counts.sort_values(ascending=False).iloc[2]].index)
         display_cols = list(mdf.columns)
         tf = blended_transform_factory(ax.transAxes, ax.transData)
         for csf_name in top3:
@@ -418,7 +420,7 @@ def _render_panels_grid(args, metric: list[str],
             edgecolor='none', label='feature-side'))
     top3_handle = mpatches.Patch(
         facecolor='none', edgecolor='black', linestyle=':', linewidth=1.4,
-        label='top-3 by clique count')
+        label='top-3 by clique count, with ties' if args.top3_ties else 'top-3 by clique count')
     legend_handles = handles + side_handles + [top3_handle]
     if legend_handles:
         fig.legend(handles=legend_handles,
@@ -487,6 +489,10 @@ def main():
     parser.add_argument("--arc-links", action="store_true",
                         help="Draw clique links of the --all-paradigms / --all-backbones "
                              "figure as arcs that do not touch unselected CSFs")
+    parser.add_argument("--top3-ties", action="store_true",
+                        help="Mark every CSF tied with the third-highest clique count in the "
+                             "--all-paradigms / --all-backbones figure, so the marks do not "
+                             "depend on the row order")
     parser.add_argument("--fig-width", type=float, default=None,
                         help="Width in inches of the --all-paradigms / --all-backbones "
                              "figure (default: from the number of panels)")
