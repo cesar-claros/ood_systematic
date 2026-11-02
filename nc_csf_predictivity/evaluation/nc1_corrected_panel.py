@@ -6,12 +6,15 @@ fixed estimator (`src/neural_collapse.py` since 77d87b2) divides by N and
 pins the pseudoinverse of Sigma_B (float64, hermitian, rcond 1e-6). This
 script collects the corrected value per model:
 
-  VGG13 (280)        pilot0 Papyan panel (`pilot0/pool_coords`), the source of
-                     `var_collapse_corrected` in long_harmonized_v2.
-  ResNet18 (56)      aug-view Papyan panel of the D-R4 re-measurement
-                     (`rn18_handoff_replication/outputs/phase1_nc1`): the
+  VGG13 (280)        remeasured Papyan panel from `pilot0/extract_pool_coords.py`.
+  ResNet18 (56)      remeasured aug-view Papyan panel from
+                     `rn18_handoff_replication/phase1_nc1_remeasure.py`: the
                      datamodule's training set with training augmentations,
                      the view of the paper's NC metrics.
+                     Both panels are stored in
+                     `outputs/nc1_corrected/remeasured_panels.csv`. Their
+                     extraction scripts are at commit 18ff09e of this
+                     repository; they need GPU access to the checkpoints.
   SSL probes (40),   legacy x C, exact: their estimators already use the
   ImageNet (47)      fixed pseudoinverse (numpy float64, rcond 1e-6).
   ViT (40)           legacy x C, approximate: no re-measurement exists, and
@@ -28,7 +31,6 @@ Outputs: outputs/nc1_corrected/nc1_corrected.csv, outputs/54_nc1_corrected.md
 """
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -39,14 +41,11 @@ CODE_DIR = EVAL_DIR.parents[1]
 for path in (EVAL_DIR.parent / "ablations", EVAL_DIR, CODE_DIR):
     sys.path.insert(0, str(path))
 from calibration_features_clique import DEFAULT_OUT_ROOT, add_model_id  # noqa: E402
-from heldout_theory_validation import load_coords  # noqa: E402
 from regimefree_wilcoxon import load_parquet  # noqa: E402
 
 N_CLASSES = {"cifar10": 10, "cifar100": 100, "supercifar100": 20, "tinyimagenet": 200,
              "imagenet": 1000}
 POOL_SIZE = {"VGG13": 280, "ResNet18": 56, "ViT": 40, "SSL probes": 40, "ImageNet": 47}
-RN18_DIR = CODE_DIR / "rn18_handoff_replication" / "outputs" / "phase1_nc1"
-RN18_SOURCES = {"supercifar": "supercifar100", "tiny-imagenet-200": "tinyimagenet"}
 WEIGHT_TOL, ANGLE_TOL = 1e-5, 1e-2
 ANGLES = ["equiangular_uc", "max_equiangular_uc"]
 
@@ -67,35 +66,6 @@ def gate_view(pool: str, paper: pd.DataFrame, panel: pd.DataFrame) -> None:
           f"angle median rel {angle:.1e})")
 
 
-def vgg_panel(models: pd.DataFrame) -> pd.DataFrame:
-    """Papyan panel of the 280 VGG13 checkpoints from pilot0, keyed by model id."""
-    coords, problems = load_coords(CODE_DIR / "pilot0" / "pool_coords")
-    if problems:
-        raise RuntimeError(f"pilot0 coords: {problems}")
-    vgg = models[models["architecture"] == "VGG13"]
-    cell = (vgg["paradigm"].astype(str) + "|" + vgg["source"].astype(str) + "|"
-            + vgg["run"].astype(str) + "|" + vgg["reward"].astype(str) + "|"
-            + vgg["dropout"].astype(str))
-    panel = pd.DataFrame([coords[c]["papyan"] for c in cell])
-    return panel.assign(model_id=vgg["model_id"].values)
-
-
-def rn18_panel() -> pd.DataFrame:
-    """Aug-view Papyan panel of the paper's 56 ResNet18 checkpoints."""
-    recs = []
-    for path in sorted(RN18_DIR.glob("*.json")):
-        if path.name.startswith("FAILED_"):
-            continue
-        rec = json.loads(path.read_text())
-        if rec["paradigm"] not in ("confidnet", "devries", "dg"):
-            continue
-        source = RN18_SOURCES.get(rec["source"], rec["source"])
-        recs.append({"model_id": f"ResNet18|{rec['paradigm']}|{source}|{rec['run_label']}"
-                                 f"|{int(rec['dropout'])}|{float(rec['reward']):g}",
-                     **rec["aug_view"]["papyan"]})
-    return pd.DataFrame(recs)
-
-
 def rescaled(pool: str, frame: pd.DataFrame, exact: bool) -> pd.DataFrame:
     """Legacy NC1 times the number of classes."""
     c = frame["source"].map(N_CLASSES)
@@ -114,8 +84,10 @@ def main() -> None:
                                         / "long_harmonized.parquet"))
     models = long_df.drop_duplicates("model_id")
     parts = []
-    for pool, panel, convention in (("VGG13", vgg_panel(models), "pilot0 remeasure"),
-                                    ("ResNet18", rn18_panel(), "D-R4 aug-view remeasure")):
+    panels = pd.read_csv(out_root / "nc1_corrected" / "remeasured_panels.csv",
+                         float_precision="round_trip")
+    for pool, convention in (("VGG13", "pilot0 remeasure"), ("ResNet18", "D-R4 aug-view remeasure")):
+        panel = panels[panels["pool"] == pool]
         paper = models[models["architecture"] == pool]
         gate_view(pool, paper, panel)
         both = paper.merge(panel[["model_id", "var_collapse"]], on="model_id",
