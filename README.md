@@ -6,13 +6,13 @@ The repository covers the full pipeline from FD-Shifts pretrained checkpoints th
 
 ### Note on NC1
 
-The paper's NC1 is Papyan's NC1 divided by the number of classes in every pool (Appendix B). VGG-13, ResNet-18, and ViT use the default float32 tolerance of `torch.linalg.pinv`; the self-supervised probes and the ImageNet models use a relative tolerance of 1e-6. The main results use these stored values (`neural_collapse_metrics/` and `nc_csf_predictivity/outputs/track1/dataset/long_harmonized.parquet`). Since commit `77d87b2`, `src/neural_collapse.py` computes Papyan's NC1 with a fixed estimator (float64, hermitian, relative tolerance 1e-6), so a fresh extraction from checkpoints gives the corrected values of Appendix B and not the stored values. `nc_csf_predictivity/evaluation/nc1_sensitivity.py` reports the main results under both definitions.
+The paper's NC1 is Papyan's NC1 divided by the number of classes in every pool (Appendix B). VGG-13, ResNet-18, and ViT use the default float32 tolerance of `torch.linalg.pinv`; the self-supervised probes and the ImageNet models use a relative tolerance of 1e-6. The main results use these stored values (`neural_collapse_metrics/` and `nc_csf_predictivity/outputs/track1/dataset/long_harmonized.parquet`). Since commit `77d87b2`, `src/neural_collapse.py` computes Papyan's NC1 with a fixed estimator (float64, hermitian, relative tolerance 1e-6), so a fresh extraction from checkpoints gives the corrected values of Appendix B and not the stored values. `nc_csf_predictivity/evaluation/nc1_sensitivity.py` reports the main results under both definitions. The remeasured NC1 values are stored in `nc_csf_predictivity/outputs/nc1_corrected/remeasured_panels.csv`; `pilot0/extract_pool_coords.py` and `rn18_handoff_replication/phase1_nc1_remeasure.py` at commit `18ff09e` produced them.
 
 ### Note on out-of-scope artifacts
 
-A few artifacts in this repository belong to our AISTATS 2026 Calibration Workshop companion paper, *Bounding Worst-Case Calibration Error in OOD Detection Under Distribution Shift* ([OpenReview](https://openreview.net/forum?id=aZnAoyzssI)), and are not used by any result in this paper:
+Two artifacts belong to our AISTATS 2026 Calibration Workshop companion paper, *Bounding Worst-Case Calibration Error in OOD Detection Under Distribution Shift* ([OpenReview](https://openreview.net/forum?id=aZnAoyzssI)), and are not used by any result in this paper:
 
-- **`calibration_ood.py`, `recompute_metric.py`, and the `scores_calibration/` directory.** They are listed in the repository layout for completeness, but the pipeline does not invoke them and does not read from `scores_calibration/`. You can ignore them entirely.
+- **`scores_calibration.zip`.** The pipeline does not read it.
 - **`stats_eval.py`** also supports calibration metric groups (`--metric-group CE` / `--metric-group CE_BOUND`) for that project. This paper only uses `--metric-group RC` (AURC / AUGRC), which is the only mode whose outputs feed Figures 1 and 3.
 
 ---
@@ -71,8 +71,6 @@ ood_systematic/
 |-- mantel_analysis.py                # Stage 6c: Mantel test (Appendix G)
 |-- projection_filtering_analysis.py  # Stage 6d: paired AUGRC tables (Appendix F)
 |-- projection_clique_analysis.py     # Stage 6e: clique substitution (Appendix F)
-|-- calibration_ood.py                # separate companion project; not part of this pipeline
-|-- recompute_metric.py               # separate companion project; not part of this pipeline
 `-- README.md
 ```
 

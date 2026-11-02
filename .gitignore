@@ -17,7 +17,6 @@ __pycache__/
 *.log
 *.txt
 neural_collapse_vis.py
-stats_eval_demo.py
 calibration_example.py
 calibration_hyperparameters.py
 calibration_plots.py
