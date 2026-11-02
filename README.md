@@ -315,7 +315,7 @@ python stats_eval.py --all-paradigms --metric-group RC --filter-methods \
     --clip-dir clip_scores_openood --output-dir ood_eval_outputs
 
 # Appendix E worked example heatmap
-python stats_eval_demo.py --source cifar10 --backbone Conv --metric AURC --group 0 \
+python stats_eval_demo.py --source cifar10 --backbone Conv --metric AUGRC --group 0 \
     --methods Confidence GEN MSR CTM fDBD Energy --output-dir ood_eval_outputs
 
 # Appendix F paired-AUGRC tables and clique substitutions

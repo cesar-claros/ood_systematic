@@ -50,8 +50,8 @@ def main():
     # load_all_scores expects a dict with metric names as keys and file paths as values
     
     # We will try to find the file for the requested metric.
-    # Pattern: scores/scores_all_{METRIC}_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv
-    filename = f"scores/scores_all_{METRIC}_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv"
+    # Pattern: scores_risk/scores_all_{METRIC}_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv
+    filename = f"scores_risk/scores_all_{METRIC}_MCD-{MCD_flag}_{BACKBONE}_{SOURCE}.csv"
     logger.info(f"Target file: {filename}")
     
     if not os.path.exists(filename):

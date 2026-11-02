@@ -261,10 +261,12 @@ def load_metric_csv(metric_name, csv_path):
     long['MCD'] = long['MCD'].map(mcd_dict)
     return long
 #%%
-def load_all_scores(config):
+def load_all_scores(config, metrics=None):
     frames = []
     for metric, path in config.items():
         if metric in ["CLIP_FILE", "OUTDIR", "ALPHA", "N_BOOT"]:
+            continue
+        if metrics is not None and metric not in metrics:
             continue
         if not os.path.exists(path):
             raise FileNotFoundError(f"Missing file for {metric}: {path}")

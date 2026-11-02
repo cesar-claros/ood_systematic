@@ -110,7 +110,7 @@ def _compute_members_for_config(
             "N_BOOT":       2000,
         }
         try:
-            df = load_all_scores(CONFIG)
+            df = load_all_scores(CONFIG, metrics=metric)
             exclude_methods = {"CTMmean", "CTMmeanOC", "MCD-CTMmean", "MCD-CTMmeanOC"}
             df = df[~df['methods'].isin(exclude_methods)]
             if filter_methods:
@@ -270,7 +270,7 @@ def _render_panels_grid(args, metric: list[str],
 
     if not panels:
         logger.error("No panels produced data; aborting plot.")
-        return
+        raise SystemExit(1)
 
     if getattr(args, "exclude_test", False):
         for _, _, r in panels:
@@ -588,7 +588,7 @@ def main():
 
         alpha = CONFIG["ALPHA"]
         try:
-            df = load_all_scores(CONFIG)
+            df = load_all_scores(CONFIG, metrics=metric)
 
             exclude_methods = {"CTMmean", "CTMmeanOC", "MCD-CTMmean", "MCD-CTMmeanOC"}
             n_excluded = df['methods'].isin(exclude_methods).sum()
