@@ -62,8 +62,8 @@ FEATURE_SIDE_CSFS = {
     "fDBD", "KPCA RecError global", "Residual", "MahaPP", "NCI",
 }
 # Background tint per side for the all-paradigms grid.
-SIDE_BG_COLOR = {"head": "#a6cde4", "feature": "#f3e2cc"}
-SIDE_BG_ALPHA = 0.35
+SIDE_BG_COLOR = {"head": "#d3caec", "feature": "#fdeea6"}
+SIDE_BG_ALPHA = 1.0
 
 
 def _compute_members_for_config(
